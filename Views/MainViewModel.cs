@@ -24,7 +24,9 @@ public partial class MainViewModel : ObservableObject
         new CoreMemoryIntegrityItem(),
         new SmartScreenItem(),
         new VisualEffectsItem(),
+        new OpenExplorerToThisPC(),
         new ShowFileExtItem(),
+        new NoShortcutTextWhenCreatingShortcut(),
     ];
 
     [ObservableProperty]
