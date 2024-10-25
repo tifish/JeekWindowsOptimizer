@@ -18,10 +18,10 @@
         <local:MainViewModel />
     </Design.DataContext>
 
-    <StackPanel Orientation="Vertical" Spacing="10" Margin="20">
-        <Button Content="优化选中项目" HorizontalAlignment="Center" Padding="10" CornerRadius="5" Command="{Binding OptimizeCheckedItems}" />
+    <Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto *">
+        <Button Grid.Row="0" Content="优化选中项目" HorizontalAlignment="Center" Margin="0,0,0,10" Padding="20" CornerRadius="5" FontSize="20" FontWeight="Bold" Command="{Binding OptimizeCheckedItems}" />
 
-        <ScrollViewer VerticalAlignment="Stretch">
+        <ScrollViewer Grid.Row="1" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">
             <ItemsControl ItemsSource="{Binding OptimizationItems }">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -30,27 +30,31 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
+                        
                         <Border Background="{DynamicResource SystemBaseLowColor}" CornerRadius="5" Padding="10">
                             <StackPanel Orientation="Vertical" Spacing="10">
-                                <RelativePanel>
+                                <Grid RowDefinitions="*" ColumnDefinitions="Auto *">
                                     <StackPanel Orientation="Horizontal">
                                         <CheckBox IsChecked="{Binding IsChecked}" />
                                         <TextBlock FontWeight="Bold" FontSize="20" Text="{Binding Name}" VerticalAlignment="Center">
                                             <Interaction.Behaviors>
                                                 <EventTriggerBehavior EventName="PointerPressed">
-                                                    <InvokeCommandAction Command="{Binding ToggleCheckedCommand}"></InvokeCommandAction>
+                                                    <InvokeCommandAction Command="{Binding ToggleCheckedCommand}" />
                                                 </EventTriggerBehavior>
                                             </Interaction.Behaviors>
                                         </TextBlock>
                                     </StackPanel>
-                                    <ToggleSwitch RelativePanel.AlignRightWithPanel="True" IsChecked="{Binding HasOptimized}" OnContent="" OffContent="" />
-                                </RelativePanel>
+                                    <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" IsChecked="{Binding HasOptimized}" OnContent="已优化" OffContent="未优化" />
+                                </Grid>
                                 <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
                             </StackPanel>
                         </Border>
+                        
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-    </StackPanel>
+        
+    </Grid>
+    
 </Window>
