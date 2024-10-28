@@ -1,5 +1,7 @@
 /.vs
 /.idea
-/bin
 /obj
 /*.user
+/bin/Libs
+/bin/Logs
+/bin/*.*

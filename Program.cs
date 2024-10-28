@@ -12,6 +12,10 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        var appDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+        if (appDirectory != null)
+            Environment.CurrentDirectory = appDirectory;
+
         if (Design.IsDesignMode)
             LogManager.DisableLogging();
 

@@ -24,13 +24,16 @@ public partial class MainViewModel : ObservableObject
         new CoreMemoryIntegrityItem(),
         new SmartScreenItem(),
         new VisualEffectsItem(),
-        new OpenExplorerToThisPC(),
-        new ShowFileExtItem(),
-        new NoShortcutTextWhenCreatingShortcut(),
     ];
 
     [ObservableProperty]
-    private bool _isOptimizing = false;
+    private bool _isOptimizing;
+
+    public MainViewModel()
+    {
+        RegistryItemManager.Load();
+        RegistryItemManager.Items.ForEach(_optimizationItems.Add);
+    }
 
     public async Task OptimizeCheckedItems()
     {
