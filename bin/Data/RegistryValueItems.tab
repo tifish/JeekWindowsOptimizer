@@ -1,4 +1,11 @@
-﻿Name	Description	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue
-显示文件扩展名	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	HideFileExt	int	1	0	FALSE
-打开资源管理器时显示我的电脑	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	LaunchTo	int	0	1	TRUE
-创建快捷方式时不添加“快捷方式”文字	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	Link	binary		0	TRUE
+﻿GroupName	Name	Description	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue	ShouldTurnOffTamperProtection	ShouldUpdateGroupPolicy	ShouldReboot
+Explorer	显示文件扩展名	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	HideFileExt	int	1	0	FALSE			
+Explorer	打开资源管理器时显示我的电脑	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	LaunchTo	int	0	1	TRUE			
+Explorer	创建快捷方式时不添加“快捷方式”文字	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	Link	binary		00000000	TRUE			
+内核	禁用 Windows 实时防病毒	Windows 实时防病毒会影响所有文件访问的性能，建议禁用，之后定期手动扫描病毒。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableRealtimeMonitoring	int	0	1	TRUE	TRUE	TRUE	
+内核	禁用 Meltdown 和 Spectre 补丁	Meltdown 和 Spectre 是 CPU 硬件漏洞，可以获取内核数据。补丁影响性能，请根据实际情况选择是否禁用。\n重启生效。	HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettings	int	0	1				TRUE
+	禁用 Meltdown 和 Spectre 补丁		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverride	int	0	3	TRUE			
+	禁用 Meltdown 和 Spectre 补丁		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverrideMask	int	0	3	TRUE			
+内核	禁用内核内存完整性保护	内核内存完整性保护，普通用户建议禁用。\n重启生效。	HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity	Enabled	int	1	0	TRUE			TRUE
+内核	禁用 SmartScreen	SmartScreen 在打开应用和安装包时会检查文件，影响启动速度，还会阻止下载某些文件，建议禁用。\n立即生效。	HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer	SmartScreenEnabled	string	Warn	Off		TRUE		
+	禁用 SmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenEnabled		int	1	0				

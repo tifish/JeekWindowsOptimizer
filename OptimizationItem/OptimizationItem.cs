@@ -11,6 +11,7 @@ namespace JeekWindowsOptimizer;
 
 public abstract partial class OptimizationItem : ObservableObject
 {
+    public abstract string GroupName { get; }
     public abstract string Name { get; }
     public abstract string Description { get; }
 

@@ -17,13 +17,12 @@ public partial class MainViewModel : ObservableObject
     private int _selectedTabIndex;
 
     [ObservableProperty]
-    private ObservableCollection<OptimizationItem> _optimizationItems =
+    private ObservableCollection<OptimizationGroup> _optimizationGroups =
     [
-        new WindowsDefenderRealtimeProtectionItem(),
-        new MeltdownAndSpectreItem(),
-        new CoreMemoryIntegrityItem(),
-        new SmartScreenItem(),
-        new VisualEffectsItem(),
+        new("内核",
+        [
+            new VisualEffectsItem(),
+        ]),
     ];
 
     [ObservableProperty]
@@ -32,7 +31,17 @@ public partial class MainViewModel : ObservableObject
     public MainViewModel()
     {
         RegistryItemManager.Load();
-        RegistryItemManager.Items.ForEach(_optimizationItems.Add);
+        foreach (var item in RegistryItemManager.Items)
+        {
+            var group = _optimizationGroups.FirstOrDefault(group => group.Name == item.GroupName);
+            if (group == null)
+            {
+                group = new OptimizationGroup(item.GroupName, [item]);
+                _optimizationGroups.Add(group);
+            }
+
+            group.Items.Add(item);
+        }
     }
 
     public async Task OptimizeCheckedItems()
@@ -45,16 +54,17 @@ public partial class MainViewModel : ObservableObject
             var shouldUpdateGroupPolicy = false;
             var shouldReboot = false;
 
-            foreach (var item in OptimizationItems)
-            {
-                if (!item.IsChecked || item.HasOptimized)
-                    continue;
+            foreach(var group in OptimizationGroups)
+                foreach (var item in group.Items)
+                {
+                    if (!item.IsChecked || item.HasOptimized)
+                        continue;
 
-                item.HasOptimized = true;
+                    item.HasOptimized = true;
 
-                shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
-                shouldReboot |= item.ShouldReboot;
-            }
+                    shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
+                    shouldReboot |= item.ShouldReboot;
+                }
 
             if (shouldUpdateGroupPolicy)
                 await OptimizationItem.UpdateGroupPolicy();

@@ -2,11 +2,13 @@
 
 public class RegistryItem : OptimizationItem
 {
+    public override string GroupName { get; }
     public override string Name { get; }
     public override string Description { get; }
 
-    public RegistryItem(string name, string description)
+    public RegistryItem(string groupName, string name, string description)
     {
+        GroupName = groupName;
         Name = name;
         Description = description;
 
