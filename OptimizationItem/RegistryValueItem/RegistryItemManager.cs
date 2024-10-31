@@ -35,20 +35,22 @@ public static class RegistryItemManager
             OptimizationRegistryValue value = type switch
             {
                 "int" => new OptimizationRegistryIntValue(keyPath, valueName,
-                    int.Parse(defaultValue), int.Parse(optimizingValue), deleteDefaultValue,
-                    shouldTurnOffTamperProtection, shouldUpdateGroupPolicy, shouldReboot),
+                    int.Parse(defaultValue), int.Parse(optimizingValue), deleteDefaultValue),
                 "string" => new OptimizationRegistryStringValue(keyPath, valueName,
-                    defaultValue, optimizingValue, deleteDefaultValue,
-                    shouldTurnOffTamperProtection, shouldUpdateGroupPolicy, shouldReboot),
+                    defaultValue, optimizingValue, deleteDefaultValue),
                 "binary" => new OptimizationRegistryBinaryValue(keyPath, valueName,
-                    Convert.FromHexString(defaultValue), Convert.FromHexString(optimizingValue), deleteDefaultValue,
-                    shouldTurnOffTamperProtection, shouldUpdateGroupPolicy, shouldReboot),
+                    Convert.FromHexString(defaultValue), Convert.FromHexString(optimizingValue), deleteDefaultValue),
                 _ => throw new NotImplementedException("Unknown type: " + type),
             };
 
             if (!itemsDict.TryGetValue(name, out var item))
             {
-                item = new RegistryItem(groupName, name, description);
+                item = new RegistryItem(groupName, name, description)
+                {
+                    ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection,
+                    ShouldUpdateGroupPolicy = shouldUpdateGroupPolicy,
+                    ShouldReboot = shouldReboot,
+                };
                 itemsDict[name] = item;
                 Items.Add(item);
             }
