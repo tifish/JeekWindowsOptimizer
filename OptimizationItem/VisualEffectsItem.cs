@@ -17,7 +17,7 @@ public class VisualEffectsItem : OptimizationItem
         Disabled = value;
     }
 
-    public override string GroupName => "内核";
+    public override string GroupName => "动画";
 
     public override string Name => "禁用部分视觉效果";
 

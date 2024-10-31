@@ -17,13 +17,7 @@ public partial class MainViewModel : ObservableObject
     private int _selectedTabIndex;
 
     [ObservableProperty]
-    private ObservableCollection<OptimizationGroup> _optimizationGroups =
-    [
-        new("内核",
-        [
-            new VisualEffectsItem(),
-        ]),
-    ];
+    private ObservableCollection<OptimizationGroup> _optimizationGroups = [];
 
     [ObservableProperty]
     private bool _isOptimizing;
@@ -32,16 +26,21 @@ public partial class MainViewModel : ObservableObject
     {
         RegistryItemManager.Load();
         foreach (var item in RegistryItemManager.Items)
-        {
-            var group = _optimizationGroups.FirstOrDefault(group => group.Name == item.GroupName);
-            if (group == null)
+            AddOptimizationItem(item);
+
+        AddOptimizationItem(new VisualEffectsItem());
+    }
+
+    private void AddOptimizationItem(OptimizationItem item)
+    {
+        foreach (var group in OptimizationGroups)
+            if (group.Name == item.GroupName)
             {
-                group = new OptimizationGroup(item.GroupName, [item]);
-                _optimizationGroups.Add(group);
+                group.Items.Add(item);
+                return;
             }
 
-            group.Items.Add(item);
-        }
+        OptimizationGroups.Add(new OptimizationGroup(item.GroupName, [item]));
     }
 
     public async Task OptimizeCheckedItems()
@@ -54,7 +53,7 @@ public partial class MainViewModel : ObservableObject
             var shouldUpdateGroupPolicy = false;
             var shouldReboot = false;
 
-            foreach(var group in OptimizationGroups)
+            foreach (var group in OptimizationGroups)
                 foreach (var item in group.Items)
                 {
                     if (!item.IsChecked || item.HasOptimized)
