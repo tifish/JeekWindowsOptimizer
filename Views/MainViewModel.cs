@@ -29,6 +29,10 @@ public partial class MainViewModel : ObservableObject
             AddOptimizationItem(item);
 
         AddOptimizationItem(new VisualEffectsItem());
+
+        ServiceItemManager.Load();
+        foreach (var item in ServiceItemManager.Items)
+            AddOptimizationItem(item);
     }
 
     private void AddOptimizationItem(OptimizationItem item)

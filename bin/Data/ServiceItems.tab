@@ -1,0 +1,3 @@
+﻿GroupName	Name	Description	ServiceName
+系统	禁用程序兼容性助手	监控安装和运行的程序，提示兼容性问题。\n立即生效。	PcaSvc
+系统	禁用诊断策略服务	诊断策略服务提供疑难解答，解决不了什么实际问题。\n立即生效。	DPS
