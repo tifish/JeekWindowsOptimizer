@@ -16,7 +16,7 @@ public static class RegistryItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 12)
+            if (row.Count != 13)
                 continue;
 
             var groupName = row[0];
@@ -31,6 +31,7 @@ public static class RegistryItemManager
             var shouldTurnOffTamperProtection = row[9].Equals("true", StringComparison.CurrentCultureIgnoreCase);
             var shouldUpdateGroupPolicy = row[10].Equals("true", StringComparison.CurrentCultureIgnoreCase);
             var shouldReboot = row[11].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldRestartExplorer = row[12].Equals("true", StringComparison.CurrentCultureIgnoreCase);
 
             OptimizationRegistryValue value = type switch
             {
@@ -50,6 +51,7 @@ public static class RegistryItemManager
                     ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection,
                     ShouldUpdateGroupPolicy = shouldUpdateGroupPolicy,
                     ShouldReboot = shouldReboot,
+                    ShouldRestartExplorer = shouldRestartExplorer,
                 };
                 itemsDict[name] = item;
                 Items.Add(item);

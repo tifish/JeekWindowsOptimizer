@@ -43,6 +43,12 @@ public abstract partial class OptimizationItem : ObservableObject
 
         if (ShouldUpdateGroupPolicy)
             await UpdateGroupPolicy();
+
+        if (ShouldRestartExplorer)
+            RestartExplorer();
+
+        if (ShouldReboot)
+            await PromptReboot();
     }
 
     private static readonly RegistryValue TamperProtectionRegistryValue = new(
@@ -87,17 +93,42 @@ public abstract partial class OptimizationItem : ObservableObject
         await proc!.WaitForExitAsync();
     }
 
+    public static void RestartExplorer()
+    {
+        // Kill all explorer.exe processes
+        foreach (var process in Process.GetProcessesByName("explorer"))
+            process.Kill();
+    }
+
+    public static async Task PromptReboot()
+    {
+        await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
+        {
+            ContentMessage = "需要重启生效。",
+            ButtonDefinitions = ButtonEnum.Ok,
+            Icon = Icon.Info,
+            WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            Topmost = true,
+            FontFamily = "Microsoft YaHei",
+        }).ShowAsync();
+    }
+
     public abstract void HasOptimizedChanged(bool value);
 
     [ObservableProperty]
     private bool _isChecked = true;
 
     [RelayCommand]
-    private void ToggleChecked() => IsChecked = !IsChecked;
+    private void ToggleChecked()
+    {
+        IsChecked = !IsChecked;
+    }
 
     protected static string MessageTitle => "Jeek Windows Optimizer";
 
     public bool ShouldTurnOffTamperProtection { get; set; }
     public bool ShouldUpdateGroupPolicy { get; set; }
     public bool ShouldReboot { get; set; }
+
+    public bool ShouldRestartExplorer { get; set; }
 }
