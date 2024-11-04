@@ -7,7 +7,8 @@
 内核	禁用 SmartScreen	SmartScreen 在打开应用和安装包时会检查文件，影响启动速度，还会阻止下载某些文件，建议禁用。\n立即生效。	HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer	SmartScreenEnabled	string	Warn	Off		TRUE			
 	禁用 SmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenEnabled		int	1	0					
 系统	禁用系统还原	系统还原会占用一定的磁盘空间，安装系统补丁时会减慢速度，如果不是经常折腾系统，可以考虑关闭。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore	DisableSR	int	0	1	TRUE				
-系统	关闭微软客户体验改善计划	微软客户体验改善计划会自动向微软发送电脑的各种信息。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\SQMClient\Windows	CEIPEnable	int	1	0	TRUE				
+系统	禁用微软客户体验改善计划	微软客户体验改善计划会自动向微软发送电脑的各种信息。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\SQMClient\Windows	CEIPEnable	int	1	0	TRUE				
+系统	禁用 UAC	UAC 在安装和启动程序时提示是否允许管理员权限，让用户自己判断是否安全。用户没法知道安不安全，只能点允许。不仅影响系统性能，还	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System	EnableLUA	int	1	0				TRUE	
 Explorer	显示文件扩展名	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	HideFileExt	int	1	0	FALSE				
 Explorer	打开资源管理器时显示我的电脑	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	LaunchTo	int	0	1	TRUE				
 Explorer	创建快捷方式时不添加“快捷方式”文字	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	Link	binary		00000000	TRUE				
@@ -16,3 +17,5 @@ Explorer	创建快捷方式时不添加“快捷方式”文字	快捷方式的�
 任务栏	隐藏搜索框	任务栏搜索框占用了多任务窗口的显示空间，而通过开始菜单搜索更简便。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	SearchboxTaskbarMode	int	2	0					
 任务栏	隐藏任务视图按钮	通过快捷键 WIN+TAB 即可启动任务视图，不需要额外的按钮。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	ShowTaskViewButton	int	1	0					
 任务栏	从不合并任务栏图标	任务栏图标合并后没有文字描述，难以区分同一个软件的不同窗口，建议从不合并，工作效率更高。\n重启资源管理器生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	TaskbarGlomLevel	int	0	2					TRUE
+开始菜单	禁止开始菜单搜索网页	开始菜单输入通常是为了搜索应用程序和系统设置，搜索网页浪费资源。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	BingSearchEnabled	int	1	0	TRUE				
+开始菜单	禁止开始菜单搜索云端内容	阻止搜索 OneDrive、SharePoint、Outlook 等云端信息。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	AllowCloudSearch	int	1	0	TRUE				
