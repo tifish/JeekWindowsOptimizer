@@ -59,5 +59,8 @@ public static class RegistryItemManager
 
             item.RegistryValues.Add(value);
         }
+
+        foreach (var item in itemsDict.Values)
+            item.Initialized();
     }
 }

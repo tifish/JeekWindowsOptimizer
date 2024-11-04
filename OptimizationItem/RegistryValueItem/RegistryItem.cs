@@ -11,7 +11,10 @@ public class RegistryItem : OptimizationItem
         GroupName = groupName;
         Name = name;
         Description = description;
+    }
 
+    public void Initialized()
+    {
         HasOptimized = RegistryValues.All(value => value.HasOptimized);
 
         IsInitializing = false;
