@@ -4,7 +4,7 @@ namespace JeekWindowsOptimizer;
 
 public class UseClassicalContextMenuItem : OptimizationItem
 {
-    public override string GroupName => "Explorer";
+    public override string GroupName => "文件资源管理器";
     public override string Name => "使用 Win10 经典右键菜单";
     public override string Description => """
                                           Windows 11 默认右键菜单少了许多软件的功能，兼容性不佳。
