@@ -49,7 +49,7 @@ public class OptimizationRegistryBinaryValue(string keyPath, string valueName, b
 {
     public override bool HasOptimized
     {
-        get => Value.GetBinaryValue(defaultValue) == optimizingValue;
+        get => Value.GetBinaryValue(defaultValue)!.SequenceEqual(optimizingValue);
         set
         {
             if (value)
