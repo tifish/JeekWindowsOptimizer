@@ -30,6 +30,9 @@ public partial class MainViewModel : ObservableObject
 
         AddOptimizationItem(new VisualEffectsItem());
         AddOptimizationItem(new UseClassicalContextMenuItem());
+        AddOptimizationItem(new UninstallCortanaItem());
+        AddOptimizationItem(new UninstallSkypeItem());
+        AddOptimizationItem(new UninstallOneDriveItem());
     }
 
     private void AddOptimizationItem(OptimizationItem item)
