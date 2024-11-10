@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JeekTools;
 using Microsoft.Extensions.Logging;
@@ -20,19 +21,31 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel()
     {
+        if (Design.IsDesignMode)
+        {
+            _optimizationGroups.Add(new OptimizationGroup("测试1", [new TestItem(), new TestItem()]));
+            _optimizationGroups.Add(new OptimizationGroup("测试2", [new TestItem(), new TestItem()]));
+            return;
+        }
+
         RegistryItemManager.Load();
         foreach (var item in RegistryItemManager.Items)
             AddOptimizationItem(item);
 
-        ServiceItemManager.Load();
-        foreach (var item in ServiceItemManager.Items)
-            AddOptimizationItem(item);
+        ServiceItemManager.Load().ContinueWith(_ =>
+        {
+            foreach (var item in ServiceItemManager.Items)
+                AddOptimizationItem(item);
+        });
 
         AddOptimizationItem(new VisualEffectsItem());
         AddOptimizationItem(new UseClassicalContextMenuItem());
-        AddOptimizationItem(new UninstallCortanaItem());
-        AddOptimizationItem(new UninstallSkypeItem());
         AddOptimizationItem(new UninstallOneDriveItem());
+
+        var uninstallCortanaItem = new UninstallCortanaItem();
+        var uninstallSkypeItem = new UninstallSkypeItem();
+        uninstallCortanaItem.Initialize().ContinueWith(_ => AddOptimizationItem(uninstallCortanaItem));
+        uninstallSkypeItem.Initialize().ContinueWith(_ => AddOptimizationItem(uninstallSkypeItem));
     }
 
     private void AddOptimizationItem(OptimizationItem item)

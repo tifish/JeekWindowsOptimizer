@@ -1,28 +1,23 @@
-﻿using Windows.ApplicationModel;
-using Windows.Management.Deployment;
+﻿using JeekTools;
 
 namespace JeekWindowsOptimizer;
 
 public static class MicrosoftStore
 {
-    private static List<Package>? _installedPackages;
+    private const string PowerShell = "PowerShell";
+    private const string PowerShellArguments = "-ExecutionPolicy Bypass -WindowStyle Hidden -NonInteractive -Command";
 
-    public static List<Package> InstalledPackages
+    public static async Task<bool> HasPackage(string packageName)
     {
-        get
-        {
-            if (_installedPackages is null)
-            {
-                var packageManager = new PackageManager();
-                _installedPackages = packageManager.FindPackages().ToList();
-            }
-
-            return _installedPackages!;
-        }
+        return await Executor.RunAndWait(PowerShell,
+            $$"""{{PowerShellArguments}} "if ((Get-AppxPackage -AllUsers {{packageName}}).Count > 0) { Exit 0 } else { Exit 1 }" """,
+            false, true);
     }
 
-    public static Package? GetPackage(string namePrefix)
+    public static async Task UninstallPackage(string packageName)
     {
-        return InstalledPackages.FirstOrDefault(package => package.Id.Name.StartsWith(namePrefix));
+        await Executor.RunAndWait(PowerShell,
+            $"""{PowerShellArguments} "Get-AppxPackage -AllUsers {packageName} | Remove-AppxPackage" """,
+            false, true);
     }
 }

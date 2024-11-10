@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+        <TargetFramework>net8.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\JeekTools.NET\JeekTools.csproj" />
+        <ProjectReference Include="..\JeekTools.NET\JeekTools.csproj" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -66,7 +66,7 @@
         <!-- <BeautyAfterTasks></BeautyAfterTasks> -->
         <!-- valid values: Error|Detail|Info -->
         <BeautyLogLevel>Info</BeautyLogLevel>
-        <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
         <!-- set to a repo mirror if you have troble in connecting github -->
         <!-- <BeautyGitCDN>https://gitee.com/liesauer/HostFXRPatcher</BeautyGitCDN> -->
         <!-- <BeautyGitTree>master</BeautyGitTree> -->

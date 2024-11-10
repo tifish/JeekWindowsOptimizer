@@ -6,10 +6,10 @@ public static class ServiceItemManager
 {
     public static List<ServiceItem> Items { get; } = [];
 
-    public static void Load()
+    public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!tabFile.Load(@"Data\ServiceItems.tab"))
+        if (!await tabFile.LoadAsync(@"Data\ServiceItems.tab"))
             return;
 
         foreach (var row in tabFile.Rows.Skip(1))

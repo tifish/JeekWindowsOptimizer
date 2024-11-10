@@ -1,6 +1,4 @@
-﻿using System.CodeDom.Compiler;
-
-namespace JeekWindowsOptimizer;
+﻿namespace JeekWindowsOptimizer;
 
 public class UninstallSkypeItem : OptimizationItem
 {
@@ -12,11 +10,15 @@ public class UninstallSkypeItem : OptimizationItem
                                           立即生效。
                                           """;
 
-    public UninstallSkypeItem()
+    private const string PackageName = "Microsoft.SkypeApp";
+
+    public async Task<UninstallSkypeItem> Initialize()
     {
-        HasOptimized = MicrosoftStore.GetPackage("Microsoft.SkypeApp") is null;
+        HasOptimized = !await MicrosoftStore.HasPackage(PackageName);
 
         IsInitializing = false;
+
+        return this;
     }
 
     public override async void HasOptimizedChanged(bool value)
@@ -24,6 +26,6 @@ public class UninstallSkypeItem : OptimizationItem
         if (!value)
             return;
 
-        await JeekTools.Executor.RunAndWait("PowerShell", """-ex bypass -c "Get-AppxPackage -AllUsers Microsoft.SkypeApp | Remove-AppxPackage" """);
+        await MicrosoftStore.UninstallPackage(PackageName);
     }
 }

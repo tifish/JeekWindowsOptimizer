@@ -10,11 +10,15 @@ public class UninstallCortanaItem : OptimizationItem
                                           立即生效。
                                           """;
 
-    public UninstallCortanaItem()
+    private const string PackageName = "Microsoft.549981C3F5F10";
+
+    public async Task<UninstallCortanaItem> Initialize()
     {
-        HasOptimized = MicrosoftStore.GetPackage("Microsoft.549981C3F5F10") is null;
+        HasOptimized = !await MicrosoftStore.HasPackage(PackageName);
 
         IsInitializing = false;
+
+        return this;
     }
 
     public override async void HasOptimizedChanged(bool value)
@@ -22,6 +26,6 @@ public class UninstallCortanaItem : OptimizationItem
         if (!value)
             return;
 
-        await JeekTools.Executor.RunAndWait("PowerShell", """-ex bypass -c "Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Remove-AppxPackage" """);
+        await MicrosoftStore.UninstallPackage(PackageName);
     }
 }

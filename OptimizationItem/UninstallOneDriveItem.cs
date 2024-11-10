@@ -12,9 +12,11 @@ public class UninstallOneDriveItem : OptimizationItem
                                           立即生效。
                                           """;
 
+    private const string Installer = @"C:\Windows\SysWOW64\OneDriveSetup.exe";
+
     public UninstallOneDriveItem()
     {
-        HasOptimized = !File.Exists(@"C:\Windows\SysWOW64\OneDriveSetup.exe");
+        HasOptimized = !File.Exists(Installer);
 
         IsInitializing = false;
     }
@@ -22,6 +24,9 @@ public class UninstallOneDriveItem : OptimizationItem
     public override async void HasOptimizedChanged(bool value)
     {
         if (!value)
+            return;
+
+        if (!File.Exists(Installer))
             return;
 
         using var proc = Process.Start(new ProcessStartInfo(@"C:\Windows\SysWOW64\OneDriveSetup.exe", "/uninstall")
