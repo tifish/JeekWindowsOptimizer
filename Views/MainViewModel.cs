@@ -32,20 +32,21 @@ public partial class MainViewModel : ObservableObject
         foreach (var item in RegistryItemManager.Items)
             AddOptimizationItem(item);
 
+        AddOptimizationItem(new VisualEffectsItem());
+        AddOptimizationItem(new UseClassicalContextMenuItem());
+        AddOptimizationItem(new UninstallOneDriveItem());
+
         ServiceItemManager.Load().ContinueWith(_ =>
         {
             foreach (var item in ServiceItemManager.Items)
                 AddOptimizationItem(item);
         });
 
-        AddOptimizationItem(new VisualEffectsItem());
-        AddOptimizationItem(new UseClassicalContextMenuItem());
-        AddOptimizationItem(new UninstallOneDriveItem());
-
-        var uninstallCortanaItem = new UninstallCortanaItem();
-        var uninstallSkypeItem = new UninstallSkypeItem();
-        uninstallCortanaItem.Initialize().ContinueWith(_ => AddOptimizationItem(uninstallCortanaItem));
-        uninstallSkypeItem.Initialize().ContinueWith(_ => AddOptimizationItem(uninstallSkypeItem));
+        MicrosoftStoreItemManager.Load().ContinueWith(_ =>
+        {
+            foreach (var item in MicrosoftStoreItemManager.Items)
+                AddOptimizationItem(item);
+        });
     }
 
     private void AddOptimizationItem(OptimizationItem item)
