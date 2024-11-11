@@ -10,9 +10,9 @@
 内核	禁用快速启动	快速启动在重启系统时，保存内核状态，使得启动更快速。但有可能造成系统卡顿、内存占用高等异常情况。毕竟重启是低频行为，建议关闭。\n如果禁用了休眠功能，则快速启动失效。\n立即生效。	HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power	HiberbootEnabled	int	1	0					
 系统	禁用系统还原	系统还原会占用一定的磁盘空间，安装系统补丁时会减慢速度，如果不是经常折腾系统，可以考虑关闭。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore	DisableSR	int	0	1	TRUE				
 系统	禁用微软客户体验改善计划	微软客户体验改善计划会自动向微软发送电脑的各种信息。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\SQMClient\Windows	CEIPEnable	int	1	0	TRUE				
-系统	禁用 UAC	UAC 在安装和启动程序时提示是否允许管理员权限，让用户自己判断是否安全。用户没法知道安不安全，只能点允许。不仅影响系统性能，还	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System	EnableLUA	int	1	0				TRUE	
+系统	禁用 UAC	UAC 在安装和启动程序时提示是否允许管理员权限，让用户自己判断是否安全。用户没法知道安不安全，只能点允许。影响系统性能，拖慢应用开启速度，操作繁琐。\n重启生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System	EnableLUA	int	1	0				TRUE	
 系统	禁用打开下载文件的警告	下载的可执行文件会被标记为不安全，打开时弹出警告，拖慢启动速度。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3	1806	int	1	0					
-显示	禁止任务栏和窗口半透明	半透明会持续消耗计算性能，建议禁用。立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize	EnableTransparency	int	1	0					
+显示	禁止任务栏和窗口半透明	半透明会持续消耗计算性能，建议禁用。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize	EnableTransparency	int	1	0					
 文件资源管理器	显示文件扩展名	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	HideFileExt	int	1	0	FALSE				
 文件资源管理器	打开文件资源管理器时显示我的电脑	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	LaunchTo	int	0	1	TRUE				
 文件资源管理器	创建快捷方式时不添加“快捷方式”文字	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	Link	binary		00000000	TRUE				
