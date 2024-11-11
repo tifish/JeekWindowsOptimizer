@@ -15,17 +15,32 @@ public abstract partial class OptimizationItem : ObservableObject
     public abstract string Name { get; }
     public abstract string Description { get; }
 
-    [ObservableProperty]
     private bool _hasOptimized;
+
+    public bool HasOptimized
+    {
+        get => _hasOptimized;
+        set
+        {
+            if (value == _hasOptimized)
+                return;
+
+            CallOnHasOptimizedChanging(value).ContinueWith(task =>
+            {
+                if (task.Result)
+                    SetProperty(ref _hasOptimized, value);
+            });
+        }
+    }
 
     protected bool IsInitializing = true;
 
     public static bool InBatching { get; set; }
 
-    async partial void OnHasOptimizedChanged(bool value)
+    private async Task<bool> CallOnHasOptimizedChanging(bool value)
     {
         if (IsInitializing)
-            return;
+            return true;
 
         if (ShouldTurnOffTamperProtection)
             if (!await TurnOffTamperProtection())
@@ -33,13 +48,14 @@ public abstract partial class OptimizationItem : ObservableObject
                 IsInitializing = true;
                 HasOptimized = !value;
                 IsInitializing = false;
-                return;
+                return true;
             }
 
-        HasOptimizedChanged(value);
+        if (!await OnHasOptimizedChanging(value))
+            return false;
 
         if (InBatching)
-            return;
+            return true;
 
         if (ShouldUpdateGroupPolicy)
             await UpdateGroupPolicy();
@@ -49,6 +65,8 @@ public abstract partial class OptimizationItem : ObservableObject
 
         if (ShouldReboot)
             await PromptReboot();
+
+        return true;
     }
 
     private static readonly RegistryValue TamperProtectionRegistryValue = new(
@@ -113,7 +131,7 @@ public abstract partial class OptimizationItem : ObservableObject
         }).ShowAsync();
     }
 
-    public abstract void HasOptimizedChanged(bool value);
+    public abstract Task<bool> OnHasOptimizedChanging(bool value);
 
     [ObservableProperty]
     private bool _isChecked = true;

@@ -21,11 +21,12 @@ public class UninstallSkypeItem : OptimizationItem
         return this;
     }
 
-    public override async void HasOptimizedChanged(bool value)
+    public override async Task<bool> OnHasOptimizedChanging(bool value)
     {
         if (!value)
-            return;
+            return false;
 
         await MicrosoftStore.UninstallPackage(PackageName);
+        return true;
     }
 }

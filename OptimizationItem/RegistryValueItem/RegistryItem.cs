@@ -13,10 +13,12 @@ public class RegistryItem(string groupName, string name, string description) : O
         IsInitializing = false;
     }
 
-    public override void HasOptimizedChanged(bool value)
+    public override Task<bool> OnHasOptimizedChanging(bool value)
     {
         foreach (var registryValue in RegistryValues)
             registryValue.HasOptimized = value;
+
+        return Task.FromResult(true);
     }
 
     public List<OptimizationRegistryValue> RegistryValues { get; } = [];

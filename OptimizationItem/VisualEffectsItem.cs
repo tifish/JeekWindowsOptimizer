@@ -12,9 +12,10 @@ public class VisualEffectsItem : OptimizationItem
         IsInitializing = false;
     }
 
-    public override void HasOptimizedChanged(bool value)
+    public override Task<bool> OnHasOptimizedChanging(bool value)
     {
         Disabled = value;
+        return Task.FromResult(true);
     }
 
     public override string GroupName => "显示";

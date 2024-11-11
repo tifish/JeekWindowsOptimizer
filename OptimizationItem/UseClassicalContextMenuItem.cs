@@ -23,11 +23,13 @@ public class UseClassicalContextMenuItem : OptimizationItem
 
         IsInitializing = false;
     }
-    public override void HasOptimizedChanged(bool value)
+    public override Task<bool> OnHasOptimizedChanging(bool value)
     {
         if (value)
             _registryValue.SetValue("");
         else
             _registryValue.DeleteKey();
+
+        return Task.FromResult(value);
     }
 }

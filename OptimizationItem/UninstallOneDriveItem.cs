@@ -21,13 +21,13 @@ public class UninstallOneDriveItem : OptimizationItem
         IsInitializing = false;
     }
 
-    public override async void HasOptimizedChanged(bool value)
+    public override async Task<bool> OnHasOptimizedChanging(bool value)
     {
         if (!value)
-            return;
+            return false;
 
         if (!File.Exists(Installer))
-            return;
+            return true;
 
         using var proc = Process.Start(new ProcessStartInfo(@"C:\Windows\SysWOW64\OneDriveSetup.exe", "/uninstall")
         {
@@ -35,8 +35,9 @@ public class UninstallOneDriveItem : OptimizationItem
         });
 
         if (proc is null)
-            return;
+            return false;
 
         await proc.WaitForExitAsync();
+        return true;
     }
 }

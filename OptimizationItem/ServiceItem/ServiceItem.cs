@@ -21,7 +21,7 @@ public class ServiceItem : OptimizationItem
         IsInitializing = false;
     }
 
-    public override void HasOptimizedChanged(bool value)
+    public override Task<bool> OnHasOptimizedChanging(bool value)
     {
         if (value)
         {
@@ -33,5 +33,7 @@ public class ServiceItem : OptimizationItem
             _service.SetStartMode(WindowsService.StartMode.Automatic);
             _service.Start();
         }
+
+        return Task.FromResult(true);
     }
 }
