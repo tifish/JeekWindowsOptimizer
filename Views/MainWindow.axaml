@@ -6,8 +6,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="JeekWindowsOptimizer.Views.MainWindow"
         x:DataType="local:MainViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="JeekWindowsOptimizer"
+        Icon="/Assets/App.ico"
+        Title="Jeek Windows Optimizer"
         Width="800" Height="900"
         WindowStartupLocation="CenterScreen"
         FontFamily="微软雅黑">
