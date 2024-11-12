@@ -19,7 +19,7 @@ public class MicrosoftStoreItem : OptimizationItem
         IsInitializing = false;
     }
 
-    public override async Task<bool> OnHasOptimizedChanging(bool value)
+    protected override async Task<bool> HasOptimizedChanging(bool value)
     {
         if (!value)
             return false;

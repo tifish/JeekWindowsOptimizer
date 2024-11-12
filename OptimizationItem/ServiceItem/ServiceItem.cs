@@ -21,7 +21,7 @@ public class ServiceItem : OptimizationItem
         IsInitializing = false;
     }
 
-    public override Task<bool> OnHasOptimizedChanging(bool value)
+    protected override Task<bool> HasOptimizedChanging(bool value)
     {
         if (value)
         {

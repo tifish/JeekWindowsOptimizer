@@ -12,7 +12,7 @@ public class VisualEffectsItem : OptimizationItem
         IsInitializing = false;
     }
 
-    public override Task<bool> OnHasOptimizedChanging(bool value)
+    protected override Task<bool> HasOptimizedChanging(bool value)
     {
         Disabled = value;
         return Task.FromResult(true);

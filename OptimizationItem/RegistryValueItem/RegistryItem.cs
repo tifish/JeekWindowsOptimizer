@@ -13,7 +13,7 @@ public class RegistryItem(string groupName, string name, string description) : O
         IsInitializing = false;
     }
 
-    public override Task<bool> OnHasOptimizedChanging(bool value)
+    protected override Task<bool> HasOptimizedChanging(bool value)
     {
         foreach (var registryValue in RegistryValues)
             registryValue.HasOptimized = value;

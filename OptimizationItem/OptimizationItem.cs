@@ -15,29 +15,14 @@ public abstract partial class OptimizationItem : ObservableObject
     public abstract string Name { get; }
     public abstract string Description { get; }
 
+    [ObservableProperty]
     private bool _hasOptimized;
-
-    public bool HasOptimized
-    {
-        get => _hasOptimized;
-        set
-        {
-            if (value == _hasOptimized)
-                return;
-
-            CallOnHasOptimizedChanging(value).ContinueWith(task =>
-            {
-                if (task.Result)
-                    SetProperty(ref _hasOptimized, value);
-            });
-        }
-    }
 
     protected bool IsInitializing = true;
 
     public static bool InBatching { get; set; }
 
-    private async Task<bool> CallOnHasOptimizedChanging(bool value)
+    public async Task<bool> CallHasOptimizedChangingEvent(bool value)
     {
         if (IsInitializing)
             return true;
@@ -51,7 +36,7 @@ public abstract partial class OptimizationItem : ObservableObject
                 return true;
             }
 
-        if (!await OnHasOptimizedChanging(value))
+        if (!await HasOptimizedChanging(value))
             return false;
 
         if (InBatching)
@@ -68,6 +53,8 @@ public abstract partial class OptimizationItem : ObservableObject
 
         return true;
     }
+
+    protected abstract Task<bool> HasOptimizedChanging(bool value);
 
     private static readonly RegistryValue TamperProtectionRegistryValue = new(
         @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features",
@@ -130,8 +117,6 @@ public abstract partial class OptimizationItem : ObservableObject
             FontFamily = "Microsoft YaHei",
         }).ShowAsync();
     }
-
-    public abstract Task<bool> OnHasOptimizedChanging(bool value);
 
     [ObservableProperty]
     private bool _isChecked = true;

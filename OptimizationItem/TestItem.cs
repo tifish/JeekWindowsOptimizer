@@ -10,7 +10,7 @@ public class TestItem : OptimizationItem
                                           立即生效。
                                           """;
 
-    public override Task<bool> OnHasOptimizedChanging(bool value)
+    protected override Task<bool> HasOptimizedChanging(bool value)
     {
         IsInitializing = false;
         return Task.FromResult(true);
