@@ -7,6 +7,14 @@ public static class MicrosoftStore
 {
     private static readonly PowerShell _powerShell = PowerShell.Create();
 
+    static MicrosoftStore()
+    {
+        _powerShell.AddCommand("Set-ExecutionPolicy")
+            .AddParameter("Scope", "Process")
+            .AddParameter("ExecutionPolicy", "Bypass")
+            .Invoke();
+    }
+
     private static Command GetPackageCommand(string packageName) =>
         new("Get-AppxPackage")
         {
