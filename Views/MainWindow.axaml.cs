@@ -22,12 +22,7 @@ public partial class MainWindow : Window
         var optimizationItem = (OptimizationItem)toggleButton.DataContext!;
         var isOptimized = toggleButton.IsChecked ?? false;
 
-        if (optimizationItem.IsOptimized == isOptimized)
-            return;
-
-        if (await optimizationItem.CallIsOptimizedChangingEvent(isOptimized))
-            optimizationItem.IsOptimized = isOptimized;
-        else
+        if (!await optimizationItem.SetIsOptimized(isOptimized))
             // Change the toggle immediately cause wrong UI status, so delay it
             SynchronizationContext.Current!.Post(_ =>
             {

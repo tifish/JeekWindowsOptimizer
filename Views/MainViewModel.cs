@@ -93,7 +93,7 @@ public partial class MainViewModel : ObservableObject
                     if (!item.IsChecked || item.IsOptimized)
                         continue;
 
-                    item.IsOptimized = true;
+                    await item.SetIsOptimized(true);
 
                     shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
                     shouldReboot |= item.ShouldReboot;

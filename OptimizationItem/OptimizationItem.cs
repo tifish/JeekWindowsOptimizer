@@ -22,10 +22,13 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static bool InBatching { get; set; }
 
-    public async Task<bool> CallIsOptimizedChangingEvent(bool value)
+    public async Task<bool> SetIsOptimized(bool value)
     {
         if (IsInitializing)
-            return true;
+            return false;
+
+        if (value == IsOptimized)
+            return false;
 
         if (ShouldTurnOffTamperProtection)
             if (!await TurnOffTamperProtection())
@@ -33,11 +36,13 @@ public abstract partial class OptimizationItem : ObservableObject
                 IsInitializing = true;
                 IsOptimized = !value;
                 IsInitializing = false;
-                return true;
+                return false;
             }
 
         if (!await IsOptimizedChanging(value))
             return false;
+
+        IsOptimized = value;
 
         if (InBatching)
             return true;
