@@ -8,15 +8,15 @@ public class RegistryItem(string groupName, string name, string description) : O
 
     public void Initialized()
     {
-        HasOptimized = RegistryValues.All(value => value.HasOptimized);
+        IsOptimized = RegistryValues.All(value => value.IsOptimized);
 
         IsInitializing = false;
     }
 
-    protected override Task<bool> HasOptimizedChanging(bool value)
+    protected override Task<bool> IsOptimizedChanging(bool value)
     {
         foreach (var registryValue in RegistryValues)
-            registryValue.HasOptimized = value;
+            registryValue.IsOptimized = value;
 
         return Task.FromResult(true);
     }

@@ -16,12 +16,12 @@ public class UninstallOneDriveItem : OptimizationItem
 
     public UninstallOneDriveItem()
     {
-        HasOptimized = !File.Exists(Installer);
+        IsOptimized = !File.Exists(Installer);
 
         IsInitializing = false;
     }
 
-    protected override async Task<bool> HasOptimizedChanging(bool value)
+    protected override async Task<bool> IsOptimizedChanging(bool value)
     {
         if (!value)
             return false;

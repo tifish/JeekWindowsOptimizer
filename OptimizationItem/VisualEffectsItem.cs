@@ -7,12 +7,12 @@ public class VisualEffectsItem : OptimizationItem
 {
     public VisualEffectsItem()
     {
-        HasOptimized = Disabled;
+        IsOptimized = Disabled;
 
         IsInitializing = false;
     }
 
-    protected override Task<bool> HasOptimizedChanging(bool value)
+    protected override Task<bool> IsOptimizedChanging(bool value)
     {
         Disabled = value;
         return Task.FromResult(true);

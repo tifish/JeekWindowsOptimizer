@@ -16,13 +16,13 @@ public abstract partial class OptimizationItem : ObservableObject
     public abstract string Description { get; }
 
     [ObservableProperty]
-    private bool _hasOptimized;
+    private bool _isOptimized;
 
     protected bool IsInitializing = true;
 
     public static bool InBatching { get; set; }
 
-    public async Task<bool> CallHasOptimizedChangingEvent(bool value)
+    public async Task<bool> CallIsOptimizedChangingEvent(bool value)
     {
         if (IsInitializing)
             return true;
@@ -31,12 +31,12 @@ public abstract partial class OptimizationItem : ObservableObject
             if (!await TurnOffTamperProtection())
             {
                 IsInitializing = true;
-                HasOptimized = !value;
+                IsOptimized = !value;
                 IsInitializing = false;
                 return true;
             }
 
-        if (!await HasOptimizedChanging(value))
+        if (!await IsOptimizedChanging(value))
             return false;
 
         if (InBatching)
@@ -54,7 +54,7 @@ public abstract partial class OptimizationItem : ObservableObject
         return true;
     }
 
-    protected abstract Task<bool> HasOptimizedChanging(bool value);
+    protected abstract Task<bool> IsOptimizedChanging(bool value);
 
     private static readonly RegistryValue TamperProtectionRegistryValue = new(
         @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features",

@@ -73,7 +73,7 @@ public partial class MainViewModel : ObservableObject
             foreach (var group in OptimizationGroups)
                 foreach (var item in group.Items)
                 {
-                    if (!item.IsChecked || item.HasOptimized)
+                    if (!item.IsChecked || item.IsOptimized)
                         continue;
 
                     shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
@@ -90,10 +90,10 @@ public partial class MainViewModel : ObservableObject
             foreach (var group in OptimizationGroups)
                 foreach (var item in group.Items)
                 {
-                    if (!item.IsChecked || item.HasOptimized)
+                    if (!item.IsChecked || item.IsOptimized)
                         continue;
 
-                    item.HasOptimized = true;
+                    item.IsOptimized = true;
 
                     shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
                     shouldReboot |= item.ShouldReboot;

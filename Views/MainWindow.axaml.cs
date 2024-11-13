@@ -20,19 +20,19 @@ public partial class MainWindow : Window
     {
         var toggleButton = (ToggleButton)sender!;
         var optimizationItem = (OptimizationItem)toggleButton.DataContext!;
-        var hasOptimized = toggleButton.IsChecked ?? false;
+        var isOptimized = toggleButton.IsChecked ?? false;
 
-        if (optimizationItem.HasOptimized == hasOptimized)
+        if (optimizationItem.IsOptimized == isOptimized)
             return;
 
-        if (await optimizationItem.CallHasOptimizedChangingEvent(hasOptimized))
-            optimizationItem.HasOptimized = hasOptimized;
+        if (await optimizationItem.CallIsOptimizedChangingEvent(isOptimized))
+            optimizationItem.IsOptimized = isOptimized;
         else
             // Change the toggle immediately cause wrong UI status, so delay it
             SynchronizationContext.Current!.Post(_ =>
             {
                 toggleButton.IsCheckedChanged -= ToggleButton_OnIsCheckedChanged;
-                toggleButton.IsChecked = optimizationItem.HasOptimized;
+                toggleButton.IsChecked = optimizationItem.IsOptimized;
                 toggleButton.IsCheckedChanged += ToggleButton_OnIsCheckedChanged;
             }, null);
     }

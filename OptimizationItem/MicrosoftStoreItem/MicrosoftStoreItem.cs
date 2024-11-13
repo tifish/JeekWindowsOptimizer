@@ -14,12 +14,12 @@ public class MicrosoftStoreItem : OptimizationItem
         Description = description;
         PackageName = packageName;
 
-        HasOptimized = !MicrosoftStore.HasPackage(PackageName);
+        IsOptimized = !MicrosoftStore.HasPackage(PackageName);
 
         IsInitializing = false;
     }
 
-    protected override async Task<bool> HasOptimizedChanging(bool value)
+    protected override async Task<bool> IsOptimizedChanging(bool value)
     {
         if (!value)
             return false;

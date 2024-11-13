@@ -16,12 +16,12 @@ public class ServiceItem : OptimizationItem
 
         _service = new WindowsService(serviceName);
 
-        HasOptimized = _service.GetStartMode() == WindowsService.StartMode.Disabled;
+        IsOptimized = _service.GetStartMode() == WindowsService.StartMode.Disabled;
 
         IsInitializing = false;
     }
 
-    protected override Task<bool> HasOptimizedChanging(bool value)
+    protected override Task<bool> IsOptimizedChanging(bool value)
     {
         if (value)
         {
