@@ -60,7 +60,7 @@ public abstract partial class OptimizationItem : ObservableObject
         @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features",
         "TamperProtection");
 
-    private static async Task<bool> TurnOffTamperProtection()
+    public static async Task<bool> TurnOffTamperProtection()
     {
         if (TamperProtectionRegistryValue.GetValue(5) != 5)
             return true;

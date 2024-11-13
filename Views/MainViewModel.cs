@@ -68,6 +68,21 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
+            var shouldTurnOffTamperProtection = false;
+
+            foreach (var group in OptimizationGroups)
+                foreach (var item in group.Items)
+                {
+                    if (!item.IsChecked || item.HasOptimized)
+                        continue;
+
+                    shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
+                }
+
+            if (shouldTurnOffTamperProtection)
+                if (!await OptimizationItem.TurnOffTamperProtection())
+                    return;
+
             var shouldUpdateGroupPolicy = false;
             var shouldReboot = false;
             var shouldRestartExplorer = false;
