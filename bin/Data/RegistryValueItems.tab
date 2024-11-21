@@ -21,6 +21,7 @@
 任务栏	隐藏搜索框	任务栏搜索框占用了多任务窗口的显示空间，而通过开始菜单搜索更简便。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	SearchboxTaskbarMode	int	2	0					
 任务栏	隐藏任务视图按钮	通过快捷键 WIN+TAB 即可启动任务视图，不需要额外的按钮。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	ShowTaskViewButton	int	1	0					
 任务栏	从不合并任务栏图标	任务栏图标合并后没有文字描述，难以区分同一个软件的不同窗口，建议从不合并，工作效率更高。\n重启资源管理器生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	TaskbarGlomLevel	int	0	2					TRUE
+	从不合并任务栏图标		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	MMTaskbarGlomLevel	int	0	2					
 开始菜单	禁止开始菜单搜索网页	开始菜单输入通常是为了搜索应用程序和系统设置，搜索网页浪费资源。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	BingSearchEnabled	int	1	0	TRUE				
 开始菜单	禁止开始菜单搜索云端内容	阻止搜索 OneDrive、SharePoint、Outlook 等云端信息。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	AllowCloudSearch	int	1	0	TRUE				
 开始菜单	禁止推荐应用	立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_IrisRecommendations	int	1	0					
