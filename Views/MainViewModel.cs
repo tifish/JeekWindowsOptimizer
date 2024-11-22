@@ -1,8 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using JeekTools;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 
 namespace JeekWindowsOptimizer;
 
@@ -11,20 +11,20 @@ public partial class MainViewModel : ObservableObject
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
 
     [ObservableProperty]
-    private int _selectedTabIndex;
+    public partial int SelectedTabIndex { get; set; }
 
     [ObservableProperty]
-    private ObservableCollection<OptimizationGroup> _optimizationGroups = [];
+    public partial ObservableCollection<OptimizationGroup> OptimizationGroups { get; set; } = [];
 
     [ObservableProperty]
-    private bool _isOptimizing;
+    public partial bool IsOptimizing { get; set; }
 
     public MainViewModel()
     {
         if (Design.IsDesignMode)
         {
-            _optimizationGroups.Add(new OptimizationGroup("测试1", [new TestItem(), new TestItem()]));
-            _optimizationGroups.Add(new OptimizationGroup("测试2", [new TestItem(), new TestItem()]));
+            OptimizationGroups.Add(new OptimizationGroup("测试1", [new TestItem(), new TestItem()]));
+            OptimizationGroups.Add(new OptimizationGroup("测试2", [new TestItem(), new TestItem()]));
             return;
         }
 

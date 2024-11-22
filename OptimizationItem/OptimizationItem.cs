@@ -1,11 +1,11 @@
-using System.Diagnostics;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JeekTools;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
+using System.Diagnostics;
 
 namespace JeekWindowsOptimizer;
 
@@ -16,7 +16,7 @@ public abstract partial class OptimizationItem : ObservableObject
     public abstract string Description { get; }
 
     [ObservableProperty]
-    private bool _isOptimized;
+    public partial bool IsOptimized { get; protected set; }
 
     protected bool IsInitializing = true;
 
@@ -124,7 +124,7 @@ public abstract partial class OptimizationItem : ObservableObject
     }
 
     [ObservableProperty]
-    private bool _isChecked = true;
+    public partial bool IsChecked { get; set; } = true;
 
     [RelayCommand]
     private void ToggleChecked()

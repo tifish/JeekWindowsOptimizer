@@ -1,13 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace JeekWindowsOptimizer;
 
 public partial class OptimizationGroup(string name, OptimizationItem[] items) : ObservableObject
 {
     [ObservableProperty]
-    private string _name = name;
+    public partial string Name { get; set; } = name;
 
     [ObservableProperty]
-    private ObservableCollection<OptimizationItem> _items = new(items);
+    public partial ObservableCollection<OptimizationItem> Items { get; set; } = [.. items];
 }
