@@ -12,11 +12,12 @@ public class UninstallOneDriveItem : OptimizationItem
                                           立即生效。
                                           """;
 
-    private const string Installer = @"C:\Windows\SysWOW64\OneDriveSetup.exe";
+    private readonly string _installerPath1 = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\System32\OneDriveSetup.exe");
+    private readonly string _installerPath2 = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\SysWOW64\OneDriveSetup.exe");
 
     public UninstallOneDriveItem()
     {
-        IsOptimized = !File.Exists(Installer);
+        IsOptimized = !File.Exists(Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\Microsoft\OneDrive\OneDrive.exe"));
 
         IsInitializing = false;
     }
@@ -26,10 +27,15 @@ public class UninstallOneDriveItem : OptimizationItem
         if (!value)
             return false;
 
-        if (!File.Exists(Installer))
-            return true;
+        var installerPath = _installerPath1;
+        if (!File.Exists(installerPath))
+        {
+            installerPath = _installerPath2;
+            if (!File.Exists(installerPath))
+                return false;
+        }
 
-        using var proc = Process.Start(new ProcessStartInfo(@"C:\Windows\SysWOW64\OneDriveSetup.exe", "/uninstall")
+        using var proc = Process.Start(new ProcessStartInfo(installerPath, "/uninstall")
         {
             UseShellExecute = true,
         });
