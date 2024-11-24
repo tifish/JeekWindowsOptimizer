@@ -11,13 +11,13 @@ public partial class MainViewModel : ObservableObject
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
 
     [ObservableProperty]
-    public partial int SelectedTabIndex { get; set; }
-
-    [ObservableProperty]
     public partial ObservableCollection<OptimizationGroup> OptimizationGroups { get; set; } = [];
 
     [ObservableProperty]
     public partial bool IsOptimizing { get; set; }
+
+    [ObservableProperty]
+    public partial string StatusMessage { get; set; } = "";
 
     public MainViewModel()
     {
@@ -68,6 +68,8 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
+            StatusMessage = "优化前准备工作...";
+
             var shouldTurnOffTamperProtection = false;
 
             foreach (var group in OptimizationGroups)
@@ -93,12 +95,15 @@ public partial class MainViewModel : ObservableObject
                     if (!item.IsChecked || item.IsOptimized)
                         continue;
 
+                    StatusMessage = $"正在优化 {item.Name}...";
                     await item.SetIsOptimized(true);
 
                     shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
                     shouldReboot |= item.ShouldReboot;
                     shouldRestartExplorer |= item.ShouldRestartExplorer;
                 }
+
+            StatusMessage = "优化后处理...";
 
             if (shouldUpdateGroupPolicy)
                 await OptimizationItem.UpdateGroupPolicy();
@@ -113,6 +118,7 @@ public partial class MainViewModel : ObservableObject
         {
             OptimizationItem.InBatching = false;
             IsOptimizing = false;
+            StatusMessage = "优化已全部完成！";
         }
     }
 }
