@@ -67,7 +67,7 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static async Task<bool> TurnOffTamperProtection()
     {
-        if (TamperProtectionRegistryValue.GetValue(5) != 5)
+        if (TamperProtectionRegistryValue.GetValue(1) is 0 or 4)
             return true;
 
         var openDefenderCommand = Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Windows Defender\MSASCui.exe");
@@ -78,19 +78,23 @@ public abstract partial class OptimizationItem : ObservableObject
             UseShellExecute = true,
         });
 
-        var msgResult = await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
+        while (TamperProtectionRegistryValue.GetValue(1) is not (0 or 4))
         {
-            ContentMessage = "请关闭防病毒设置中的篡改防护，然后按确定继续。",
-            ButtonDefinitions = ButtonEnum.OkCancel,
-            Icon = Icon.Info,
-            WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            Topmost = true,
-            FontFamily = "Microsoft YaHei",
-        }).ShowAsync();
-        if (msgResult != ButtonResult.Ok)
-            return false;
+            var msgResult = await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
+            {
+                ContentMessage = "请关闭防病毒设置中的篡改防护，然后按确定继续。",
+                ButtonDefinitions = ButtonEnum.OkCancel,
+                Icon = Icon.Info,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Topmost = true,
+                FontFamily = "Microsoft YaHei",
+            }).ShowAsync();
 
-        return TamperProtectionRegistryValue.GetValue(5) != 5;
+            if (msgResult == ButtonResult.Cancel)
+                return false;
+        }
+
+        return true;
     }
 
     public static async Task UpdateGroupPolicy()
