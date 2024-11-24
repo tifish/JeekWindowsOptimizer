@@ -6,10 +6,10 @@ public static class RegistryItemManager
 {
     public static List<RegistryItem> Items { get; } = [];
 
-    public static void Load()
+    public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!tabFile.Load(@"Data\RegistryValueItems.tab"))
+        if (!await tabFile.LoadAsync(@"Data\RegistryValueItems.tab"))
             return;
 
         var itemsDict = new Dictionary<string, RegistryItem>();

@@ -3,6 +3,7 @@
         xmlns:local="using:JeekWindowsOptimizer"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:li="using:LoadingIndicators.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="JeekWindowsOptimizer.Views.MainWindow"
         x:DataType="local:MainViewModel"
@@ -18,14 +19,23 @@
         <local:MainViewModel />
     </Design.DataContext>
 
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <InvokeCommandAction Command="{Binding InitializeItemsCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
     <Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto *">
-        <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10">
-            <Button Content="优化选中项目" HorizontalAlignment="Center" Margin="0,0,0,10" Padding="20" CornerRadius="5" FontSize="20" FontWeight="Bold"
-                    Command="{Binding OptimizeCheckedItems}" IsVisible="{Binding !IsOptimizing}" />
-            <Button Content="优化选中项目" HorizontalAlignment="Center" Margin="0,0,0,10" Padding="20" CornerRadius="5" FontSize="20" FontWeight="Bold"
-                    Command="{Binding OptimizeCheckedItems}" IsVisible="{Binding IsOptimizing}" />
-            <TextBlock HorizontalAlignment="Center" Text="{Binding StatusMessage}" />
+        <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="0,0,0,10">
+            <li:LoadingIndicator HorizontalAlignment="Center" Height="70"
+                                 IsActive="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                 Mode="Arcs" SpeedRatio="1.2" />
+            <Button Content="优化选中项目" HorizontalAlignment="Center" Padding="20" CornerRadius="5" FontSize="20" FontWeight="Bold"
+                    Command="{Binding OptimizeCheckedItems}"
+                    IsVisible="{Binding !IsBusy}" />
+            <TextBlock HorizontalAlignment="Center" FontSize="20" Text="{Binding StatusMessage}" />
         </StackPanel>
+
         <ScrollViewer Grid.Row="1" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">
 
             <!-- Groups -->

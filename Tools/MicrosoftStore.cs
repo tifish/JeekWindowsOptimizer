@@ -12,20 +12,20 @@ public static class MicrosoftStore
 
     private static readonly PowerShell _powerShell = PowerShell.Create();
 
-    static MicrosoftStore()
+    public static async Task Initialize()
     {
         try
         {
-            _powerShell.AddCommand("Set-ExecutionPolicy")
+            await _powerShell.AddCommand("Set-ExecutionPolicy")
                 .AddParameter("Scope", "Process")
                 .AddParameter("ExecutionPolicy", "Bypass")
-                .Invoke();
+                .InvokeAsync();
 
             _powerShell.Commands.Clear();
-            _powerShell.AddCommand("Import-Module")
+            await _powerShell.AddCommand("Import-Module")
                 .AddParameter("Name", "AppX")
                 .AddParameter("UseWindowsPowerShell")
-                .Invoke();
+                .InvokeAsync();
         }
         catch (Exception e)
         {

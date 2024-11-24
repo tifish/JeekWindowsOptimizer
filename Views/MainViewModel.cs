@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using JeekTools;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace JeekWindowsOptimizer;
 
@@ -14,12 +15,13 @@ public partial class MainViewModel : ObservableObject
     public partial ObservableCollection<OptimizationGroup> OptimizationGroups { get; set; } = [];
 
     [ObservableProperty]
-    public partial bool IsOptimizing { get; set; }
+    public partial string StatusMessage { get; set; } = "正在初始化...";
 
     [ObservableProperty]
-    public partial string StatusMessage { get; set; } = "";
+    public partial bool IsBusy { get; set; } = true;
 
-    public MainViewModel()
+    [RelayCommand]
+    private async Task InitializeItems()
     {
         if (Design.IsDesignMode)
         {
@@ -28,7 +30,7 @@ public partial class MainViewModel : ObservableObject
             return;
         }
 
-        RegistryItemManager.Load();
+        await RegistryItemManager.Load();
         foreach (var item in RegistryItemManager.Items)
             AddOptimizationItem(item);
 
@@ -36,17 +38,17 @@ public partial class MainViewModel : ObservableObject
         AddOptimizationItem(new UseClassicalContextMenuItem());
         AddOptimizationItem(new UninstallOneDriveItem());
 
-        ServiceItemManager.Load().ContinueWith(_ =>
-        {
-            foreach (var item in ServiceItemManager.Items)
-                AddOptimizationItem(item);
-        });
+        await ServiceItemManager.Load();
+        foreach (var item in ServiceItemManager.Items)
+            AddOptimizationItem(item);
 
-        MicrosoftStoreItemManager.Load().ContinueWith(_ =>
-        {
-            foreach (var item in MicrosoftStoreItemManager.Items)
-                AddOptimizationItem(item);
-        });
+        await MicrosoftStore.Initialize();
+        await MicrosoftStoreItemManager.Load();
+        foreach (var item in MicrosoftStoreItemManager.Items)
+            AddOptimizationItem(item);
+
+        IsBusy = false;
+        StatusMessage = "初始化完成。";
     }
 
     private void AddOptimizationItem(OptimizationItem item)
@@ -64,7 +66,7 @@ public partial class MainViewModel : ObservableObject
     public async Task OptimizeCheckedItems()
     {
         OptimizationItem.InBatching = true;
-        IsOptimizing = true;
+        IsBusy = true;
 
         try
         {
@@ -95,7 +97,7 @@ public partial class MainViewModel : ObservableObject
                     if (!item.IsChecked || item.IsOptimized)
                         continue;
 
-                    StatusMessage = $"正在优化 {item.Name}...";
+                    StatusMessage = $"正在优化：{item.Name}...";
                     await item.SetIsOptimized(true);
 
                     shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
@@ -117,8 +119,8 @@ public partial class MainViewModel : ObservableObject
         finally
         {
             OptimizationItem.InBatching = false;
-            IsOptimizing = false;
-            StatusMessage = "优化已全部完成！";
+            IsBusy = false;
+            StatusMessage = "优化已完成！";
         }
     }
 }
