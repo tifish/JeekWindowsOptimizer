@@ -48,8 +48,11 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Expander Header="{Binding Name}" IsExpanded="True" HorizontalAlignment="Stretch">
-
+                        <Expander IsExpanded="True" HorizontalAlignment="Stretch">
+                            <Expander.Header>
+                                <TextBlock FontWeight="Bold" FontSize="30" Text="{Binding Name}" />
+                            </Expander.Header>
+                            
                             <!-- Items -->
                             <ItemsControl ItemsSource="{Binding Items }">
                                 <ItemsControl.ItemsPanel>
