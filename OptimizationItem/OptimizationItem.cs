@@ -67,7 +67,7 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static async Task<bool> TurnOffTamperProtection()
     {
-        if (TamperProtectionRegistryValue.GetValue(1) is 0 or 4)
+        if (TamperProtectionRegistryValue.GetValue(0) is 0 or 4)
             return true;
 
         var openDefenderCommand = Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Windows Defender\MSASCui.exe");
@@ -78,7 +78,7 @@ public abstract partial class OptimizationItem : ObservableObject
             UseShellExecute = true,
         });
 
-        while (TamperProtectionRegistryValue.GetValue(1) is not (0 or 4))
+        while (TamperProtectionRegistryValue.GetValue(0) is not (0 or 4))
         {
             var msgResult = await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
             {
