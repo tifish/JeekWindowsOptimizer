@@ -20,8 +20,6 @@ public class UseClassicalContextMenuItem : OptimizationItem
         ShouldRestartExplorer = true;
 
         IsOptimized = _registryValue.HasKey();
-
-        IsInitializing = false;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

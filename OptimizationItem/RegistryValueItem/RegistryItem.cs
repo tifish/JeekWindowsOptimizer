@@ -9,8 +9,6 @@ public class RegistryItem(string groupName, string name, string description) : O
     public void Initialized()
     {
         IsOptimized = RegistryValues.All(value => value.IsOptimized);
-
-        IsInitializing = false;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

@@ -18,24 +18,24 @@ public abstract partial class OptimizationItem : ObservableObject
     [ObservableProperty]
     public partial bool IsOptimized { get; protected set; }
 
-    protected bool IsInitializing = true;
-
     public static bool InBatching { get; set; }
 
     public async Task<bool> SetIsOptimized(bool value)
     {
-        if (IsInitializing)
-            return false;
-
         if (value == IsOptimized)
             return false;
 
         if (ShouldTurnOffTamperProtection)
             if (!await TurnOffTamperProtection())
             {
-                IsInitializing = true;
                 IsOptimized = !value;
-                IsInitializing = false;
+                return false;
+            }
+
+        if (ShouldTurnOffRealTimeProtection)
+            if (!await TurnOffRealTimeProtection())
+            {
+                IsOptimized = !value;
                 return false;
             }
 
@@ -70,13 +70,7 @@ public abstract partial class OptimizationItem : ObservableObject
         if (TamperProtectionRegistryValue.GetValue(0) is 0 or 4)
             return true;
 
-        var openDefenderCommand = Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Windows Defender\MSASCui.exe");
-        if (!File.Exists(openDefenderCommand))
-            openDefenderCommand = "windowsdefender://Threatsettings";
-        Process.Start(new ProcessStartInfo(openDefenderCommand)
-        {
-            UseShellExecute = true,
-        });
+        OpenDefenderSettings();
 
         while (TamperProtectionRegistryValue.GetValue(0) is not (0 or 4))
         {
@@ -95,6 +89,48 @@ public abstract partial class OptimizationItem : ObservableObject
         }
 
         return true;
+    }
+
+    private static readonly RegistryValue RealTimeProtectionRegistryValue = new(
+        @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection",
+        "DisableRealtimeMonitoring");
+
+    public static async Task<bool> TurnOffRealTimeProtection()
+    {
+        if (RealTimeProtectionRegistryValue.GetValue(0) is 1)
+            return true;
+
+        OpenDefenderSettings();
+
+        while (RealTimeProtectionRegistryValue.GetValue(0) is 0)
+        {
+            var msgResult = await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
+            {
+                ContentMessage = "请关闭防病毒设置中的实时保护，然后按确定继续。",
+                ButtonDefinitions = ButtonEnum.OkCancel,
+                Icon = Icon.Info,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Topmost = true,
+                FontFamily = "Microsoft YaHei",
+            }).ShowAsync();
+
+            if (msgResult == ButtonResult.Cancel)
+                return false;
+        }
+
+        return true;
+    }
+
+    private static void OpenDefenderSettings()
+
+    {
+        var openDefenderCommand = Environment.ExpandEnvironmentVariables(@"%ProgramFiles%\Windows Defender\MSASCui.exe");
+        if (!File.Exists(openDefenderCommand))
+            openDefenderCommand = "windowsdefender://Threatsettings";
+        Process.Start(new ProcessStartInfo(openDefenderCommand)
+        {
+            UseShellExecute = true,
+        });
     }
 
     public static async Task UpdateGroupPolicy()
@@ -139,6 +175,7 @@ public abstract partial class OptimizationItem : ObservableObject
     protected static string MessageTitle => "Jeek Windows Optimizer";
 
     public bool ShouldTurnOffTamperProtection { get; set; }
+    public bool ShouldTurnOffRealTimeProtection { get; set; }
     public bool ShouldUpdateGroupPolicy { get; set; }
     public bool ShouldReboot { get; set; }
 

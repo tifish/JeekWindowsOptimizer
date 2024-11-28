@@ -18,8 +18,6 @@ public class UninstallOneDriveItem : OptimizationItem
     public UninstallOneDriveItem()
     {
         IsOptimized = !File.Exists(Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\Microsoft\OneDrive\OneDrive.exe"));
-
-        IsInitializing = false;
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)

@@ -37,6 +37,7 @@ public partial class MainViewModel : ObservableObject
         AddOptimizationItem(new VisualEffectsItem());
         AddOptimizationItem(new UseClassicalContextMenuItem());
         AddOptimizationItem(new UninstallOneDriveItem());
+        AddOptimizationItem(new WindowsActivatorItem());
 
         await ServiceItemManager.Load();
         foreach (var item in ServiceItemManager.Items)
@@ -73,6 +74,7 @@ public partial class MainViewModel : ObservableObject
             StatusMessage = "优化前准备工作...";
 
             var shouldTurnOffTamperProtection = false;
+            var shouldTurnOffRealTimeProtection = false;
 
             foreach (var group in OptimizationGroups)
                 foreach (var item in group.Items)
@@ -81,10 +83,15 @@ public partial class MainViewModel : ObservableObject
                         continue;
 
                     shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
+                    shouldTurnOffRealTimeProtection |= item.ShouldTurnOffRealTimeProtection;
                 }
 
             if (shouldTurnOffTamperProtection)
                 if (!await OptimizationItem.TurnOffTamperProtection())
+                    return;
+
+            if (shouldTurnOffRealTimeProtection)
+                if (!await OptimizationItem.TurnOffRealTimeProtection())
                     return;
 
             var shouldUpdateGroupPolicy = false;

@@ -15,8 +15,6 @@ public class MicrosoftStoreItem : OptimizationItem
         PackageName = packageName;
 
         IsOptimized = !MicrosoftStore.HasPackage(PackageName);
-
-        IsInitializing = false;
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)

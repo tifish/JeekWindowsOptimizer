@@ -8,8 +8,6 @@ public class VisualEffectsItem : OptimizationItem
     public VisualEffectsItem()
     {
         IsOptimized = Disabled;
-
-        IsInitializing = false;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

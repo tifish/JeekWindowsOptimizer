@@ -12,7 +12,6 @@ public class TestItem : OptimizationItem
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        IsInitializing = false;
         return Task.FromResult(true);
     }
 }
