@@ -38,6 +38,7 @@ public partial class MainViewModel : ObservableObject
         AddOptimizationItem(new UseClassicalContextMenuItem());
         AddOptimizationItem(new UninstallOneDriveItem());
         AddOptimizationItem(new WindowsActivatorItem());
+        AddOptimizationItem(new WindowsUpdateItem());
 
         await ServiceItemManager.Load();
         foreach (var item in ServiceItemManager.Items)
