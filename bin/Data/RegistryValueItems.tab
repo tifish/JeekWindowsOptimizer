@@ -16,6 +16,7 @@
 文件资源管理器	显示文件扩展名	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	HideFileExt	int	1	0	FALSE				
 文件资源管理器	打开文件资源管理器时显示我的电脑	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	LaunchTo	int	0	1	TRUE				
 文件资源管理器	创建快捷方式时不添加“快捷方式”文字	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	Link	binary		00000000	TRUE				
+文件资源管理器	禁止窗口拖动到屏幕顶端时显示贴靠布局	显示贴靠布局会导致拖动窗口时卡顿，也容易误操作，建议关闭。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	EnableSnapBar	int	1	0					TRUE
 任务栏	关闭搜索热点	搜索热点在搜索栏右侧显示，会不断的更新网上的热点消息。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	EnableDynamicContentInWSB	int	1	0	TRUE				
 任务栏	关闭小组件	小组件显示在任务栏左侧，更新各种新闻和信息。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Dsh	AllowNewsAndInterests	int	1	0	TRUE				
 任务栏	隐藏搜索框	任务栏搜索框占用了多任务窗口的显示空间，而通过开始菜单搜索更简便。\n立即生效。	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	SearchboxTaskbarMode	int	2	0					
