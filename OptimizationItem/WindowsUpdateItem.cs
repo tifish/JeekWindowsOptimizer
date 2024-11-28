@@ -24,15 +24,23 @@ public class WindowsUpdateItem : OptimizationItem
         new(KeyPath, "PauseUpdatesStartTime"),
     ];
 
+    private readonly WindowsService _service = new("wuauserv");
+
     public WindowsUpdateItem()
     {
-        IsOptimized = _registryValues.All(value => !value.HasValue());
+        IsOptimized = _registryValues.All(value => !value.HasValue())
+                      && _service.GetStartMode() != WindowsService.StartMode.Disabled;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
         if (value)
+        {
             _registryValues.ForEach(regValue => regValue.DeleteValue());
+
+            if (_service.GetStartMode() == WindowsService.StartMode.Disabled)
+                _service.SetStartMode(WindowsService.StartMode.Manual);
+        }
 
         return Task.FromResult(value);
     }
