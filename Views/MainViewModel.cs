@@ -4,6 +4,7 @@ using JeekTools;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using ZLogger;
 
 namespace JeekWindowsOptimizer;
 
@@ -106,7 +107,15 @@ public partial class MainViewModel : ObservableObject
                         continue;
 
                     StatusMessage = $"正在优化：{item.Name}...";
-                    await item.SetIsOptimized(true);
+                    try
+                    {
+                        await item.SetIsOptimized(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.ZLogError(ex, $"Failed to optimize: {item.Name}");
+                        continue;
+                    }
 
                     shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
                     shouldReboot |= item.ShouldReboot;
