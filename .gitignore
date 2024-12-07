@@ -5,3 +5,6 @@
 /bin/Libs
 /bin/Logs
 /bin/*.*
+/BuildAndDeploy.cmd
+/FastCopy.exe
+/FastCopy2.ini
