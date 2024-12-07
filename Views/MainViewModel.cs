@@ -76,7 +76,7 @@ public partial class MainViewModel : ObservableObject
             StatusMessage = "优化前准备工作...";
 
             var shouldTurnOffTamperProtection = false;
-            var shouldTurnOffRealTimeProtection = false;
+            var shouldTurnOffOnAccessProtection = false;
 
             foreach (var group in OptimizationGroups)
                 foreach (var item in group.Items)
@@ -85,15 +85,15 @@ public partial class MainViewModel : ObservableObject
                         continue;
 
                     shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
-                    shouldTurnOffRealTimeProtection |= item.ShouldTurnOffRealTimeProtection;
+                    shouldTurnOffOnAccessProtection |= item.ShouldTurnOffOnAccessProtection;
                 }
 
             if (shouldTurnOffTamperProtection)
                 if (!await OptimizationItem.TurnOffTamperProtection())
                     return;
 
-            if (shouldTurnOffRealTimeProtection)
-                if (!await OptimizationItem.TurnOffRealTimeProtection())
+            if (shouldTurnOffOnAccessProtection)
+                if (!await OptimizationItem.TurnOffOnAccessProtection())
                     return;
 
             var shouldUpdateGroupPolicy = false;

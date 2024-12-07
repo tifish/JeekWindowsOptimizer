@@ -15,7 +15,7 @@ public class WindowsActivatorItem : OptimizationItem
 
     public WindowsActivatorItem()
     {
-        ShouldTurnOffRealTimeProtection = true;
+        ShouldTurnOffOnAccessProtection = true;
 
         IsOptimized = IsWindowsActivated();
     }

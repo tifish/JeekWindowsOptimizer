@@ -25,36 +25,39 @@ public abstract partial class OptimizationItem : ObservableObject
         if (value == IsOptimized)
             return false;
 
-        if (ShouldTurnOffTamperProtection)
-            if (!await TurnOffTamperProtection())
-            {
-                IsOptimized = !value;
-                return false;
-            }
+        if (!InBatching)
+        {
+            if (ShouldTurnOffTamperProtection)
+                if (!await TurnOffTamperProtection())
+                {
+                    IsOptimized = !value;
+                    return false;
+                }
 
-        if (ShouldTurnOffRealTimeProtection)
-            if (!await TurnOffRealTimeProtection())
-            {
-                IsOptimized = !value;
-                return false;
-            }
+            if (ShouldTurnOffOnAccessProtection)
+                if (!await TurnOffOnAccessProtection())
+                {
+                    IsOptimized = !value;
+                    return false;
+                }
+        }
 
         if (!await IsOptimizedChanging(value))
             return false;
 
         IsOptimized = value;
 
-        if (InBatching)
-            return true;
+        if (!InBatching)
+        {
+            if (ShouldUpdateGroupPolicy)
+                await UpdateGroupPolicy();
 
-        if (ShouldUpdateGroupPolicy)
-            await UpdateGroupPolicy();
+            if (ShouldRestartExplorer)
+                RestartExplorer();
 
-        if (ShouldRestartExplorer)
-            RestartExplorer();
-
-        if (ShouldReboot)
-            await PromptReboot();
+            if (ShouldReboot)
+                await PromptReboot();
+        }
 
         return true;
     }
@@ -91,32 +94,18 @@ public abstract partial class OptimizationItem : ObservableObject
         return true;
     }
 
-    private static readonly RegistryValue RealTimeProtectionRegistryValue = new(
-        @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Real-Time Protection",
-        "DisableRealtimeMonitoring");
+    private static readonly RegistryValue DisableOnAccessProtectionRegistryValue = new(
+        @"HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection",
+        "DisableOnAccessProtection");
 
-    public static async Task<bool> TurnOffRealTimeProtection()
+    public static async Task<bool> TurnOffOnAccessProtection()
     {
-        if (RealTimeProtectionRegistryValue.GetValue(0) is 1)
+        if (DisableOnAccessProtectionRegistryValue.GetValue(0) is 1)
             return true;
 
-        OpenDefenderSettings();
+        await TurnOffTamperProtection();
 
-        while (RealTimeProtectionRegistryValue.GetValue(0) is 0)
-        {
-            var msgResult = await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
-            {
-                ContentMessage = "请关闭防病毒设置中的实时保护，然后按确定继续。",
-                ButtonDefinitions = ButtonEnum.OkCancel,
-                Icon = Icon.Info,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Topmost = true,
-                FontFamily = "Microsoft YaHei",
-            }).ShowAsync();
-
-            if (msgResult == ButtonResult.Cancel)
-                return false;
-        }
+        DisableOnAccessProtectionRegistryValue.SetValue(1);
 
         return true;
     }
@@ -175,7 +164,7 @@ public abstract partial class OptimizationItem : ObservableObject
     protected static string MessageTitle => "Jeek Windows Optimizer";
 
     public bool ShouldTurnOffTamperProtection { get; set; }
-    public bool ShouldTurnOffRealTimeProtection { get; set; }
+    public bool ShouldTurnOffOnAccessProtection { get; set; }
     public bool ShouldUpdateGroupPolicy { get; set; }
     public bool ShouldReboot { get; set; }
 

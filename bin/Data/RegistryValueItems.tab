@@ -1,7 +1,11 @@
 ﻿GroupName	Name	Description	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue	ShouldTurnOffTamperProtection	ShouldUpdateGroupPolicy	ShouldReboot	shouldRestartExplorer
-内核	禁用 Windows 实时防病毒	Windows 实时防病毒会影响所有文件访问的性能，建议禁用，之后定期手动扫描病毒。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableRealtimeMonitoring	int	0	1	TRUE	TRUE	TRUE		
-	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableOnAccessProtection	int	0	1					
-	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableBehaviorMonitoring	int	0	1					
+内核	禁用 Windows 实时防病毒	Windows 实时防病毒会影响所有文件访问的性能，建议禁用。此项仅禁用访问文件时的实时扫描、行为监控、自动隔离、上传样本，但允许自动扫描下载文件、提示威胁和定期手动扫描。\n立即生效。	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableAntiSpyware	int	0	0	TRUE	TRUE	TRUE		
+	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableRoutinelyTakingAction	int	0	1	TRUE				
+	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableRealtimeMonitoring	int	0	0	TRUE				
+	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableBehaviorMonitoring	int	0	1	TRUE				
+	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableIOAVProtection	int	0	0	TRUE				
+	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableOnAccessProtection	int	0	1	TRUE				
+	禁用 Windows 实时防病毒		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Spynet	SubmitSamplesConsent	int	1	0					
 内核	禁用 Meltdown 和 Spectre 补丁	Meltdown 和 Spectre 是 CPU 硬件漏洞，可以获取内核数据。补丁影响性能，请根据实际情况选择是否禁用。\n重启生效。	HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettings	int	0	1				TRUE	
 	禁用 Meltdown 和 Spectre 补丁		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverride	int	0	3	TRUE				
 	禁用 Meltdown 和 Spectre 补丁		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverrideMask	int	0	3	TRUE				

@@ -17,11 +17,19 @@ public class OptimizationRegistryIntValue(string keyPath, string valueName, int 
         set
         {
             if (value)
-                Value.SetValue(optimizingValue);
-            else if (deleteDefaultValue)
-                Value.DeleteValue();
+            {
+                if (defaultValue == optimizingValue)
+                    Value.DeleteValue();
+                else
+                    Value.SetValue(optimizingValue);
+            }
             else
-                Value.SetValue(defaultValue);
+            {
+                if (deleteDefaultValue)
+                    Value.DeleteValue();
+                else
+                    Value.SetValue(defaultValue);
+            }
         }
     }
 }
