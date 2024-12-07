@@ -47,7 +47,7 @@ public class WindowsActivatorItem : OptimizationItem
         if (!value)
             return false;
 
-        await Executor.RunAndWait(Path.Join(AppContext.BaseDirectory, @"Activate\Activate.cmd"));
+        await Executor.RunAndWait(Path.Join(AppContext.BaseDirectory, @"Activator\Activate.cmd"));
 
         return IsWindowsActivated();
     }
