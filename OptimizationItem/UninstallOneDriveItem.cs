@@ -1,16 +1,14 @@
 ﻿using System.Diagnostics;
+using Jeek.Avalonia.Localization;
 
 namespace JeekWindowsOptimizer;
 
 public class UninstallOneDriveItem : OptimizationItem
 {
-    public override string GroupName => "卸载";
-    public override string Name => "卸载 OneDrive";
+    public override string GroupName => Localizer.Get("UninstallGroup");
+    public override string Name => Localizer.Get("UninstallOneDrive");
 
-    public override string Description => """
-                                          OneDrive 是微软的云盘服务，占用资源，不使用可以卸载。
-                                          立即生效。
-                                          """;
+    public override string Description => Localizer.Get("UninstallOneDriveDescription");
 
     private readonly string _installerPath1 = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\System32\OneDriveSetup.exe");
     private readonly string _installerPath2 = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\SysWOW64\OneDriveSetup.exe");

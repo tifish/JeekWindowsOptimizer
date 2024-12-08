@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Avalonia.Media;
+using Jeek.Avalonia.Localization;
 using JeekTools;
 using Microsoft.Extensions.Logging;
 using ZLogger;
@@ -14,11 +16,19 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
+        OnLanguageChanged(null, EventArgs.Empty);
+        Localizer.LanguageChanged += OnLanguageChanged;
+
         InitializeComponent();
 
 #if DEBUG
         this.AttachDevTools();
 #endif
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        FontFamily = new FontFamily(Localizer.Get("DefaultFontName"));
     }
 
     // ReSharper disable once AsyncVoidMethod
@@ -33,7 +43,7 @@ public partial class MainWindow : Window
 
         var model = (MainViewModel)DataContext!;
         model.IsBusy = true;
-        model.StatusMessage = $"正在操作：{optimizationItem.Name}";
+        model.StatusMessage = string.Format(Localizer.Get("OperatingItem"), optimizationItem.Name);
 
         try
         {
@@ -48,7 +58,7 @@ public partial class MainWindow : Window
         finally
         {
             model.IsBusy = false;
-            model.StatusMessage = $"操作完成：{optimizationItem.Name}";
+            model.StatusMessage = string.Format(Localizer.Get("OperatingItemFinished"), optimizationItem.Name);
         }
     }
 }

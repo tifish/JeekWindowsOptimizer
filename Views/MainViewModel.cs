@@ -4,6 +4,7 @@ using JeekTools;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
+using Jeek.Avalonia.Localization;
 using ZLogger;
 
 namespace JeekWindowsOptimizer;
@@ -51,7 +52,7 @@ public partial class MainViewModel : ObservableObject
             AddOptimizationItem(item);
 
         IsBusy = false;
-        StatusMessage = "初始化完成。";
+        StatusMessage = Localizer.Get("InitializationFinished");
     }
 
     private void AddOptimizationItem(OptimizationItem item)

@@ -1,0 +1,9 @@
+﻿	en-US	zh-CN
+DefaultFontName	Segoe UI	微软雅黑
+OptimizeSelectedItems	Optimize selected items	优化选中项目
+InitializationFinished	Initialization finished.	初始化完成。
+OperatingItem	Operating: {0}	正在操作：{0}
+OperatingItemFinished	Operation finished: {0}	操作完成：{0}
+UninstallGroup	Uninstall	卸载
+UninstallOneDrive	Uninstall OneDrive	卸载 OneDrive
+UninstallOneDriveDescription	OneDrive is Microsoft's cloud storage service. It consumes resources and can be uninstalled if not in use.\nEffective immediately.	OneDrive 是微软的云盘服务，占用资源，不使用可以卸载。\n立即生效。

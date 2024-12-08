@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Jeek.Avalonia.Localization;
 using JeekWindowsOptimizer.Views;
 
 namespace JeekWindowsOptimizer;
@@ -18,6 +19,8 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            Localizer.SetLocalizer(new TabLocalizer(@"Data\Languages.tab"));
+
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);

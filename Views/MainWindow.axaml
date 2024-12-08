@@ -4,14 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:li="using:LoadingIndicators.Avalonia"
+        xmlns:l="using:Jeek.Avalonia.Localization"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="JeekWindowsOptimizer.Views.MainWindow"
         x:DataType="local:MainViewModel"
         Icon="/Assets/App.ico"
         Title="Jeek Windows Optimizer"
         Width="800" Height="2000"
-        WindowStartupLocation="CenterScreen"
-        FontFamily="微软雅黑">
+        WindowStartupLocation="CenterScreen">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -30,7 +30,7 @@
             <li:LoadingIndicator HorizontalAlignment="Center" Height="70"
                                  IsActive="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                  Mode="Arcs" SpeedRatio="1.2" />
-            <Button Content="优化选中项目" HorizontalAlignment="Center" Padding="20" CornerRadius="5" FontSize="20" FontWeight="Bold"
+            <Button Content="{l:Localize OptimizeSelectedItems}" HorizontalAlignment="Center" Padding="20" CornerRadius="5" FontSize="20" FontWeight="Bold"
                     Command="{Binding OptimizeCheckedItems}"
                     IsVisible="{Binding !IsBusy}" />
             <TextBlock HorizontalAlignment="Center" FontSize="20" Text="{Binding StatusMessage}" />
