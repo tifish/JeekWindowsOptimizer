@@ -1,4 +1,6 @@
-﻿	en-US	zh-CN
+﻿	en	zh
+en	English	英文
+zh	Chinese	中文
 DefaultFontName	Segoe UI	微软雅黑
 OptimizeSelectedItems	Optimize selected items	优化选中项目
 InitializationFinished	Initialization finished.	初始化完成。

@@ -1,10 +1,10 @@
-﻿using Avalonia.Controls;
+﻿using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using JeekTools;
-using Microsoft.Extensions.Logging;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
+using JeekTools;
+using Microsoft.Extensions.Logging;
 using ZLogger;
 
 namespace JeekWindowsOptimizer;
@@ -23,6 +23,20 @@ public partial class MainViewModel : ObservableObject
     public partial bool IsBusy { get; set; } = true;
 
     [RelayCommand]
+    private async Task Loaded()
+    {
+        await InitializeItems();
+
+        Localizer.LanguageChanged += (sender, e) =>
+        {
+            foreach (var group in OptimizationGroups)
+            {
+                foreach (var item in group.Items)
+                    item.NotifyLanguageChanged();
+            }
+        };
+    }
+
     private async Task InitializeItems()
     {
         if (Design.IsDesignMode)
@@ -140,5 +154,17 @@ public partial class MainViewModel : ObservableObject
             IsBusy = false;
             StatusMessage = "优化已完成！";
         }
+    }
+
+    [RelayCommand]
+    private void SwitchToEnglish()
+    {
+        Localizer.Language = "en";
+    }
+
+    [RelayCommand]
+    private void SwitchToChinese()
+    {
+        Localizer.Language = "zh";
     }
 }

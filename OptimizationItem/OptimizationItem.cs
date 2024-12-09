@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System.ComponentModel;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using JeekTools;
@@ -6,6 +7,7 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace JeekWindowsOptimizer;
 
@@ -169,4 +171,11 @@ public abstract partial class OptimizationItem : ObservableObject
     public bool ShouldReboot { get; set; }
 
     public bool ShouldRestartExplorer { get; set; }
+
+    public void NotifyLanguageChanged()
+    {
+        OnPropertyChanged(nameof(GroupName));
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(Description));
+    }
 }

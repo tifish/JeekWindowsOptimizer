@@ -21,12 +21,19 @@
 
     <Interaction.Behaviors>
         <EventTriggerBehavior EventName="Loaded">
-            <InvokeCommandAction Command="{Binding InitializeItemsCommand}" />
+            <InvokeCommandAction Command="{Binding LoadedCommand}" />
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
     <Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto *">
         <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="0,0,0,10">
+            <StackPanel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{l:Localize en}" Command="{Binding SwitchToEnglishCommand}" />
+                    <MenuItem Header="{l:Localize zh}" Command="{Binding SwitchToChineseCommand}" />
+                </ContextMenu>
+            </StackPanel.ContextMenu>
+
             <li:LoadingIndicator HorizontalAlignment="Center" Height="70"
                                  IsActive="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
                                  Mode="Arcs" SpeedRatio="1.2" />
@@ -52,7 +59,7 @@
                             <Expander.Header>
                                 <TextBlock FontWeight="Bold" FontSize="30" Text="{Binding Name}" />
                             </Expander.Header>
-                            
+
                             <!-- Items -->
                             <ItemsControl ItemsSource="{Binding Items }">
                                 <ItemsControl.ItemsPanel>
