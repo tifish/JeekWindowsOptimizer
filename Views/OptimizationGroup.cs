@@ -1,13 +1,26 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Jeek.Avalonia.Localization;
 
 namespace JeekWindowsOptimizer;
 
-public partial class OptimizationGroup(string name, OptimizationItem[] items) : ObservableObject
+public class OptimizationGroup(string nameKey, OptimizationItem[] items) : INotifyPropertyChanged
 {
-    [ObservableProperty]
-    public partial string Name { get; set; } = name;
+    public string NameKey => nameKey;
+    public string Name => Localizer.Get(NameKey);
 
-    [ObservableProperty]
-    public partial ObservableCollection<OptimizationItem> Items { get; set; } = [.. items];
+    public ObservableCollection<OptimizationItem> Items { get; } = [.. items];
+
+    public void NotifyLanguageChanged()
+    {
+        OnPropertyChanged(nameof(Name));
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

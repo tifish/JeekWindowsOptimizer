@@ -1,10 +1,10 @@
 ﻿namespace JeekWindowsOptimizer;
 
-public class RegistryItem(string groupName, string name, string description) : OptimizationItem
+public class RegistryItem(string groupNameKey, string nameKey, string descriptionKey) : OptimizationItem
 {
-    public override string GroupName { get; } = groupName;
-    public override string Name { get; } = name;
-    public override string Description { get; } = description;
+    public override string GroupNameKey => groupNameKey;
+    public override string NameKey => nameKey;
+    public override string DescriptionKey => descriptionKey;
 
     public void Initialized()
     {

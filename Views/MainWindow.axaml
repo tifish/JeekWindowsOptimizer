@@ -83,7 +83,9 @@
                                                         <CheckBox IsChecked="{Binding IsChecked}" />
                                                         <TextBlock FontWeight="Bold" FontSize="20" Text="{Binding Name}" VerticalAlignment="Center" />
                                                     </StackPanel>
-                                                    <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" IsChecked="{Binding IsOptimized, Mode=OneWay}" OnContent="已优化" OffContent="未优化" IsCheckedChanged="ToggleButton_OnIsCheckedChanged" />
+                                                    <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" IsChecked="{Binding IsOptimized, Mode=OneWay}" 
+                                                                  OnContent="{l:Localize Optimized}" OffContent="{l:Localize NotOptimized}"
+                                                                  IsCheckedChanged="ToggleButton_OnIsCheckedChanged" />
                                                 </Grid>
                                                 <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
                                             </StackPanel>

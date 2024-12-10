@@ -5,13 +5,10 @@ namespace JeekWindowsOptimizer;
 
 public class WindowsActivatorItem : OptimizationItem
 {
-    public override string GroupName => "系统";
-    public override string Name => "激活 Windows";
+    public override string GroupNameKey => "System";
+    public override string NameKey => "WindowsActivatorName";
 
-    public override string Description => """
-                                          未激活的 Windows 缺少部分功能，性能也不是最佳，建议激活。
-                                          立即生效。
-                                          """;
+    public override string DescriptionKey => "WindowsActivatorDescription";
 
     public WindowsActivatorItem()
     {

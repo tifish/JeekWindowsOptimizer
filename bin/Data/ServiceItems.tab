@@ -1,5 +1,5 @@
-﻿GroupName	Name	Description	ServiceName
-系统	禁用程序兼容性助手	监控安装和运行的程序，提示兼容性问题。\n立即生效。	PcaSvc
-系统	禁用诊断策略服务	诊断策略服务提供疑难解答，解决不了什么实际问题。\n立即生效。	DPS
-系统	禁用 Windows 搜索服务	Windows 搜索在后台扫描文件改动，有时会明显影响性能，但实际作用却不大，不如 everything 好用。\n立即生效。	WSearch
-系统	禁用 SysMain 服务	SysMain 服务在后台压缩和合并内存，并预加载常用应用，在大内存和 SSD 电脑上效果不明显，还占用后台资源。\n立即生效。	SysMain
+﻿GroupName	Name	ServiceName
+System	DisableProgramCompatibilityAssistantService	PcaSvc
+System	DisableDiagnosticPolicyService	DPS
+System	DisableWindowsSearchService	WSearch
+System	DisableSysMainService	SysMain

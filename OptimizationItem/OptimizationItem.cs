@@ -1,21 +1,24 @@
-﻿using System.ComponentModel;
+﻿using System.Diagnostics;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Jeek.Avalonia.Localization;
 using JeekTools;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 namespace JeekWindowsOptimizer;
 
 public abstract partial class OptimizationItem : ObservableObject
 {
-    public abstract string GroupName { get; }
-    public abstract string Name { get; }
-    public abstract string Description { get; }
+    public  string GroupName => Localizer.Get(GroupNameKey);
+    public  string Name => Localizer.Get(NameKey);
+    public  string Description => Localizer.Get(DescriptionKey);
+
+    public abstract string GroupNameKey { get; }
+    public abstract string NameKey { get; }
+    public abstract string DescriptionKey { get; }
 
     [ObservableProperty]
     public partial bool IsOptimized { get; protected set; }

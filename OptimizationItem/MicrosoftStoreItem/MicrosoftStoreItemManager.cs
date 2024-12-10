@@ -14,15 +14,15 @@ public static class MicrosoftStoreItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 4)
+            if (row.Count != 3)
                 continue;
 
-            var groupName = row[0];
-            var name = row[1];
-            var description = row[2].Replace("\\n", "\r\n");
-            var packageName = row[3];
+            var groupNameKey = row[0];
+            var nameKey = row[1] + "Name";
+            var descriptionKey = row[1] + "Description";
+            var packageName = row[2];
 
-            var item = new MicrosoftStoreItem(groupName, name, description, packageName);
+            var item = new MicrosoftStoreItem(groupNameKey, nameKey, descriptionKey, packageName);
             Items.Add(item);
         }
     }

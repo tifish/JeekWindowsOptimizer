@@ -17,7 +17,7 @@ public partial class MainViewModel : ObservableObject
     public partial ObservableCollection<OptimizationGroup> OptimizationGroups { get; set; } = [];
 
     [ObservableProperty]
-    public partial string StatusMessage { get; set; } = "正在初始化...";
+    public partial string StatusMessage { get; set; } = Localizer.Get("Initializing");
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; } = true;
@@ -31,6 +31,8 @@ public partial class MainViewModel : ObservableObject
         {
             foreach (var group in OptimizationGroups)
             {
+                group.NotifyLanguageChanged();
+
                 foreach (var item in group.Items)
                     item.NotifyLanguageChanged();
             }
@@ -41,8 +43,8 @@ public partial class MainViewModel : ObservableObject
     {
         if (Design.IsDesignMode)
         {
-            OptimizationGroups.Add(new OptimizationGroup("测试1", [new TestItem(), new TestItem()]));
-            OptimizationGroups.Add(new OptimizationGroup("测试2", [new TestItem(), new TestItem()]));
+            OptimizationGroups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
+            OptimizationGroups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
             return;
         }
 
@@ -72,13 +74,13 @@ public partial class MainViewModel : ObservableObject
     private void AddOptimizationItem(OptimizationItem item)
     {
         foreach (var group in OptimizationGroups)
-            if (group.Name == item.GroupName)
+            if (group.NameKey == item.GroupNameKey)
             {
                 group.Items.Add(item);
                 return;
             }
 
-        OptimizationGroups.Add(new OptimizationGroup(item.GroupName, [item]));
+        OptimizationGroups.Add(new OptimizationGroup(item.GroupNameKey, [item]));
     }
 
     public async Task OptimizeCheckedItems()
@@ -88,7 +90,7 @@ public partial class MainViewModel : ObservableObject
 
         try
         {
-            StatusMessage = "优化前准备工作...";
+            StatusMessage = Localizer.Get("PreOptimizationPreparations");
 
             var shouldTurnOffTamperProtection = false;
             var shouldTurnOffOnAccessProtection = false;
@@ -121,7 +123,7 @@ public partial class MainViewModel : ObservableObject
                     if (!item.IsChecked || item.IsOptimized)
                         continue;
 
-                    StatusMessage = $"正在优化：{item.Name}...";
+                    StatusMessage = string.Format(Localizer.Get("OptimizingItem"), item.Name);
                     try
                     {
                         await item.SetIsOptimized(true);
@@ -137,7 +139,7 @@ public partial class MainViewModel : ObservableObject
                     shouldRestartExplorer |= item.ShouldRestartExplorer;
                 }
 
-            StatusMessage = "优化后处理...";
+            StatusMessage = Localizer.Get("PostOptimizationProcessing");
 
             if (shouldUpdateGroupPolicy)
                 await OptimizationItem.UpdateGroupPolicy();
@@ -152,7 +154,7 @@ public partial class MainViewModel : ObservableObject
         {
             OptimizationItem.InBatching = false;
             IsBusy = false;
-            StatusMessage = "优化已完成！";
+            StatusMessage = Localizer.Get("OptimizationCompleted");
         }
     }
 

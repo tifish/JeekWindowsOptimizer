@@ -2,16 +2,17 @@ namespace JeekWindowsOptimizer;
 
 public class MicrosoftStoreItem : OptimizationItem
 {
-    public override string GroupName { get; }
-    public override string Name { get; }
-    public override string Description { get; }
+    public override string GroupNameKey { get; }
+    public override string NameKey { get; }
+    public override string DescriptionKey { get; }
     private string PackageName { get; }
 
-    public MicrosoftStoreItem(string groupName, string name, string description, string packageName)
+    public MicrosoftStoreItem(string groupNameKey, string nameKey, string descriptionKey, string packageName)
     {
-        GroupName = groupName;
-        Name = name;
-        Description = description;
+        GroupNameKey = groupNameKey;
+        NameKey = nameKey;
+        DescriptionKey = descriptionKey;
+
         PackageName = packageName;
 
         IsOptimized = !MicrosoftStore.HasPackage(PackageName);

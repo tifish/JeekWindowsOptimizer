@@ -2,17 +2,17 @@
 
 public class ServiceItem : OptimizationItem
 {
-    public override string GroupName { get; }
-    public override string Name { get; }
-    public override string Description { get; }
+    public override string GroupNameKey { get; }
+    public override string NameKey { get; }
+    public override string DescriptionKey { get; }
 
     private readonly WindowsService _service;
 
-    public ServiceItem(string groupName, string name, string description, string serviceName)
+    public ServiceItem(string groupNameKey, string nameKey, string descriptionKey, string serviceName)
     {
-        GroupName = groupName;
-        Name = name;
-        Description = description;
+        GroupNameKey = groupNameKey;
+        NameKey = nameKey;
+        DescriptionKey = descriptionKey;
 
         _service = new WindowsService(serviceName);
 

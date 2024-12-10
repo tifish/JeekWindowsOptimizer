@@ -16,22 +16,24 @@ public static class RegistryItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 13)
+            if (row.Count != 12)
                 continue;
 
-            var groupName = row[0];
-            var name = row[1];
-            var description = row[2].Replace("\\n", "\r\n");
-            var keyPath = row[3];
-            var valueName = row[4];
-            var type = row[5];
-            var defaultValue = row[6];
-            var optimizingValue = row[7];
-            var deleteDefaultValue = row[8].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldTurnOffTamperProtection = row[9].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldUpdateGroupPolicy = row[10].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldReboot = row[11].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldRestartExplorer = row[12].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var index = -1;
+
+            var groupNameKey = row[++index];
+            var nameKey = row[++index] + "Name";
+            var descriptionKey = row[index] + "Description";
+            var keyPath = row[++index];
+            var valueName = row[++index];
+            var type = row[++index];
+            var defaultValue = row[++index];
+            var optimizingValue = row[++index];
+            var deleteDefaultValue = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldTurnOffTamperProtection = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldUpdateGroupPolicy = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldReboot = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldRestartExplorer = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
 
             OptimizationRegistryValue value = type switch
             {
@@ -44,16 +46,16 @@ public static class RegistryItemManager
                 _ => throw new NotImplementedException("Unknown type: " + type),
             };
 
-            if (!itemsDict.TryGetValue(name, out var item))
+            if (!itemsDict.TryGetValue(nameKey, out var item))
             {
-                item = new RegistryItem(groupName, name, description)
+                item = new RegistryItem(groupNameKey, nameKey, descriptionKey)
                 {
                     ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection,
                     ShouldUpdateGroupPolicy = shouldUpdateGroupPolicy,
                     ShouldReboot = shouldReboot,
                     ShouldRestartExplorer = shouldRestartExplorer,
                 };
-                itemsDict[name] = item;
+                itemsDict[nameKey] = item;
                 Items.Add(item);
             }
 

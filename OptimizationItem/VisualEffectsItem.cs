@@ -16,14 +16,11 @@ public class VisualEffectsItem : OptimizationItem
         return Task.FromResult(true);
     }
 
-    public override string GroupName => "显示";
+    public override string GroupNameKey => "Display";
 
-    public override string Name => "禁用部分视觉效果";
+    public override string NameKey => "DisableVisualEffectsName";
 
-    public override string Description => """
-                                          Windows 开启了一些视觉效果和动画，会消耗一些性能，并拖慢操作速度，建议禁用。
-                                          部分需要重新登录生效。
-                                          """;
+    public override string DescriptionKey => "DisableVisualEffectsDescription";
 
     public bool Disabled
     {

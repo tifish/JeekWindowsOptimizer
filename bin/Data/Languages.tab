@@ -3,9 +3,116 @@ en	English	英文
 zh	Chinese	中文
 DefaultFontName	Segoe UI	微软雅黑
 OptimizeSelectedItems	Optimize selected items	优化选中项目
+Initializing	Initializing…	正在初始化...
 InitializationFinished	Initialization finished.	初始化完成。
 OperatingItem	Operating: {0}	正在操作：{0}
 OperatingItemFinished	Operation finished: {0}	操作完成：{0}
-UninstallGroup	Uninstall	卸载
-UninstallOneDrive	Uninstall OneDrive	卸载 OneDrive
+PreOptimizationPreparations	Pre-optimization preparations…	优化前准备工作...
+OptimizingItem	Optimizing: {0}…	正在优化：{0}…
+PostOptimizationProcessing	Post-optimization processing…	优化后处理…
+OptimizationCompleted	Optimization completed!	优化已完成！
+Optimized	Optimized	已优化
+NotOptimized	Not optimized	未优化
+Uninstall	Uninstall	卸载
+Kernel	Kernel	内核
+System	System	系统
+Display	Display	显示
+Explorer	Explorer	文件资源管理器
+Taskbar	Taskbar	任务栏
+StartMenu	Start Menu	开始菜单
+Security	Security	安全
+Privacy	Privacy	隐私
+UninstallOneDriveName	Uninstall OneDrive	卸载 OneDrive
 UninstallOneDriveDescription	OneDrive is Microsoft's cloud storage service. It consumes resources and can be uninstalled if not in use.\nEffective immediately.	OneDrive 是微软的云盘服务，占用资源，不使用可以卸载。\n立即生效。
+DisableProgramCompatibilityAssistantServiceName	Disable the Program Compatibility Assistant Service	禁用程序兼容性助手
+DisableProgramCompatibilityAssistantServiceDescription	Monitor installed and running programs and notify of compatibility issues.\nEffective immediately.	监控安装和运行的程序，提示兼容性问题。\n立即生效。
+DisableDiagnosticPolicyServiceName	Disable the Diagnostic Policy Service	禁用诊断策略服务
+DisableDiagnosticPolicyServiceDescription	The Diagnostic Policy Service provides troubleshooting but solves few practical issues.\nEffective immediately.	诊断策略服务提供疑难解答，解决不了什么实际问题。\n立即生效。
+DisableWindowsSearchServiceName	Disable the Windows Search Service	禁用 Windows 搜索服务
+DisableWindowsSearchServiceDescription	Windows Search scans for file changes in the background, sometimes noticeably affecting performance, but is less practical compared to Everything.\nEffective immediately.	Windows 搜索在后台扫描文件改动，有时会明显影响性能，但实际作用却不大，不如 everything 好用。\n立即生效。
+DisableSysMainServiceName	Disable the SysMain Service	禁用 SysMain 服务
+DisableSysMainServiceDescription	The SysMain service compresses and merges memory in the background and preloads frequently used applications. On computers with large memory and SSDs, its effects are negligible, and it consumes background resources.\nEffective immediately.	SysMain 服务在后台压缩和合并内存，并预加载常用应用，在大内存和 SSD 电脑上效果不明显，还占用后台资源。\n立即生效。
+UninstallCortanaName	Uninstall Cortana	卸载 Cortana
+UninstallCortanaDescription	Cortana is Microsoft’s voice assistant. If not used, it can be uninstalled.	Cortana 是微软的语音助手，不使用可以卸载。
+UninstallSkypeName	Uninstall Skype	卸载 Skype
+UninstallSkypeDescription	Skype is Microsoft’s instant messaging tool. If not used, it can be uninstalled.	Skype 是微软的即时通讯工具，不使用可以卸载。
+DisableWindowsRealTimeAntivirusName	Disable windows real-time antivirus	禁用 Windows 实时防病毒
+DisableWindowsRealTimeAntivirusDescription	Disabling Windows real-time antivirus can improve performance for file access. This only disables real-time scanning, behavior monitoring, and automatic quarantine during file access, but allows automatic scanning of downloaded files, threat alerts, and regular manual scans.\nEffective immediately.	Windows 实时防病毒会影响所有文件访问的性能，建议禁用。此项仅禁用访问文件时的实时扫描、行为监控、自动隔离，但允许自动扫描下载文件、提示威胁、定期手动扫描。\n立即生效。
+DisableMeltdownAndSpectrePatchesName	Disable meltdown and spectre patches	禁用 Meltdown 和 Spectre 补丁
+DisableMeltdownAndSpectrePatchesDescription	Meltdown and Spectre are CPU hardware vulnerabilities that can access kernel data. Patches affect performance; decide whether to disable based on your situation.\nTakes effect after reboot.	Meltdown 和 Spectre 是 CPU 硬件漏洞，可以获取内核数据。补丁影响性能，请根据实际情况选择是否禁用。\n重启生效。
+DisableKernelMemoryIntegrityProtectionName	Disable kernel memory integrity protection	禁用内核内存完整性保护
+DisableKernelMemoryIntegrityProtectionDescription	Kernel memory integrity protection is recommended to be disabled for regular users.\nTakes effect after reboot.	内核内存完整性保护，普通用户建议禁用。\n重启生效。
+DisableWindowsDefenderApplicationControlName	Disable windows defender application control	禁用 Windows Defender 应用控制
+DisableWindowsDefenderApplicationControlDescription	Windows Defender Application Control checks applications against system policies at startup, slowing down the boot process.\nTakes effect after reboot.	Windows Defender 应用控制在启动应用时检查是否符合系统策略，拖慢启动速度。\n重启生效。
+DisableSmartScreenName	Disable smartscreen	禁用 SmartScreen
+DisableSmartScreenDescription	SmartScreen checks files when opening applications and installation packages, affecting startup speed and blocking downloads of certain files.\nEffective immediately.	SmartScreen 在打开应用和安装包时会检查文件，影响启动速度，还会阻止下载某些文件。\n立即生效。
+DisableFastStartupName	Disable fast startup	禁用快速启动
+DisableFastStartupDescription	Fast Startup saves the kernel state during a system restart for quicker boot times, but may cause system sluggishness and high memory usage. Since restarting is infrequent, it’s advisable to disable it. If hibernation is disabled, Fast Startup is ineffective.\nEffective immediately.	快速启动在重启系统时，保存内核状态，使得启动更快速。但有可能造成系统卡顿、内存占用高等异常情况。毕竟重启是低频行为，建议关闭。\n如果禁用了休眠功能，则快速启动失效。\n立即生效。
+DisableSystemRestoreName	Disable system restore	禁用系统还原
+DisableSystemRestoreDescription	System Restore uses some disk space and slows down the installation of system patches. Consider disabling if you don’t frequently modify your system.\nEffective immediately.	系统还原会占用一定的磁盘空间，安装系统补丁时会减慢速度，如果不是经常折腾系统，可以考虑关闭。\n立即生效。
+DisableMicrosoftCustomerExperienceImprovementProgramName	Disable Microsoft customer experience improvement program	禁用微软客户体验改善计划
+DisableMicrosoftCustomerExperienceImprovementProgramDescription	The Microsoft Customer Experience Improvement Program automatically sends various computer information to Microsoft.\nEffective immediately.	微软客户体验改善计划会自动向微软发送电脑的各种信息。\n立即生效。
+DisableUACName	Disable UAC	禁用 UAC
+DisableUACDescription	UAC prompts for administrative permission when installing and starting programs, making users decide on safety without knowledge. It affects system performance, slows application launch, and is cumbersome.\nTakes effect after reboot.	UAC 在安装和启动程序时提示是否允许管理员权限，让用户自己判断是否安全。用户没法知道安不安全，只能点允许。影响系统性能，拖慢应用开启速度，操作繁琐。\n重启生效。
+DisableWarningForOpeningDownloadedFilesName	Disable warning for opening downloaded files	禁用打开下载文件的警告
+DisableWarningForOpeningDownloadedFilesDescription	Downloaded executable files are marked as unsafe, triggering warnings on opening and slowing startup.\nEffective immediately.	下载的可执行文件会被标记为不安全，打开时弹出警告，拖慢启动速度。\n立即生效。
+ShowKeyboardAccessKeyUnderlinesName	Show keyboard access key underlines	为键盘访问键显示下划线
+ShowKeyboardAccessKeyUnderlinesDescription	Displaying underlines for ALT+shortcut keys aids in quick keyboard operations.	显示ALT+快捷按键的下划线提示，方便快速键盘操作。
+DisableTaskbarAndWindowTransparencyName	Disable taskbar and window transparency	禁止任务栏和窗口半透明
+DisableTaskbarAndWindowTransparencyDescription	Transparency continuously consumes computing power, so it’s recommended to disable it.\nEffective immediately.	半透明会持续消耗计算性能，建议禁用。\n立即生效。
+ShowFileExtensionsName	Show file extensions	显示文件扩展名
+ShowFileExtensionsDescription	File extensions determine file types in Windows; enabling them helps better identify files.\nEffective immediately.	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。
+DisplayThisPCWhenOpeningFileExplorerName	Display this PC when opening file explorer	打开文件资源管理器时显示我的电脑
+DisplayThisPCWhenOpeningFileExplorerDescription	Opening File Explorer usually involves searching for files, so showing ‘My Computer’ directly is quicker.\nEffective immediately.	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。
+DoNotAddShortcutTextWhenCreatingShortcutsName	Do not add “shortcut” text when creating shortcuts	创建快捷方式时不添加“快捷方式”文字
+DoNotAddShortcutTextWhenCreatingShortcutsDescription	Shortcut names already have an arrow indicator, so additional “Shortcut” text is unnecessary and inconvenient to manually remove each time. It’s recommended to disable this.\nEffective immediately.	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。
+PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenName	Prevent snap layouts from showing when dragging windows to the top of the screen	禁止窗口拖动到屏幕顶端时显示贴靠布局
+PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenDescription	Snap Layouts can cause lag while dragging windows and lead to misoperations, so it’s recommended to disable them.\nEffective immediately.	显示贴靠布局会导致拖动窗口时卡顿，也容易误操作，建议关闭。\n立即生效。
+TurnOffSearchHighlightsName	Turn off search highlights	关闭搜索热点
+TurnOffSearchHighlightsDescription	Search highlights in the search bar constantly update online trending topics.\nEffective immediately.	搜索热点在搜索栏右侧显示，会不断的更新网上的热点消息。\n立即生效。
+TurnOffWidgetsName	Turn off widgets	关闭小组件
+TurnOffWidgetsDescription	Widgets display news and information on the taskbar’s left side.\nEffective immediately.	小组件显示在任务栏左侧，更新各种新闻和信息。\n立即生效。
+HideTheSearchBoxName	Hide the search box	隐藏搜索框
+HideTheSearchBoxDescription	The taskbar search box takes up space for multitask viewing, and the Start menu search is simpler.\nEffective immediately.	任务栏搜索框占用了多任务窗口的显示空间，而通过开始菜单搜索更简便。\n立即生效。
+HideTaskViewButtonName	Hide task view button	隐藏任务视图按钮
+HideTaskViewButtonDescription	Task View can be launched with the shortcut WIN+TAB, eliminating the need for an extra button.\nEffective immediately.	通过快捷键 WIN+TAB 即可启动任务视图，不需要额外的按钮。\n立即生效。
+NeverCombineTaskbarIconsName	Never combine taskbar icons	从不合并任务栏图标
+NeverCombineTaskbarIconsDescription	Merging taskbar icons removes text labels, making it harder to distinguish between different windows of the same software. For higher work efficiency, it’s recommended never to merge them.\nTakes effect after restarting Explorer.	任务栏图标合并后没有文字描述，难以区分同一个软件的不同窗口，建议从不合并，工作效率更高。\n重启资源管理器生效。
+PreventStartMenuFromSearchingTheWebName	Prevent start menu from searching the web	禁止开始菜单搜索网页
+PreventStartMenuFromSearchingTheWebDescription	Start Menu input is generally for searching apps and system settings; web searches waste resources.\nEffective immediately.	开始菜单输入通常是为了搜索应用程序和系统设置，搜索网页浪费资源。\n立即生效。
+PreventStartMenuFromSearchingCloudContentName	Prevent start menu from searching cloud content	禁止开始菜单搜索云端内容
+PreventStartMenuFromSearchingCloudContentDescription	Block searches of cloud information like OneDrive, SharePoint, Outlook, etc.\nEffective immediately.	阻止搜索 OneDrive、SharePoint、Outlook 等云端信息。\n立即生效。
+DisableRecommendedAppsName	Disable recommended apps	禁止推荐应用
+DisableRecommendedAppsDescription	Effective immediately.	立即生效。
+DisableAutoPlayName	Disable autoplay	禁止自动播放
+DisableAutoPlayDescription	Auto-playing CDs or USB drives could lead to virus infections.\nEffective immediately.	自动播放光盘或者 U 盘可能导致中毒。\n立即生效。
+EnableWindowsDeliveryOptimizationName	Enable windows delivery optimization	开启 Windows 传递优化
+EnableWindowsDeliveryOptimizationDescription	Windows Delivery Optimization can download system updates from other computers in the local network, improving efficiency.\nEffective immediately.	Windows 传递优化可以从局域网其他电脑下载系统补丁，提升效率。\n立即生效。
+DoNotShowFrequentFoldersInFileExplorerName	Do not show frequent folders in file explorer	文件资源管理器中不显示常用文件夹
+DoNotShowFrequentFoldersInFileExplorerDescription	Effective immediately.	立即生效。
+DoNotShowRecentlyUsedFilesInFileExplorerName	Do not show recently used files in file explorer	文件资源管理器中不显示最近使用的文件
+DoNotShowRecentlyUsedFilesInFileExplorerDescription	Effective immediately.	立即生效。
+DoNotShowFilesFromOfficeComInFileExplorerName	Do not show files from office.com in file explorer	文件资源管理器中不显示来自 Office.com 的文件
+DoNotShowFilesFromOfficeComInFileExplorerDescription	Effective immediately.	立即生效。
+DoNotShowNewlyInstalledAppsInTheStartMenuName	Do not show newly installed apps in the start menu	开始菜单不显示新安装的应用
+DoNotShowNewlyInstalledAppsInTheStartMenuDescription	Effective immediately.	立即生效。
+DoNotShowFrequentlyUsedAppsInTheStartMenuName	Do not show frequently used apps in the start menu	开始菜单不显示常用的应用
+DoNotShowFrequentlyUsedAppsInTheStartMenuDescription	Effective immediately.	立即生效。
+DisablePersonalizedAdsName	Disable personalized ads	禁用个性化广告
+DisablePersonalizedAdsDescription	Personalized ad tracking follows my advertising ID to learn my preferences.\nEffective immediately.	个性化广告跟踪我的广告 ID，了解我的喜好。\n立即生效。
+PreventWebsitesFromKnowingMyLanguageName	Prevent websites from knowing my language	禁止网站知道我使用的语言
+PreventWebsitesFromKnowingMyLanguageDescription	Effective immediately.	立即生效。
+PreventWindowsFromTrackingAppsILaunchName	Prevent windows from tracking apps I launch	禁止 Windows 跟踪我启动的应用
+PreventWindowsFromTrackingAppsILaunchDescription	Effective immediately.	立即生效。
+PreventWindowsFromTrackingFilesIOpenName	Prevent windows from tracking files I open	禁止 Windows 跟踪我我打开的文件
+PreventWindowsFromTrackingFilesIOpenDescription	Effective immediately.	立即生效。
+PreventWindowsFromTrackingMySystemSettingsName	Prevent windows from tracking my system settings	禁止 Windows 跟踪我的系统设置
+PreventWindowsFromTrackingMySystemSettingsDescription	Effective immediately.	立即生效。
+UseClassicalContextMenuName	Use the classic right-click menu in Windows 10	使用 Win10 经典右键菜单
+UseClassicalContextMenuDescription	The default right-click menu in Windows 11 lacks many software features and has compatibility issues. Restarting File Explorer will apply the changes.	Windows 11 默认右键菜单少了许多软件的功能，兼容性不佳。\n重启资源管理器生效。
+VisualEffectsName	Disable some visual effects	禁用部分视觉效果
+VisualEffectsDescription	Windows enables certain visual effects and animations that can consume performance and slow down operations. It is recommended to disable them. Some changes require re-logging to take effect.	Windows 开启了一些视觉效果和动画，会消耗一些性能，并拖慢操作速度，建议禁用。\n部分需要重新登录生效。
+WindowsActivatorName	Activate Windows	激活 Windows
+WindowsActivatorDescription	An unactivated Windows lacks some features and doesn’t perform optimally, so activation is recommended. Changes take effect immediately.	未激活的 Windows 缺少部分功能，性能也不是最佳，建议激活。\n立即生效。
+WindowsUpdateName	Enable Windows Update	启用 Windows 更新
+WindowsUpdateDescription	Windows Update can fix system vulnerabilities and improve system security. It is recommended to enable it. Changes take effect immediately.	Windows 更新可以修复系统漏洞，提高系统安全性，建议启用。\n立即生效。

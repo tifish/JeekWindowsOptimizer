@@ -4,13 +4,10 @@ namespace JeekWindowsOptimizer;
 
 public class WindowsUpdateItem : OptimizationItem
 {
-    public override string GroupName => "安全";
-    public override string Name => "启用 Windows 更新";
+    public override string GroupNameKey => "Security";
+    public override string NameKey => "WindowsUpdateName";
 
-    public override string Description => """
-                                          Windows 更新可以修复系统漏洞，提高系统安全性，建议启用。
-                                          立即生效。
-                                          """;
+    public override string DescriptionKey => "WindowsUpdateDescription";
 
     private const string KeyPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings";
 
