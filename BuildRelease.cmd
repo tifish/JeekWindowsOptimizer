@@ -7,6 +7,5 @@ rd /s /q "bin\Logs"
 
 "C:\Program Files\Microsoft Visual Studio\2022\Preview\MSBuild\Current\Bin\amd64\MSBuild.exe" JeekWindowsOptimizer.sln -t:Rebuild -p:Configuration=Release
 if errorlevel 1 pause
-@REM dotnet build JeekWindowsOptimizer.sln -c Release
 
 endlocal

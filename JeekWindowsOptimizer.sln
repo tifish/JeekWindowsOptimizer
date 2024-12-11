@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeekWindowsOptimizer", "JeekWindowsOptimizer.csproj", "{6993C185-1C6E-4671-80A6-AEA20E007DCD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeekWindowsOptimizer", "JeekWindowsOptimizer\JeekWindowsOptimizer.csproj", "{6993C185-1C6E-4671-80A6-AEA20E007DCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeekTools", "..\JeekTools.NET\JeekTools.csproj", "{C5928FA6-CB8E-42F0-86BA-2707BE111ACC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeekTools", "JeekTools.NET\JeekTools.csproj", "{C5928FA6-CB8E-42F0-86BA-2707BE111ACC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
