@@ -19,7 +19,7 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            Localizer.SetLocalizer(new TabLocalizer(@"Data\Languages.tab"));
+            Localizer.SetLocalizer(new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab")));
 
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT

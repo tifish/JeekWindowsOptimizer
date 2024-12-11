@@ -9,7 +9,7 @@ public static class RegistryItemManager
     public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!await tabFile.LoadAsync(@"Data\RegistryValueItems.tab"))
+        if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\RegistryValueItems.tab")))
             return;
 
         var itemsDict = new Dictionary<string, RegistryItem>();

@@ -9,7 +9,7 @@ public static class MicrosoftStoreItemManager
     public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!await tabFile.LoadAsync(@"Data\MicrosoftStoreItems.tab"))
+        if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\MicrosoftStoreItems.tab")))
             return;
 
         foreach (var row in tabFile.Rows.Skip(1))
