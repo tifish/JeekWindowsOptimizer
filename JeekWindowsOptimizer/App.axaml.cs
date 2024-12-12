@@ -4,12 +4,16 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Jeek.Avalonia.Localization;
+using JeekTools;
 using JeekWindowsOptimizer.Views;
+using Microsoft.Extensions.Logging;
 
 namespace JeekWindowsOptimizer;
 
 public class App : Application
 {
+    private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -17,10 +21,10 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        Localizer.SetLocalizer(new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab")));
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            Localizer.SetLocalizer(new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab")));
-
             // Line below is needed to remove Avalonia data validation.
             // Without this line you will get duplicate validations from both Avalonia and CT
             BindingPlugins.DataValidators.RemoveAt(0);
