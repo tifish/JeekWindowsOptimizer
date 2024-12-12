@@ -4,7 +4,7 @@ using Jeek.Avalonia.Localization;
 
 namespace JeekWindowsOptimizer;
 
-public partial class OptimizationGroup(string nameKey, OptimizationItem[] items) : ObservableObject
+public class OptimizationGroup(string nameKey, OptimizationItem[] items) : ObservableObject
 {
     public string NameKey => nameKey;
     public string Name => Localizer.Get(NameKey);
@@ -15,7 +15,4 @@ public partial class OptimizationGroup(string nameKey, OptimizationItem[] items)
     {
         OnPropertyChanged(nameof(Name));
     }
-
-    [ObservableProperty]
-    public partial bool IsVisible { get; set; } = true;
 }

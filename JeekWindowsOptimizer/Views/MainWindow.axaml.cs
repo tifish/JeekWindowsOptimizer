@@ -36,7 +36,8 @@ public partial class MainWindow : Window
     private async void ToggleButton_OnIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         var toggleButton = (ToggleButton)sender!;
-        var optimizationItem = (OptimizationItem)toggleButton.DataContext!;
+        if (toggleButton.DataContext is not OptimizationItem optimizationItem)
+            return;
         var isOptimized = toggleButton.IsChecked ?? false;
 
         if (optimizationItem.IsOptimized == isOptimized)

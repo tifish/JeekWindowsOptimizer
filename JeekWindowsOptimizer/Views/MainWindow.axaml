@@ -42,16 +42,16 @@
                     IsVisible="{Binding !IsBusy}" />
             <TextBlock HorizontalAlignment="Center" FontSize="20" Text="{Binding StatusMessage}" />
         </StackPanel>
-        
+
         <TabStrip Grid.Row="1" Margin="5" SelectedIndex="{Binding SelectedTabIndex}">
-            <TabItem Header="{l:Localize Optimizing}"/>
-            <TabItem Header="{l:Localize Personal}"/>
+            <TabItem Header="{l:Localize Optimizing}" />
+            <TabItem Header="{l:Localize Personal}" />
         </TabStrip>
-        
+
         <ScrollViewer Grid.Row="2" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">
 
             <!-- Groups -->
-            <ItemsControl ItemsSource="{Binding OptimizationGroups }">
+            <ItemsControl ItemsSource="{Binding Groups }">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical" Spacing="10" />
@@ -60,8 +60,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Expander IsExpanded="True" HorizontalAlignment="Stretch" 
-                                  IsVisible="{Binding IsVisible}">
+                        <Expander IsExpanded="True" HorizontalAlignment="Stretch">
                             <Expander.Header>
                                 <TextBlock FontWeight="Bold" FontSize="30" Text="{Binding Name}" />
                             </Expander.Header>
@@ -77,8 +76,7 @@
                                     <DataTemplate>
 
                                         <Border Background="{DynamicResource SystemBaseLowColor}" CornerRadius="5"
-                                                PointerPressed="InputElement_OnPointerPressed"
-                                                IsVisible="{Binding IsVisible }">
+                                                PointerPressed="InputElement_OnPointerPressed">
 
                                             <StackPanel Orientation="Vertical" Spacing="10">
                                                 <Grid RowDefinitions="*" ColumnDefinitions="Auto *">

@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
@@ -16,27 +15,17 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     public partial int SelectedTabIndex { get; set; }
 
+    private bool _showPersonal;
+
     partial void OnSelectedTabIndexChanged(int value)
     {
-        var showPersonalItemsOnly = value == 1;
-
-        foreach (var group in OptimizationGroups)
-        {
-            var hasVisibleItem = false;
-
-            foreach (var item in group.Items)
-            {
-                item.IsVisible = !(showPersonalItemsOnly ^ item.IsPersonal);
-                if (item.IsVisible)
-                    hasVisibleItem = true;
-            }
-
-            group.IsVisible = hasVisibleItem;
-        }
+        _showPersonal = value == 1;
+        Groups.Replace(_showPersonal ? PersonalGroups : OptimizingGroups);
     }
 
-    [ObservableProperty]
-    public partial ObservableCollection<OptimizationGroup> OptimizationGroups { get; set; } = [];
+    public FastObservableCollection<OptimizationGroup> Groups { get; } = [];
+    public List<OptimizationGroup> OptimizingGroups { get; } = [];
+    public List<OptimizationGroup> PersonalGroups { get; } = [];
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = Localizer.Get("Initializing");
@@ -51,7 +40,7 @@ public partial class MainViewModel : ObservableObject
 
         Localizer.LanguageChanged += (_, _) =>
         {
-            foreach (var group in OptimizationGroups)
+            foreach (var group in Groups)
             {
                 group.NotifyLanguageChanged();
 
@@ -65,8 +54,8 @@ public partial class MainViewModel : ObservableObject
     {
         if (Design.IsDesignMode)
         {
-            OptimizationGroups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
-            OptimizationGroups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
+            Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
+            Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
             return;
         }
 
@@ -95,14 +84,21 @@ public partial class MainViewModel : ObservableObject
 
     private void AddOptimizationItem(OptimizationItem item)
     {
-        foreach (var group in OptimizationGroups)
+        var groups = item.IsPersonal
+            ? PersonalGroups
+            : OptimizingGroups;
+
+        foreach (var group in groups)
             if (group.NameKey == item.GroupNameKey)
             {
                 group.Items.Add(item);
                 return;
             }
 
-        OptimizationGroups.Add(new OptimizationGroup(item.GroupNameKey, [item]));
+        var newGroup = new OptimizationGroup(item.GroupNameKey, [item]);
+        groups.Add(newGroup);
+        if (!(item.IsPersonal ^ _showPersonal))
+            Groups.Add(newGroup);
     }
 
     public async Task OptimizeCheckedItems()
@@ -117,10 +113,10 @@ public partial class MainViewModel : ObservableObject
             var shouldTurnOffTamperProtection = false;
             var shouldTurnOffOnAccessProtection = false;
 
-            foreach (var group in OptimizationGroups)
+            foreach (var group in Groups)
                 foreach (var item in group.Items)
                 {
-                    if (!item.IsVisible || !item.IsChecked || item.IsOptimized)
+                    if (!item.IsChecked || item.IsOptimized)
                         continue;
 
                     shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
@@ -139,10 +135,10 @@ public partial class MainViewModel : ObservableObject
             var shouldReboot = false;
             var shouldRestartExplorer = false;
 
-            foreach (var group in OptimizationGroups)
+            foreach (var group in Groups)
                 foreach (var item in group.Items)
                 {
-                    if (!item.IsVisible || !item.IsChecked || item.IsOptimized)
+                    if (!item.IsChecked || item.IsOptimized)
                         continue;
 
                     StatusMessage = string.Format(Localizer.Get("OptimizingItem"), item.Name);

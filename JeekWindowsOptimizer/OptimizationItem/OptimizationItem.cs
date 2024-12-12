@@ -180,7 +180,4 @@ public abstract partial class OptimizationItem : ObservableObject
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Description));
     }
-
-    [ObservableProperty]
-    public partial bool IsVisible { get; set; } = true;
 }
