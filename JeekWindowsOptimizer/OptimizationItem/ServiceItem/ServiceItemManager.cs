@@ -14,15 +14,16 @@ public static class ServiceItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 3)
+            if (row.Count != 4)
                 continue;
 
             var groupNameKey = row[0];
             var nameKey = row[1] + "Name";
             var descriptionKey = row[1] + "Description";
-            var serviceName = row[2];
+            var isPersonal = row[2].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var serviceName = row[3];
 
-            var item = new ServiceItem(groupNameKey, nameKey, descriptionKey, serviceName);
+            var item = new ServiceItem(groupNameKey, nameKey, descriptionKey, isPersonal, serviceName);
             Items.Add(item);
         }
     }

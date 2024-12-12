@@ -16,7 +16,7 @@ public static class RegistryItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 12)
+            if (row.Count != 13)
                 continue;
 
             var index = -1;
@@ -24,6 +24,7 @@ public static class RegistryItemManager
             var groupNameKey = row[++index];
             var nameKey = row[++index] + "Name";
             var descriptionKey = row[index] + "Description";
+            var isPersonal = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
             var keyPath = row[++index];
             var valueName = row[++index];
             var type = row[++index];
@@ -50,6 +51,7 @@ public static class RegistryItemManager
             {
                 item = new RegistryItem(groupNameKey, nameKey, descriptionKey)
                 {
+                    IsPersonal = isPersonal,
                     ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection,
                     ShouldUpdateGroupPolicy = shouldUpdateGroupPolicy,
                     ShouldReboot = shouldReboot,

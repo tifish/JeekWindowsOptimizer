@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Jeek.Avalonia.Localization;
@@ -60,5 +61,15 @@ public partial class MainWindow : Window
             model.IsBusy = false;
             model.StatusMessage = string.Format(Localizer.Get("OperatingItemFinished"), optimizationItem.Name);
         }
+    }
+
+    private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            return;
+
+        var border = (Border)sender!;
+        var item = border.DataContext as OptimizationItem;
+        item!.ToggleChecked();
     }
 }

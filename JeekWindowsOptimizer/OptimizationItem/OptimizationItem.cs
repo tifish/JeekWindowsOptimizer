@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
 using JeekTools;
 using MsBox.Avalonia;
@@ -12,13 +11,15 @@ namespace JeekWindowsOptimizer;
 
 public abstract partial class OptimizationItem : ObservableObject
 {
-    public  string GroupName => Localizer.Get(GroupNameKey);
-    public  string Name => Localizer.Get(NameKey);
-    public  string Description => Localizer.Get(DescriptionKey);
+    public string GroupName => Localizer.Get(GroupNameKey);
+    public string Name => Localizer.Get(NameKey);
+    public string Description => Localizer.Get(DescriptionKey);
 
     public abstract string GroupNameKey { get; }
     public abstract string NameKey { get; }
     public abstract string DescriptionKey { get; }
+
+    public bool IsPersonal { get; set; }
 
     [ObservableProperty]
     public partial bool IsOptimized { get; protected set; }
@@ -160,8 +161,7 @@ public abstract partial class OptimizationItem : ObservableObject
     [ObservableProperty]
     public partial bool IsChecked { get; set; } = true;
 
-    [RelayCommand]
-    private void ToggleChecked()
+    public void ToggleChecked()
     {
         IsChecked = !IsChecked;
     }
@@ -172,7 +172,6 @@ public abstract partial class OptimizationItem : ObservableObject
     public bool ShouldTurnOffOnAccessProtection { get; set; }
     public bool ShouldUpdateGroupPolicy { get; set; }
     public bool ShouldReboot { get; set; }
-
     public bool ShouldRestartExplorer { get; set; }
 
     public void NotifyLanguageChanged()
@@ -181,4 +180,7 @@ public abstract partial class OptimizationItem : ObservableObject
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Description));
     }
+
+    [ObservableProperty]
+    public partial bool IsVisible { get; set; } = true;
 }

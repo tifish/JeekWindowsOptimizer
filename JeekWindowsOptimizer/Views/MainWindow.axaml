@@ -25,7 +25,7 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto *">
+    <Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto Auto *">
         <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="0,0,0,10">
             <StackPanel.ContextMenu>
                 <ContextMenu>
@@ -42,8 +42,13 @@
                     IsVisible="{Binding !IsBusy}" />
             <TextBlock HorizontalAlignment="Center" FontSize="20" Text="{Binding StatusMessage}" />
         </StackPanel>
-
-        <ScrollViewer Grid.Row="1" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">
+        
+        <TabStrip Grid.Row="1" Margin="5" SelectedIndex="{Binding SelectedTabIndex}">
+            <TabItem Header="Optimizing"/>
+            <TabItem Header="Personal"/>
+        </TabStrip>
+        
+        <ScrollViewer Grid.Row="2" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">
 
             <!-- Groups -->
             <ItemsControl ItemsSource="{Binding OptimizationGroups }">
@@ -55,7 +60,8 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Expander IsExpanded="True" HorizontalAlignment="Stretch">
+                        <Expander IsExpanded="True" HorizontalAlignment="Stretch" 
+                                  IsVisible="{Binding IsVisible}">
                             <Expander.Header>
                                 <TextBlock FontWeight="Bold" FontSize="30" Text="{Binding Name}" />
                             </Expander.Header>
@@ -70,12 +76,9 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
 
-                                        <Border Background="{DynamicResource SystemBaseLowColor}" CornerRadius="5">
-                                            <Interaction.Behaviors>
-                                                <EventTriggerBehavior EventName="PointerPressed">
-                                                    <InvokeCommandAction Command="{Binding ToggleCheckedCommand}" />
-                                                </EventTriggerBehavior>
-                                            </Interaction.Behaviors>
+                                        <Border Background="{DynamicResource SystemBaseLowColor}" CornerRadius="5"
+                                                PointerPressed="InputElement_OnPointerPressed"
+                                                IsVisible="{Binding IsVisible }">
 
                                             <StackPanel Orientation="Vertical" Spacing="10">
                                                 <Grid RowDefinitions="*" ColumnDefinitions="Auto *">
@@ -83,7 +86,8 @@
                                                         <CheckBox IsChecked="{Binding IsChecked}" />
                                                         <TextBlock FontWeight="Bold" FontSize="20" Text="{Binding Name}" VerticalAlignment="Center" />
                                                     </StackPanel>
-                                                    <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right" IsChecked="{Binding IsOptimized, Mode=OneWay}"
+                                                    <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right"
+                                                                  IsChecked="{Binding IsOptimized, Mode=OneWay}"
                                                                   OnContent="{l:Localize Optimized}" OffContent="{l:Localize NotOptimized}"
                                                                   IsCheckedChanged="ToggleButton_OnIsCheckedChanged" />
                                                 </Grid>

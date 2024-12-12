@@ -7,12 +7,12 @@ public class MicrosoftStoreItem : OptimizationItem
     public override string DescriptionKey { get; }
     private string PackageName { get; }
 
-    public MicrosoftStoreItem(string groupNameKey, string nameKey, string descriptionKey, string packageName)
+    public MicrosoftStoreItem(string groupNameKey, string nameKey, string descriptionKey, bool isPersonal, string packageName)
     {
         GroupNameKey = groupNameKey;
         NameKey = nameKey;
         DescriptionKey = descriptionKey;
-
+        IsPersonal = isPersonal;
         PackageName = packageName;
 
         IsOptimized = !MicrosoftStore.HasPackage(PackageName);

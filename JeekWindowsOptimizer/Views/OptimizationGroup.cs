@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Jeek.Avalonia.Localization;
 
 namespace JeekWindowsOptimizer;
 
-public class OptimizationGroup(string nameKey, OptimizationItem[] items) : INotifyPropertyChanged
+public partial class OptimizationGroup(string nameKey, OptimizationItem[] items) : ObservableObject
 {
     public string NameKey => nameKey;
     public string Name => Localizer.Get(NameKey);
@@ -17,10 +18,6 @@ public class OptimizationGroup(string nameKey, OptimizationItem[] items) : INoti
         OnPropertyChanged(nameof(Name));
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    [ObservableProperty]
+    public partial bool IsVisible { get; set; } = true;
 }

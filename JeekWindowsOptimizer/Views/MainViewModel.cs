@@ -14,6 +14,28 @@ public partial class MainViewModel : ObservableObject
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
 
     [ObservableProperty]
+    public partial int SelectedTabIndex { get; set; }
+
+    partial void OnSelectedTabIndexChanged(int value)
+    {
+        var showPersonalItemsOnly = value == 1;
+
+        foreach (var group in OptimizationGroups)
+        {
+            var hasVisibleItem = false;
+
+            foreach (var item in group.Items)
+            {
+                item.IsVisible = !showPersonalItemsOnly || item.IsPersonal;
+                if (item.IsVisible)
+                    hasVisibleItem = true;
+            }
+
+            group.IsVisible = hasVisibleItem;
+        }
+    }
+
+    [ObservableProperty]
     public partial ObservableCollection<OptimizationGroup> OptimizationGroups { get; set; } = [];
 
     [ObservableProperty]
@@ -98,7 +120,7 @@ public partial class MainViewModel : ObservableObject
             foreach (var group in OptimizationGroups)
                 foreach (var item in group.Items)
                 {
-                    if (!item.IsChecked || item.IsOptimized)
+                    if (!item.IsVisible || !item.IsChecked || item.IsOptimized)
                         continue;
 
                     shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
@@ -120,7 +142,7 @@ public partial class MainViewModel : ObservableObject
             foreach (var group in OptimizationGroups)
                 foreach (var item in group.Items)
                 {
-                    if (!item.IsChecked || item.IsOptimized)
+                    if (!item.IsVisible || !item.IsChecked || item.IsOptimized)
                         continue;
 
                     StatusMessage = string.Format(Localizer.Get("OptimizingItem"), item.Name);

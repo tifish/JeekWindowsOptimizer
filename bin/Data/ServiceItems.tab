@@ -1,5 +1,5 @@
-﻿GroupName	Name	ServiceName
-System	DisableProgramCompatibilityAssistantService	PcaSvc
-System	DisableDiagnosticPolicyService	DPS
-System	DisableWindowsSearchService	WSearch
-System	DisableSysMainService	SysMain
+﻿GroupName	Name	IsPersonal	ServiceName
+System	DisableProgramCompatibilityAssistantService		PcaSvc
+System	DisableDiagnosticPolicyService		DPS
+System	DisableWindowsSearchService		WSearch
+System	DisableSysMainService		SysMain
