@@ -29,8 +29,8 @@
         <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="0,0,0,10">
             <StackPanel.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="{l:Localize en}" Command="{Binding SwitchToEnglishCommand}" />
-                    <MenuItem Header="{l:Localize zh}" Command="{Binding SwitchToChineseCommand}" />
+                    <MenuItem Header="{l:Localize en}" Command="{Binding SwitchToEnglish}" />
+                    <MenuItem Header="{l:Localize zh}" Command="{Binding SwitchToChinese}" />
                 </ContextMenu>
             </StackPanel.ContextMenu>
 

@@ -49,7 +49,7 @@ public partial class MainViewModel : ObservableObject
     {
         await InitializeItems();
 
-        Localizer.LanguageChanged += (sender, e) =>
+        Localizer.LanguageChanged += (_, _) =>
         {
             foreach (var group in OptimizationGroups)
             {
@@ -180,13 +180,11 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
     private void SwitchToEnglish()
     {
         Localizer.Language = "en";
     }
 
-    [RelayCommand]
     private void SwitchToChinese()
     {
         Localizer.Language = "zh";
