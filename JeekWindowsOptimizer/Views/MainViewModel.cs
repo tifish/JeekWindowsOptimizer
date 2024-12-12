@@ -106,6 +106,8 @@ public partial class MainViewModel : ObservableObject
         OptimizationItem.InBatching = true;
         IsBusy = true;
 
+        var groups = _showPersonal ? PersonalGroups : OptimizingGroups;
+
         try
         {
             StatusMessage = Localizer.Get("PreOptimizationPreparations");
@@ -113,7 +115,7 @@ public partial class MainViewModel : ObservableObject
             var shouldTurnOffTamperProtection = false;
             var shouldTurnOffOnAccessProtection = false;
 
-            foreach (var group in Groups)
+            foreach (var group in groups)
                 foreach (var item in group.Items)
                 {
                     if (!item.IsChecked || item.IsOptimized)
@@ -135,7 +137,7 @@ public partial class MainViewModel : ObservableObject
             var shouldReboot = false;
             var shouldRestartExplorer = false;
 
-            foreach (var group in Groups)
+            foreach (var group in groups)
                 foreach (var item in group.Items)
                 {
                     if (!item.IsChecked || item.IsOptimized)
