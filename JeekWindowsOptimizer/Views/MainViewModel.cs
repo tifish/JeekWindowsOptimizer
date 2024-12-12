@@ -26,7 +26,7 @@ public partial class MainViewModel : ObservableObject
 
             foreach (var item in group.Items)
             {
-                item.IsVisible = !showPersonalItemsOnly || item.IsPersonal;
+                item.IsVisible = !(showPersonalItemsOnly ^ item.IsPersonal);
                 if (item.IsVisible)
                     hasVisibleItem = true;
             }
