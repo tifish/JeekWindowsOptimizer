@@ -110,8 +110,8 @@ PreventWindowsFromTrackingMySystemSettingsName	Prevent windows from tracking my 
 PreventWindowsFromTrackingMySystemSettingsDescription	Effective immediately.	立即生效。
 UseClassicalContextMenuName	Use the classic right-click menu in Windows 10	使用 Win10 经典右键菜单
 UseClassicalContextMenuDescription	The default right-click menu in Windows 11 lacks many software features and has compatibility issues. Restarting File Explorer will apply the changes.	Windows 11 默认右键菜单少了许多软件的功能，兼容性不佳。\n重启资源管理器生效。
-VisualEffectsName	Disable some visual effects	禁用部分视觉效果
-VisualEffectsDescription	Windows enables certain visual effects and animations that can consume performance and slow down operations. It is recommended to disable them. Some changes require re-logging to take effect.	Windows 开启了一些视觉效果和动画，会消耗一些性能，并拖慢操作速度，建议禁用。\n部分需要重新登录生效。
+DisableVisualEffectsName	Disable some visual effects	禁用部分视觉效果
+DisableVisualEffectsDescription	Windows enables certain visual effects and animations that can consume performance and slow down operations. It is recommended to disable them. Some changes require re-logging to take effect.	Windows 开启了一些视觉效果和动画，会消耗一些性能，并拖慢操作速度，建议禁用。\n部分需要重新登录生效。
 WindowsActivatorName	Activate Windows	激活 Windows
 WindowsActivatorDescription	An unactivated Windows lacks some features and doesn’t perform optimally, so activation is recommended. Changes take effect immediately.	未激活的 Windows 缺少部分功能，性能也不是最佳，建议激活。\n立即生效。
 WindowsUpdateName	Enable Windows Update	启用 Windows 更新
