@@ -44,8 +44,8 @@
         </StackPanel>
         
         <TabStrip Grid.Row="1" Margin="5" SelectedIndex="{Binding SelectedTabIndex}">
-            <TabItem Header="Optimizing"/>
-            <TabItem Header="Personal"/>
+            <TabItem Header="{l:Localize Optimizing}"/>
+            <TabItem Header="{l:Localize Personal}"/>
         </TabStrip>
         
         <ScrollViewer Grid.Row="2" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">

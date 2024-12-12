@@ -180,12 +180,12 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private void SwitchToEnglish()
+    public void SwitchToEnglish()
     {
         Localizer.Language = "en";
     }
 
-    private void SwitchToChinese()
+    public void SwitchToChinese()
     {
         Localizer.Language = "zh";
     }

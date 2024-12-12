@@ -11,6 +11,8 @@ PreOptimizationPreparations	Pre-optimization preparations…	优化前准备工�
 OptimizingItem	Optimizing: {0}…	正在优化：{0}…
 PostOptimizationProcessing	Post-optimization processing…	优化后处理…
 OptimizationCompleted	Optimization completed!	优化已完成！
+Optimizing	Optimizing	优化
+Personal	Personal	个性化
 Optimized	Optimized	已优化
 NotOptimized	Not optimized	未优化
 Uninstall	Uninstall	卸载
