@@ -45,8 +45,8 @@ public class App : Application
             return;
 
         // Limit window size to screen.WorkingArea
-        var workAreaWidth = screen.WorkingArea.Width;
-        var workAreaHeight = (int)(screen.WorkingArea.Height * 0.9); // Under Windows 11 height exceeds screen.WorkingArea
+        var workAreaWidth = screen.WorkingArea.Width / screen.Scaling;
+        var workAreaHeight = (int)(screen.WorkingArea.Height * 0.9) / screen.Scaling; // Under Windows 11 height exceeds screen.WorkingArea
         if (mainWindow.Width > workAreaWidth)
             mainWindow.Width = workAreaWidth;
         if (mainWindow.Height > workAreaHeight)
@@ -54,7 +54,7 @@ public class App : Application
 
         // Center window in screen.WorkingArea
         mainWindow.Position = new PixelPoint(
-            (int)(workAreaWidth - mainWindow.Width) / 2,
-            (int)(workAreaHeight - mainWindow.Height) / 2);
+            (int)((workAreaWidth - mainWindow.Width) / 2 * screen.Scaling),
+            (int)((workAreaHeight - mainWindow.Height) / 2 * screen.Scaling));
     }
 }
