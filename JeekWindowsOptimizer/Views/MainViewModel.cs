@@ -68,6 +68,8 @@ public partial class MainViewModel : ObservableObject
         AddOptimizationItem(new UninstallOneDriveItem());
         AddOptimizationItem(new WindowsActivatorItem());
         AddOptimizationItem(new WindowsUpdateItem());
+        if (!Battery.HasBattery())
+            AddOptimizationItem(new BestPerformancePowerModeItem());
 
         await ServiceItemManager.Load();
         foreach (var item in ServiceItemManager.Items)
