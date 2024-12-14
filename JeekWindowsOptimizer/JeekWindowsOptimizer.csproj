@@ -33,6 +33,7 @@
         <PackageReference Include="LoadingIndicators.Avalonia" Version="11.0.11.1" />
         <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
         <PackageReference Include="nulastudio.NetBeauty" Version="2.1.4.6" />
+        <PackageReference Include="PowerManagerAPI" Version="0.2.0-CI-20200413-015121" />
         <PackageReference Include="System.Management" Version="9.0.0" />
         <!-- PowerShell begin -->
         <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="7.4.6" />
@@ -46,6 +47,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\JeekTools.NET\JeekTools.csproj" />
+        <ProjectReference Include="..\PowerManagerAPI\PowerManagerAPI\PowerManagerAPI.csproj" />
     </ItemGroup>
 
     <PropertyGroup>

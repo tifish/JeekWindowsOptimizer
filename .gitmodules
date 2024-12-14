@@ -1,3 +1,6 @@
 [submodule "JeekTools.NET"]
 	path = JeekTools.NET
 	url = https://github.com/tifish/JeekTools.NET.git
+[submodule "PowerManagerAPI"]
+	path = PowerManagerAPI
+	url = https://github.com/tifish/PowerManagerAPI.git

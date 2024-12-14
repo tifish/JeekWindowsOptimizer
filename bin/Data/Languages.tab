@@ -120,3 +120,5 @@ WindowsUpdateName	Enable Windows Update	启用 Windows 更新
 WindowsUpdateDescription	Windows Update can fix system vulnerabilities and improve system security. It is recommended to enable it. Changes take effect immediately.	Windows 更新可以修复系统漏洞，提高系统安全性，建议启用。\n立即生效。
 BestPerformancePowerModeName	Best performance power mode	最佳性能电源模式
 BestPerformancePowerModeDescription	The best performance power mode ensures that the system operates in a high-performance state while avoiding incorrect big-little core scheduling.\nEffective immediately.	最佳性能电源模式能保证系统运行在高性能状态，同时避免错误的大小核调度。\n立即生效。
+SetIdleTimeName	The computer does not automatically sleep.	电脑不自动休眠
+SetIdleTimeDescription	Set the computer not to sleep automatically, and turn off the screen after 30 minutes, and apply only when plugged in..\nEffective immediately.	设置电脑不自动休眠，30 分钟关闭屏幕，仅在插电时生效。\n立即生效。

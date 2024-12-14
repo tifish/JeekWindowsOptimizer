@@ -1,4 +1,4 @@
-﻿using JeekTools;
+﻿using PowerManagerAPI;
 
 namespace JeekWindowsOptimizer;
 
@@ -6,19 +6,18 @@ public class BestPerformancePowerModeItem : OptimizationItem
 {
     public override string GroupNameKey => "System";
     public override string NameKey => "BestPerformancePowerModeName";
-
     public override string DescriptionKey => "BestPerformancePowerModeDescription";
 
     public BestPerformancePowerModeItem()
     {
-        IsOptimized = Power.GetPowerPlan() == PowerPlanType.Balanced
-                      && Power.GetPowerMode() == PowerModeType.BestPerformance;
+        IsOptimized = PowerManager.ActivePowerPlan == PowerPlan.Balanced
+                      && PowerManager.PowerMode == PowerMode.BestPerformance;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        var result1 = Power.SetPowerPlan(value ? PowerPlanType.HighPerformance : PowerPlanType.Balanced);
-        var result2 = Power.SetPowerMode(value ? PowerModeType.BestPerformance : PowerModeType.Balanced);
-        return Task.FromResult(result1 && result2);
+        PowerManager.ActivePowerPlan = PowerPlan.Balanced;
+        PowerManager.PowerMode = value ? PowerMode.BestPerformance : PowerMode.Balanced;
+        return Task.FromResult(true);
     }
 }

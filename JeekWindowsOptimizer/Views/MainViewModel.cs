@@ -70,6 +70,7 @@ public partial class MainViewModel : ObservableObject
         AddOptimizationItem(new WindowsUpdateItem());
         if (!Battery.HasBattery())
             AddOptimizationItem(new BestPerformancePowerModeItem());
+        AddOptimizationItem(new SetIdleTimeItem());
 
         await ServiceItemManager.Load();
         foreach (var item in ServiceItemManager.Items)

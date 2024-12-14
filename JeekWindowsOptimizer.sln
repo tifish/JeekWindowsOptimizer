@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeekWindowsOptimizer", "Jee
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JeekTools", "JeekTools.NET\JeekTools.csproj", "{C5928FA6-CB8E-42F0-86BA-2707BE111ACC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerManagerAPI", "PowerManagerAPI\PowerManagerAPI\PowerManagerAPI.csproj", "{11D90B11-3C6E-4C27-AC3E-F4A84B992628}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{C5928FA6-CB8E-42F0-86BA-2707BE111ACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5928FA6-CB8E-42F0-86BA-2707BE111ACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5928FA6-CB8E-42F0-86BA-2707BE111ACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11D90B11-3C6E-4C27-AC3E-F4A84B992628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D90B11-3C6E-4C27-AC3E-F4A84B992628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D90B11-3C6E-4C27-AC3E-F4A84B992628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D90B11-3C6E-4C27-AC3E-F4A84B992628}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
