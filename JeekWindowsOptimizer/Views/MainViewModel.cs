@@ -71,6 +71,7 @@ public partial class MainViewModel : ObservableObject
         if (!Battery.HasBattery())
             AddOptimizationItem(new BestPerformancePowerModeItem());
         AddOptimizationItem(new SetIdleTimeItem());
+        AddOptimizationItem(new DisableSystemSounds());
 
         await ServiceItemManager.Load();
         foreach (var item in ServiceItemManager.Items)
