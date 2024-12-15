@@ -48,4 +48,5 @@ Privacy	PreventWindowsFromTrackingFilesIOpen	TRUE	HKEY_CURRENT_USER\Software\Mic
 Privacy	PreventWindowsFromTrackingMySystemSettings	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-338393Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353694Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353696Enabled	int	1	0					
-Software	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main	AllowPrelaunch	int	1	0			TRUE		
+Software	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main	AllowPrelaunch	int	1	0	TRUE		TRUE		
+	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	StartupBoostEnabled	int	1	0	TRUE				
