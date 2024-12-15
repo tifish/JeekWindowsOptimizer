@@ -24,6 +24,7 @@ Taskbar	Taskbar	任务栏
 StartMenu	Start Menu	开始菜单
 Security	Security	安全
 Privacy	Privacy	隐私
+Software	Software	软件
 UninstallOneDriveName	Uninstall OneDrive	卸载 OneDrive
 UninstallOneDriveDescription	OneDrive is Microsoft's cloud storage service. It consumes resources and can be uninstalled if not in use.\nEffective immediately.	OneDrive 是微软的云盘服务，占用资源，不使用可以卸载。\n立即生效。
 DisableProgramCompatibilityAssistantServiceName	Disable the Program Compatibility Assistant Service	禁用程序兼容性助手
@@ -124,3 +125,5 @@ SetIdleTimeName	The computer does not automatically sleep.	电脑不自动休眠
 SetIdleTimeDescription	Set the computer not to sleep automatically, and turn off the screen after 30 minutes, and apply only when plugged in..\nEffective immediately.	设置电脑不自动休眠，30 分钟关闭屏幕，仅在插电时生效。\n立即生效。
 DisableSystemSoundsName	Disable system sounds.	禁止系统音效
 DisableSystemSoundsDescription	The system often makes various notification sounds, which can be quite annoying.\nEffective immediately.	系统经常会发出各种提示音，比较烦人。\n立即生效。
+DisableEdgeFromRunningInBackgroundName	Prevent Edge Browser from Running in the Background	禁止 Edge 浏览器在后台运行
+DisableEdgeFromRunningInBackgroundDescription	The Edge browser continues to run in the background even after it is closed, consuming system resources.\nEffective immediately.	Edge 浏览器在退出之后，依然会在后台运行，占用系统资源。\n立即生效。
