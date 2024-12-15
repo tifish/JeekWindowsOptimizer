@@ -127,3 +127,5 @@ DisableSystemSoundsName	Disable system sounds.	禁止系统音效
 DisableSystemSoundsDescription	The system often makes various notification sounds, which can be quite annoying.\nEffective immediately.	系统经常会发出各种提示音，比较烦人。\n立即生效。
 DisableEdgeFromRunningInBackgroundName	Prevent Edge Browser from Running in the Background	禁止 Edge 浏览器在后台运行
 DisableEdgeFromRunningInBackgroundDescription	The Edge browser continues to run in the background even after it is closed, consuming system resources.\nEffective immediately.	Edge 浏览器在退出之后，依然会在后台运行，占用系统资源。\n立即生效。
+TurnOnGameModeName	Turn on game mode	开启游戏模式
+TurnOnGameModeDescription	Game mode can improve game performance and stability.\nEffective immediately.	游戏模式可以提高游戏运行的性能和稳定性。\n立即生效
