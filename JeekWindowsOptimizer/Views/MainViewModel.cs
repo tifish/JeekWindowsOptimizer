@@ -64,6 +64,7 @@ public partial class MainViewModel : ObservableObject
             AddOptimizationItem(item);
 
         AddOptimizationItem(new VisualEffectsItem());
+        AddOptimizationItem(new DisableThumbnailsItem());
         AddOptimizationItem(new UseClassicalContextMenuItem());
         AddOptimizationItem(new UninstallOneDriveItem());
         AddOptimizationItem(new WindowsActivatorItem());
