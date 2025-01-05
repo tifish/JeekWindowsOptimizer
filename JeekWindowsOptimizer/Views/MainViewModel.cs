@@ -47,6 +47,9 @@ public partial class MainViewModel : ObservableObject
                 foreach (var item in group.Items)
                     item.NotifyLanguageChanged();
             }
+
+            UpdateItemStat(false);
+            UpdateItemStat(true);
         };
     }
 
@@ -105,12 +108,12 @@ public partial class MainViewModel : ObservableObject
         if (!(item.IsPersonal ^ _showPersonal))
             Groups.Add(newGroup);
 
-        UpdateItemStat(item);
+        UpdateItemStat(item.IsPersonal);
     }
 
-    public void UpdateItemStat(OptimizationItem item)
+    public void UpdateItemStat(bool isPersonal)
     {
-        var groups = item.IsPersonal
+        var groups = isPersonal
             ? PersonalGroups
             : OptimizingGroups;
 
@@ -118,7 +121,7 @@ public partial class MainViewModel : ObservableObject
         var optimizedItemCount = groups.Sum(group => group.Items.Count(it => it.IsOptimized));
 
         // Update the tab header
-        if (item.IsPersonal)
+        if (isPersonal)
             PersonalTabHeader = $"{Localizer.Get("Personal")}({optimizedItemCount}/{totalItemsCount})";
         else
             OptimizingTabHeader = $"{Localizer.Get("Optimizing")}({optimizedItemCount}/{totalItemsCount})";
@@ -176,7 +179,7 @@ public partial class MainViewModel : ObservableObject
                     try
                     {
                         await item.SetIsOptimized(true);
-                        UpdateItemStat(item);
+                        UpdateItemStat(item.IsPersonal);
                     }
                     catch (Exception ex)
                     {
