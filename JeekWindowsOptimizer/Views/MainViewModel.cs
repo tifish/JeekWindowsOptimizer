@@ -96,17 +96,22 @@ public partial class MainViewModel : ObservableObject
             ? PersonalGroups
             : OptimizingGroups;
 
+        var isNewGroup = true;
         foreach (var group in groups)
             if (group.NameKey == item.GroupNameKey)
             {
                 group.Items.Add(item);
-                return;
+                isNewGroup = false;
+                break;
             }
 
-        var newGroup = new OptimizationGroup(item.GroupNameKey, [item]);
-        groups.Add(newGroup);
-        if (!(item.IsPersonal ^ _showPersonal))
-            Groups.Add(newGroup);
+        if (isNewGroup)
+        {
+            var newGroup = new OptimizationGroup(item.GroupNameKey, [item]);
+            groups.Add(newGroup);
+            if (!(item.IsPersonal ^ _showPersonal))
+                Groups.Add(newGroup);
+        }
 
         UpdateItemStat(item.IsPersonal);
     }
