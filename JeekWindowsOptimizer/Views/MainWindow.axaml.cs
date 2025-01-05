@@ -49,7 +49,9 @@ public partial class MainWindow : Window
 
         try
         {
-            if (!await optimizationItem.SetIsOptimized(isOptimized))
+            if (await optimizationItem.SetIsOptimized(isOptimized))
+                model.UpdateItemStat(optimizationItem);
+            else
                 // Change the toggle immediately cause wrong UI status, so delay it
                 SynchronizationContext.Current!.Post(_ => { toggleButton.IsChecked = optimizationItem.IsOptimized; }, null);
         }

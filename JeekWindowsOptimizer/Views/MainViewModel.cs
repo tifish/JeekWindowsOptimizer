@@ -104,7 +104,31 @@ public partial class MainViewModel : ObservableObject
         groups.Add(newGroup);
         if (!(item.IsPersonal ^ _showPersonal))
             Groups.Add(newGroup);
+
+        UpdateItemStat(item);
     }
+
+    public void UpdateItemStat(OptimizationItem item)
+    {
+        var groups = item.IsPersonal
+            ? PersonalGroups
+            : OptimizingGroups;
+
+        var totalItemsCount = groups.Sum(group => group.Items.Count);
+        var optimizedItemCount = groups.Sum(group => group.Items.Count(it => it.IsOptimized));
+
+        // Update the tab header
+        if (item.IsPersonal)
+            PersonalTabHeader = $"{Localizer.Get("Personal")}({optimizedItemCount}/{totalItemsCount})";
+        else
+            OptimizingTabHeader = $"{Localizer.Get("Optimizing")}({optimizedItemCount}/{totalItemsCount})";
+    }
+
+    [ObservableProperty]
+    public partial string OptimizingTabHeader { get; set; } = Localizer.Get("Optimizing");
+
+    [ObservableProperty]
+    public partial string PersonalTabHeader { get; set; } = Localizer.Get("Personal");
 
     public async Task OptimizeCheckedItems()
     {
@@ -152,6 +176,7 @@ public partial class MainViewModel : ObservableObject
                     try
                     {
                         await item.SetIsOptimized(true);
+                        UpdateItemStat(item);
                     }
                     catch (Exception ex)
                     {
