@@ -122,9 +122,9 @@ public partial class MainViewModel : ObservableObject
 
         // Update the tab header
         if (isPersonal)
-            PersonalTabHeader = $"{Localizer.Get("Personal")}({optimizedItemCount}/{totalItemsCount})";
+            PersonalTabHeader = $"{Localizer.Get("Personal")} ({optimizedItemCount}/{totalItemsCount})";
         else
-            OptimizingTabHeader = $"{Localizer.Get("Optimizing")}({optimizedItemCount}/{totalItemsCount})";
+            OptimizingTabHeader = $"{Localizer.Get("Optimizing")} ({optimizedItemCount}/{totalItemsCount})";
     }
 
     [ObservableProperty]
