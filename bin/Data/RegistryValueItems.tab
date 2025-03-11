@@ -43,7 +43,7 @@ Privacy	DoNotShowNewlyInstalledAppsInTheStartMenu	TRUE	HKEY_CURRENT_USER\Softwar
 Privacy	DoNotShowFrequentlyUsedAppsInTheStartMenu	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start	ShowFrequentList	int	1	0					
 Privacy	DisablePersonalizedAds	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo	Enabled	int	1	0					
 Privacy	PreventWebsitesFromKnowingMyLanguage	TRUE	HKEY_CURRENT_USER\Control Panel\International\User Profile	HttpAcceptLanguageOptOut	int	0	1	TRUE				
-Privacy	PreventWindowsFromTrackingAppsILaunch	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_TrackProgs	int	1	0					
+Privacy	AllowWindowsTrackingAppsILaunch	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_TrackProgs	int	0	1					
 Privacy	PreventWindowsFromTrackingFilesIOpen	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_TrackDocs	int	1	0					
 Privacy	PreventWindowsFromTrackingMySystemSettings	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-338393Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353694Enabled	int	1	0					

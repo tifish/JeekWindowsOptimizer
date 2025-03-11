@@ -105,8 +105,8 @@ DisablePersonalizedAdsName	Disable personalized ads	禁用个性化广告
 DisablePersonalizedAdsDescription	Personalized ad tracking follows my advertising ID to learn my preferences.\nEffective immediately.	个性化广告跟踪我的广告 ID，了解我的喜好。\n立即生效。
 PreventWebsitesFromKnowingMyLanguageName	Prevent websites from knowing my language	禁止网站知道我使用的语言
 PreventWebsitesFromKnowingMyLanguageDescription	Effective immediately.	立即生效。
-PreventWindowsFromTrackingAppsILaunchName	Prevent windows from tracking apps I launch	禁止 Windows 跟踪我启动的应用
-PreventWindowsFromTrackingAppsILaunchDescription	Effective immediately.	立即生效。
+AllowWindowsTrackingAppsILaunchName	Allow windows tracking apps I launch	允许 Windows 跟踪我启动的应用
+AllowWindowsTrackingAppsILaunchDescription	So runned command can be remembered. Effective immediately.	运行对话框中的命令才能被记住。立即生效。
 PreventWindowsFromTrackingFilesIOpenName	Prevent windows from tracking files I open	禁止 Windows 跟踪我我打开的文件
 PreventWindowsFromTrackingFilesIOpenDescription	Effective immediately.	立即生效。
 PreventWindowsFromTrackingMySystemSettingsName	Prevent windows from tracking my system settings	禁止 Windows 跟踪我的系统设置
