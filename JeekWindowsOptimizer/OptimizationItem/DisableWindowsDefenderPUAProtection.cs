@@ -10,7 +10,7 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
     public override async Task Initialize()
     {
         PowerShellService.Commands.Clear();
-        PowerShellService.AddScript("(Get-MpPreference).PUAProtection");
+        PowerShellService.AddCommand("Get-MpPreference").AddCommand("Select-Object").AddParameter("ExpandProperty", "PUAProtection");
         var result = await PowerShellService.InvokeAsync();
         IsOptimized = (byte)result.First().BaseObject == 0;
     }
