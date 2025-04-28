@@ -12,11 +12,11 @@ public class UseClassicalContextMenuItem : OptimizationItem
         @"HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32",
         "");
 
-    public UseClassicalContextMenuItem()
+    public override Task Initialize()
     {
         ShouldRestartExplorer = true;
-
         IsOptimized = _registryValue.HasKey();
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

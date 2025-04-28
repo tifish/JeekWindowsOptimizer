@@ -14,8 +14,11 @@ public class MicrosoftStoreItem : OptimizationItem
         DescriptionKey = descriptionKey;
         IsPersonal = isPersonal;
         PackageName = packageName;
+    }
 
-        IsOptimized = !MicrosoftStore.HasPackage(PackageName);
+    public override async Task Initialize()
+    {
+        IsOptimized = !await MicrosoftStore.HasPackage(PackageName);
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
@@ -24,6 +27,6 @@ public class MicrosoftStoreItem : OptimizationItem
             return false;
 
         await MicrosoftStore.UninstallPackage(PackageName);
-        return !MicrosoftStore.HasPackage(PackageName);
+        return !await MicrosoftStore.HasPackage(PackageName);
     }
 }

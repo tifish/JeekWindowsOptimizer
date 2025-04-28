@@ -14,8 +14,13 @@ public class DisableSystemSounds : OptimizationItem
 
     public DisableSystemSounds()
     {
-        IsOptimized = _systemSoundSchemeValue.GetValue("") == ".None";
         IsPersonal = true;
+    }
+
+    public override Task Initialize()
+    {
+        IsOptimized = _systemSoundSchemeValue.GetValue("") == ".None";
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

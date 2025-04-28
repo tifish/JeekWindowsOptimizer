@@ -2,9 +2,10 @@ namespace JeekWindowsOptimizer;
 
 public class VisualEffectsItem : OptimizationItem
 {
-    public VisualEffectsItem()
+    public override Task Initialize()
     {
         IsOptimized = Disabled;
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

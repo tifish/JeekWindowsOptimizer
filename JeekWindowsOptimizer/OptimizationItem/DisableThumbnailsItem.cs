@@ -4,8 +4,13 @@ public class DisableThumbnailsItem : OptimizationItem
 {
     public DisableThumbnailsItem()
     {
-        IsOptimized = Disabled;
         IsPersonal = true;
+    }
+
+    public override Task Initialize()
+    {
+        IsOptimized = Disabled;
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

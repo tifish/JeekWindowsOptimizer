@@ -26,6 +26,8 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static bool InBatching { get; set; }
 
+    public abstract Task Initialize();
+
     public async Task<bool> SetIsOptimized(bool value)
     {
         if (value == IsOptimized)

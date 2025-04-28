@@ -16,8 +16,12 @@ public class ServiceItem : OptimizationItem
         IsPersonal = isPersonal;
 
         _service = new WindowsService(serviceName);
+    }
 
+    public override Task Initialize()
+    {
         IsOptimized = _service.GetStartMode() == WindowsService.StartMode.Disabled;
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

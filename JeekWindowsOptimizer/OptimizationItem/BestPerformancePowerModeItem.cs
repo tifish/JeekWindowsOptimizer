@@ -8,10 +8,11 @@ public class BestPerformancePowerModeItem : OptimizationItem
     public override string NameKey => "BestPerformancePowerModeName";
     public override string DescriptionKey => "BestPerformancePowerModeDescription";
 
-    public BestPerformancePowerModeItem()
+    public override Task Initialize()
     {
         IsOptimized = PowerManager.ActivePowerPlan == PowerPlan.Balanced
                       && PowerManager.PowerMode == PowerMode.BestPerformance;
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

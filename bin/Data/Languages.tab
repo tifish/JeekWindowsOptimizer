@@ -47,6 +47,8 @@ DisableKernelMemoryIntegrityProtectionName	Disable kernel memory integrity prote
 DisableKernelMemoryIntegrityProtectionDescription	Kernel memory integrity protection is recommended to be disabled for regular users.\nTakes effect after reboot.	内核内存完整性保护，普通用户建议禁用。\n重启生效。
 DisableWindowsDefenderApplicationControlName	Disable windows defender application control	禁用 Windows Defender 应用控制
 DisableWindowsDefenderApplicationControlDescription	Windows Defender Application Control checks applications against system policies at startup, slowing down the boot process.\nTakes effect after reboot.	Windows Defender 应用控制在启动应用时检查是否符合系统策略，拖慢启动速度。\n重启生效。
+DisableWindowsDefenderPUAProtectionName	Disable Windows Defender blocking potentially unwanted apps	禁用 Windows Defneder 阻止可能不需要的应用
+DisableWindowsDefenderPUAProtectionDescription	Blocking unwanted apps may slow down app startup.	阻止行为可能会减慢启动应用的速度。
 DisableSmartScreenName	Disable smartscreen	禁用 SmartScreen
 DisableSmartScreenDescription	SmartScreen checks files when opening applications and installation packages, affecting startup speed and blocking downloads of certain files.\nEffective immediately.	SmartScreen 在打开应用和安装包时会检查文件，影响启动速度，还会阻止下载某些文件。\n立即生效。
 DisableFastStartupName	Disable fast startup	禁用快速启动

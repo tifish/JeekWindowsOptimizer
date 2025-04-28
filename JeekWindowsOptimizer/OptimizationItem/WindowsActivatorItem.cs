@@ -10,11 +10,11 @@ public class WindowsActivatorItem : OptimizationItem
 
     public override string DescriptionKey => "WindowsActivatorDescription";
 
-    public WindowsActivatorItem()
+    public override Task Initialize()
     {
         ShouldTurnOffOnAccessProtection = true;
-
         IsOptimized = IsWindowsActivated();
+        return Task.CompletedTask;
     }
 
     private static bool IsWindowsActivated()

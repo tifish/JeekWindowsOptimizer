@@ -1,5 +1,6 @@
 ﻿using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Threading.Tasks;
 using JeekTools;
 using Microsoft.Extensions.Logging;
 using ZLogger;
@@ -10,19 +11,18 @@ public static class MicrosoftStore
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
 
-    private static readonly PowerShell _powerShell = PowerShell.Create();
-
     public static async Task Initialize()
     {
         try
         {
-            await _powerShell.AddCommand("Set-ExecutionPolicy")
+            PowerShellService.Commands.Clear();
+            await PowerShellService.AddCommand("Set-ExecutionPolicy")
                 .AddParameter("Scope", "Process")
                 .AddParameter("ExecutionPolicy", "Bypass")
                 .InvokeAsync();
 
-            _powerShell.Commands.Clear();
-            await _powerShell.AddCommand("Import-Module")
+            PowerShellService.Commands.Clear();
+            await PowerShellService.AddCommand("Import-Module")
                 .AddParameter("Name", "AppX")
                 .AddParameter("UseWindowsPowerShell")
                 .InvokeAsync();
@@ -43,13 +43,13 @@ public static class MicrosoftStore
             },
         };
 
-    public static bool HasPackage(string packageName)
+    public static async Task<bool> HasPackage(string packageName)
     {
         try
         {
-            _powerShell.Commands.Clear();
-            _powerShell.Commands.AddCommand(GetPackageCommand(packageName));
-            return _powerShell.Invoke().Count > 0;
+            PowerShellService.Commands.Clear();
+            PowerShellService.Commands.AddCommand(GetPackageCommand(packageName));
+            return (await PowerShellService.InvokeAsync()).Count > 0;
         }
         catch (Exception e)
         {
@@ -60,9 +60,9 @@ public static class MicrosoftStore
 
     public static async Task UninstallPackage(string packageName)
     {
-        _powerShell.Commands.Clear();
-        _powerShell.Commands.AddCommand(GetPackageCommand(packageName))
+        PowerShellService.Commands.Clear();
+        PowerShellService.Commands.AddCommand(GetPackageCommand(packageName))
             .AddCommand("Remove-AppxPackage");
-        await _powerShell.InvokeAsync();
+        await PowerShellService.InvokeAsync();
     }
 }

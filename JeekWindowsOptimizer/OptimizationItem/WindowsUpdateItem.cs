@@ -23,10 +23,11 @@ public class WindowsUpdateItem : OptimizationItem
 
     private readonly WindowsService _service = new("wuauserv");
 
-    public WindowsUpdateItem()
+    public override Task Initialize()
     {
         IsOptimized = _registryValues.All(value => !value.HasValue())
                       && _service.GetStartMode() != WindowsService.StartMode.Disabled;
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

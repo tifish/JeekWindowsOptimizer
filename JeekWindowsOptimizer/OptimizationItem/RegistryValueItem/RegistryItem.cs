@@ -6,9 +6,10 @@ public class RegistryItem(string groupNameKey, string nameKey, string descriptio
     public override string NameKey => nameKey;
     public override string DescriptionKey => descriptionKey;
 
-    public void Initialized()
+    public override Task Initialize()
     {
         IsOptimized = RegistryValues.All(value => value.IsOptimized);
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

@@ -10,8 +10,13 @@ public class SetIdleTimeItem : OptimizationItem
 
     public SetIdleTimeItem()
     {
-        IsOptimized = SleepTime == 0 && HibernateTime == 0 && TurnOffDisplayTime == 30 * 60;
         IsPersonal = true;
+    }
+
+    public override Task Initialize()
+    {
+        IsOptimized = SleepTime == 0 && HibernateTime == 0 && TurnOffDisplayTime == 30 * 60;
+        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)

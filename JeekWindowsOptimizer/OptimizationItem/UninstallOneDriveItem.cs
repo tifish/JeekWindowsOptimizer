@@ -13,9 +13,10 @@ public class UninstallOneDriveItem : OptimizationItem
     private readonly string _installerPath1 = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\System32\OneDriveSetup.exe");
     private readonly string _installerPath2 = Environment.ExpandEnvironmentVariables(@"%SystemRoot%\SysWOW64\OneDriveSetup.exe");
 
-    public UninstallOneDriveItem()
+    public override Task Initialize()
     {
         IsOptimized = !File.Exists(Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\Microsoft\OneDrive\OneDrive.exe"));
+        return Task.CompletedTask;
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)

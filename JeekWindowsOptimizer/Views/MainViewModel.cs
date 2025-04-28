@@ -66,6 +66,7 @@ public partial class MainViewModel : ObservableObject
         foreach (var item in RegistryItemManager.Items)
             AddOptimizationItem(item);
 
+        AddOptimizationItem(new DisableWindowsDefenderPUAProtectionItem());
         AddOptimizationItem(new VisualEffectsItem());
         AddOptimizationItem(new DisableThumbnailsItem());
         AddOptimizationItem(new UseClassicalContextMenuItem());
@@ -85,6 +86,24 @@ public partial class MainViewModel : ObservableObject
         await MicrosoftStoreItemManager.Load();
         foreach (var item in MicrosoftStoreItemManager.Items)
             AddOptimizationItem(item);
+
+        foreach (var group in OptimizingGroups)
+        {
+            foreach (var item in group.Items)
+            {
+                await item.Initialize();
+                UpdateItemStat(item.IsPersonal);
+            }
+        }
+
+        foreach (var group in PersonalGroups)
+        {
+            foreach (var item in group.Items)
+            {
+                await item.Initialize();
+                UpdateItemStat(item.IsPersonal);
+            }
+        }
 
         IsBusy = false;
         StatusMessage = Localizer.Get("InitializationFinished");
