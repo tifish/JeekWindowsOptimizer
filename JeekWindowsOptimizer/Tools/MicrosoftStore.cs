@@ -1,6 +1,4 @@
-﻿using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.Threading.Tasks;
+﻿using System.Management.Automation.Runspaces;
 using JeekTools;
 using Microsoft.Extensions.Logging;
 using ZLogger;

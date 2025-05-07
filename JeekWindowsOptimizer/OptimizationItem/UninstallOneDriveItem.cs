@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Jeek.Avalonia.Localization;
 
 namespace JeekWindowsOptimizer;
 
