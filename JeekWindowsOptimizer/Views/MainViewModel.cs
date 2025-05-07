@@ -55,60 +55,67 @@ public partial class MainViewModel : ObservableObject
 
     private async Task InitializeItems()
     {
-        if (Design.IsDesignMode)
+        try
         {
-            Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
-            Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
-            return;
-        }
-
-        await RegistryItemManager.Load();
-        foreach (var item in RegistryItemManager.Items)
-            AddOptimizationItem(item);
-
-        AddOptimizationItem(new DisableWindowsDefenderPUAProtectionItem());
-        AddOptimizationItem(new VisualEffectsItem());
-        AddOptimizationItem(new DisableThumbnailsItem());
-        AddOptimizationItem(new UseClassicalContextMenuItem());
-        AddOptimizationItem(new UninstallOneDriveItem());
-        AddOptimizationItem(new WindowsActivatorItem());
-        AddOptimizationItem(new WindowsUpdateItem());
-        if (!Battery.HasBattery())
-            AddOptimizationItem(new BestPerformancePowerModeItem());
-        AddOptimizationItem(new SetIdleTimeItem());
-        AddOptimizationItem(new DisableSystemSounds());
-
-        await ServiceItemManager.Load();
-        foreach (var item in ServiceItemManager.Items)
-            AddOptimizationItem(item);
-
-        await MicrosoftStore.Initialize();
-        await MicrosoftStoreItemManager.Load();
-        foreach (var item in MicrosoftStoreItemManager.Items)
-            AddOptimizationItem(item);
-
-        foreach (var group in OptimizingGroups)
-        {
-            foreach (var item in group.Items)
+            if (Design.IsDesignMode)
             {
-                await item.Initialize();
-                UpdateItemStat(item.IsPersonal);
+                Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
+                Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
+                return;
             }
-        }
 
-        foreach (var group in PersonalGroups)
-        {
-            foreach (var item in group.Items)
+            await RegistryItemManager.Load();
+            foreach (var item in RegistryItemManager.Items)
+                AddOptimizationItem(item);
+
+            AddOptimizationItem(new DisableWindowsDefenderPUAProtectionItem());
+            AddOptimizationItem(new VisualEffectsItem());
+            AddOptimizationItem(new DisableThumbnailsItem());
+            AddOptimizationItem(new UseClassicalContextMenuItem());
+            AddOptimizationItem(new UninstallOneDriveItem());
+            AddOptimizationItem(new WindowsActivatorItem());
+            AddOptimizationItem(new WindowsUpdateItem());
+            if (!Battery.HasBattery())
+                AddOptimizationItem(new BestPerformancePowerModeItem());
+            AddOptimizationItem(new SetIdleTimeItem());
+            AddOptimizationItem(new DisableSystemSounds());
+
+            await ServiceItemManager.Load();
+            foreach (var item in ServiceItemManager.Items)
+                AddOptimizationItem(item);
+
+            await MicrosoftStore.Initialize();
+            await MicrosoftStoreItemManager.Load();
+            foreach (var item in MicrosoftStoreItemManager.Items)
+                AddOptimizationItem(item);
+
+            foreach (var group in OptimizingGroups.Concat(PersonalGroups))
             {
-                await item.Initialize();
-                UpdateItemStat(item.IsPersonal);
-            }
-        }
+                foreach (var item in group.Items)
+                {
+                    try
+                    {
+                        await item.Initialize();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.ZLogError(ex, $"Failed to initialize {item.Name}");
+                    }
 
-        IsBusy = false;
-        StatusMessage = Localizer.Get("InitializationFinished");
+                    UpdateItemStat(item.IsPersonal);
+                }
+            }
+
+            IsBusy = false;
+            StatusMessage = Localizer.Get("InitializationFinished");
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogError(ex, $"Failed to initialize items");
+            IsBusy = false;
+            StatusMessage = Localizer.Get("InitializationFailed");
+        }
     }
-
     private void AddOptimizationItem(OptimizationItem item)
     {
         var groups = item.IsPersonal

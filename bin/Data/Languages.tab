@@ -5,6 +5,7 @@ DefaultFontName	Segoe UI	微软雅黑
 OptimizeSelectedItems	Optimize selected items	优化选中项目
 Initializing	Initializing…	正在初始化...
 InitializationFinished	Initialization finished.	初始化完成。
+InitializationFailed	Initialization failed.	初始化出错。
 OperatingItem	Operating: {0}	正在操作：{0}
 OperatingItemFinished	Operation finished: {0}	操作完成：{0}
 PreOptimizationPreparations	Pre-optimization preparations…	优化前准备工作...
