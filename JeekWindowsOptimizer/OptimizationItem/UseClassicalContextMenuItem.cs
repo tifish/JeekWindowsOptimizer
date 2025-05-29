@@ -26,6 +26,6 @@ public class UseClassicalContextMenuItem : OptimizationItem
         else
             _registryValue.DeleteKey();
 
-        return Task.FromResult(value);
+        return Task.FromResult(true);
     }
 }
