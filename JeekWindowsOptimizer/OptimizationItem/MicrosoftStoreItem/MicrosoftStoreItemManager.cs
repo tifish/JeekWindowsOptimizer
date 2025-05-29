@@ -20,10 +20,11 @@ public static class MicrosoftStoreItemManager
             var groupNameKey = row[0];
             var nameKey = row[1] + "Name";
             var descriptionKey = row[1] + "Description";
-            var isPersonal = row[2].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            if (!Enum.TryParse<OptimizationItemCategory>(row[2], out var category))
+                category = OptimizationItemCategory.Default;
             var packageName = row[3];
 
-            var item = new MicrosoftStoreItem(groupNameKey, nameKey, descriptionKey, isPersonal, packageName);
+            var item = new MicrosoftStoreItem(groupNameKey, nameKey, descriptionKey, category, packageName);
             Items.Add(item);
         }
     }

@@ -1,21 +1,27 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="using:JeekWindowsOptimizer"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:li="using:LoadingIndicators.Avalonia"
-        xmlns:l="using:Jeek.Avalonia.Localization"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="JeekWindowsOptimizer.Views.MainWindow"
-        x:DataType="local:MainViewModel"
-        Icon="/Assets/App.ico"
-        Title="Jeek Windows Optimizer"
-        Width="800" Height="2000"
-        WindowStartupLocation="CenterScreen">
+<Window
+    x:Class="JeekWindowsOptimizer.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:l="using:Jeek.Avalonia.Localization"
+    xmlns:li="using:LoadingIndicators.Avalonia"
+    xmlns:local="using:JeekWindowsOptimizer"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Jeek Windows Optimizer"
+    Width="800"
+    Height="2000"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="local:MainViewModel"
+    Icon="/Assets/App.ico"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
         <local:MainViewModel />
     </Design.DataContext>
 
@@ -25,33 +31,60 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto Auto *">
-        <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10" Margin="0,0,0,10">
+    <Grid
+        Margin="20"
+        ColumnDefinitions="*"
+        RowDefinitions="Auto Auto *">
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Orientation="Vertical"
+            Spacing="10">
             <StackPanel.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Header="{l:Localize en}" Command="{Binding SwitchToEnglish}" />
-                    <MenuItem Header="{l:Localize zh}" Command="{Binding SwitchToChinese}" />
+                    <MenuItem Command="{Binding SwitchToEnglish}" Header="{l:Localize en}" />
+                    <MenuItem Command="{Binding SwitchToChinese}" Header="{l:Localize zh}" />
                 </ContextMenu>
             </StackPanel.ContextMenu>
 
-            <li:LoadingIndicator HorizontalAlignment="Center" Height="70"
-                                 IsActive="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-                                 Mode="Arcs" SpeedRatio="1.2" />
-            <Button Content="{l:Localize OptimizeSelectedItems}" HorizontalAlignment="Center" Padding="20" CornerRadius="5" FontSize="20" FontWeight="Bold"
-                    Command="{Binding OptimizeCheckedItems}"
-                    IsVisible="{Binding !IsBusy}" />
-            <TextBlock HorizontalAlignment="Center" FontSize="20" Text="{Binding StatusMessage}" />
+            <li:LoadingIndicator
+                Height="70"
+                HorizontalAlignment="Center"
+                IsActive="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                Mode="Arcs"
+                SpeedRatio="1.2" />
+            <Button
+                Padding="20"
+                HorizontalAlignment="Center"
+                Command="{Binding OptimizeCheckedItems}"
+                Content="{l:Localize OptimizeSelectedItems}"
+                CornerRadius="5"
+                FontSize="20"
+                FontWeight="Bold"
+                IsVisible="{Binding !IsBusy}" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="20"
+                Text="{Binding StatusMessage}" />
         </StackPanel>
 
-        <TabStrip Grid.Row="1" Margin="5" SelectedIndex="{Binding SelectedTabIndex}">
+        <TabStrip
+            Grid.Row="1"
+            Margin="5"
+            SelectedIndex="{Binding SelectedTabIndex}">
             <TabItem Header="{Binding OptimizingTabHeader}" />
+            <TabItem Header="{Binding AntivirusTabHeader}" />
             <TabItem Header="{Binding PersonalTabHeader}" />
         </TabStrip>
 
-        <ScrollViewer Grid.Row="2" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">
+        <ScrollViewer
+            Grid.Row="2"
+            VerticalAlignment="Stretch"
+            VerticalScrollBarVisibility="Visible">
 
-            <!-- Groups -->
-            <ItemsControl ItemsSource="{Binding Groups }">
+            <!--  Groups  -->
+            <ItemsControl ItemsSource="{Binding Groups}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Vertical" Spacing="10" />
@@ -60,13 +93,16 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-                        <Expander IsExpanded="True" HorizontalAlignment="Stretch">
+                        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
                             <Expander.Header>
-                                <TextBlock FontWeight="Bold" FontSize="30" Text="{Binding Name}" />
+                                <TextBlock
+                                    FontSize="30"
+                                    FontWeight="Bold"
+                                    Text="{Binding Name}" />
                             </Expander.Header>
 
-                            <!-- Items -->
-                            <ItemsControl ItemsSource="{Binding Items }">
+                            <!--  Items  -->
+                            <ItemsControl ItemsSource="{Binding Items}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Vertical" Spacing="10" />
@@ -75,19 +111,28 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
 
-                                        <Border Background="{DynamicResource SystemBaseLowColor}" CornerRadius="5"
-                                                PointerPressed="InputElement_OnPointerPressed">
+                                        <Border
+                                            Background="{DynamicResource SystemBaseLowColor}"
+                                            CornerRadius="5"
+                                            PointerPressed="InputElement_OnPointerPressed">
 
                                             <StackPanel Orientation="Vertical" Spacing="10">
-                                                <Grid RowDefinitions="*" ColumnDefinitions="Auto *">
+                                                <Grid ColumnDefinitions="Auto *" RowDefinitions="*">
                                                     <StackPanel Orientation="Horizontal">
                                                         <CheckBox IsChecked="{Binding IsChecked}" />
-                                                        <TextBlock FontWeight="Bold" FontSize="20" Text="{Binding Name}" VerticalAlignment="Center" />
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            FontSize="20"
+                                                            FontWeight="Bold"
+                                                            Text="{Binding Name}" />
                                                     </StackPanel>
-                                                    <ToggleSwitch Grid.Column="1" HorizontalAlignment="Right"
-                                                                  IsChecked="{Binding IsOptimized, Mode=OneWay}"
-                                                                  OnContent="{l:Localize Optimized}" OffContent="{l:Localize NotOptimized}"
-                                                                  IsCheckedChanged="ToggleButton_OnIsCheckedChanged" />
+                                                    <ToggleSwitch
+                                                        Grid.Column="1"
+                                                        HorizontalAlignment="Right"
+                                                        IsChecked="{Binding IsOptimized, Mode=OneWay}"
+                                                        IsCheckedChanged="ToggleButton_OnIsCheckedChanged"
+                                                        OffContent="{l:Localize NotOptimized}"
+                                                        OnContent="{l:Localize Optimized}" />
                                                 </Grid>
                                                 <TextBlock Text="{Binding Description}" TextWrapping="Wrap" />
                                             </StackPanel>

@@ -9,6 +9,13 @@ using MsBox.Avalonia.Enums;
 
 namespace JeekWindowsOptimizer;
 
+public enum OptimizationItemCategory
+{
+    Default,
+    Antivirus,
+    Personal,
+}
+
 public abstract partial class OptimizationItem : ObservableObject
 {
     public string GroupName => Localizer.Get(GroupNameKey);
@@ -19,7 +26,7 @@ public abstract partial class OptimizationItem : ObservableObject
     public abstract string NameKey { get; }
     public abstract string DescriptionKey { get; }
 
-    public bool IsPersonal { get; set; }
+    public OptimizationItemCategory Category { get; set; }
 
     [ObservableProperty]
     public partial bool IsOptimized { get; protected set; }

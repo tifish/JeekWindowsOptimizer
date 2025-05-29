@@ -15,16 +15,24 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     public partial int SelectedTabIndex { get; set; }
 
-    private bool _showPersonal;
+    private OptimizationItemCategory _selectedCategory;
 
     partial void OnSelectedTabIndexChanged(int value)
     {
-        _showPersonal = value == 1;
-        Groups.Replace(_showPersonal ? PersonalGroups : OptimizingGroups);
+        _selectedCategory = (OptimizationItemCategory)value;
+        var selectedGroup = _selectedCategory switch
+        {
+            OptimizationItemCategory.Default => OptimizingGroups,
+            OptimizationItemCategory.Antivirus => AntivirusGroups,
+            OptimizationItemCategory.Personal => PersonalGroups,
+            _ => throw new Exception("Invalid optimization item category"),
+        };
+        Groups.Replace(selectedGroup);
     }
 
     public FastObservableCollection<OptimizationGroup> Groups { get; } = [];
     public List<OptimizationGroup> OptimizingGroups { get; } = [];
+    public List<OptimizationGroup> AntivirusGroups { get; } = [];
     public List<OptimizationGroup> PersonalGroups { get; } = [];
 
     [ObservableProperty]
@@ -48,8 +56,9 @@ public partial class MainViewModel : ObservableObject
                     item.NotifyLanguageChanged();
             }
 
-            UpdateItemStat(false);
-            UpdateItemStat(true);
+            UpdateItemStat(OptimizationItemCategory.Default);
+            UpdateItemStat(OptimizationItemCategory.Antivirus);
+            UpdateItemStat(OptimizationItemCategory.Personal);
         };
     }
 
@@ -89,7 +98,7 @@ public partial class MainViewModel : ObservableObject
             foreach (var item in MicrosoftStoreItemManager.Items)
                 AddOptimizationItem(item);
 
-            foreach (var group in OptimizingGroups.Concat(PersonalGroups))
+            foreach (var group in OptimizingGroups.Concat(AntivirusGroups).Concat(PersonalGroups))
             {
                 foreach (var item in group.Items)
                 {
@@ -102,7 +111,7 @@ public partial class MainViewModel : ObservableObject
                         Log.ZLogError(ex, $"Failed to initialize {item.Name}");
                     }
 
-                    UpdateItemStat(item.IsPersonal);
+                    UpdateItemStat(item.Category);
                 }
             }
 
@@ -118,9 +127,13 @@ public partial class MainViewModel : ObservableObject
     }
     private void AddOptimizationItem(OptimizationItem item)
     {
-        var groups = item.IsPersonal
-            ? PersonalGroups
-            : OptimizingGroups;
+        var groups = item.Category switch
+        {
+            OptimizationItemCategory.Default => OptimizingGroups,
+            OptimizationItemCategory.Antivirus => AntivirusGroups,
+            OptimizationItemCategory.Personal => PersonalGroups,
+            _ => throw new Exception("Invalid optimization item category"),
+        };
 
         var isNewGroup = true;
         foreach (var group in groups)
@@ -135,31 +148,40 @@ public partial class MainViewModel : ObservableObject
         {
             var newGroup = new OptimizationGroup(item.GroupNameKey, [item]);
             groups.Add(newGroup);
-            if (!(item.IsPersonal ^ _showPersonal))
+            if (!(item.Category == _selectedCategory))
                 Groups.Add(newGroup);
         }
 
-        UpdateItemStat(item.IsPersonal);
+        UpdateItemStat(item.Category);
     }
 
-    public void UpdateItemStat(bool isPersonal)
+    public void UpdateItemStat(OptimizationItemCategory category)
     {
-        var groups = isPersonal
-            ? PersonalGroups
-            : OptimizingGroups;
+        var groups = category switch
+        {
+            OptimizationItemCategory.Default => OptimizingGroups,
+            OptimizationItemCategory.Antivirus => AntivirusGroups,
+            OptimizationItemCategory.Personal => PersonalGroups,
+            _ => throw new Exception("Invalid optimization item category"),
+        };
 
         var totalItemsCount = groups.Sum(group => group.Items.Count);
         var optimizedItemCount = groups.Sum(group => group.Items.Count(it => it.IsOptimized));
 
         // Update the tab header
-        if (isPersonal)
+        if (category == OptimizationItemCategory.Personal)
             PersonalTabHeader = $"{Localizer.Get("Personal")} ({optimizedItemCount}/{totalItemsCount})";
+        else if (category == OptimizationItemCategory.Antivirus)
+            AntivirusTabHeader = $"{Localizer.Get("Antivirus")} ({optimizedItemCount}/{totalItemsCount})";
         else
             OptimizingTabHeader = $"{Localizer.Get("Optimizing")} ({optimizedItemCount}/{totalItemsCount})";
     }
 
     [ObservableProperty]
     public partial string OptimizingTabHeader { get; set; } = Localizer.Get("Optimizing");
+
+    [ObservableProperty]
+    public partial string AntivirusTabHeader { get; set; } = Localizer.Get("Antivirus");
 
     [ObservableProperty]
     public partial string PersonalTabHeader { get; set; } = Localizer.Get("Personal");
@@ -169,7 +191,13 @@ public partial class MainViewModel : ObservableObject
         OptimizationItem.InBatching = true;
         IsBusy = true;
 
-        var groups = _showPersonal ? PersonalGroups : OptimizingGroups;
+        var groups = _selectedCategory switch
+        {
+            OptimizationItemCategory.Default => OptimizingGroups,
+            OptimizationItemCategory.Personal => PersonalGroups,
+            OptimizationItemCategory.Antivirus => AntivirusGroups,
+            _ => throw new Exception("Invalid optimization item category"),
+        };
 
         try
         {
@@ -210,7 +238,7 @@ public partial class MainViewModel : ObservableObject
                     try
                     {
                         await item.SetIsOptimized(true);
-                        UpdateItemStat(item.IsPersonal);
+                        UpdateItemStat(item.Category);
                     }
                     catch (Exception ex)
                     {

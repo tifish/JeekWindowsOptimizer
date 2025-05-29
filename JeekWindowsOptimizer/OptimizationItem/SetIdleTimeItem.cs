@@ -10,7 +10,7 @@ public class SetIdleTimeItem : OptimizationItem
 
     public SetIdleTimeItem()
     {
-        IsPersonal = true;
+        Category = OptimizationItemCategory.Personal;
     }
 
     public override Task Initialize()

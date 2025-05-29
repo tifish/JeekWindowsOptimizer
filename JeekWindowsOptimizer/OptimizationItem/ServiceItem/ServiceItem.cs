@@ -8,12 +8,12 @@ public class ServiceItem : OptimizationItem
 
     private readonly WindowsService _service;
 
-    public ServiceItem(string groupNameKey, string nameKey, string descriptionKey, bool isPersonal, string serviceName)
+    public ServiceItem(string groupNameKey, string nameKey, string descriptionKey, OptimizationItemCategory category, string serviceName)
     {
         GroupNameKey = groupNameKey;
         NameKey = nameKey;
         DescriptionKey = descriptionKey;
-        IsPersonal = isPersonal;
+        Category = category;
 
         _service = new WindowsService(serviceName);
     }

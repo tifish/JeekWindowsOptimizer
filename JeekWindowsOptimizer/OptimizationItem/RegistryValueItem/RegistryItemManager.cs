@@ -24,7 +24,8 @@ public static class RegistryItemManager
             var groupNameKey = row[++index];
             var nameKey = row[++index] + "Name";
             var descriptionKey = row[index] + "Description";
-            var isPersonal = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            if (!Enum.TryParse<OptimizationItemCategory>(row[++index], out var category))
+                category = OptimizationItemCategory.Default;
             var keyPath = row[++index];
             var valueName = row[++index];
             var type = row[++index];
@@ -51,7 +52,7 @@ public static class RegistryItemManager
             {
                 item = new RegistryItem(groupNameKey, nameKey, descriptionKey)
                 {
-                    IsPersonal = isPersonal,
+                    Category = category,
                     ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection,
                     ShouldUpdateGroupPolicy = shouldUpdateGroupPolicy,
                     ShouldReboot = shouldReboot,

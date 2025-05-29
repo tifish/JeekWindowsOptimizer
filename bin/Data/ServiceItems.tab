@@ -1,4 +1,4 @@
-﻿GroupName	Name	IsPersonal	ServiceName
+﻿GroupName	Name	Category	ServiceName
 System	DisableProgramCompatibilityAssistantService		PcaSvc
 System	DisableDiagnosticPolicyService		DPS
 System	DisableWindowsSearchService		WSearch

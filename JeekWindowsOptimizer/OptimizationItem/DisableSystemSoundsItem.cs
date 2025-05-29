@@ -14,7 +14,7 @@ public class DisableSystemSounds : OptimizationItem
 
     public DisableSystemSounds()
     {
-        IsPersonal = true;
+        Category = OptimizationItemCategory.Personal;
     }
 
     public override Task Initialize()
@@ -60,23 +60,5 @@ public class DisableSystemSounds : OptimizationItem
         }
 
         return Task.FromResult(true);
-    }
-
-    public static int SleepTime
-    {
-        get => (int)PowerManager.GetPlanSetting(PowerManager.GetActivePlan(), SettingSubgroup.SLEEP_SUBGROUP, Setting.STANDBYIDLE, PowerSource.AC);
-        set => PowerManager.SetPlanSetting(PowerManager.GetActivePlan(), SettingSubgroup.SLEEP_SUBGROUP, Setting.STANDBYIDLE, PowerSource.AC, (uint)value);
-    }
-
-    public static int HibernateTime
-    {
-        get => (int)PowerManager.GetPlanSetting(PowerManager.GetActivePlan(), SettingSubgroup.SLEEP_SUBGROUP, Setting.HIBERNATEIDLE, PowerSource.AC);
-        set => PowerManager.SetPlanSetting(PowerManager.GetActivePlan(), SettingSubgroup.SLEEP_SUBGROUP, Setting.HIBERNATEIDLE, PowerSource.AC, (uint)value);
-    }
-
-    public static int TurnOffDisplayTime
-    {
-        get => (int)PowerManager.GetPlanSetting(PowerManager.GetActivePlan(), SettingSubgroup.VIDEO_SUBGROUP, Setting.VIDEOIDLE, PowerSource.AC);
-        set => PowerManager.SetPlanSetting(PowerManager.GetActivePlan(), SettingSubgroup.VIDEO_SUBGROUP, Setting.VIDEOIDLE, PowerSource.AC, (uint)value);
     }
 }

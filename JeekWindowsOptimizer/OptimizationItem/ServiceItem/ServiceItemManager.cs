@@ -20,10 +20,11 @@ public static class ServiceItemManager
             var groupNameKey = row[0];
             var nameKey = row[1] + "Name";
             var descriptionKey = row[1] + "Description";
-            var isPersonal = row[2].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            if (!Enum.TryParse(row[2], out OptimizationItemCategory category))
+                category = OptimizationItemCategory.Default;
             var serviceName = row[3];
 
-            var item = new ServiceItem(groupNameKey, nameKey, descriptionKey, isPersonal, serviceName);
+            var item = new ServiceItem(groupNameKey, nameKey, descriptionKey, category, serviceName);
             Items.Add(item);
         }
     }

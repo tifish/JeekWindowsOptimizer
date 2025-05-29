@@ -4,7 +4,7 @@ public class DisableThumbnailsItem : OptimizationItem
 {
     public DisableThumbnailsItem()
     {
-        IsPersonal = true;
+        Category = OptimizationItemCategory.Personal;
     }
 
     public override Task Initialize()

@@ -1,5 +1,5 @@
-﻿GroupName	Name	IsPersonal	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue	ShouldTurnOffTamperProtection	ShouldUpdateGroupPolicy	ShouldReboot	shouldRestartExplorer
-Kernel	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableAntiSpyware	int	0	0	TRUE	TRUE	TRUE		
+﻿GroupName	Name	Category	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue	ShouldTurnOffTamperProtection	ShouldUpdateGroupPolicy	ShouldReboot	shouldRestartExplorer
+Kernel	DisableWindowsRealTimeAntivirus	Antivirus	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableAntiSpyware	int	0	0	TRUE	TRUE	TRUE		
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableRoutinelyTakingAction	int	0	1	TRUE				
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableRealtimeMonitoring	int	0	1	TRUE				
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableBehaviorMonitoring	int	0	1	TRUE				
@@ -10,7 +10,7 @@ Kernel	DisableMeltdownAndSpectrePatches		HKEY_LOCAL_MACHINE\SYSTEM\CurrentContro
 	DisableMeltdownAndSpectrePatches		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverrideMask	int	0	3	TRUE				
 Kernel	DisableKernelMemoryIntegrityProtection		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity	Enabled	int	1	0	TRUE			TRUE	
 Kernel	DisableWindowsDefenderApplicationControl		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\CI\Policy	VerifiedAndReputablePolicyState	int	1	0	TRUE				
-Kernel	DisableSmartScreen		HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer	SmartScreenEnabled	string	Warn	Off		TRUE			
+Kernel	DisableSmartScreen	Antivirus	HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer	SmartScreenEnabled	string	Warn	Off		TRUE			
 	DisableSmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenEnabled		int	1	0					
 	DisableSmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenPuaEnabled		int	1	0					
 Kernel	DisableFastStartup		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power	HiberbootEnabled	int	1	0					
@@ -18,7 +18,7 @@ System	DisableSystemRestore		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Wind
 System	DisableMicrosoftCustomerExperienceImprovementProgram		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\SQMClient\Windows	CEIPEnable	int	1	0	TRUE				
 System	DisableUAC		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System	EnableLUA	int	1	0				TRUE	
 System	DisableWarningForOpeningDownloadedFiles		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3	1806	int	1	0					
-System	ShowKeyboardAccessKeyUnderlines	TRUE	HKEY_CURRENT_USER\Control Panel\Accessibility\Keyboard Preference	On	string	0	1				TRUE	
+System	ShowKeyboardAccessKeyUnderlines	Personal	HKEY_CURRENT_USER\Control Panel\Accessibility\Keyboard Preference	On	string	0	1				TRUE	
 System	TurnOnGameMode		HKEY_CURRENT_USER\Software\Microsoft\GameBar	AutoGameModeEnabled	int	1	1	TRUE				
 Display	DisableTaskbarAndWindowTransparency		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize	EnableTransparency	int	1	0					
 Explorer	ShowFileExtensions		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	HideFileExt	int	1	0	FALSE				
@@ -29,7 +29,7 @@ Taskbar	TurnOffSearchHighlights		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\
 Taskbar	TurnOffWidgets		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Dsh	AllowNewsAndInterests	int	1	0	TRUE				
 Taskbar	HideTheSearchBox		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	SearchboxTaskbarMode	int	2	0					
 Taskbar	HideTaskViewButton		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	ShowTaskViewButton	int	1	0					
-Taskbar	NeverCombineTaskbarIcons	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	TaskbarGlomLevel	int	0	2					TRUE
+Taskbar	NeverCombineTaskbarIcons	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	TaskbarGlomLevel	int	0	2					TRUE
 	NeverCombineTaskbarIcons		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	MMTaskbarGlomLevel	int	0	2					
 StartMenu	PreventStartMenuFromSearchingTheWeb		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	BingSearchEnabled	int	1	0	TRUE				
 StartMenu	PreventStartMenuFromSearchingCloudContent		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	AllowCloudSearch	int	1	0	TRUE				
@@ -37,16 +37,16 @@ StartMenu	DisableRecommendedApps		HKEY_CURRENT_USER\Software\Microsoft\Windows\C
 Security	DisableAutoPlay		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers	DisableAutoplay	int	0	1					
 Security	EnableWindowsDeliveryOptimization		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings	DownloadMode	int	1	1					
 Security	NoAutoRebootAfterWindowsUpdate		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU	NoAutoRebootWithLoggedOnUsers	int	0	1	TRUE		TRUE		
-Privacy	DoNotShowFrequentFoldersInFileExplorer	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	ShowFrequent	int	1	0	TRUE				
-Privacy	DoNotShowRecentlyUsedFilesInFileExplorer	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	ShowRecent	int	1	0	TRUE				
-Privacy	DoNotShowFilesFromOfficeComInFileExplorer	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	ShowCloudFilesInQuickAccess	int	1	0					
-Privacy	DoNotShowNewlyInstalledAppsInTheStartMenu	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start	ShowRecentList	int	1	0					
-Privacy	DoNotShowFrequentlyUsedAppsInTheStartMenu	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start	ShowFrequentList	int	1	0					
-Privacy	DisablePersonalizedAds	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo	Enabled	int	1	0					
-Privacy	PreventWebsitesFromKnowingMyLanguage	TRUE	HKEY_CURRENT_USER\Control Panel\International\User Profile	HttpAcceptLanguageOptOut	int	0	1	TRUE				
-Privacy	AllowWindowsTrackingAppsILaunch	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_TrackProgs	int	0	1					
-Privacy	PreventWindowsFromTrackingFilesIOpen	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_TrackDocs	int	1	0					
-Privacy	PreventWindowsFromTrackingMySystemSettings	TRUE	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-338393Enabled	int	1	0					
+Privacy	DoNotShowFrequentFoldersInFileExplorer	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	ShowFrequent	int	1	0	TRUE				
+Privacy	DoNotShowRecentlyUsedFilesInFileExplorer	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	ShowRecent	int	1	0	TRUE				
+Privacy	DoNotShowFilesFromOfficeComInFileExplorer	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer	ShowCloudFilesInQuickAccess	int	1	0					
+Privacy	DoNotShowNewlyInstalledAppsInTheStartMenu	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start	ShowRecentList	int	1	0					
+Privacy	DoNotShowFrequentlyUsedAppsInTheStartMenu	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start	ShowFrequentList	int	1	0					
+Privacy	DisablePersonalizedAds	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo	Enabled	int	1	0					
+Privacy	PreventWebsitesFromKnowingMyLanguage	Personal	HKEY_CURRENT_USER\Control Panel\International\User Profile	HttpAcceptLanguageOptOut	int	0	1	TRUE				
+Privacy	AllowWindowsTrackingAppsILaunch	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_TrackProgs	int	0	1					
+Privacy	PreventWindowsFromTrackingFilesIOpen	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_TrackDocs	int	1	0					
+Privacy	PreventWindowsFromTrackingMySystemSettings	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-338393Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353694Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353696Enabled	int	1	0					
 Software	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main	AllowPrelaunch	int	1	0	TRUE		TRUE		
