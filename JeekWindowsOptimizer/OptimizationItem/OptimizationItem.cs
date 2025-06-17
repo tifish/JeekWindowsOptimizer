@@ -43,18 +43,22 @@ public abstract partial class OptimizationItem : ObservableObject
         if (!InBatching)
         {
             if (ShouldTurnOffTamperProtection)
+            {
                 if (!await TurnOffTamperProtection())
                 {
                     IsOptimized = !value;
                     return false;
                 }
+            }
 
             if (ShouldTurnOffOnAccessProtection)
+            {
                 if (!await TurnOffOnAccessProtection())
                 {
                     IsOptimized = !value;
                     return false;
                 }
+            }
         }
 
         if (!await IsOptimizedChanging(value))
@@ -86,6 +90,9 @@ public abstract partial class OptimizationItem : ObservableObject
     public static async Task<bool> TurnOffTamperProtection()
     {
         if (TamperProtectionRegistryValue.GetValue(0) is 0 or 4)
+            return true;
+
+        if (AntiVirus.HasThirdPartyAntivirusInstalled())
             return true;
 
         OpenDefenderSettings();
