@@ -137,18 +137,21 @@ public partial class MainViewModel : ObservableObject
 
         var isNewGroup = true;
         foreach (var group in groups)
+        {
             if (group.NameKey == item.GroupNameKey)
             {
                 group.Items.Add(item);
                 isNewGroup = false;
                 break;
             }
+        }
 
         if (isNewGroup)
         {
             var newGroup = new OptimizationGroup(item.GroupNameKey, [item]);
             groups.Add(newGroup);
-            if (!(item.Category == _selectedCategory))
+
+            if (item.Category == _selectedCategory)
                 Groups.Add(newGroup);
         }
 
