@@ -135,5 +135,11 @@ DisableEdgeFromRunningInBackgroundName	Prevent Edge Browser from Running in the 
 DisableEdgeFromRunningInBackgroundDescription	The Edge browser continues to run in the background even after it is closed, consuming system resources.\nEffective immediately.	Edge 浏览器在退出之后，依然会在后台运行，占用系统资源。\n立即生效。
 TurnOnGameModeName	Turn on game mode	开启游戏模式
 TurnOnGameModeDescription	Game mode can improve game performance and stability.\nEffective immediately.	游戏模式可以提高游戏运行的性能和稳定性。\n立即生效
-DisableThumbnailsName		不显示图片预览
-DisableThumbnailsDescription		图片预览要占用后台资源，可以使用图片查看软件替代。\n立即生效。
+DisableThumbnailsName	Disable thumbnails	不显示图片预览
+DisableThumbnailsDescription	The thumbnails consumes background resources. You can use an image viewer application as an alternative.\nEffective immediately.	图片预览要占用后台资源，可以使用图片查看软件替代。\n立即生效。
+KingsoftAntivirusName	Kingsoft Antivirus	金山毒霸
+KingsoftAntivirusDescription	Uninstall Kingsoft Antivirus.	卸载金山毒霸。
+HuoRongSecurityName	HuoRong Security	火绒安全
+HuoRongSecurityDescription	Uninstall HuoRong Security.	卸载火绒安全。
+360AntivirusName	360 Antivirus	360 杀毒
+360AntivirusDescription	Uninstall 360 Antivirus.	卸载 360 杀毒。

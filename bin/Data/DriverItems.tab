@@ -1,0 +1,11 @@
+﻿GroupName	Name	Category	DriverFile
+Kernel	KingsoftAntivirus	Antivirus	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
+	KingsoftAntivirus		c:\program files (x86)\kingsoft\kingsoft antivirus\security\kxescan\kdhacker64.sys
+	KingsoftAntivirus		C:\WINDOWS\system32\drivers\kisknl.sys
+	KingsoftAntivirus		c:\program files (x86)\kingsoft\kingsoft antivirus\security\ksde\kisnetflt64.sys
+	KingsoftAntivirus		C:\WINDOWS\system32\drivers\ksapi64.sys
+	KingsoftAntivirus		C:\WINDOWS\system32\Drivers\ksthlp64.sys
+Kernel	HuoRongSecurity	Antivirus	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
+	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\hrwfpdrv.sys
+	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\sysdiag.sys
+Kernel	360Antivirus	Antivirus	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys

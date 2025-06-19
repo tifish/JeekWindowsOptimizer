@@ -77,6 +77,10 @@ public partial class MainViewModel : ObservableObject
             foreach (var item in RegistryItemManager.Items)
                 AddOptimizationItem(item);
 
+            await DriverItemManager.Load();
+            foreach (var item in DriverItemManager.Items)
+                AddOptimizationItem(item);
+
             AddOptimizationItem(new DisableWindowsDefenderPUAProtectionItem());
             AddOptimizationItem(new VisualEffectsItem());
             AddOptimizationItem(new DisableThumbnailsItem());
