@@ -12,6 +12,7 @@ PreOptimizationPreparations	Pre-optimization preparations…	优化前准备工�
 OptimizingItem	Optimizing: {0}…	正在优化：{0}…
 PostOptimizationProcessing	Post-optimization processing…	优化后处理…
 OptimizationCompleted	Optimization completed!	优化已完成！
+PleaseUninstallDriver	Please {0} and restart to continue.	请 {0} 并重启后重试。
 Optimizing	Optimizing	优化
 Antivirus	Antivirus	防病毒
 Personal	Personal	个性化
@@ -137,9 +138,15 @@ TurnOnGameModeName	Turn on game mode	开启游戏模式
 TurnOnGameModeDescription	Game mode can improve game performance and stability.\nEffective immediately.	游戏模式可以提高游戏运行的性能和稳定性。\n立即生效
 DisableThumbnailsName	Disable thumbnails	不显示图片预览
 DisableThumbnailsDescription	The thumbnails consumes background resources. You can use an image viewer application as an alternative.\nEffective immediately.	图片预览要占用后台资源，可以使用图片查看软件替代。\n立即生效。
-KingsoftAntivirusName	Kingsoft Antivirus	金山毒霸
-KingsoftAntivirusDescription	Uninstall Kingsoft Antivirus.	卸载金山毒霸。
-HuoRongSecurityName	HuoRong Security	火绒安全
-HuoRongSecurityDescription	Uninstall HuoRong Security.	卸载火绒安全。
-360AntivirusName	360 Antivirus	360 杀毒
-360AntivirusDescription	Uninstall 360 Antivirus.	卸载 360 杀毒。
+KingsoftAntivirusName	Uninstall Kingsoft Antivirus	卸载金山毒霸
+KingsoftAntivirusDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+HuoRongSecurityName	Uninstall HuoRong Security	卸载火绒安全
+HuoRongSecurityDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+360AntivirusName	Uninstall 360 Antivirus	卸载 360 杀毒
+360AntivirusDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+DASEDRName	Uninstall DAS EDR	卸载明御终端安全及防病毒系统
+DASEDRDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+RisingAntivirusName	Uninstall Rising Antivirus	卸载瑞星杀毒
+RisingAntivirusDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+TencentPCManagerName	Uninstall Tencent PC Manager	卸载腾讯电脑管家
+TencentPCManagerDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。

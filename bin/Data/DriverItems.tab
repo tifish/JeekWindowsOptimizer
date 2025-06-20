@@ -1,4 +1,4 @@
-﻿GroupName	Name	Category	DriverFile
+﻿GroupName	Name	Category	DriverPathPattern
 Kernel	KingsoftAntivirus	Antivirus	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
 	KingsoftAntivirus		c:\program files (x86)\kingsoft\kingsoft antivirus\security\kxescan\kdhacker64.sys
 	KingsoftAntivirus		C:\WINDOWS\system32\drivers\kisknl.sys
@@ -9,3 +9,16 @@ Kernel	HuoRongSecurity	Antivirus	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
 	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\hrwfpdrv.sys
 	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\sysdiag.sys
 Kernel	360Antivirus	Antivirus	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys
+Kernel	DASEDR	Antivirus	C:\windows\SYSTEM32\drivers\nfw*.sys
+	DASEDR		C:\windows\SYSTEM32\drivers\sysmon*.sys
+	DASEDR		C:\Windows\ShellExt.dll
+	DASEDR		C:\Program Files (x86)\DBAppSecurity
+	DASEDR		C:\Windows\dasec
+Kernel	RisingAntivirus	Antivirus	C:\WINDOWS\system32\drivers\esmshield.sys
+	RisingAntivirus		C:\Program Files (x86)\Rising\REC\ep\hookesm.sys
+	RisingAntivirus		C:\Program Files (x86)\Rising\REC\xav\rsutils.sys
+Kernel	TencentPCManager	Antivirus	C:\WINDOWS\system32\drivers\qmbsecx64.sys
+	TencentPCManager		C:\WINDOWS\system32\Drivers\TAOAcceleratorEx64_ev.sys
+	TencentPCManager		C:\WINDOWS\system32\Drivers\TAOKernelEx64_ev.sys
+	TencentPCManager		C:\WINDOWS\system32\Drivers\TFsFltX64_ev.sys
+	TencentPCManager		C:\Program Files (x86)\Tencent\QQPCMgr

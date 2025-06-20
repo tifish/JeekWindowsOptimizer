@@ -1,23 +1,48 @@
 ﻿using System.Diagnostics;
 using Avalonia.Controls;
+using Jeek.Avalonia.Localization;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
 
 namespace JeekWindowsOptimizer;
 
-public class DriverItem(string groupNameKey, string nameKey, string descriptionKey, string driverPath) : OptimizationItem
+public class DriverItem(string groupNameKey, string nameKey, string descriptionKey) : OptimizationItem
 {
     public override string GroupNameKey => groupNameKey;
     public override string NameKey => nameKey;
     public override string DescriptionKey => descriptionKey;
-    public string DriverPath => driverPath;
 
-    public List<string> DriverPaths { get; } = [];
+    public List<string> DriverPathPatterns { get; } = [];
+
+    public List<string> GetDriverPaths()
+    {
+        var result = new List<string>();
+
+        foreach (var pattern in DriverPathPatterns)
+        {
+            if (pattern.Contains('*') || pattern.Contains('?'))
+            {
+                var folderPath = Path.GetDirectoryName(pattern);
+                var namePattern = Path.GetFileName(pattern);
+
+                if (folderPath == null)
+                    continue;
+
+                result.AddRange(Directory.GetFileSystemEntries(folderPath, namePattern));
+            }
+            else if (Directory.Exists(pattern) || File.Exists(pattern))
+            {
+                result.Add(pattern);
+            }
+        }
+
+        return result;
+    }
 
     public override Task Initialize()
     {
-        IsOptimized = !DriverPaths.Any(File.Exists);
+        IsOptimized = GetDriverPaths().Count == 0;
         return Task.CompletedTask;
     }
 
@@ -29,19 +54,18 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
         var result = true;
         try
         {
-            foreach (var driverPath in DriverPaths)
+            var driverPaths = GetDriverPaths();
+
+            foreach (var driverPath in driverPaths)
             {
-                if (!File.Exists(driverPath))
-                    continue;
-
-                File.Delete(driverPath);
-
                 if (File.Exists(driverPath))
-                {
-                    result = false;
-                    break;
-                }
+                    File.Delete(driverPath);
+
+                if (Directory.Exists(driverPath))
+                    Directory.Delete(driverPath, true);
             }
+
+            result = driverPaths.All(path => !File.Exists(path) && !Directory.Exists(path));
         }
         catch
         {
@@ -52,7 +76,7 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
         {
             await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
             {
-                ContentMessage = $"请手工卸载 {Name} 并重启后重试。",
+                ContentMessage = string.Format(Localizer.Get("PleaseUninstallDriver"), Name),
                 ButtonDefinitions = ButtonEnum.Ok,
                 Icon = Icon.Info,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,

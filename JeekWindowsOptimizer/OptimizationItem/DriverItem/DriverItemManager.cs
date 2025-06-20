@@ -26,11 +26,11 @@ public static class DriverItemManager
             var descriptionKey = row[index] + "Description";
             if (!Enum.TryParse<OptimizationItemCategory>(row[++index], out var category))
                 category = OptimizationItemCategory.Default;
-            var driverPath = row[++index];
+            var driverPathPattern = row[++index];
 
             if (!itemsDict.TryGetValue(nameKey, out var item))
             {
-                item = new DriverItem(groupNameKey, nameKey, descriptionKey, driverPath)
+                item = new DriverItem(groupNameKey, nameKey, descriptionKey)
                 {
                     Category = category,
                 };
@@ -38,7 +38,7 @@ public static class DriverItemManager
                 Items.Add(item);
             }
 
-            item.DriverPaths.Add(driverPath);
+            item.DriverPathPatterns.Add(driverPathPattern);
         }
     }
 }
