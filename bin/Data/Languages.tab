@@ -98,6 +98,9 @@ EnableWindowsDeliveryOptimizationName	Enable windows delivery optimization	开�
 EnableWindowsDeliveryOptimizationDescription	Windows Delivery Optimization can download system updates from other computers in the local network, improving efficiency.\nEffective immediately.	Windows 传递优化可以从局域网其他电脑下载系统补丁，提升效率。\n立即生效。
 NoAutoRebootAfterWindowsUpdateName	No auto-reboot after Windows update	Windows 更新后不自动重启
 NoAutoRebootAfterWindowsUpdateDescription	No auto-restart with logged on users for scheduled automatic updates installations.	如果当前用户已登录，则 Windows 更新后不自动重启。
+AllowEdgeToDownloadDangerousFileTypesWithoutWarningName	Allow Edge to download .exe, .msi, .crx without warning	允许 Edge 下载 .exe, .msi, .crx 文件时不弹出警告
+AllowEdgeToDownloadDangerousFileTypesWithoutWarningDescription	Effective immediately.	立即生效。
+AllowEdgeToDownloadDangerousFileTypesDescription	Effective immediately.	立即生效。
 DoNotShowFrequentFoldersInFileExplorerName	Do not show frequent folders in file explorer	文件资源管理器中不显示常用文件夹
 DoNotShowFrequentFoldersInFileExplorerDescription	Effective immediately.	立即生效。
 DoNotShowRecentlyUsedFilesInFileExplorerName	Do not show recently used files in file explorer	文件资源管理器中不显示最近使用的文件
