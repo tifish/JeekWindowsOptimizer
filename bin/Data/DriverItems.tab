@@ -8,9 +8,11 @@ Kernel	KingsoftAntivirus	Antivirus	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
 Kernel	HuoRongSecurity	Antivirus	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
 	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\hrwfpdrv.sys
 	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\sysdiag.sys
+	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\nxeng.sys
 Kernel	360Antivirus	Antivirus	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys
-Kernel	DASEDR	Antivirus	C:\windows\SYSTEM32\drivers\nfw*.sys
-	DASEDR		C:\windows\SYSTEM32\drivers\sysmon*.sys
+Kernel	DASEDR	Antivirus	C:\windows\SYSTEM32\drivers\nfw_*.sys
+	DASEDR		C:\windows\SYSTEM32\drivers\sysmon?.sys
+	DASEDR		C:\windows\SYSTEM32\drivers\dasnfw.sys
 	DASEDR		C:\Windows\ShellExt.dll
 	DASEDR		C:\Program Files (x86)\DBAppSecurity
 	DASEDR		C:\Windows\dasec
