@@ -14,8 +14,15 @@ Kernel	DASEDR	Antivirus	C:\windows\SYSTEM32\drivers\nfw_*.sys
 	DASEDR		C:\windows\SYSTEM32\drivers\sysmon?.sys
 	DASEDR		C:\windows\SYSTEM32\drivers\dasnfw.sys
 	DASEDR		C:\Windows\ShellExt.dll
-	DASEDR		C:\Program Files (x86)\DBAppSecurity
+	DASEDR		C:\Windows\ShellExt.dll.bak
 	DASEDR		C:\Windows\dasec
+	DASEDR		C:\Program Files (x86)\DBAppSecurity
+Kernel	YunTianEDR	Antivirus	C:\Windows\sedisk.sys
+	YunTianEDR		C:\Windows\SYSTEM32\ProcMon.sys
+	YunTianEDR		C:\Windows\SYSTEM32\ytdisk.sys
+	YunTianEDR		C:\windows\SYSTEM32\drivers\YtMiniFilter.sys
+	YunTianEDR		C:\windows\SysWOW64\MANC.exe
+	YunTianEDR		C:\windows\SysWOW64\msres
 Kernel	RisingAntivirus	Antivirus	C:\WINDOWS\system32\drivers\esmshield.sys
 	RisingAntivirus		C:\Program Files (x86)\Rising\REC\ep\hookesm.sys
 	RisingAntivirus		C:\Program Files (x86)\Rising\REC\xav\rsutils.sys
