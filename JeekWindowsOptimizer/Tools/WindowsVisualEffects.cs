@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using JeekTools;
+using DotNetRun;
 
 namespace JeekWindowsOptimizer;
 
@@ -11,11 +11,21 @@ public static class WindowsVisualEffects
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+    private static extern bool SystemParametersInfo(
+        uint uiAction,
+        uint uiParam,
+        IntPtr pvParam,
+        uint fWinIni
+    );
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, out int pvParam, uint fWinIni);
+    private static extern bool SystemParametersInfo(
+        uint uiAction,
+        uint uiParam,
+        out int pvParam,
+        uint fWinIni
+    );
 
     public static bool ClientAreaAnimation
     {
@@ -24,7 +34,13 @@ public static class WindowsVisualEffects
             var result = SystemParametersInfo(SPI_GETCLIENTAREAANIMATION, 0, out var isEnabled, 0);
             return result && isEnabled != 0;
         }
-        set => SystemParametersInfo(SPI_SETCLIENTAREAANIMATION, 0, new IntPtr(value ? 1 : 0), SPIF_UPDATEINIFILE);
+        set =>
+            SystemParametersInfo(
+                SPI_SETCLIENTAREAANIMATION,
+                0,
+                new IntPtr(value ? 1 : 0),
+                SPIF_UPDATEINIFILE
+            );
     }
 
     private const uint SPI_GETANIMATION = 0x0048;
@@ -40,11 +56,17 @@ public static class WindowsVisualEffects
 
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref ANIMATIONINFO pvParam, uint fWinIni);
+    private static extern bool SystemParametersInfo(
+        uint uiAction,
+        uint uiParam,
+        ref ANIMATIONINFO pvParam,
+        uint fWinIni
+    );
 
     private static readonly RegistryValue MinAnimateValue = new(
         @"HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics",
-        "MinAnimate");
+        "MinAnimate"
+    );
 
     public static bool WindowAnimation
     {
@@ -64,7 +86,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue VisualFXSettingValue = new(
         @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects",
-        "VisualFXSetting");
+        "VisualFXSetting"
+    );
 
     public static bool CustomSetting
     {
@@ -74,7 +97,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue TaskbarAnimationValue = new(
         @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
-        "TaskbarAnimations");
+        "TaskbarAnimations"
+    );
 
     public static bool TaskBarAnimation
     {
@@ -84,7 +108,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue AeroPeekValue = new(
         @"HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM",
-        "EnableAeroPeek");
+        "EnableAeroPeek"
+    );
 
     public static bool AeroPeek
     {
@@ -94,7 +119,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue SaveTaskbarThumbnailValue = new(
         @"HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM",
-        "AlwaysHibernateThumbnails");
+        "AlwaysHibernateThumbnails"
+    );
 
     public static bool SaveTaskbarThumbnail
     {
@@ -104,7 +130,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue IconOnlyValue = new(
         @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
-        "IconsOnly");
+        "IconsOnly"
+    );
 
     public static bool ShowThumbnailsInsteadOfIcons
     {
@@ -114,7 +141,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue ListviewAlphaSelectValue = new(
         @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
-        "ListviewAlphaSelect");
+        "ListviewAlphaSelect"
+    );
 
     public static bool ShowTranslucentSelectionRectangle
     {
@@ -124,7 +152,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue DragFullWindowsValue = new(
         @"HKEY_CURRENT_USER\Control Panel\Desktop",
-        "DragFullWindows");
+        "DragFullWindows"
+    );
 
     public static bool ShowWindowContentWhileDragging
     {
@@ -134,7 +163,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue FontSmoothingValue = new(
         @"HKEY_CURRENT_USER\Control Panel\Desktop",
-        "FontSmoothing");
+        "FontSmoothing"
+    );
 
     public static bool SmoothingFonts
     {
@@ -144,7 +174,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue ListviewShadowValue = new(
         @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced",
-        "ListviewShadow");
+        "ListviewShadow"
+    );
 
     public static bool UseDropShadowForIconLabels
     {
@@ -154,7 +185,8 @@ public static class WindowsVisualEffects
 
     private static readonly RegistryValue UserPreferencesMaskValue = new(
         @"HKEY_CURRENT_USER\Control Panel\Desktop",
-        "UserPreferencesMask");
+        "UserPreferencesMask"
+    );
 
     public static bool FadeOrSlideMenusIntoView
     {

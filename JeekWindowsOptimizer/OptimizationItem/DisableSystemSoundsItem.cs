@@ -1,5 +1,4 @@
-﻿using JeekTools;
-using PowerManagerAPI;
+﻿using DotNetRun;
 
 namespace JeekWindowsOptimizer;
 
@@ -9,7 +8,10 @@ public class DisableSystemSounds : OptimizationItem
     public override string NameKey => "DisableSystemSoundsName";
     public override string DescriptionKey => "DisableSystemSoundsDescription";
 
-    private readonly RegistryValue _systemSoundSchemeValue = new(@"HKEY_CURRENT_USER\AppEvents\Schemes", null);
+    private readonly RegistryValue _systemSoundSchemeValue = new(
+        @"HKEY_CURRENT_USER\AppEvents\Schemes",
+        null
+    );
     private const string SystemSoundsRootKey = @"HKEY_CURRENT_USER\AppEvents\Schemes\Apps";
 
     public DisableSystemSounds()
@@ -27,7 +29,7 @@ public class DisableSystemSounds : OptimizationItem
     {
         _systemSoundSchemeValue.SetValue(value ? ".None" : ".Default");
 
-        using var rootKey = RegistryHelper.OpenKey(SystemSoundsRootKey, true);
+        using var rootKey = Reg.OpenKey(SystemSoundsRootKey, true);
         if (rootKey == null)
             return Task.FromResult(false);
 
@@ -43,8 +45,8 @@ public class DisableSystemSounds : OptimizationItem
                 if (soundKey == null)
                     continue;
 
-                var currentSoundKey = soundKey.OpenSubKey(".Current", true)
-                                      ?? soundKey.CreateSubKey(".Current");
+                var currentSoundKey =
+                    soundKey.OpenSubKey(".Current", true) ?? soundKey.CreateSubKey(".Current");
 
                 if (value)
                 {

@@ -1,4 +1,4 @@
-﻿using JeekTools;
+﻿using DotNetRun;
 
 namespace JeekWindowsOptimizer;
 
@@ -8,8 +8,13 @@ public abstract class OptimizationRegistryValue(string keyPath, string valueName
     protected RegistryValue Value = new(keyPath, valueName);
 }
 
-public class OptimizationRegistryIntValue(string keyPath, string valueName, int defaultValue, int optimizingValue, bool deleteDefaultValue)
-    : OptimizationRegistryValue(keyPath, valueName)
+public class OptimizationRegistryIntValue(
+    string keyPath,
+    string valueName,
+    int defaultValue,
+    int optimizingValue,
+    bool deleteDefaultValue
+) : OptimizationRegistryValue(keyPath, valueName)
 {
     public override bool IsOptimized
     {
@@ -34,8 +39,13 @@ public class OptimizationRegistryIntValue(string keyPath, string valueName, int 
     }
 }
 
-public class OptimizationRegistryStringValue(string keyPath, string valueName, string defaultValue, string optimizingValue, bool deleteDefaultValue)
-    : OptimizationRegistryValue(keyPath, valueName)
+public class OptimizationRegistryStringValue(
+    string keyPath,
+    string valueName,
+    string defaultValue,
+    string optimizingValue,
+    bool deleteDefaultValue
+) : OptimizationRegistryValue(keyPath, valueName)
 {
     public override bool IsOptimized
     {
@@ -52,8 +62,13 @@ public class OptimizationRegistryStringValue(string keyPath, string valueName, s
     }
 }
 
-public class OptimizationRegistryBinaryValue(string keyPath, string valueName, byte[] defaultValue, byte[] optimizingValue, bool deleteDefaultValue)
-    : OptimizationRegistryValue(keyPath, valueName)
+public class OptimizationRegistryBinaryValue(
+    string keyPath,
+    string valueName,
+    byte[] defaultValue,
+    byte[] optimizingValue,
+    bool deleteDefaultValue
+) : OptimizationRegistryValue(keyPath, valueName)
 {
     public override bool IsOptimized
     {

@@ -1,4 +1,4 @@
-﻿using JeekTools;
+﻿using DotNetRun;
 
 namespace JeekWindowsOptimizer;
 
@@ -9,7 +9,8 @@ public class WindowsUpdateItem : OptimizationItem
 
     public override string DescriptionKey => "WindowsUpdateDescription";
 
-    private const string KeyPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings";
+    private const string KeyPath =
+        @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings";
 
     private readonly List<RegistryValue> _registryValues =
     [
@@ -25,8 +26,9 @@ public class WindowsUpdateItem : OptimizationItem
 
     public override Task Initialize()
     {
-        IsOptimized = _registryValues.All(value => !value.HasValue())
-                      && _service.GetStartMode() != WindowsService.StartMode.Disabled;
+        IsOptimized =
+            _registryValues.All(value => !value.HasValue())
+            && _service.GetStartMode() != WindowsService.StartMode.Disabled;
         return Task.CompletedTask;
     }
 
