@@ -54,5 +54,5 @@ Privacy	PreventWindowsFromTrackingMySystemSettings	Personal	HKEY_CURRENT_USER\So
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353696Enabled	int	1	0					
 Software	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main	AllowPrelaunch	int	1	0	TRUE		TRUE		
 	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	StartupBoostEnabled	int	1	0	TRUE				
-	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationConsole	string	{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}	{2EACA947-7F5F-4CFA-BA87-8F7FBEEFBE69}					
-			HKEY_CURRENT_USER\Console\%%Startup	DelegationTerminal	string	{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}	{E12CFF52-A866-4C77-9A90-F570A7AA2C6B}					
+Software	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationConsole	string	{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}	{2EACA947-7F5F-4CFA-BA87-8F7FBEEFBE69}					
+	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationTerminal	string	{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}	{E12CFF52-A866-4C77-9A90-F570A7AA2C6B}					

@@ -101,6 +101,7 @@ public partial class MainViewModel : ObservableObject
             await MicrosoftStoreItemManager.Load();
             foreach (var item in MicrosoftStoreItemManager.Items)
                 AddOptimizationItem(item);
+            AddOptimizationItem(new WindowsTerminalUseNewWindow());
 
             foreach (var group in OptimizingGroups.Concat(AntivirusGroups).Concat(PersonalGroups))
             {
@@ -129,6 +130,7 @@ public partial class MainViewModel : ObservableObject
             StatusMessage = Localizer.Get("InitializationFailed");
         }
     }
+
     private void AddOptimizationItem(OptimizationItem item)
     {
         var groups = item.Category switch
@@ -177,11 +179,14 @@ public partial class MainViewModel : ObservableObject
 
         // Update the tab header
         if (category == OptimizationItemCategory.Personal)
-            PersonalTabHeader = $"{Localizer.Get("Personal")} ({optimizedItemCount}/{totalItemsCount})";
+            PersonalTabHeader =
+                $"{Localizer.Get("Personal")} ({optimizedItemCount}/{totalItemsCount})";
         else if (category == OptimizationItemCategory.Antivirus)
-            AntivirusTabHeader = $"{Localizer.Get("Antivirus")} ({optimizedItemCount}/{totalItemsCount})";
+            AntivirusTabHeader =
+                $"{Localizer.Get("Antivirus")} ({optimizedItemCount}/{totalItemsCount})";
         else
-            OptimizingTabHeader = $"{Localizer.Get("Optimizing")} ({optimizedItemCount}/{totalItemsCount})";
+            OptimizingTabHeader =
+                $"{Localizer.Get("Optimizing")} ({optimizedItemCount}/{totalItemsCount})";
     }
 
     [ObservableProperty]
@@ -214,14 +219,14 @@ public partial class MainViewModel : ObservableObject
             var shouldTurnOffOnAccessProtection = false;
 
             foreach (var group in groups)
-                foreach (var item in group.Items)
-                {
-                    if (!item.IsChecked || item.IsOptimized)
-                        continue;
+            foreach (var item in group.Items)
+            {
+                if (!item.IsChecked || item.IsOptimized)
+                    continue;
 
-                    shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
-                    shouldTurnOffOnAccessProtection |= item.ShouldTurnOffOnAccessProtection;
-                }
+                shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
+                shouldTurnOffOnAccessProtection |= item.ShouldTurnOffOnAccessProtection;
+            }
 
             if (shouldTurnOffTamperProtection)
                 if (!await OptimizationItem.TurnOffTamperProtection())
@@ -236,27 +241,27 @@ public partial class MainViewModel : ObservableObject
             var shouldRestartExplorer = false;
 
             foreach (var group in groups)
-                foreach (var item in group.Items)
+            foreach (var item in group.Items)
+            {
+                if (!item.IsChecked || item.IsOptimized)
+                    continue;
+
+                StatusMessage = string.Format(Localizer.Get("OptimizingItem"), item.Name);
+                try
                 {
-                    if (!item.IsChecked || item.IsOptimized)
-                        continue;
-
-                    StatusMessage = string.Format(Localizer.Get("OptimizingItem"), item.Name);
-                    try
-                    {
-                        await item.SetIsOptimized(true);
-                        UpdateItemStat(item.Category);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.ZLogError(ex, $"Failed to optimize: {item.Name}");
-                        continue;
-                    }
-
-                    shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
-                    shouldReboot |= item.ShouldReboot;
-                    shouldRestartExplorer |= item.ShouldRestartExplorer;
+                    await item.SetIsOptimized(true);
+                    UpdateItemStat(item.Category);
                 }
+                catch (Exception ex)
+                {
+                    Log.ZLogError(ex, $"Failed to optimize: {item.Name}");
+                    continue;
+                }
+
+                shouldUpdateGroupPolicy |= item.ShouldUpdateGroupPolicy;
+                shouldReboot |= item.ShouldReboot;
+                shouldRestartExplorer |= item.ShouldRestartExplorer;
+            }
 
             StatusMessage = Localizer.Get("PostOptimizationProcessing");
 

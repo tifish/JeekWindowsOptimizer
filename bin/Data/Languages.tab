@@ -153,3 +153,7 @@ RisingAntivirusName	Uninstall Rising Antivirus	卸载瑞星杀毒
 RisingAntivirusDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
 TencentPCManagerName	Uninstall Tencent PC Manager	卸载腾讯电脑管家
 TencentPCManagerDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+UseWindowsTerminalName	Use Windows Terminal instead of legacy Windows Console Host	使用 Windows Terminal 代替旧版的 Windows 控制台
+UseWindowsTerminalDescription	Windows Terminal is a modern, powerful, and customizable terminal application. It supports multiple tabs, themes, and plugins, making it a better alternative to the legacy Windows Console Host.	Windows Terminal 是一个现代、强大且可定制的终端应用程序。它支持多个标签页、主题和插件，是一个比旧版 Windows 控制台更好的替代品。
+WindowsTerminalUseNewWindowName	Create new window when opening Windows Terminal	使用新窗口打开 Windows Terminal
+WindowsTerminalUseNewWindowDescription	When opening Windows Terminal, a new window is created by default, providing better compatibility and less interference.	打开 Windows Terminal 时，默认打开一个新窗口，有更好的兼容性，干扰更少。
