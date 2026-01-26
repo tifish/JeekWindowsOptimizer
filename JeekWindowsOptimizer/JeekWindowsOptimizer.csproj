@@ -14,7 +14,7 @@
     <ApplicationIcon>Assets\App.ico</ApplicationIcon>
     <CETCompat>false</CETCompat>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishDir>..\bin</PublishDir>
+    <PublishDir>$(OutDir)</PublishDir>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
