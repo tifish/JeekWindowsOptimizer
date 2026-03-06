@@ -159,3 +159,7 @@ WindowsTerminalUseNewWindowName	Create new window when opening Windows Terminal	
 WindowsTerminalUseNewWindowDescription	When opening Windows Terminal, a new window is created by default, providing better compatibility and less interference.	打开 Windows Terminal 时，默认打开一个新窗口，有更好的兼容性，干扰更少。
 YunTianEDRName	Uninstall YunTian EDR	卸载云天 EDR
 YunTianEDRDescription	EDR software can significantly affect system performance.	EDR 软件会显著影响系统性能。
+TortoiseSVNCacheTypeName	TortoiseSVN use simple cache	TortoiseSVN 使用简单缓存
+TortoiseSVNCacheTypeDescription	For large repositories, simple cache strategies avoid large CPU and disk usage in the background.	对于大型仓库，简单缓存策略避免了后台的大量 CPU 和磁盘占用。
+TortoiseGitCacheTypeName	TortoiseGit use simple cache	TortoiseGit 使用简单缓存
+TortoiseGitCacheTypeDescription	For large repositories, simple cache strategies avoid large CPU and disk usage in the background.	对于大型仓库，简单缓存策略避免了后台的大量 CPU 和磁盘占用。
