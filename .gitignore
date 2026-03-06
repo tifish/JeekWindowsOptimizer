@@ -6,5 +6,6 @@ obj/
 /bin/Logs
 /bin/*.*
 /BuildAndDeploy.cmd
+/Deploy.cmd
 /FastCopy.exe
 /FastCopy2.ini
