@@ -58,3 +58,4 @@ Software	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationConso
 	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationTerminal	string	{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}	{E12CFF52-A866-4C77-9A90-F570A7AA2C6B}					
 Software	TortoiseSVNCacheType		HKEY_CURRENT_USER\SOFTWARE\TortoiseSVN	CacheType	int	2	2					
 Software	TortoiseGitCacheType		HKEY_CURRENT_USER\SOFTWARE\TortoiseGit	CacheType	int	2	2					
+Software	DisableRemoteDesktopSecurityWarning		HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Terminal Services\Client	RedirectionWarningDialogVersion	int	0	1	TRUE				
