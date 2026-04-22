@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:Jeek.Avalonia.Localization"
-    xmlns:li="using:LoadingIndicators.Avalonia"
     xmlns:local="using:JeekWindowsOptimizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Jeek Windows Optimizer"
@@ -25,12 +24,6 @@
         <local:MainViewModel />
     </Design.DataContext>
 
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Loaded">
-            <InvokeCommandAction Command="{Binding LoadedCommand}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <Grid
         Margin="20"
         ColumnDefinitions="*"
@@ -47,13 +40,11 @@
                 </ContextMenu>
             </StackPanel.ContextMenu>
 
-            <li:LoadingIndicator
-                Height="70"
-                HorizontalAlignment="Center"
-                IsActive="{Binding IsBusy}"
-                IsVisible="{Binding IsBusy}"
-                Mode="Arcs"
-                SpeedRatio="1.2" />
+            <ProgressBar
+                Height="20"
+                HorizontalAlignment="Stretch"
+                IsIndeterminate="True"
+                IsVisible="{Binding IsBusy}" />
             <Button
                 Padding="20"
                 HorizontalAlignment="Center"

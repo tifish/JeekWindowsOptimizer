@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Jeek.Avalonia.Localization;
 using JeekTools;
@@ -21,17 +20,13 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        Localizer.SetLocalizer(new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab")));
+        Localizer.SetLocalizer(
+            new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab"))
+        );
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Line below is needed to remove Avalonia data validation.
-            // Without this line you will get duplicate validations from both Avalonia and CT
-            BindingPlugins.DataValidators.RemoveAt(0);
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel(),
-            };
+            desktop.MainWindow = new MainWindow { DataContext = new MainViewModel() };
             PositionMainWindow(desktop.MainWindow);
         }
 
@@ -55,6 +50,7 @@ public class App : Application
         // Center window in screen.WorkingArea
         mainWindow.Position = new PixelPoint(
             (int)((workAreaWidth - mainWindow.Width) / 2 * screen.Scaling),
-            (int)((workAreaHeight - mainWindow.Height) / 2 * screen.Scaling));
+            (int)((workAreaHeight - mainWindow.Height) / 2 * screen.Scaling)
+        );
     }
 }

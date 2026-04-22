@@ -22,9 +22,17 @@ public partial class MainWindow : Window
 
         InitializeComponent();
 
+        Loaded += OnLoaded;
+
 #if DEBUG
-        this.AttachDevTools();
+        Application.Current?.AttachDeveloperTools();
 #endif
+    }
+
+    private void OnLoaded(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm && vm.LoadedCommand.CanExecute(null))
+            vm.LoadedCommand.Execute(null);
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
