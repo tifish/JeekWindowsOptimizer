@@ -54,6 +54,7 @@ Privacy	PreventWindowsFromTrackingMySystemSettings	Personal	HKEY_CURRENT_USER\So
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353694Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353696Enabled	int	1	0					
 Privacy	DisableTelemetry		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection	AllowTelemetry	int	1	0	TRUE		TRUE		
+Privacy	DisablePowerShell7Telemetry		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment	POWERSHELL_TELEMETRY_OPTOUT	string		1	TRUE				
 Privacy	DisableActivityHistory		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System	PublishUserActivities	int	1	0	TRUE		TRUE		
 Privacy	DisableFeedbackPrompts		HKEY_CURRENT_USER\Software\Microsoft\Siuf\Rules	NumberOfSIUFInPeriod	int	1	0					
 Software	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main	AllowPrelaunch	int	1	0	TRUE		TRUE		
