@@ -14,6 +14,7 @@ Kernel	DisableSmartScreen	Antivirus	HKEY_LOCAL_MACHINE\Software\Microsoft\Window
 	DisableSmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenEnabled		int	1	0					
 	DisableSmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenPuaEnabled		int	1	0					
 Kernel	DisableFastStartup		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power	HiberbootEnabled	int	1	0					
+Kernel	DisableWindowsPlatformBinaryTable		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager	DisableWpbtExecution	int	0	1	TRUE			TRUE	
 System	DisableSystemRestore		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\SystemRestore	DisableSR	int	0	1	TRUE				
 System	DisableMicrosoftCustomerExperienceImprovementProgram		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\SQMClient\Windows	CEIPEnable	int	1	0	TRUE				
 System	DisableUAC		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System	EnableLUA	int	1	0				TRUE	
