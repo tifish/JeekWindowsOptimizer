@@ -3,3 +3,5 @@ System	DisableProgramCompatibilityAssistantService		PcaSvc
 System	DisableDiagnosticPolicyService		DPS
 System	DisableWindowsSearchService		WSearch
 System	DisableSysMainService		SysMain
+System	DisableConnectedUserExperiencesAndTelemetryService		DiagTrack
+System	DisableWindowsErrorReportingService		WerSvc
