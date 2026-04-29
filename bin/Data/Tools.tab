@@ -1,0 +1,10 @@
+GroupName	Name	ExecutablePath	Arguments	RunAsAdministrator	WaitForExit
+Other	WindowsActivator	Activator\Activate.cmd		false	true
+Storage	CrystalDiskInfo	CrystalDiskInfo\DiskInfo64.exe		false	false
+Storage	CrystalDiskMark	CrystalDiskMark\DiskMark64.exe		false	false
+Software	GeekUninstaller	Geek Uninstaller\geek.exe		false	false
+System	HotkeyDetective	Hotkey Detective\Hotkey Detective.cmd		false	false
+System	Autoruns	SysinternalsSuite\Autoruns64.exe		false	false
+System	ProcessExplorer	SysinternalsSuite\procexp64.exe		false	false
+Network	TcpView	SysinternalsSuite\tcpview64.exe		false	false
+Storage	WinDirStat	WinDirStat\WinDirStat.exe		false	false

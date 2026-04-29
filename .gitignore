@@ -9,3 +9,5 @@ obj/
 /Deploy.cmd
 /FastCopy.exe
 /FastCopy2.ini
+/bin/Tools/CrystalDiskInfo/Smart
+/bin/Tools/CrystalDiskInfo/DiskInfo.ini

@@ -11,6 +11,7 @@ namespace JeekWindowsOptimizer;
 public partial class MainViewModel : ObservableObject
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
+    private const int ToolsTabIndex = 3;
 
     [ObservableProperty]
     public partial int SelectedTabIndex { get; set; }
@@ -19,6 +20,13 @@ public partial class MainViewModel : ObservableObject
 
     partial void OnSelectedTabIndexChanged(int value)
     {
+        OnPropertyChanged(nameof(IsOptimizationTabSelected));
+        OnPropertyChanged(nameof(IsToolsTabSelected));
+        OnPropertyChanged(nameof(CanShowOptimizeButton));
+
+        if (value == ToolsTabIndex)
+            return;
+
         _selectedCategory = (OptimizationItemCategory)value;
         var selectedGroup = _selectedCategory switch
         {
@@ -34,12 +42,22 @@ public partial class MainViewModel : ObservableObject
     public List<OptimizationGroup> OptimizingGroups { get; } = [];
     public List<OptimizationGroup> AntivirusGroups { get; } = [];
     public List<OptimizationGroup> PersonalGroups { get; } = [];
+    public FastObservableCollection<ToolGroup> ToolGroups { get; } = [];
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = Localizer.Get("Initializing");
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; } = true;
+
+    public bool IsOptimizationTabSelected => SelectedTabIndex != ToolsTabIndex;
+    public bool IsToolsTabSelected => SelectedTabIndex == ToolsTabIndex;
+    public bool CanShowOptimizeButton => !IsBusy && IsOptimizationTabSelected;
+
+    partial void OnIsBusyChanged(bool value)
+    {
+        OnPropertyChanged(nameof(CanShowOptimizeButton));
+    }
 
     [RelayCommand]
     private async Task Loaded()
@@ -59,6 +77,15 @@ public partial class MainViewModel : ObservableObject
             UpdateItemStat(OptimizationItemCategory.Default);
             UpdateItemStat(OptimizationItemCategory.Antivirus);
             UpdateItemStat(OptimizationItemCategory.Personal);
+            ToolsTabHeader = Localizer.Get("Tools");
+
+            foreach (var group in ToolGroups)
+            {
+                group.NotifyLanguageChanged();
+
+                foreach (var item in group.Items)
+                    item.NotifyLanguageChanged();
+            }
         };
     }
 
@@ -70,6 +97,22 @@ public partial class MainViewModel : ObservableObject
             {
                 Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
                 Groups.Add(new OptimizationGroup("System", [new TestItem(), new TestItem()]));
+                ToolGroups.Add(
+                    new ToolGroup(
+                        "Tools",
+                        [
+                            new ToolItem(
+                                "Tools",
+                                "CrystalDiskInfoName",
+                                "CrystalDiskInfoDescription",
+                                @"CrystalDiskInfo\DiskInfo64.exe",
+                                "",
+                                false,
+                                false
+                            ),
+                        ]
+                    )
+                );
                 return;
             }
 
@@ -102,6 +145,10 @@ public partial class MainViewModel : ObservableObject
             foreach (var item in MicrosoftStoreItemManager.Items)
                 AddOptimizationItem(item);
             AddOptimizationItem(new WindowsTerminalUseNewWindow());
+
+            await ToolItemManager.Load();
+            foreach (var item in ToolItemManager.Items)
+                AddToolItem(item);
 
             foreach (var group in OptimizingGroups.Concat(AntivirusGroups).Concat(PersonalGroups))
             {
@@ -164,6 +211,20 @@ public partial class MainViewModel : ObservableObject
         UpdateItemStat(item.Category);
     }
 
+    private void AddToolItem(ToolItem item)
+    {
+        foreach (var group in ToolGroups)
+        {
+            if (group.NameKey == item.GroupNameKey)
+            {
+                group.Items.Add(item);
+                return;
+            }
+        }
+
+        ToolGroups.Add(new ToolGroup(item.GroupNameKey, [item]));
+    }
+
     public void UpdateItemStat(OptimizationItemCategory category)
     {
         var groups = category switch
@@ -197,6 +258,9 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     public partial string PersonalTabHeader { get; set; } = Localizer.Get("Personal");
+
+    [ObservableProperty]
+    public partial string ToolsTabHeader { get; set; } = Localizer.Get("Tools");
 
     public async Task OptimizeCheckedItems()
     {

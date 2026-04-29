@@ -1,0 +1,6 @@
+@echo off
+
+(fsutil dirty query %systemdrive% 1>nul 2>nul) || (echo Start-Process $env:ComSpec '/s /c "cd /d "%cd%" && "%~f0" %*"' -Verb RunAs -PassThru ^| Wait-Process> "%temp%\getadmin.ps1") && (powershell -ExecutionPolicy Bypass -File "%temp%\getadmin.ps1") && (exit /b)
+
+start "" "%~dp0\x64\HotkeyDetective.exe"
+start "" "%~dp0\x86\HotkeyDetective.exe"

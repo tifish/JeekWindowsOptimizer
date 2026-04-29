@@ -179,3 +179,26 @@ DisableConnectedUserExperiencesAndTelemetryServiceName	Disable the Connected Use
 DisableConnectedUserExperiencesAndTelemetryServiceDescription	The DiagTrack service uploads diagnostic data to Microsoft. Disabling it breaks the Feedback Hub and Windows Insider enrollment.\nEffective immediately.	DiagTrack 服务负责将诊断数据上传到微软。禁用后反馈中心和 Windows 预览体验计划将无法使用。\n立即生效。
 DisableWindowsErrorReportingServiceName	Disable the Windows Error Reporting Service	禁用 Windows 错误报告服务
 DisableWindowsErrorReportingServiceDescription	Stops the system from uploading application crash reports to Microsoft.\nEffective immediately.	停止将应用崩溃报告上传到微软。\n立即生效。
+Tools	Tools	工具
+Other	Other	其他
+Storage	Storage	存储
+Network	Network	网络
+RunTool	Run	运行
+ToolFailed	Failed to run.	运行失败。
+ToolNotFound	Tool file not found: {0}	找不到工具文件：{0}
+CrystalDiskInfoName	CrystalDiskInfo	CrystalDiskInfo
+CrystalDiskInfoDescription	View disk health, temperature, and SMART information.	查看硬盘健康状态、温度和 SMART 信息。
+CrystalDiskMarkName	CrystalDiskMark	CrystalDiskMark
+CrystalDiskMarkDescription	Test disk read and write performance.	测试磁盘读写性能。
+GeekUninstallerName	Geek Uninstaller	Geek Uninstaller
+GeekUninstallerDescription	Uninstall desktop applications and clean leftover entries.	卸载桌面应用并清理残留项目。
+HotkeyDetectiveName	Hotkey Detective	Hotkey Detective
+HotkeyDetectiveDescription	Find which process registered a global hotkey.	查找哪个进程占用了全局快捷键。
+AutorunsName	Autoruns	Autoruns
+AutorunsDescription	Inspect programs and services that start automatically.	查看自动启动的程序和服务。
+ProcessExplorerName	Process Explorer	Process Explorer
+ProcessExplorerDescription	Inspect running processes, handles, DLLs, and resource usage.	查看运行中的进程、句柄、DLL 和资源占用。
+TcpViewName	TCPView	TCPView
+TcpViewDescription	Inspect active TCP and UDP connections.	查看当前活动的 TCP 和 UDP 连接。
+WinDirStatName	WinDirStat	WinDirStat
+WinDirStatDescription	Analyze disk usage and locate large files or directories.	分析磁盘占用，定位大文件或目录。
