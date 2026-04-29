@@ -21,7 +21,9 @@ public class WindowsActivatorItem : OptimizationItem
     {
         try
         {
-            using var searcher = new ManagementObjectSearcher("SELECT LicenseStatus FROM SoftwareLicensingProduct WHERE PartialProductKey IS NOT NULL");
+            using var searcher = new ManagementObjectSearcher(
+                "SELECT LicenseStatus FROM SoftwareLicensingProduct WHERE PartialProductKey IS NOT NULL"
+            );
             foreach (var o in searcher.Get())
             {
                 var obj = (ManagementObject)o;
@@ -44,7 +46,9 @@ public class WindowsActivatorItem : OptimizationItem
         if (!value)
             return false;
 
-        await Executor.RunAndWait(Path.Join(AppContext.BaseDirectory, @"Activator\Activate.cmd"));
+        await Executor.RunAndWait(
+            Path.Join(AppContext.BaseDirectory, @"Tools\Activator\Activate.cmd")
+        );
 
         return IsWindowsActivated();
     }
