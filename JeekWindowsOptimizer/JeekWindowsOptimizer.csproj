@@ -28,7 +28,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="Jeek.Avalonia.Localization" Version="1.4.0" />
     <PackageReference Include="Json.Easy" Version="1.0.0" />
-    <PackageReference Include="MessageBox.Avalonia" Version="3.3.1.1" />
+    <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
     <PackageReference Include="nulastudio.NetBeauty" Version="2.1.5" />
     <PackageReference Include="PowerManagerAPI" Version="0.2.0-CI-20200413-015121" />
     <PackageReference Include="System.Management" Version="10.0.7" />
