@@ -8,4 +8,6 @@ rd /s /q "bin\Logs" 2>nul
 dotnet publish --configuration Release JeekWindowsOptimizer.sln
 if errorlevel 1 pause
 
+del /q /s bin\*.pdb 2>nul
+
 endlocal
