@@ -1,5 +1,4 @@
 GroupName	Name	ExecutionKind	Target	Arguments	IconPath	RunAsAdministrator	WaitForExit	ConfirmBeforeRun	OpenInTerminal
-System	WindowsActivator	PackagedExecutable	Activator\Activate.cmd			false	true	false	false
 Storage	CrystalDiskInfo	PackagedExecutable	CrystalDiskInfo\DiskInfo64.exe			false	false	false	false
 Storage	CrystalDiskMark	PackagedExecutable	CrystalDiskMark\DiskMark64.exe			false	false	false	false
 Software	GeekUninstaller	PackagedExecutable	Geek Uninstaller\geek.exe			false	false	false	false
@@ -16,10 +15,13 @@ System	DeviceManager	ShellOpen	devmgmt.msc		%SystemRoot%\System32\devmgr.dll,-20
 System	EventViewer	ShellOpen	eventvwr.msc		%SystemRoot%\System32\miguiresource.dll,-500	false	false	false	false
 System	TaskScheduler	ShellOpen	taskschd.msc		%SystemRoot%\System32\miguiresource.dll,-600	false	false	false	false
 System	EnvironmentVariables	SystemCommand	rundll32.exe	sysdm.cpl,EditEnvironmentVariables		false	false	false	false
+Software	OptionalFeaturesSettings	ShellOpen	ms-settings:optionalfeatures		%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe	false	false	false	false
 System	ReliabilityMonitor	SystemCommand	perfmon.exe	/rel		false	false	false	false
 System	ResourceMonitor	SystemCommand	resmon.exe			false	false	false	false
 Network	FlushDns	SystemCommand	ipconfig.exe	/flushdns		false	true	false	false
 Network	NetworkConnections	ShellOpen	ncpa.cpl			false	false	false	false
+Network	WindowsFirewallSettings	SystemCommand	control.exe	/name Microsoft.WindowsFirewall	%SystemRoot%\System32\AuthFWGP.dll,-101	false	false	false	false
+Network	AllowAppsThroughFirewall	SystemCommand	control.exe	/name Microsoft.WindowsFirewall /page pageConfigureApps	%SystemRoot%\System32\AuthFWGP.dll,-101	false	false	false	false
 Network	FirewallAdvancedSettings	ShellOpen	wf.msc		%SystemRoot%\System32\AuthFWGP.dll,-101	false	false	false	false
 Network	ResetWinsock	SystemCommand	netsh.exe	winsock reset		true	false	true	true
 Network	ResetTcpIp	SystemCommand	netsh.exe	int ip reset		true	false	true	true

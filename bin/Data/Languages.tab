@@ -224,6 +224,8 @@ TaskSchedulerName	Task Scheduler	任务计划程序
 TaskSchedulerDescription	Inspect scheduled tasks that run programs automatically, cause popups, wake the PC, or add background work.	查看计划任务，用于排查自动运行程序、弹窗、唤醒电脑或后台任务占用。
 EnvironmentVariablesName	Environment variables	环境变量设置
 EnvironmentVariablesDescription	Edit user and system environment variables such as PATH when command-line tools or development tools cannot be found.	编辑用户和系统环境变量，例如 PATH，用于修复命令行工具或开发工具找不到的问题。
+OptionalFeaturesSettingsName	Optional Features	Windows 可选功能
+OptionalFeaturesSettingsDescription	Install or remove modern Windows optional features such as OpenSSH, language components, and system tools.	安装或删除 OpenSSH、语言组件、系统工具等现代 Windows 可选功能。
 ReliabilityMonitorName	Reliability Monitor	可靠性监视器
 ReliabilityMonitorDescription	Review a timeline of crashes, failed updates, and app failures to find what changed before instability began.	按时间线查看崩溃、更新失败和应用故障，用于定位系统不稳定前发生了什么变化。
 ResourceMonitorName	Resource Monitor	资源监视器
@@ -232,6 +234,10 @@ FlushDnsName	Flush DNS cache	刷新 DNS 缓存
 FlushDnsDescription	Clear the local DNS cache when websites resolve to old addresses or domain changes do not take effect.	清理本机 DNS 缓存，用于解决网站解析到旧地址或域名变更不生效的问题。
 NetworkConnectionsName	Network connections	网络连接
 NetworkConnectionsDescription	Open adapter settings to enable, disable, rename, or inspect network adapters and IP configuration.	打开网络适配器设置，用于启用、禁用、重命名或查看网卡和 IP 配置。
+WindowsFirewallSettingsName	Windows Firewall settings	Windows 防火墙设置
+WindowsFirewallSettingsDescription	Open Windows Firewall settings to check protection status and turn firewall profiles on or off.	打开 Windows 防火墙设置，用于查看保护状态并开启或关闭各网络配置文件的防火墙。
+AllowAppsThroughFirewallName	Allow apps through Firewall	允许应用通过防火墙
+AllowAppsThroughFirewallDescription	Choose which apps and features are allowed to communicate through Windows Firewall.	选择允许哪些应用和功能通过 Windows 防火墙进行通信。
 FirewallAdvancedSettingsName	Windows Firewall advanced settings	防火墙高级设置
 FirewallAdvancedSettingsDescription	Manage inbound and outbound firewall rules when an app cannot connect or a port must be allowed or blocked.	管理入站和出站防火墙规则，用于处理应用无法联网、端口放行或端口阻止。
 ResetWinsockName	Reset Winsock	重置 Winsock
