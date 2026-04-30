@@ -71,6 +71,17 @@
                     <SolidColorBrush x:Key="AccentButtonForegroundPressed" Color="#FF000000" />
                     <SolidColorBrush x:Key="AccentButtonForegroundDisabled" Color="#FF717171" />
 
+                    <!-- 浅色主题下 accent 按钮：Win11 设置式白底描边次级按钮 -->
+                    <SolidColorBrush x:Key="AccentButtonBackground" Color="#FFFFFFFF" />
+                    <SolidColorBrush x:Key="AccentButtonBackgroundPointerOver" Color="#FFF9F9F9" />
+                    <SolidColorBrush x:Key="AccentButtonBackgroundPressed" Color="#FFF0F0F0" />
+                    <SolidColorBrush x:Key="AccentButtonBackgroundDisabled" Color="#FFF8F8F8" />
+
+                    <SolidColorBrush x:Key="AccentButtonBorderBrush" Color="#FFDADADA" />
+                    <SolidColorBrush x:Key="AccentButtonBorderBrushPointerOver" Color="#FFBFBFBF" />
+                    <SolidColorBrush x:Key="AccentButtonBorderBrushPressed" Color="#FFB3B3B3" />
+                    <SolidColorBrush x:Key="AccentButtonBorderBrushDisabled" Color="#FFDADADA" />
+
                     <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#00000000" />
                     <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#08000000" />
                     <SolidColorBrush x:Key="ExpanderHeaderBackgroundPressed" Color="#14000000" />
@@ -121,8 +132,37 @@
             Spacing="10">
             <StackPanel.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding SwitchToEnglish}" Header="{l:Localize en}" />
-                    <MenuItem Command="{Binding SwitchToChinese}" Header="{l:Localize zh}" />
+                    <MenuItem
+                        Command="{Binding SwitchToEnglishCommand}"
+                        GroupName="Language"
+                        Header="{l:Localize en}"
+                        IsChecked="{Binding IsEnglishMenuChecked, Mode=OneWay}"
+                        ToggleType="Radio" />
+                    <MenuItem
+                        Command="{Binding SwitchToChineseCommand}"
+                        GroupName="Language"
+                        Header="{l:Localize zh}"
+                        IsChecked="{Binding IsChineseMenuChecked, Mode=OneWay}"
+                        ToggleType="Radio" />
+                    <Separator />
+                    <MenuItem
+                        Command="{Binding SwitchToLightThemeCommand}"
+                        GroupName="Theme"
+                        Header="{l:Localize ThemeLight}"
+                        IsChecked="{Binding IsLightThemeMenuChecked, Mode=OneWay}"
+                        ToggleType="Radio" />
+                    <MenuItem
+                        Command="{Binding SwitchToDarkThemeCommand}"
+                        GroupName="Theme"
+                        Header="{l:Localize ThemeDark}"
+                        IsChecked="{Binding IsDarkThemeMenuChecked, Mode=OneWay}"
+                        ToggleType="Radio" />
+                    <MenuItem
+                        Command="{Binding SwitchToSystemThemeCommand}"
+                        GroupName="Theme"
+                        Header="{l:Localize ThemeSystem}"
+                        IsChecked="{Binding IsSystemThemeMenuChecked, Mode=OneWay}"
+                        ToggleType="Radio" />
                 </ContextMenu>
             </StackPanel.ContextMenu>
 

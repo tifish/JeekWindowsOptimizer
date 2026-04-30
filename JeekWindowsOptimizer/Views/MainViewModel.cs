@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
@@ -12,6 +14,50 @@ public partial class MainViewModel : ObservableObject
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
     private const int ToolsTabIndex = 3;
+
+    public MainViewModel()
+    {
+        Localizer.LanguageChanged += (_, _) => RefreshLanguageMenuCheckState();
+        RefreshLanguageMenuCheckState();
+        RefreshThemeMenuCheckState();
+    }
+
+    [ObservableProperty]
+    public partial bool IsEnglishMenuChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsChineseMenuChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsLightThemeMenuChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsDarkThemeMenuChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsSystemThemeMenuChecked { get; set; }
+
+    private void RefreshLanguageMenuCheckState()
+    {
+        IsEnglishMenuChecked = string.Equals(
+            Localizer.Language,
+            "en",
+            StringComparison.OrdinalIgnoreCase
+        );
+        IsChineseMenuChecked = string.Equals(
+            Localizer.Language,
+            "zh",
+            StringComparison.OrdinalIgnoreCase
+        );
+    }
+
+    private void RefreshThemeMenuCheckState()
+    {
+        var v = Application.Current?.RequestedThemeVariant ?? ThemeVariant.Default;
+        IsLightThemeMenuChecked = v == ThemeVariant.Light;
+        IsDarkThemeMenuChecked = v == ThemeVariant.Dark;
+        IsSystemThemeMenuChecked = v == ThemeVariant.Default;
+    }
 
     [ObservableProperty]
     public partial int SelectedTabIndex { get; set; }
@@ -346,13 +392,39 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public void SwitchToEnglish()
+    [RelayCommand]
+    private void SwitchToEnglish()
     {
         Localizer.Language = "en";
     }
 
-    public void SwitchToChinese()
+    [RelayCommand]
+    private void SwitchToChinese()
     {
         Localizer.Language = "zh";
+    }
+
+    [RelayCommand]
+    private void SwitchToLightTheme()
+    {
+        if (Application.Current is { } app)
+            app.RequestedThemeVariant = ThemeVariant.Light;
+        RefreshThemeMenuCheckState();
+    }
+
+    [RelayCommand]
+    private void SwitchToDarkTheme()
+    {
+        if (Application.Current is { } app)
+            app.RequestedThemeVariant = ThemeVariant.Dark;
+        RefreshThemeMenuCheckState();
+    }
+
+    [RelayCommand]
+    private void SwitchToSystemTheme()
+    {
+        if (Application.Current is { } app)
+            app.RequestedThemeVariant = ThemeVariant.Default;
+        RefreshThemeMenuCheckState();
     }
 }
