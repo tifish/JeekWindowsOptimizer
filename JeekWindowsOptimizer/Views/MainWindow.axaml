@@ -242,24 +242,31 @@
                                             PointerPressed="InputElement_OnPointerPressed">
 
                                             <Grid ColumnDefinitions="* Auto">
-                                                <StackPanel Orientation="Vertical" Spacing="6">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <CheckBox
-                                                            IsChecked="{Binding IsChecked}"
-                                                            IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
-                                                        <TextBlock
-                                                            VerticalAlignment="Center"
-                                                            FontSize="17"
-                                                            FontWeight="SemiBold"
-                                                            Text="{Binding Name}" />
-                                                    </StackPanel>
+                                                <Grid
+                                                    ColumnDefinitions="Auto *"
+                                                    RowDefinitions="Auto Auto">
+                                                    <CheckBox
+                                                        Grid.Column="0"
+                                                        Grid.Row="0"
+                                                        VerticalAlignment="Center"
+                                                        IsChecked="{Binding IsChecked}"
+                                                        IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
                                                     <TextBlock
-                                                        Margin="0,0,20,0"
+                                                        Grid.Column="1"
+                                                        Grid.Row="0"
+                                                        VerticalAlignment="Center"
+                                                        FontSize="17"
+                                                        FontWeight="SemiBold"
+                                                        Text="{Binding Name}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        Grid.Row="1"
+                                                        Margin="0,6,20,0"
                                                         FontSize="14"
                                                         Foreground="{DynamicResource Win11SecondaryTextBrush}"
                                                         Text="{Binding Description}"
                                                         TextWrapping="Wrap" />
-                                                </StackPanel>
+                                                </Grid>
                                                 <StackPanel
                                                     Grid.Column="1"
                                                     HorizontalAlignment="Right"
