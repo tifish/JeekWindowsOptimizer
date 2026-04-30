@@ -17,10 +17,10 @@ public partial class MainWindow : Window
 
     public MainWindow()
     {
-        OnLanguageChanged(null, EventArgs.Empty);
-        Localizer.LanguageChanged += OnLanguageChanged;
-
         InitializeComponent();
+
+        Localizer.LanguageChanged += OnLanguageChanged;
+        UpdateFontFamily();
 
         Loaded += OnLoaded;
 
@@ -36,6 +36,11 @@ public partial class MainWindow : Window
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        UpdateFontFamily();
+    }
+
+    private void UpdateFontFamily()
     {
         FontFamily = new FontFamily(Localizer.Get("DefaultFontName"));
     }
@@ -61,16 +66,28 @@ public partial class MainWindow : Window
                 model.UpdateItemStat(optimizationItem.Category);
             else
                 // Change the toggle immediately cause wrong UI status, so delay it
-                SynchronizationContext.Current!.Post(_ => { toggleButton.IsChecked = optimizationItem.IsOptimized; }, null);
+                SynchronizationContext.Current!.Post(
+                    _ =>
+                    {
+                        toggleButton.IsChecked = optimizationItem.IsOptimized;
+                    },
+                    null
+                );
         }
         catch (Exception ex)
         {
-            Log.ZLogError(ex, $"Failed to change optimization item '{optimizationItem.Name}' status.");
+            Log.ZLogError(
+                ex,
+                $"Failed to change optimization item '{optimizationItem.Name}' status."
+            );
         }
         finally
         {
             model.IsBusy = false;
-            model.StatusMessage = string.Format(Localizer.Get("OperatingItemFinished"), optimizationItem.Name);
+            model.StatusMessage = string.Format(
+                Localizer.Get("OperatingItemFinished"),
+                optimizationItem.Name
+            );
         }
     }
 

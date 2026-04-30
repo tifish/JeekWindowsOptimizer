@@ -2,6 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
 using Jeek.Avalonia.Localization;
 using JeekTools;
 using JeekWindowsOptimizer.Views;
@@ -12,6 +15,15 @@ namespace JeekWindowsOptimizer;
 public class App : Application
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
+
+    /// <summary>Win11Fluent dark-mode Checkbox / ToggleSwitch-on fill (~AccentFill).</summary>
+    private static readonly Color Win11FluentControlAccentDark = Color.Parse("#48B2E9");
+
+    /// <summary>Win11Fluent light-mode Checkbox / ToggleSwitch-on fill (<see cref="Win11FluentControlAccentDark" /> on white reads harsh).</summary>
+    private static readonly Color Win11FluentControlAccentLight = Color.Parse("#0067C0");
+
+    private ColorPaletteResources? _fluentLightPalette;
+    private ColorPaletteResources? _fluentDarkPalette;
 
     public override void Initialize()
     {
@@ -30,7 +42,31 @@ public class App : Application
             PositionMainWindow(desktop.MainWindow);
         }
 
+        ApplyWin11FluentControlAccentPalettes();
+
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void ApplyWin11FluentControlAccentPalettes()
+    {
+        FluentTheme? fluent = null;
+        foreach (var entry in Styles)
+            if (entry is FluentTheme ft)
+            {
+                fluent = ft;
+                break;
+            }
+
+        if (fluent is null)
+            return;
+
+        var palettes = fluent.Palettes;
+        _fluentLightPalette ??= new ColorPaletteResources();
+        _fluentDarkPalette ??= new ColorPaletteResources();
+        palettes[ThemeVariant.Light] = _fluentLightPalette;
+        palettes[ThemeVariant.Dark] = _fluentDarkPalette;
+        _fluentLightPalette.Accent = Win11FluentControlAccentLight;
+        _fluentDarkPalette.Accent = Win11FluentControlAccentDark;
     }
 
     private void PositionMainWindow(Window mainWindow)

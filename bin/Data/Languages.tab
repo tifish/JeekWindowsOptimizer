@@ -1,7 +1,7 @@
 ﻿	en	zh
 en	English	英文
 zh	Chinese	中文
-DefaultFontName	Segoe UI	微软雅黑
+DefaultFontName	Microsoft YaHei UI, Segoe UI, sans-serif	Microsoft YaHei UI, Segoe UI, sans-serif
 OptimizeSelectedItems	Optimize selected items	优化选中项目
 Initializing	Initializing…	正在初始化...
 InitializationFinished	Initialization finished.	初始化完成。
