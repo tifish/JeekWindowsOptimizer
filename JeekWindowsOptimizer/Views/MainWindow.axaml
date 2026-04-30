@@ -258,14 +258,31 @@
                                                         Text="{Binding Description}"
                                                         TextWrapping="Wrap" />
                                                 </StackPanel>
-                                                <ToggleSwitch
+                                                <StackPanel
                                                     Grid.Column="1"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Center"
-                                                    IsChecked="{Binding IsOptimized, Mode=OneWay}"
-                                                    IsCheckedChanged="ToggleButton_OnIsCheckedChanged"
-                                                    OffContent="{l:Localize NotOptimized}"
-                                                    OnContent="{l:Localize Optimized}" />
+                                                    Orientation="Horizontal"
+                                                    Spacing="12">
+                                                    <Grid VerticalAlignment="Center">
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            FontSize="14"
+                                                            IsVisible="{Binding IsOptimized}"
+                                                            Text="{l:Localize Optimized}" />
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            FontSize="14"
+                                                            IsVisible="{Binding !IsOptimized}"
+                                                            Text="{l:Localize NotOptimized}" />
+                                                    </Grid>
+                                                    <ToggleSwitch
+                                                        VerticalAlignment="Center"
+                                                        OffContent=""
+                                                        OnContent=""
+                                                        IsChecked="{Binding IsOptimized, Mode=OneWay}"
+                                                        IsCheckedChanged="ToggleButton_OnIsCheckedChanged" />
+                                                </StackPanel>
                                             </Grid>
                                         </Border>
 
