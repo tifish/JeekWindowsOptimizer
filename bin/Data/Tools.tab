@@ -15,7 +15,7 @@ System	DeviceManager	ShellOpen	devmgmt.msc		%SystemRoot%\System32\devmgr.dll,-20
 System	EventViewer	ShellOpen	eventvwr.msc		%SystemRoot%\System32\miguiresource.dll,-500	false	false	false	false
 System	TaskScheduler	ShellOpen	taskschd.msc		%SystemRoot%\System32\miguiresource.dll,-600	false	false	false	false
 System	EnvironmentVariables	SystemCommand	rundll32.exe	sysdm.cpl,EditEnvironmentVariables		false	false	false	false
-Software	OptionalFeaturesSettings	ShellOpen	ms-settings:optionalfeatures		%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe	false	false	false	false
+Software	OptionalFeaturesSettings	SystemCommand	OptionalFeatures.exe		%SystemRoot%\System32\OptionalFeatures.exe	false	false	false	false
 System	ReliabilityMonitor	SystemCommand	perfmon.exe	/rel		false	false	false	false
 System	ResourceMonitor	SystemCommand	resmon.exe			false	false	false	false
 Network	FlushDns	SystemCommand	ipconfig.exe	/flushdns		false	true	false	false

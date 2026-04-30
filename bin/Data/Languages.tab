@@ -225,7 +225,7 @@ TaskSchedulerDescription	Inspect scheduled tasks that run programs automatically
 EnvironmentVariablesName	Environment variables	环境变量设置
 EnvironmentVariablesDescription	Edit user and system environment variables such as PATH when command-line tools or development tools cannot be found.	编辑用户和系统环境变量，例如 PATH，用于修复命令行工具或开发工具找不到的问题。
 OptionalFeaturesSettingsName	Optional Features	Windows 可选功能
-OptionalFeaturesSettingsDescription	Install or remove modern Windows optional features such as OpenSSH, language components, and system tools.	安装或删除 OpenSSH、语言组件、系统工具等现代 Windows 可选功能。
+OptionalFeaturesSettingsDescription	Enable or disable classic Windows components such as Hyper-V, IIS, SMB, and legacy platform features.	启用或关闭 Hyper-V、IIS、SMB 等传统 Windows 组件和旧版平台功能。
 ReliabilityMonitorName	Reliability Monitor	可靠性监视器
 ReliabilityMonitorDescription	Review a timeline of crashes, failed updates, and app failures to find what changed before instability began.	按时间线查看崩溃、更新失败和应用故障，用于定位系统不稳定前发生了什么变化。
 ResourceMonitorName	Resource Monitor	资源监视器
