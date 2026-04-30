@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
@@ -35,6 +38,11 @@ public partial class ToolItem : ObservableObject
 
         FullExecutablePath = ResolveToolsPath(executablePath);
         FullWorkingDirectory = Path.GetDirectoryName(FullExecutablePath) ?? ToolsRoot;
+
+        if (Design.IsDesignMode)
+            LoadToolIconSyncForDesigner();
+        else
+            _ = LoadToolIconAsync();
     }
 
     public string GroupNameKey { get; }
@@ -49,6 +57,12 @@ public partial class ToolItem : ObservableObject
 
     public string Name => Localizer.Get(NameKey);
     public string Description => Localizer.Get(DescriptionKey);
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasToolIcon))]
+    private Bitmap? _toolIcon;
+
+    public bool HasToolIcon => ToolIcon is not null;
     public bool IsAvailable => File.Exists(FullExecutablePath);
     public bool HasDisplayStatus => !string.IsNullOrEmpty(DisplayStatus);
 
@@ -116,6 +130,60 @@ public partial class ToolItem : ObservableObject
     {
         OnPropertyChanged(nameof(DisplayStatus));
         OnPropertyChanged(nameof(HasDisplayStatus));
+    }
+
+    private void LoadToolIconSyncForDesigner()
+    {
+        try
+        {
+            ToolIcon = ToolIconExtractor.TryLoadToolIcon(FullExecutablePath);
+        }
+        catch
+        {
+            // 设计器占位路径或非 Windows 预览环境
+        }
+    }
+
+    private async Task LoadToolIconAsync()
+    {
+        var path = FullExecutablePath;
+        if (!File.Exists(path))
+            return;
+
+        byte[]? pngBytes;
+        try
+        {
+            pngBytes = await Task.Run(() => ToolIconExtractor.TryEncodeToolIconPng(path))
+                .ConfigureAwait(false);
+        }
+        catch
+        {
+            return;
+        }
+
+        if (pngBytes is null || pngBytes.Length == 0)
+            return;
+
+        Dispatcher.UIThread.Post(
+            () =>
+            {
+                try
+                {
+                    var next = new Bitmap(new MemoryStream(pngBytes));
+                    var prev = ToolIcon;
+                    ToolIcon = next;
+                    prev?.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Log.ZLogWarning(
+                        ex,
+                        $"Failed to create tool icon bitmap: {RelativeExecutablePath}"
+                    );
+                }
+            },
+            DispatcherPriority.Background
+        );
     }
 
     public void NotifyLanguageChanged()

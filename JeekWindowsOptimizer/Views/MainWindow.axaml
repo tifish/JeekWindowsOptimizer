@@ -330,7 +330,7 @@
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate x:DataType="local:ToolItem">
 
                                         <Border
                                             Padding="14,12"
@@ -339,8 +339,17 @@
                                             BorderThickness="1"
                                             CornerRadius="6">
 
-                                            <Grid ColumnDefinitions="* Auto">
-                                                <StackPanel Orientation="Vertical" Spacing="6">
+                                            <Grid ColumnDefinitions="Auto * Auto">
+                                                <Image
+                                                    Grid.Column="0"
+                                                    Width="24"
+                                                    Height="24"
+                                                    Margin="0,2,10,0"
+                                                    VerticalAlignment="Top"
+                                                    IsVisible="{Binding HasToolIcon}"
+                                                    RenderOptions.BitmapInterpolationMode="MediumQuality"
+                                                    Source="{Binding ToolIcon}" />
+                                                <StackPanel Grid.Column="1" Orientation="Vertical" Spacing="6">
                                                     <TextBlock
                                                         VerticalAlignment="Center"
                                                         FontSize="17"
@@ -361,7 +370,7 @@
                                                         TextWrapping="Wrap" />
                                                 </StackPanel>
                                                 <Button
-                                                    Grid.Column="1"
+                                                    Grid.Column="2"
                                                     Padding="16,8"
                                                     Classes="accent"
                                                     HorizontalAlignment="Right"
