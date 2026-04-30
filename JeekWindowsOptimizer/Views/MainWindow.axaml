@@ -26,6 +26,13 @@
                     <SolidColorBrush x:Key="Win11SettingsCardBackgroundBrush" Color="#FF2B2B2B" />
                     <SolidColorBrush x:Key="Win11SettingsCardBorderBrush" Color="#FF3A3A3A" />
                     <SolidColorBrush x:Key="Win11SecondaryTextBrush" Color="#FFA6A6A6" />
+                    <SolidColorBrush x:Key="ToolCardBackgroundPointerOverBrush" Color="#FF333333" />
+                    <SolidColorBrush x:Key="ToolCardBackgroundPressedBrush" Color="#FF262626" />
+                    <SolidColorBrush x:Key="ToolCardBorderPointerOverBrush" Color="#FF4A4A4A" />
+                    <SolidColorBrush x:Key="ToolCardBorderPressedBrush" Color="#FF444444" />
+                    <SolidColorBrush x:Key="ToolRunHintBackgroundBrush" Color="#FF353535" />
+                    <SolidColorBrush x:Key="ToolRunHintBorderBrush" Color="#FF494949" />
+                    <SolidColorBrush x:Key="ToolRunHintForegroundBrush" Color="#FFE8E8E8" />
 
                     <SolidColorBrush x:Key="AccentButtonForeground" Color="#FF000000" />
                     <SolidColorBrush x:Key="AccentButtonForegroundPointerOver" Color="#FF000000" />
@@ -65,6 +72,13 @@
                     <SolidColorBrush x:Key="Win11SettingsCardBackgroundBrush" Color="#FFFFFFFF" />
                     <SolidColorBrush x:Key="Win11SettingsCardBorderBrush" Color="#FFE5E5E5" />
                     <SolidColorBrush x:Key="Win11SecondaryTextBrush" Color="#FF666666" />
+                    <SolidColorBrush x:Key="ToolCardBackgroundPointerOverBrush" Color="#FFFAFAFA" />
+                    <SolidColorBrush x:Key="ToolCardBackgroundPressedBrush" Color="#FFF4F4F4" />
+                    <SolidColorBrush x:Key="ToolCardBorderPointerOverBrush" Color="#FFD8D8D8" />
+                    <SolidColorBrush x:Key="ToolCardBorderPressedBrush" Color="#FFCFCFCF" />
+                    <SolidColorBrush x:Key="ToolRunHintBackgroundBrush" Color="#FFF9F9F9" />
+                    <SolidColorBrush x:Key="ToolRunHintBorderBrush" Color="#FFDADADA" />
+                    <SolidColorBrush x:Key="ToolRunHintForegroundBrush" Color="#FF202020" />
 
                     <SolidColorBrush x:Key="AccentButtonForeground" Color="#FF000000" />
                     <SolidColorBrush x:Key="AccentButtonForegroundPointerOver" Color="#FF000000" />
@@ -112,6 +126,30 @@
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Button.tool-card">
+            <Setter Property="Padding" Value="14,12" />
+            <Setter Property="Background" Value="{DynamicResource Win11SettingsCardBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Win11SettingsCardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="Button.tool-card:pointerover">
+            <Setter Property="Background" Value="{DynamicResource ToolCardBackgroundPointerOverBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ToolCardBorderPointerOverBrush}" />
+        </Style>
+        <Style Selector="Button.tool-card:pressed">
+            <Setter Property="Background" Value="{DynamicResource ToolCardBackgroundPressedBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ToolCardBorderPressedBrush}" />
+        </Style>
+        <Style Selector="Button.tool-card:disabled">
+            <Setter Property="Opacity" Value="0.62" />
+        </Style>
+    </Window.Styles>
 
     <Design.DataContext>
         <!--
@@ -342,12 +380,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="local:ToolItem">
 
-                                        <Border
-                                            Padding="14,12"
-                                            Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
-                                            BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="6">
+                                        <Button Classes="tool-card" Command="{Binding RunCommand}">
 
                                             <Grid ColumnDefinitions="Auto * Auto">
                                                 <Image
@@ -379,19 +412,24 @@
                                                         Text="{Binding DisplayStatus}"
                                                         TextWrapping="Wrap" />
                                                 </StackPanel>
-                                                <Button
+                                                <Border
                                                     Grid.Column="2"
                                                     Padding="16,8"
-                                                    Classes="accent"
+                                                    Background="{DynamicResource ToolRunHintBackgroundBrush}"
+                                                    BorderBrush="{DynamicResource ToolRunHintBorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6"
                                                     HorizontalAlignment="Right"
-                                                    HorizontalContentAlignment="Center"
                                                     VerticalAlignment="Center"
-                                                    VerticalContentAlignment="Center"
-                                                    Command="{Binding RunCommand}"
-                                                    Content="{l:Localize RunTool}"
-                                                    CornerRadius="6" />
+                                                    IsHitTestVisible="False">
+                                                    <TextBlock
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Foreground="{DynamicResource ToolRunHintForegroundBrush}"
+                                                        Text="{l:Localize RunTool}" />
+                                                </Border>
                                             </Grid>
-                                        </Border>
+                                        </Button>
 
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
