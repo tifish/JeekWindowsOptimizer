@@ -190,18 +190,75 @@ RunTool	Run	运行
 ToolFailed	Failed to run.	运行失败。
 ToolNotFound	Tool file not found: {0}	找不到工具文件：{0}
 CrystalDiskInfoName	CrystalDiskInfo	CrystalDiskInfo
-CrystalDiskInfoDescription	View disk health, temperature, and SMART information.	查看硬盘健康状态、温度和 SMART 信息。
+CrystalDiskInfoDescription	Check disk SMART health, temperature, and power-on history to detect failing drives early.	查看硬盘 SMART 健康状态、温度和通电记录，提前发现硬盘故障风险。
 CrystalDiskMarkName	CrystalDiskMark	CrystalDiskMark
-CrystalDiskMarkDescription	Test disk read and write performance.	测试磁盘读写性能。
+CrystalDiskMarkDescription	Benchmark disk read and write speed to identify slow storage or verify SSD performance.	测试磁盘读写速度，用于发现存储性能异常或验证 SSD 性能。
 GeekUninstallerName	Geek Uninstaller	Geek Uninstaller
-GeekUninstallerDescription	Uninstall desktop applications and clean leftover entries.	卸载桌面应用并清理残留项目。
+GeekUninstallerDescription	Remove desktop applications and scan leftovers when normal uninstall leaves files or registry entries behind.	卸载桌面应用，并在普通卸载残留文件或注册表项时继续清理。
 HotkeyDetectiveName	Hotkey Detective	Hotkey Detective
-HotkeyDetectiveDescription	Find which process registered a global hotkey.	查找哪个进程占用了全局快捷键。
+HotkeyDetectiveDescription	Find which process registered a global hotkey when a shortcut is occupied or stops responding.	当快捷键被占用或失效时，查找是哪个进程注册了全局快捷键。
 AutorunsName	Autoruns	Autoruns
-AutorunsDescription	Inspect programs and services that start automatically.	查看自动启动的程序和服务。
+AutorunsDescription	Inspect startup programs, services, drivers, scheduled tasks, and shell extensions that slow boot or add background load.	查看启动项、服务、驱动、计划任务和外壳扩展，用于排查开机变慢和后台占用。
 ProcessExplorerName	Process Explorer	Process Explorer
-ProcessExplorerDescription	Inspect running processes, handles, DLLs, and resource usage.	查看运行中的进程、句柄、DLL 和资源占用。
+ProcessExplorerDescription	Analyze running processes, handles, DLLs, and resource usage to find high CPU, file locks, or suspicious processes.	分析运行中的进程、句柄、DLL 和资源占用，用于定位高 CPU、文件占用或可疑进程。
 TcpViewName	TCPView	TCPView
-TcpViewDescription	Inspect active TCP and UDP connections.	查看当前活动的 TCP 和 UDP 连接。
+TcpViewDescription	Inspect active TCP and UDP connections to see which process is using a port or making network connections.	查看当前 TCP 和 UDP 连接，用于定位端口占用或正在联网的进程。
 WinDirStatName	WinDirStat	WinDirStat
-WinDirStatDescription	Analyze disk usage and locate large files or directories.	分析磁盘占用，定位大文件或目录。
+WinDirStatDescription	Visualize disk usage to locate large files and folders when free space is running low.	可视化分析磁盘占用，在空间不足时快速定位大文件和大目录。
+Repair	Repair	修复
+ToolConfirmTitle	Confirm action	确认操作
+ToolConfirmMessage	Run “{0}”? This action may affect system state.	是否运行“{0}”？此操作可能会影响系统状态。
+RestartExplorerName	Restart File Explorer	重启文件资源管理器
+RestartExplorerDescription	Restart the Windows shell when the desktop, taskbar, tray icons, or File Explorer are stuck or need settings refreshed.	当桌面、任务栏、托盘图标或文件资源管理器卡住，或需要刷新设置时重启 Windows 外壳。
+RefreshIconCacheName	Refresh icon cache	刷新图标缓存
+RefreshIconCacheDescription	Rebuild icon and thumbnail caches to fix wrong, blank, or stale file and shortcut icons.	重建图标和缩略图缓存，用于修复文件或快捷方式图标错误、空白或不刷新。
+UpdateGroupPolicyName	Update group policy	更新组策略
+UpdateGroupPolicyDescription	Refresh local and domain group policies after changing policy-related settings or joining a managed network.	在修改组策略相关设置或接入受管理网络后，刷新本地和域组策略。
+ServiceManagerName	Service Manager	服务管理器
+ServiceManagerDescription	Manage Windows services to diagnose background components that fail to start, consume resources, or block features.	管理 Windows 服务，用于排查后台组件无法启动、占用资源或影响功能的问题。
+DeviceManagerName	Device Manager	设备管理器
+DeviceManagerDescription	Check hardware and drivers when devices are missing, disabled, showing errors, or need driver updates.	检查硬件和驱动，用于处理设备丢失、被禁用、报错或需要更新驱动的问题。
+EventViewerName	Event Viewer	事件查看器
+EventViewerDescription	Review Windows event logs to investigate crashes, service failures, driver errors, and repeated system warnings.	查看 Windows 事件日志，用于排查崩溃、服务失败、驱动错误和反复出现的系统警告。
+TaskSchedulerName	Task Scheduler	任务计划程序
+TaskSchedulerDescription	Inspect scheduled tasks that run programs automatically, cause popups, wake the PC, or add background work.	查看计划任务，用于排查自动运行程序、弹窗、唤醒电脑或后台任务占用。
+EnvironmentVariablesName	Environment variables	环境变量设置
+EnvironmentVariablesDescription	Edit user and system environment variables such as PATH when command-line tools or development tools cannot be found.	编辑用户和系统环境变量，例如 PATH，用于修复命令行工具或开发工具找不到的问题。
+ReliabilityMonitorName	Reliability Monitor	可靠性监视器
+ReliabilityMonitorDescription	Review a timeline of crashes, failed updates, and app failures to find what changed before instability began.	按时间线查看崩溃、更新失败和应用故障，用于定位系统不稳定前发生了什么变化。
+ResourceMonitorName	Resource Monitor	资源监视器
+ResourceMonitorDescription	Inspect CPU, memory, disk, and network activity in detail to find processes causing slowdowns.	详细查看 CPU、内存、磁盘和网络活动，用于定位导致卡顿的进程。
+FlushDnsName	Flush DNS cache	刷新 DNS 缓存
+FlushDnsDescription	Clear the local DNS cache when websites resolve to old addresses or domain changes do not take effect.	清理本机 DNS 缓存，用于解决网站解析到旧地址或域名变更不生效的问题。
+NetworkConnectionsName	Network connections	网络连接
+NetworkConnectionsDescription	Open adapter settings to enable, disable, rename, or inspect network adapters and IP configuration.	打开网络适配器设置，用于启用、禁用、重命名或查看网卡和 IP 配置。
+FirewallAdvancedSettingsName	Windows Firewall advanced settings	防火墙高级设置
+FirewallAdvancedSettingsDescription	Manage inbound and outbound firewall rules when an app cannot connect or a port must be allowed or blocked.	管理入站和出站防火墙规则，用于处理应用无法联网、端口放行或端口阻止。
+ResetWinsockName	Reset Winsock	重置 Winsock
+ResetWinsockDescription	Reset the Winsock catalog to fix broken network stacks caused by proxy, VPN, antivirus, or network filter software.	重置 Winsock 目录，用于修复代理、VPN、杀毒或网络过滤软件导致的网络栈异常。
+ResetTcpIpName	Reset TCP/IP	重置 TCP/IP
+ResetTcpIpDescription	Reset TCP/IP settings to repair abnormal IP configuration, gateway, or connectivity issues.	重置 TCP/IP 设置，用于修复 IP 配置、网关或连接异常。
+ReleaseRenewIpName	Release and renew IP	释放/续租 IP
+ReleaseRenewIpDescription	Release and renew DHCP leases when the PC has no valid IP address or cannot reach the network.	释放并续租 DHCP 地址，用于处理电脑没有有效 IP 或无法连接网络的问题。
+EmptyRecycleBinName	Empty Recycle Bin	清空回收站
+EmptyRecycleBinDescription	Free disk space by emptying deleted files from the Recycle Bin through the Windows Shell.	通过 Windows Shell 清空回收站中的已删除文件，释放磁盘空间。
+DiskManagementName	Disk Management	磁盘管理
+DiskManagementDescription	Manage partitions, drive letters, and disk initialization when drives do not appear correctly.	管理分区、盘符和磁盘初始化，用于处理磁盘或分区显示异常。
+CleanWindowsTempName	Clean Windows temp directory	清理 Windows 临时目录
+CleanWindowsTempDescription	Remove leftover temporary files created by installers, updates, and apps to recover space and reduce clutter.	清理安装程序、更新和应用留下的临时文件，用于释放空间并减少无用文件。
+CleanWindowsUpdateCacheName	Clean Windows Update download cache	清理 Windows Update 下载缓存
+CleanWindowsUpdateCacheDescription	Clear downloaded Windows Update files to fix stuck update downloads or reclaim update cache space.	清理 Windows Update 已下载文件，用于修复更新下载卡住或回收更新缓存空间。
+DiskCleanupName	Disk Cleanup	磁盘清理
+DiskCleanupDescription	Open Windows Disk Cleanup to remove system caches, temporary files, thumbnails, and other safe cleanup targets.	打开 Windows 磁盘清理，用于清理系统缓存、临时文件、缩略图等安全清理项。
+StorageSenseName	Storage Sense settings	存储感知设置
+StorageSenseDescription	Configure automatic cleanup for temporary files, Recycle Bin content, and unused local cloud files.	配置自动清理临时文件、回收站内容和不常用的本地云文件。
+SystemFileCheckerName	Repair system files	修复系统文件
+SystemFileCheckerDescription	Scan and repair protected Windows system files when built-in components crash or behave abnormally.	扫描并修复受保护的 Windows 系统文件，用于处理系统组件崩溃或行为异常。
+DismRestoreHealthName	Repair Windows image	修复 Windows 映像
+DismRestoreHealthDescription	Repair the Windows component store when SFC cannot fix files or system updates and optional features fail.	修复 Windows 组件存储，用于处理 SFC 无法修复、系统更新或可选功能失败的问题。
+EditHostsFileName	Edit hosts file	编辑 hosts 文件
+EditHostsFileDescription	Edit the hosts file to override domain resolution for development, testing, or blocking specific domains.	编辑 hosts 文件，用于开发测试时指定域名解析，或阻止特定域名访问。
+SyncSystemTimeName	Sync system time	同步系统时间
+SyncSystemTimeDescription	Synchronize the system clock to fix sign-in, certificate, update, or network errors caused by incorrect time.	同步系统时间，用于修复时间不准导致的登录、证书、更新或网络错误。
+ResetMicrosoftStoreCacheName	Reset Microsoft Store cache	重置 Microsoft Store 缓存
+ResetMicrosoftStoreCacheDescription	Clear Microsoft Store cache when Store pages, downloads, updates, or app installs are stuck or fail.	清理 Microsoft Store 缓存，用于修复商店页面、下载、更新或应用安装卡住和失败。

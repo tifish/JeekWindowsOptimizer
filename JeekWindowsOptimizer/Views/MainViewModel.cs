@@ -154,8 +154,11 @@ public partial class MainViewModel : ObservableObject
                                 "Tools",
                                 "CrystalDiskInfoName",
                                 "CrystalDiskInfoDescription",
+                                ToolExecutionKind.PackagedExecutable,
                                 @"CrystalDiskInfo\DiskInfo64.exe",
                                 "",
+                                false,
+                                false,
                                 false,
                                 false
                             ),

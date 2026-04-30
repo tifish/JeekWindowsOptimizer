@@ -1,10 +1,37 @@
-GroupName	Name	ExecutablePath	Arguments	RunAsAdministrator	WaitForExit
-Other	WindowsActivator	Activator\Activate.cmd		false	true
-Storage	CrystalDiskInfo	CrystalDiskInfo\DiskInfo64.exe		false	false
-Storage	CrystalDiskMark	CrystalDiskMark\DiskMark64.exe		false	false
-Software	GeekUninstaller	Geek Uninstaller\geek.exe		false	false
-System	HotkeyDetective	Hotkey Detective\Hotkey Detective.cmd		false	false
-System	Autoruns	SysinternalsSuite\Autoruns64.exe		false	false
-System	ProcessExplorer	SysinternalsSuite\procexp64.exe		false	false
-Network	TcpView	SysinternalsSuite\tcpview64.exe		false	false
-Storage	WinDirStat	WinDirStat\WinDirStat.exe		false	false
+GroupName	Name	ExecutionKind	Target	Arguments	IconPath	RunAsAdministrator	WaitForExit	ConfirmBeforeRun	OpenInTerminal
+System	WindowsActivator	PackagedExecutable	Activator\Activate.cmd			false	true	false	false
+Storage	CrystalDiskInfo	PackagedExecutable	CrystalDiskInfo\DiskInfo64.exe			false	false	false	false
+Storage	CrystalDiskMark	PackagedExecutable	CrystalDiskMark\DiskMark64.exe			false	false	false	false
+Software	GeekUninstaller	PackagedExecutable	Geek Uninstaller\geek.exe			false	false	false	false
+System	HotkeyDetective	PackagedExecutable	Hotkey Detective\Hotkey Detective.cmd		Hotkey Detective\x64\HotkeyDetective.exe	false	false	false	false
+System	Autoruns	PackagedExecutable	SysinternalsSuite\Autoruns64.exe			false	false	false	false
+System	ProcessExplorer	PackagedExecutable	SysinternalsSuite\procexp64.exe			false	false	false	false
+Network	TcpView	PackagedExecutable	SysinternalsSuite\tcpview64.exe			false	false	false	false
+Storage	WinDirStat	PackagedExecutable	WinDirStat\WinDirStat.exe			false	false	false	false
+System	RestartExplorer	BuiltInAction	RestartExplorer		%SystemRoot%\explorer.exe	false	true	false	false
+System	RefreshIconCache	BuiltInAction	RefreshIconCache		%SystemRoot%\explorer.exe	false	true	true	false
+System	UpdateGroupPolicy	SystemCommand	gpupdate.exe	/force		false	true	false	false
+System	ServiceManager	ShellOpen	services.msc		%SystemRoot%\System32\filemgmt.dll,0	false	false	false	false
+System	DeviceManager	ShellOpen	devmgmt.msc		%SystemRoot%\System32\devmgr.dll,-201	false	false	false	false
+System	EventViewer	ShellOpen	eventvwr.msc		%SystemRoot%\System32\miguiresource.dll,-500	false	false	false	false
+System	TaskScheduler	ShellOpen	taskschd.msc		%SystemRoot%\System32\miguiresource.dll,-600	false	false	false	false
+System	EnvironmentVariables	SystemCommand	rundll32.exe	sysdm.cpl,EditEnvironmentVariables		false	false	false	false
+System	ReliabilityMonitor	SystemCommand	perfmon.exe	/rel		false	false	false	false
+System	ResourceMonitor	SystemCommand	resmon.exe			false	false	false	false
+Network	FlushDns	SystemCommand	ipconfig.exe	/flushdns		false	true	false	false
+Network	NetworkConnections	ShellOpen	ncpa.cpl			false	false	false	false
+Network	FirewallAdvancedSettings	ShellOpen	wf.msc		%SystemRoot%\System32\AuthFWGP.dll,-101	false	false	false	false
+Network	ResetWinsock	SystemCommand	netsh.exe	winsock reset		true	false	true	true
+Network	ResetTcpIp	SystemCommand	netsh.exe	int ip reset		true	false	true	true
+Network	ReleaseRenewIp	SystemCommand	cmd.exe	/k "ipconfig.exe /release & ipconfig.exe /renew"		true	false	true	false
+Storage	EmptyRecycleBin	BuiltInAction	EmptyRecycleBin		%SystemRoot%\System32\imageres.dll,-54	false	true	true	false
+Storage	DiskManagement	ShellOpen	diskmgmt.msc		%SystemRoot%\System32\dmdskres.dll,0	false	false	false	false
+Storage	CleanWindowsTemp	BuiltInAction	CleanWindowsTemp		%SystemRoot%\System32\cleanmgr.exe	false	true	true	false
+Storage	CleanWindowsUpdateCache	BuiltInAction	CleanWindowsUpdateCache		%SystemRoot%\System32\cleanmgr.exe	false	true	true	false
+Storage	DiskCleanup	SystemCommand	cleanmgr.exe			false	false	false	false
+Storage	StorageSense	ShellOpen	ms-settings:storagesense		%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe	false	false	false	false
+Repair	SystemFileChecker	SystemCommand	sfc.exe	/scannow		true	false	true	true
+Repair	DismRestoreHealth	SystemCommand	DISM.exe	/Online /Cleanup-Image /RestoreHealth		true	false	true	true
+Network	EditHostsFile	SystemCommand	notepad.exe	%SystemRoot%\System32\drivers\etc\hosts		true	false	false	false
+System	SyncSystemTime	SystemCommand	w32tm.exe	/resync		false	true	false	false
+Software	ResetMicrosoftStoreCache	SystemCommand	wsreset.exe			false	true	false	false

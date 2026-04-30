@@ -6,10 +6,21 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
 using JeekTools;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Enums;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 
 namespace JeekWindowsOptimizer;
+
+public enum ToolExecutionKind
+{
+    PackagedExecutable,
+    SystemCommand,
+    ShellOpen,
+    BuiltInAction,
+}
 
 public partial class ToolItem : ObservableObject
 {
@@ -22,22 +33,39 @@ public partial class ToolItem : ObservableObject
         string groupNameKey,
         string nameKey,
         string descriptionKey,
-        string executablePath,
+        ToolExecutionKind executionKind,
+        string target,
         string arguments,
         bool runAsAdministrator,
-        bool waitForExit
+        bool waitForExit,
+        bool confirmBeforeRun,
+        bool openInTerminal,
+        string iconPath = ""
     )
     {
         GroupNameKey = groupNameKey;
         NameKey = nameKey;
         DescriptionKey = descriptionKey;
-        RelativeExecutablePath = executablePath;
+        ExecutionKind = executionKind;
+        Target = target;
         Arguments = arguments;
         RunAsAdministrator = runAsAdministrator;
         WaitForExit = waitForExit;
+        ConfirmBeforeRun = confirmBeforeRun;
+        OpenInTerminal = openInTerminal;
 
-        FullExecutablePath = ResolveToolsPath(executablePath);
-        FullWorkingDirectory = Path.GetDirectoryName(FullExecutablePath) ?? ToolsRoot;
+        if (ExecutionKind == ToolExecutionKind.PackagedExecutable)
+        {
+            FullExecutablePath = ResolveToolsPath(target);
+            FullWorkingDirectory = Path.GetDirectoryName(FullExecutablePath) ?? ToolsRoot;
+        }
+        else
+        {
+            FullExecutablePath = Environment.ExpandEnvironmentVariables(target);
+            FullWorkingDirectory = "";
+        }
+
+        IconPath = ResolveIconPath(iconPath);
 
         if (Design.IsDesignMode)
             LoadToolIconSyncForDesigner();
@@ -48,12 +76,16 @@ public partial class ToolItem : ObservableObject
     public string GroupNameKey { get; }
     public string NameKey { get; }
     public string DescriptionKey { get; }
-    public string RelativeExecutablePath { get; }
+    public ToolExecutionKind ExecutionKind { get; }
+    public string Target { get; }
     public string FullExecutablePath { get; }
     public string FullWorkingDirectory { get; }
     public string Arguments { get; }
     public bool RunAsAdministrator { get; }
     public bool WaitForExit { get; }
+    public bool ConfirmBeforeRun { get; }
+    public bool OpenInTerminal { get; }
+    public string IconPath { get; }
 
     public string Name => Localizer.Get(NameKey);
     public string Description => Localizer.Get(DescriptionKey);
@@ -63,13 +95,14 @@ public partial class ToolItem : ObservableObject
     private Bitmap? _toolIcon;
 
     public bool HasToolIcon => ToolIcon is not null;
-    public bool IsAvailable => File.Exists(FullExecutablePath);
+    public bool IsAvailable =>
+        ExecutionKind != ToolExecutionKind.PackagedExecutable || File.Exists(FullExecutablePath);
     public bool HasDisplayStatus => !string.IsNullOrEmpty(DisplayStatus);
 
     public string DisplayStatus =>
         IsAvailable
             ? LastRunMessage
-            : string.Format(Localizer.Get("ToolNotFound"), RelativeExecutablePath);
+            : string.Format(Localizer.Get("ToolNotFound"), Target);
 
     [ObservableProperty]
     public partial bool IsRunning { get; set; }
@@ -90,25 +123,19 @@ public partial class ToolItem : ObservableObject
 
         try
         {
-            var startInfo = new ProcessStartInfo(FullExecutablePath, Arguments)
+            if (ConfirmBeforeRun && !await ConfirmRun())
+                return;
+
+            var succeeded = ExecutionKind switch
             {
-                UseShellExecute = true,
-                WorkingDirectory = FullWorkingDirectory,
+                ToolExecutionKind.PackagedExecutable => await RunProcess(),
+                ToolExecutionKind.SystemCommand => await RunProcess(),
+                ToolExecutionKind.ShellOpen => await RunProcess(),
+                ToolExecutionKind.BuiltInAction => await BuiltInToolActions.Run(Target),
+                _ => false,
             };
 
-            if (RunAsAdministrator)
-                startInfo.Verb = "runas";
-
-            if (WaitForExit)
-            {
-                var succeeded = await Executor.RunAndWait(startInfo);
-                LastRunMessage = succeeded ? "" : Localizer.Get("ToolFailed");
-            }
-            else
-            {
-                var process = Executor.Run(startInfo);
-                LastRunMessage = process is null ? Localizer.Get("ToolFailed") : "";
-            }
+            LastRunMessage = succeeded ? "" : Localizer.Get("ToolFailed");
         }
         catch (Exception ex)
         {
@@ -119,6 +146,82 @@ public partial class ToolItem : ObservableObject
         {
             IsRunning = false;
         }
+    }
+
+    private async Task<bool> ConfirmRun()
+    {
+        var msgResult = await MessageBoxManager
+            .GetMessageBoxStandard(
+                new MessageBoxStandardParams
+                {
+                    ContentTitle = Localizer.Get("ToolConfirmTitle"),
+                    ContentMessage = string.Format(Localizer.Get("ToolConfirmMessage"), Name),
+                    ButtonDefinitions = ButtonEnum.OkCancel,
+                    Icon = Icon.Warning,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    Topmost = true,
+                    FontFamily = Localizer.Get("DefaultFontName"),
+                }
+            )
+            .ShowAsync();
+
+        return msgResult == ButtonResult.Ok;
+    }
+
+    private async Task<bool> RunProcess()
+    {
+        var startInfo = BuildStartInfo();
+
+        if (WaitForExit)
+            return await Executor.RunAndWait(startInfo);
+
+        return Executor.Run(startInfo) is not null;
+    }
+
+    private ProcessStartInfo BuildStartInfo()
+    {
+        if (OpenInTerminal)
+        {
+            var command = BuildCommandLine(FullExecutablePath, Arguments);
+            return new ProcessStartInfo("cmd.exe", $"/k \"{command.Replace("\"", "\\\"")}\"")
+            {
+                UseShellExecute = true,
+                Verb = RunAsAdministrator ? "runas" : "",
+            };
+        }
+
+        var startInfo = new ProcessStartInfo(
+            FullExecutablePath,
+            Environment.ExpandEnvironmentVariables(Arguments)
+        )
+        {
+            UseShellExecute = true,
+            WorkingDirectory = FullWorkingDirectory,
+        };
+
+        if (RunAsAdministrator)
+            startInfo.Verb = "runas";
+
+        return startInfo;
+    }
+
+    private static string BuildCommandLine(string fileName, string arguments)
+    {
+        var command = fileName.Contains(' ') ? $"\"{fileName}\"" : fileName;
+        if (!string.IsNullOrWhiteSpace(arguments))
+            command += " " + Environment.ExpandEnvironmentVariables(arguments);
+        return command;
+    }
+
+    private string ResolveIconPath(string iconPath)
+    {
+        if (string.IsNullOrWhiteSpace(iconPath))
+            return FullExecutablePath;
+
+        if (ExecutionKind != ToolExecutionKind.PackagedExecutable || Path.IsPathRooted(iconPath))
+            return iconPath;
+
+        return ResolveToolsPath(iconPath);
     }
 
     partial void OnIsRunningChanged(bool value)
@@ -136,7 +239,7 @@ public partial class ToolItem : ObservableObject
     {
         try
         {
-            ToolIcon = ToolIconExtractor.TryLoadToolIcon(FullExecutablePath);
+            ToolIcon = ToolIconExtractor.TryLoadToolIcon(IconPath);
         }
         catch
         {
@@ -146,8 +249,8 @@ public partial class ToolItem : ObservableObject
 
     private async Task LoadToolIconAsync()
     {
-        var path = FullExecutablePath;
-        if (!File.Exists(path))
+        var path = IconPath;
+        if (string.IsNullOrWhiteSpace(path))
             return;
 
         byte[]? pngBytes;
@@ -156,13 +259,19 @@ public partial class ToolItem : ObservableObject
             pngBytes = await Task.Run(() => ToolIconExtractor.TryEncodeToolIconPng(path))
                 .ConfigureAwait(false);
         }
-        catch
+        catch (Exception ex)
         {
+            Log.ZLogWarning(ex, $"Failed to encode tool icon: {Name} ({IconPath})");
             return;
         }
 
         if (pngBytes is null || pngBytes.Length == 0)
+        {
+            Log.ZLogWarning(
+                $"Tool icon not found: {Name}, target={Target}, iconPath={IconPath}"
+            );
             return;
+        }
 
         Dispatcher.UIThread.Post(
             () =>
@@ -178,7 +287,7 @@ public partial class ToolItem : ObservableObject
                 {
                     Log.ZLogWarning(
                         ex,
-                        $"Failed to create tool icon bitmap: {RelativeExecutablePath}"
+                        $"Failed to create tool icon bitmap: {Target}"
                     );
                 }
             },
