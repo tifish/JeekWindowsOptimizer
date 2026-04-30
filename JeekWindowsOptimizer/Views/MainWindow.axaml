@@ -244,7 +244,9 @@
                                             <Grid ColumnDefinitions="* Auto">
                                                 <StackPanel Orientation="Vertical" Spacing="6">
                                                     <StackPanel Orientation="Horizontal">
-                                                        <CheckBox IsChecked="{Binding IsChecked}" />
+                                                        <CheckBox
+                                                            IsChecked="{Binding IsChecked}"
+                                                            IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
                                                         <TextBlock
                                                             VerticalAlignment="Center"
                                                             FontSize="17"
@@ -281,7 +283,8 @@
                                                         OffContent=""
                                                         OnContent=""
                                                         IsChecked="{Binding IsOptimized, Mode=OneWay}"
-                                                        IsCheckedChanged="ToggleButton_OnIsCheckedChanged" />
+                                                        IsCheckedChanged="ToggleButton_OnIsCheckedChanged"
+                                                        IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
                                                 </StackPanel>
                                             </Grid>
                                         </Border>

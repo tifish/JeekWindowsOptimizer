@@ -100,9 +100,12 @@ public partial class MainViewModel : ObservableObject
     public bool IsToolsTabSelected => SelectedTabIndex == ToolsTabIndex;
     public bool CanShowOptimizeButton => !IsBusy && IsOptimizationTabSelected;
 
+    public bool AreOptimizationItemControlsEnabled => !IsBusy;
+
     partial void OnIsBusyChanged(bool value)
     {
         OnPropertyChanged(nameof(CanShowOptimizeButton));
+        OnPropertyChanged(nameof(AreOptimizationItemControlsEnabled));
     }
 
     [RelayCommand]

@@ -96,6 +96,9 @@ public partial class MainWindow : Window
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             return;
 
+        if (DataContext is MainViewModel { IsBusy: true })
+            return;
+
         var border = (Border)sender!;
         var item = border.DataContext as OptimizationItem;
         item!.ToggleChecked();
