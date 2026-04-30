@@ -47,6 +47,10 @@ dotnet build JeekWindowsOptimizer.sln -c Release
 - 优化项的 `GroupNameKey`、`NameKey`、`DescriptionKey` 必须能在本地化数据中找到对应文本。
 - 修改 `bin/Data/*.tab` 时保持列数和现有命名规则一致。
 
+## Git 提交信息
+
+- **使用英文**撰写提交说明（subject 与 body），便于跨贡献者阅读与检索；风格可采用简明的不定式或 `type: summary`（如 `feat:` / `fix:`）。
+
 ## 注意事项
 
 - 该项目会修改真实 Windows 系统设置。不要在没有明确需求时新增启动、停止、删除或注册表写入行为。
