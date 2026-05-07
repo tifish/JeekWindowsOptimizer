@@ -15,6 +15,7 @@ public partial class MainViewModel : ObservableObject
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
     private const int ToolsTabIndex = 3;
+    private bool _uncheckedOptimizationItemsDirty;
 
     /// <summary>Theme button glyph (sun / moon / half-circle for follow-system).</summary>
     private static readonly Geometry ThemeLightGlyph = Geometry.Parse(
@@ -219,6 +220,8 @@ public partial class MainViewModel : ObservableObject
                 AddOptimizationItem(item);
             AddOptimizationItem(new WindowsTerminalUseNewWindow());
 
+            RestoreUncheckedOptimizationItems();
+
             await ToolItemManager.Load();
             foreach (var item in ToolItemManager.Items)
                 AddToolItem(item);
@@ -249,6 +252,43 @@ public partial class MainViewModel : ObservableObject
             IsBusy = false;
             StatusMessage = Localizer.Get("InitializationFailed");
         }
+    }
+
+    private IEnumerable<OptimizationItem> GetOptimizationItems()
+    {
+        return OptimizingGroups
+            .Concat(AntivirusGroups)
+            .Concat(PersonalGroups)
+            .SelectMany(group => group.Items);
+    }
+
+    private void RestoreUncheckedOptimizationItems()
+    {
+        var uncheckedNameKeys = AppSettingsStore.GetUncheckedOptimizationItemNameKeys();
+
+        foreach (var item in GetOptimizationItems())
+        {
+            item.IsChecked = !uncheckedNameKeys.Contains(item.NameKey);
+            item.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(OptimizationItem.IsChecked))
+                    _uncheckedOptimizationItemsDirty = true;
+            };
+        }
+
+        _uncheckedOptimizationItemsDirty = false;
+    }
+
+    public void SaveUncheckedOptimizationItemsIfChanged()
+    {
+        if (!_uncheckedOptimizationItemsDirty)
+            return;
+
+        var uncheckedNameKeys = GetOptimizationItems()
+            .Where(item => !item.IsChecked)
+            .Select(item => item.NameKey);
+        AppSettingsStore.SetUncheckedOptimizationItemNameKeys(uncheckedNameKeys);
+        _uncheckedOptimizationItemsDirty = false;
     }
 
     private void AddOptimizationItem(OptimizationItem item)

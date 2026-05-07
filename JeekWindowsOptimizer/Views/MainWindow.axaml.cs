@@ -23,6 +23,8 @@ public partial class MainWindow : Window
         UpdateFontFamily();
 
         Loaded += OnLoaded;
+        Deactivated += OnDeactivated;
+        Closing += OnClosing;
 
 #if DEBUG
         Application.Current?.AttachDeveloperTools();
@@ -33,6 +35,22 @@ public partial class MainWindow : Window
     {
         if (DataContext is MainViewModel vm && vm.LoadedCommand.CanExecute(null))
             vm.LoadedCommand.Execute(null);
+    }
+
+    private void OnDeactivated(object? sender, EventArgs e)
+    {
+        SaveUncheckedOptimizationItemsIfChanged();
+    }
+
+    private void OnClosing(object? sender, WindowClosingEventArgs e)
+    {
+        SaveUncheckedOptimizationItemsIfChanged();
+    }
+
+    private void SaveUncheckedOptimizationItemsIfChanged()
+    {
+        if (DataContext is MainViewModel vm)
+            vm.SaveUncheckedOptimizationItemsIfChanged();
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)

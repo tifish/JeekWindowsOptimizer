@@ -8,6 +8,8 @@ internal sealed class AppSettings
     public string? Language { get; set; }
 
     public string? Theme { get; set; }
+
+    public List<string>? UncheckedOptimizationItemNameKeys { get; set; }
 }
 
 internal static class AppSettingsStore
@@ -99,6 +101,24 @@ internal static class AppSettingsStore
 
         themeVariant = ThemeVariant.Default;
         return false;
+    }
+
+    public static HashSet<string> GetUncheckedOptimizationItemNameKeys()
+    {
+        return new HashSet<string>(
+            Current.UncheckedOptimizationItemNameKeys ?? [],
+            StringComparer.Ordinal
+        );
+    }
+
+    public static void SetUncheckedOptimizationItemNameKeys(IEnumerable<string> nameKeys)
+    {
+        Current.UncheckedOptimizationItemNameKeys = nameKeys
+            .Where(nameKey => !string.IsNullOrWhiteSpace(nameKey))
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToList();
+        Save();
     }
 
     public static void SetLanguage(string language)
