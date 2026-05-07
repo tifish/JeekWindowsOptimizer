@@ -35,6 +35,8 @@ public class App : Application
         Localizer.SetLocalizer(
             new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab"))
         );
+        AppSettingsStore.Load();
+        ApplyStoredSettings();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
@@ -45,6 +47,15 @@ public class App : Application
         ApplyWin11FluentControlAccentPalettes();
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void ApplyStoredSettings()
+    {
+        if (AppSettingsStore.TryGetLanguage(out var language))
+            Localizer.Language = language;
+
+        if (AppSettingsStore.TryGetThemeVariant(out var themeVariant))
+            RequestedThemeVariant = themeVariant;
     }
 
     private void ApplyWin11FluentControlAccentPalettes()

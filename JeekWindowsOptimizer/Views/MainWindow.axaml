@@ -20,6 +20,9 @@
     <!-- Win11 Settings–like: flat section headers (Expander) + card rows -->
     <Window.Resources>
         <ResourceDictionary>
+            <!-- Fluent-style icons (filled paths, 24×24 box); globe from Material globe glyph -->
+            <StreamGeometry x:Key="GlobeGeometry">M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z</StreamGeometry>
+
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="Win11ChromeBackgroundBrush" Color="#FF1C1C1C" />
@@ -38,6 +41,10 @@
                     <SolidColorBrush x:Key="AccentButtonForegroundPointerOver" Color="#FF000000" />
                     <SolidColorBrush x:Key="AccentButtonForegroundPressed" Color="#FF000000" />
                     <SolidColorBrush x:Key="AccentButtonForegroundDisabled" Color="#FF717171" />
+
+                    <SolidColorBrush x:Key="TitleBarIconForegroundBrush" Color="#FFE8E8E8" />
+                    <SolidColorBrush x:Key="TitleBarIconPointerOverBrush" Color="#14FFFFFF" />
+                    <SolidColorBrush x:Key="TitleBarIconPressedBrush" Color="#22000000" />
 
                     <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#00000000" />
                     <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#14FFFFFF" />
@@ -96,6 +103,10 @@
                     <SolidColorBrush x:Key="AccentButtonBorderBrushPressed" Color="#FFB3B3B3" />
                     <SolidColorBrush x:Key="AccentButtonBorderBrushDisabled" Color="#FFDADADA" />
 
+                    <SolidColorBrush x:Key="TitleBarIconForegroundBrush" Color="#FF202020" />
+                    <SolidColorBrush x:Key="TitleBarIconPointerOverBrush" Color="#08000000" />
+                    <SolidColorBrush x:Key="TitleBarIconPressedBrush" Color="#14000000" />
+
                     <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#00000000" />
                     <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#08000000" />
                     <SolidColorBrush x:Key="ExpanderHeaderBackgroundPressed" Color="#14000000" />
@@ -149,6 +160,27 @@
         <Style Selector="Button.tool-card:disabled">
             <Setter Property="Opacity" Value="0.62" />
         </Style>
+
+        <Style Selector="Button.titlebar-icon">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+        <Style Selector="Button.titlebar-icon:pointerover">
+            <Setter Property="Background" Value="{DynamicResource TitleBarIconPointerOverBrush}" />
+        </Style>
+        <Style Selector="Button.titlebar-icon:pressed">
+            <Setter Property="Background" Value="{DynamicResource TitleBarIconPressedBrush}" />
+        </Style>
+
+        <Style Selector="PathIcon.titlebar-glyph">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="Foreground" Value="{DynamicResource TitleBarIconForegroundBrush}" />
+        </Style>
     </Window.Styles>
 
     <Design.DataContext>
@@ -163,46 +195,8 @@
         Margin="24,20"
         ColumnDefinitions="*"
         RowDefinitions="Auto Auto *">
-        <StackPanel
-            Grid.Row="0"
-            Margin="0,0,0,10"
-            Orientation="Vertical"
-            Spacing="10">
-            <StackPanel.ContextMenu>
-                <ContextMenu>
-                    <MenuItem
-                        Command="{Binding SwitchToEnglishCommand}"
-                        GroupName="Language"
-                        Header="{l:Localize en}"
-                        IsChecked="{Binding IsEnglishMenuChecked, Mode=OneWay}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding SwitchToChineseCommand}"
-                        GroupName="Language"
-                        Header="{l:Localize zh}"
-                        IsChecked="{Binding IsChineseMenuChecked, Mode=OneWay}"
-                        ToggleType="Radio" />
-                    <Separator />
-                    <MenuItem
-                        Command="{Binding SwitchToLightThemeCommand}"
-                        GroupName="Theme"
-                        Header="{l:Localize ThemeLight}"
-                        IsChecked="{Binding IsLightThemeMenuChecked, Mode=OneWay}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding SwitchToDarkThemeCommand}"
-                        GroupName="Theme"
-                        Header="{l:Localize ThemeDark}"
-                        IsChecked="{Binding IsDarkThemeMenuChecked, Mode=OneWay}"
-                        ToggleType="Radio" />
-                    <MenuItem
-                        Command="{Binding SwitchToSystemThemeCommand}"
-                        GroupName="Theme"
-                        Header="{l:Localize ThemeSystem}"
-                        IsChecked="{Binding IsSystemThemeMenuChecked, Mode=OneWay}"
-                        ToggleType="Radio" />
-                </ContextMenu>
-            </StackPanel.ContextMenu>
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <StackPanel Orientation="Vertical" Spacing="10">
 
             <ProgressBar
                 Height="20"
@@ -224,7 +218,59 @@
                 FontSize="14"
                 Foreground="{DynamicResource Win11SecondaryTextBrush}"
                 Text="{Binding StatusMessage}" />
-        </StackPanel>
+            </StackPanel>
+
+            <StackPanel
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Orientation="Horizontal"
+                Spacing="4">
+                <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Language}">
+                    <PathIcon Classes="titlebar-glyph" Data="{StaticResource GlobeGeometry}" />
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuItem
+                                Command="{Binding SwitchToEnglishCommand}"
+                                GroupName="Language"
+                                Header="{l:Localize en}"
+                                IsChecked="{Binding IsEnglishMenuChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                            <MenuItem
+                                Command="{Binding SwitchToChineseCommand}"
+                                GroupName="Language"
+                                Header="{l:Localize zh}"
+                                IsChecked="{Binding IsChineseMenuChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+                <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Theme}">
+                    <PathIcon Classes="titlebar-glyph" Data="{Binding CurrentThemeGlyph}" />
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuItem
+                                Command="{Binding SwitchToLightThemeCommand}"
+                                GroupName="Theme"
+                                Header="{l:Localize ThemeLight}"
+                                IsChecked="{Binding IsLightThemeMenuChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                            <MenuItem
+                                Command="{Binding SwitchToDarkThemeCommand}"
+                                GroupName="Theme"
+                                Header="{l:Localize ThemeDark}"
+                                IsChecked="{Binding IsDarkThemeMenuChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                            <MenuItem
+                                Command="{Binding SwitchToSystemThemeCommand}"
+                                GroupName="Theme"
+                                Header="{l:Localize ThemeSystem}"
+                                IsChecked="{Binding IsSystemThemeMenuChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+        </Grid>
 
         <TabStrip
             Grid.Row="1"

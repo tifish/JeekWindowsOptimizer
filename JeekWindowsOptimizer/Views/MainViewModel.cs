@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -14,6 +15,19 @@ public partial class MainViewModel : ObservableObject
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
     private const int ToolsTabIndex = 3;
+
+    /// <summary>Theme button glyph (sun / moon / half-circle for follow-system).</summary>
+    private static readonly Geometry ThemeLightGlyph = Geometry.Parse(
+        "M12 18c3.31 0 6-2.69 6-6s-2.69-6-6-6-6 2.69-6 6 2.69 6 6 6zm8-6h3v-2h-3v2zm-19 0H2v2h3v-2zm11 13v3h2v-3h-2zm0-19V2h2v3h-2z"
+    );
+
+    private static readonly Geometry ThemeDarkGlyph = Geometry.Parse(
+        "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"
+    );
+
+    private static readonly Geometry ThemeSystemGlyph = Geometry.Parse(
+        "M12 2 A10 10 0 0 1 12 22 Z"
+    );
 
     public MainViewModel()
     {
@@ -37,6 +51,9 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     public partial bool IsSystemThemeMenuChecked { get; set; }
 
+    [ObservableProperty]
+    public partial Geometry? CurrentThemeGlyph { get; set; }
+
     private void RefreshLanguageMenuCheckState()
     {
         IsEnglishMenuChecked = string.Equals(
@@ -57,6 +74,10 @@ public partial class MainViewModel : ObservableObject
         IsLightThemeMenuChecked = v == ThemeVariant.Light;
         IsDarkThemeMenuChecked = v == ThemeVariant.Dark;
         IsSystemThemeMenuChecked = v == ThemeVariant.Default;
+        CurrentThemeGlyph =
+            v == ThemeVariant.Light ? ThemeLightGlyph
+            : v == ThemeVariant.Dark ? ThemeDarkGlyph
+            : ThemeSystemGlyph;
     }
 
     [ObservableProperty]
@@ -402,19 +423,24 @@ public partial class MainViewModel : ObservableObject
     private void SwitchToEnglish()
     {
         Localizer.Language = "en";
+        AppSettingsStore.SetLanguage("en");
     }
 
     [RelayCommand]
     private void SwitchToChinese()
     {
         Localizer.Language = "zh";
+        AppSettingsStore.SetLanguage("zh");
     }
 
     [RelayCommand]
     private void SwitchToLightTheme()
     {
         if (Application.Current is { } app)
+        {
             app.RequestedThemeVariant = ThemeVariant.Light;
+            AppSettingsStore.SetThemeVariant(ThemeVariant.Light);
+        }
         RefreshThemeMenuCheckState();
     }
 
@@ -422,7 +448,10 @@ public partial class MainViewModel : ObservableObject
     private void SwitchToDarkTheme()
     {
         if (Application.Current is { } app)
+        {
             app.RequestedThemeVariant = ThemeVariant.Dark;
+            AppSettingsStore.SetThemeVariant(ThemeVariant.Dark);
+        }
         RefreshThemeMenuCheckState();
     }
 
@@ -430,7 +459,10 @@ public partial class MainViewModel : ObservableObject
     private void SwitchToSystemTheme()
     {
         if (Application.Current is { } app)
+        {
             app.RequestedThemeVariant = ThemeVariant.Default;
+            AppSettingsStore.SetThemeVariant(ThemeVariant.Default);
+        }
         RefreshThemeMenuCheckState();
     }
 }
