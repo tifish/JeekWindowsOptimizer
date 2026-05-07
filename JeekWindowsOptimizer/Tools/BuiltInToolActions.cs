@@ -35,10 +35,12 @@ internal static class BuiltInToolActions
         StopExplorer();
         await Task.Delay(500);
 
-        DeleteFileIfExists(Path.Join(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "IconCache.db"
-        ));
+        DeleteFileIfExists(
+            Path.Join(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "IconCache.db"
+            )
+        );
 
         var explorerCachePath = Path.Join(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
@@ -53,10 +55,10 @@ internal static class BuiltInToolActions
     private static bool EmptyRecycleBin()
     {
         return SHEmptyRecycleBin(
-            IntPtr.Zero,
-            null,
-            SHERB_NOCONFIRMATION | SHERB_NOPROGRESSUI | SHERB_NOSOUND
-        ) == 0;
+                IntPtr.Zero,
+                null,
+                SHERB_NOCONFIRMATION | SHERB_NOPROGRESSUI | SHERB_NOSOUND
+            ) == 0;
     }
 
     private static bool CleanWindowsTemp()
@@ -119,9 +121,8 @@ internal static class BuiltInToolActions
     {
         try
         {
-            return Process.Start(
-                new ProcessStartInfo("explorer.exe") { UseShellExecute = true }
-            ) is not null;
+            return Process.Start(new ProcessStartInfo("explorer.exe") { UseShellExecute = true })
+                is not null;
         }
         catch
         {

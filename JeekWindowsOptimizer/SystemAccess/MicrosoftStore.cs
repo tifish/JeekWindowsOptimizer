@@ -14,13 +14,15 @@ public static class MicrosoftStore
         try
         {
             PowerShellService.Commands.Clear();
-            await PowerShellService.AddCommand("Set-ExecutionPolicy")
+            await PowerShellService
+                .AddCommand("Set-ExecutionPolicy")
                 .AddParameter("Scope", "Process")
                 .AddParameter("ExecutionPolicy", "Bypass")
                 .InvokeAsync();
 
             PowerShellService.Commands.Clear();
-            await PowerShellService.AddCommand("Import-Module")
+            await PowerShellService
+                .AddCommand("Import-Module")
                 .AddParameter("Name", "AppX")
                 .AddParameter("UseWindowsPowerShell")
                 .InvokeAsync();
@@ -59,7 +61,8 @@ public static class MicrosoftStore
     public static async Task UninstallPackage(string packageName)
     {
         PowerShellService.Commands.Clear();
-        PowerShellService.Commands.AddCommand(GetPackageCommand(packageName))
+        PowerShellService
+            .Commands.AddCommand(GetPackageCommand(packageName))
             .AddCommand("Remove-AppxPackage");
         await PowerShellService.InvokeAsync();
     }

@@ -27,8 +27,9 @@ public class DisableThumbnailsItem : OptimizationItem
 
     public bool Disabled
     {
-        get => WindowsVisualEffects.CustomSetting
-               && !WindowsVisualEffects.ShowThumbnailsInsteadOfIcons;
+        get =>
+            WindowsVisualEffects.CustomSetting
+            && !WindowsVisualEffects.ShowThumbnailsInsteadOfIcons;
         set
         {
             WindowsVisualEffects.CustomSetting = true;

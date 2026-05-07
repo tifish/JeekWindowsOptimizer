@@ -7,7 +7,8 @@ using MsBox.Avalonia.Enums;
 
 namespace JeekWindowsOptimizer;
 
-public class DriverItem(string groupNameKey, string nameKey, string descriptionKey) : OptimizationItem
+public class DriverItem(string groupNameKey, string nameKey, string descriptionKey)
+    : OptimizationItem
 {
     public override string GroupNameKey => groupNameKey;
     public override string NameKey => nameKey;
@@ -74,18 +75,27 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
 
         if (!result)
         {
-            await MessageBoxManager.GetMessageBoxStandard(new MessageBoxStandardParams
-            {
-                ContentMessage = string.Format(Localizer.Get("PleaseUninstallDriver"), Name),
-                ButtonDefinitions = ButtonEnum.Ok,
-                Icon = Icon.Info,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Topmost = true,
-                FontFamily = "Microsoft YaHei",
-            }).ShowAsync();
+            await MessageBoxManager
+                .GetMessageBoxStandard(
+                    new MessageBoxStandardParams
+                    {
+                        ContentMessage = string.Format(
+                            Localizer.Get("PleaseUninstallDriver"),
+                            Name
+                        ),
+                        ButtonDefinitions = ButtonEnum.Ok,
+                        Icon = Icon.Info,
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                        Topmost = true,
+                        FontFamily = "Microsoft YaHei",
+                    }
+                )
+                .ShowAsync();
 
             // Show Windows' uninstall app panel
-            Process.Start(new ProcessStartInfo("ms-settings:appsfeatures-app") { UseShellExecute = true });
+            Process.Start(
+                new ProcessStartInfo("ms-settings:appsfeatures-app") { UseShellExecute = true }
+            );
         }
 
         return result;

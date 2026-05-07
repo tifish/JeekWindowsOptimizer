@@ -24,7 +24,13 @@ public static class ServiceItemManager
                 category = OptimizationItemCategory.Default;
             var serviceName = row[3];
 
-            var item = new ServiceItem(groupNameKey, nameKey, descriptionKey, category, serviceName);
+            var item = new ServiceItem(
+                groupNameKey,
+                nameKey,
+                descriptionKey,
+                category,
+                serviceName
+            );
             Items.Add(item);
         }
     }

@@ -25,8 +25,7 @@ sealed class Program
             if (Design.IsDesignMode)
                 LogManager.DisableLogging();
 
-            BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args);
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
         catch (Exception ex)
         {
@@ -37,9 +36,6 @@ sealed class Program
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
-        return AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            .WithInterFont()
-            .LogToTrace();
+        return AppBuilder.Configure<App>().UsePlatformDetect().WithInterFont().LogToTrace();
     }
 }

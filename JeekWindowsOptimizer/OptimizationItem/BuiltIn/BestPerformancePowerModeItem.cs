@@ -10,8 +10,9 @@ public class BestPerformancePowerModeItem : OptimizationItem
 
     public override Task Initialize()
     {
-        IsOptimized = PowerManager.ActivePowerPlan == PowerPlan.Balanced
-                      && PowerManager.PowerMode == PowerMode.BestPerformance;
+        IsOptimized =
+            PowerManager.ActivePowerPlan == PowerPlan.Balanced
+            && PowerManager.PowerMode == PowerMode.BestPerformance;
         return Task.CompletedTask;
     }
 

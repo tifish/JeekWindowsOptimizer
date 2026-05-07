@@ -22,23 +22,24 @@ public class VisualEffectsItem : OptimizationItem
 
     public bool Disabled
     {
-        get => WindowsVisualEffects.CustomSetting &&
-               !WindowsVisualEffects.ClientAreaAnimation &&
-               !WindowsVisualEffects.WindowAnimation &&
-               !WindowsVisualEffects.TaskBarAnimation &&
-               !WindowsVisualEffects.AeroPeek &&
-               !WindowsVisualEffects.FadeOrSlideMenusIntoView &&
-               !WindowsVisualEffects.FadeOrSlideToolTipsIntoView &&
-               !WindowsVisualEffects.FadeOutMenuItemsAfterClicking &&
-               !WindowsVisualEffects.SaveTaskbarThumbnail &&
-               WindowsVisualEffects.ShowShadowsUnderMousePointer &&
-               WindowsVisualEffects.ShowShadowsUnderWindows &&
-               WindowsVisualEffects.ShowTranslucentSelectionRectangle &&
-               WindowsVisualEffects.ShowWindowContentWhileDragging &&
-               !WindowsVisualEffects.SlideOpenComboBoxes &&
-               WindowsVisualEffects.SmoothingFonts &&
-               !WindowsVisualEffects.SmoothScrollListBoxes &&
-               WindowsVisualEffects.UseDropShadowForIconLabels;
+        get =>
+            WindowsVisualEffects.CustomSetting
+            && !WindowsVisualEffects.ClientAreaAnimation
+            && !WindowsVisualEffects.WindowAnimation
+            && !WindowsVisualEffects.TaskBarAnimation
+            && !WindowsVisualEffects.AeroPeek
+            && !WindowsVisualEffects.FadeOrSlideMenusIntoView
+            && !WindowsVisualEffects.FadeOrSlideToolTipsIntoView
+            && !WindowsVisualEffects.FadeOutMenuItemsAfterClicking
+            && !WindowsVisualEffects.SaveTaskbarThumbnail
+            && WindowsVisualEffects.ShowShadowsUnderMousePointer
+            && WindowsVisualEffects.ShowShadowsUnderWindows
+            && WindowsVisualEffects.ShowTranslucentSelectionRectangle
+            && WindowsVisualEffects.ShowWindowContentWhileDragging
+            && !WindowsVisualEffects.SlideOpenComboBoxes
+            && WindowsVisualEffects.SmoothingFonts
+            && !WindowsVisualEffects.SmoothScrollListBoxes
+            && WindowsVisualEffects.UseDropShadowForIconLabels;
         set
         {
             WindowsVisualEffects.CustomSetting = true;

@@ -9,7 +9,11 @@ public static class RegistryItemManager
     public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\RegistryValueItems.tab")))
+        if (
+            !await tabFile.LoadAsync(
+                Path.Join(AppContext.BaseDirectory, @"Data\RegistryValueItems.tab")
+            )
+        )
             return;
 
         var itemsDict = new Dictionary<string, RegistryItem>();
@@ -31,20 +35,40 @@ public static class RegistryItemManager
             var type = row[++index];
             var defaultValue = row[++index];
             var optimizingValue = row[++index];
-            var deleteDefaultValue = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldTurnOffTamperProtection = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldUpdateGroupPolicy = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldReboot = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
-            var shouldRestartExplorer = row[++index].Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var deleteDefaultValue = row[++index]
+                .Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldTurnOffTamperProtection = row[++index]
+                .Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldUpdateGroupPolicy = row[++index]
+                .Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldReboot = row[++index]
+                .Equals("true", StringComparison.CurrentCultureIgnoreCase);
+            var shouldRestartExplorer = row[++index]
+                .Equals("true", StringComparison.CurrentCultureIgnoreCase);
 
             OptimizationRegistryValue value = type switch
             {
-                "int" => new OptimizationRegistryIntValue(keyPath, valueName,
-                    int.Parse(defaultValue), int.Parse(optimizingValue), deleteDefaultValue),
-                "string" => new OptimizationRegistryStringValue(keyPath, valueName,
-                    defaultValue, optimizingValue, deleteDefaultValue),
-                "binary" => new OptimizationRegistryBinaryValue(keyPath, valueName,
-                    Convert.FromHexString(defaultValue), Convert.FromHexString(optimizingValue), deleteDefaultValue),
+                "int" => new OptimizationRegistryIntValue(
+                    keyPath,
+                    valueName,
+                    int.Parse(defaultValue),
+                    int.Parse(optimizingValue),
+                    deleteDefaultValue
+                ),
+                "string" => new OptimizationRegistryStringValue(
+                    keyPath,
+                    valueName,
+                    defaultValue,
+                    optimizingValue,
+                    deleteDefaultValue
+                ),
+                "binary" => new OptimizationRegistryBinaryValue(
+                    keyPath,
+                    valueName,
+                    Convert.FromHexString(defaultValue),
+                    Convert.FromHexString(optimizingValue),
+                    deleteDefaultValue
+                ),
                 _ => throw new NotImplementedException("Unknown type: " + type),
             };
 

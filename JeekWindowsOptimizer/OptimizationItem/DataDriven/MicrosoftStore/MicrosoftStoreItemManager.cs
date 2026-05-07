@@ -9,7 +9,11 @@ public static class MicrosoftStoreItemManager
     public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\MicrosoftStoreItems.tab")))
+        if (
+            !await tabFile.LoadAsync(
+                Path.Join(AppContext.BaseDirectory, @"Data\MicrosoftStoreItems.tab")
+            )
+        )
             return;
 
         foreach (var row in tabFile.Rows.Skip(1))
@@ -24,7 +28,13 @@ public static class MicrosoftStoreItemManager
                 category = OptimizationItemCategory.Default;
             var packageName = row[3];
 
-            var item = new MicrosoftStoreItem(groupNameKey, nameKey, descriptionKey, category, packageName);
+            var item = new MicrosoftStoreItem(
+                groupNameKey,
+                nameKey,
+                descriptionKey,
+                category,
+                packageName
+            );
             Items.Add(item);
         }
     }

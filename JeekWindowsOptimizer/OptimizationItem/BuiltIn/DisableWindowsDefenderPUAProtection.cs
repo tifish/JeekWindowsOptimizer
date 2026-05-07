@@ -6,7 +6,8 @@ namespace JeekWindowsOptimizer;
 
 public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
 {
-    private static readonly ILogger Log = LogManager.CreateLogger<DisableWindowsDefenderPUAProtectionItem>();
+    private static readonly ILogger Log =
+        LogManager.CreateLogger<DisableWindowsDefenderPUAProtectionItem>();
 
     public override string GroupNameKey => "Kernel";
     public override string NameKey => "DisableWindowsDefenderPUAProtectionName";
@@ -18,7 +19,10 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
         try
         {
             PowerShellService.Commands.Clear();
-            PowerShellService.AddCommand("Get-MpPreference").AddCommand("Select-Object").AddParameter("ExpandProperty", "PUAProtection");
+            PowerShellService
+                .AddCommand("Get-MpPreference")
+                .AddCommand("Select-Object")
+                .AddParameter("ExpandProperty", "PUAProtection");
             var result = await PowerShellService.InvokeAsync();
             IsOptimized = (byte)result.First().BaseObject == 0;
         }
@@ -33,7 +37,9 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
         try
         {
             PowerShellService.Commands.Clear();
-            PowerShellService.AddCommand("Set-MpPreference").AddParameter("PUAProtection", value ? 0 : 1);
+            PowerShellService
+                .AddCommand("Set-MpPreference")
+                .AddParameter("PUAProtection", value ? 0 : 1);
             await PowerShellService.InvokeAsync();
             return true;
         }

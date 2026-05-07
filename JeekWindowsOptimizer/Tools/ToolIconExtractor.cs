@@ -5,8 +5,8 @@ using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using JeekTools;
 using Microsoft.Extensions.Logging;
-using AvBitmap = Avalonia.Media.Imaging.Bitmap;
 using ZLogger;
+using AvBitmap = Avalonia.Media.Imaging.Bitmap;
 
 namespace JeekWindowsOptimizer;
 
@@ -148,10 +148,12 @@ internal static class ToolIconExtractor
         if (File.Exists(systemFilePath))
             return systemFilePath;
 
-        foreach (var directory in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(
-            Path.PathSeparator,
-            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
-        ))
+        foreach (
+            var directory in (Environment.GetEnvironmentVariable("PATH") ?? "").Split(
+                Path.PathSeparator,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+            )
+        )
         {
             try
             {

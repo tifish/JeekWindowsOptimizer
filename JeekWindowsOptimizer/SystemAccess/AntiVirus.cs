@@ -6,7 +6,10 @@ public static class AntiVirus
 {
     public static bool HasThirdPartyAntivirusInstalled()
     {
-        using var searcher = new ManagementObjectSearcher(@"root\SecurityCenter2", "SELECT * FROM AntiVirusProduct");
+        using var searcher = new ManagementObjectSearcher(
+            @"root\SecurityCenter2",
+            "SELECT * FROM AntiVirusProduct"
+        );
         foreach (ManagementObject av in searcher.Get())
         {
             string displayName = av["displayName"]?.ToString() ?? "";
@@ -18,7 +21,10 @@ public static class AntiVirus
 
     public static bool IsThirdPartyAntivirusInstalled(string name)
     {
-        using var searcher = new ManagementObjectSearcher(@"root\SecurityCenter2", "SELECT * FROM AntiVirusProduct");
+        using var searcher = new ManagementObjectSearcher(
+            @"root\SecurityCenter2",
+            "SELECT * FROM AntiVirusProduct"
+        );
         foreach (ManagementObject av in searcher.Get())
         {
             string displayName = av["displayName"]?.ToString() ?? "";
@@ -27,5 +33,4 @@ public static class AntiVirus
         }
         return false;
     }
-
 }

@@ -6,10 +6,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
 using JeekTools;
+using Microsoft.Extensions.Logging;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
-using Microsoft.Extensions.Logging;
 using ZLogger;
 
 namespace JeekWindowsOptimizer;
@@ -100,9 +100,7 @@ public partial class ToolItem : ObservableObject
     public bool HasDisplayStatus => !string.IsNullOrEmpty(DisplayStatus);
 
     public string DisplayStatus =>
-        IsAvailable
-            ? LastRunMessage
-            : string.Format(Localizer.Get("ToolNotFound"), Target);
+        IsAvailable ? LastRunMessage : string.Format(Localizer.Get("ToolNotFound"), Target);
 
     [ObservableProperty]
     public partial bool IsRunning { get; set; }
@@ -267,9 +265,7 @@ public partial class ToolItem : ObservableObject
 
         if (pngBytes is null || pngBytes.Length == 0)
         {
-            Log.ZLogWarning(
-                $"Tool icon not found: {Name}, target={Target}, iconPath={IconPath}"
-            );
+            Log.ZLogWarning($"Tool icon not found: {Name}, target={Target}, iconPath={IconPath}");
             return;
         }
 
@@ -285,10 +281,7 @@ public partial class ToolItem : ObservableObject
                 }
                 catch (Exception ex)
                 {
-                    Log.ZLogWarning(
-                        ex,
-                        $"Failed to create tool icon bitmap: {Target}"
-                    );
+                    Log.ZLogWarning(ex, $"Failed to create tool icon bitmap: {Target}");
                 }
             },
             DispatcherPriority.Background
