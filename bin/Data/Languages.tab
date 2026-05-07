@@ -8,6 +8,7 @@ Language	Language	语言
 Theme	Theme	主题
 DefaultFontName	Microsoft YaHei UI, Segoe UI, sans-serif	Microsoft YaHei UI, Segoe UI, sans-serif
 OptimizeSelectedItems	Optimize selected items	优化选中项目
+OptimizeSelectedItemsWithExcludedCount	Optimize selected items ({0} excluded)	优化选中项目（已排除 {0} 项）
 Initializing	Initializing…	正在初始化...
 InitializationFinished	Initialization finished.	初始化完成。
 InitializationFailed	Initialization failed.	初始化出错。

@@ -208,7 +208,7 @@
                 Classes="accent"
                 HorizontalAlignment="Center"
                 Command="{Binding OptimizeCheckedItems}"
-                Content="{l:Localize OptimizeSelectedItems}"
+                Content="{Binding OptimizeButtonText}"
                 CornerRadius="6"
                 FontSize="18"
                 FontWeight="SemiBold"

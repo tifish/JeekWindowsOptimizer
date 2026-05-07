@@ -104,6 +104,7 @@ public partial class MainViewModel : ObservableObject
             _ => throw new Exception("Invalid optimization item category"),
         };
         Groups.Replace(selectedGroup);
+        UpdateOptimizeButtonText();
     }
 
     public FastObservableCollection<OptimizationGroup> Groups { get; } = [];
@@ -148,6 +149,7 @@ public partial class MainViewModel : ObservableObject
             UpdateItemStat(OptimizationItemCategory.Default);
             UpdateItemStat(OptimizationItemCategory.Antivirus);
             UpdateItemStat(OptimizationItemCategory.Personal);
+            UpdateOptimizeButtonText();
             ToolsTabHeader = Localizer.Get("Tools");
 
             foreach (var group in ToolGroups)
@@ -272,11 +274,15 @@ public partial class MainViewModel : ObservableObject
             item.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName == nameof(OptimizationItem.IsChecked))
+                {
                     _uncheckedOptimizationItemsDirty = true;
+                    UpdateOptimizeButtonText();
+                }
             };
         }
 
         _uncheckedOptimizationItemsDirty = false;
+        UpdateOptimizeButtonText();
     }
 
     public void SaveUncheckedOptimizationItemsIfChanged()
@@ -322,6 +328,8 @@ public partial class MainViewModel : ObservableObject
         }
 
         UpdateItemStat(item.Category);
+        if (item.Category == _selectedCategory)
+            UpdateOptimizeButtonText();
     }
 
     private void AddToolItem(ToolItem item)
@@ -374,6 +382,29 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     public partial string ToolsTabHeader { get; set; } = Localizer.Get("Tools");
+
+    [ObservableProperty]
+    public partial string OptimizeButtonText { get; set; } = Localizer.Get("OptimizeSelectedItems");
+
+    private void UpdateOptimizeButtonText()
+    {
+        var groups = _selectedCategory switch
+        {
+            OptimizationItemCategory.Default => OptimizingGroups,
+            OptimizationItemCategory.Antivirus => AntivirusGroups,
+            OptimizationItemCategory.Personal => PersonalGroups,
+            _ => throw new Exception("Invalid optimization item category"),
+        };
+
+        var uncheckedItemCount = groups.Sum(group => group.Items.Count(it => !it.IsChecked));
+        OptimizeButtonText =
+            uncheckedItemCount == 0
+                ? Localizer.Get("OptimizeSelectedItems")
+                : string.Format(
+                    Localizer.Get("OptimizeSelectedItemsWithExcludedCount"),
+                    uncheckedItemCount
+                );
+    }
 
     public async Task OptimizeCheckedItems()
     {
