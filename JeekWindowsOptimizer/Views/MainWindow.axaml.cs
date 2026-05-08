@@ -161,16 +161,18 @@ public partial class MainWindow : Window
         }
     }
 
-    private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void OptimizationItemTitle_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             return;
 
-        if (DataContext is MainViewModel { IsBusy: true })
+        if (DataContext is MainViewModel { AreOptimizationItemControlsEnabled: false })
             return;
 
-        var border = (Border)sender!;
-        var item = border.DataContext as OptimizationItem;
-        item!.ToggleChecked();
+        if (sender is not Control { DataContext: OptimizationItem item })
+            return;
+
+        item.ToggleChecked();
+        e.Handled = true;
     }
 }

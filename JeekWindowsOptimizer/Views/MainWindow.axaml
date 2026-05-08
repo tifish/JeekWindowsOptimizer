@@ -378,8 +378,7 @@
                                             Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
                                             BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
                                             BorderThickness="1"
-                                            CornerRadius="6"
-                                            PointerPressed="InputElement_OnPointerPressed">
+                                            CornerRadius="6">
 
                                             <Grid ColumnDefinitions="* Auto">
                                                 <Grid
@@ -395,8 +394,10 @@
                                                         Grid.Column="1"
                                                         Grid.Row="0"
                                                         VerticalAlignment="Center"
+                                                        Background="Transparent"
                                                         FontSize="17"
                                                         FontWeight="SemiBold"
+                                                        PointerPressed="OptimizationItemTitle_OnPointerPressed"
                                                         Text="{Binding Name}" />
                                                     <TextBlock
                                                         Grid.Column="1"
