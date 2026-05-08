@@ -454,9 +454,7 @@ public partial class MainViewModel : ObservableObject
 
     private string[] GetSearchTerms()
     {
-        return SearchText
-            .Trim()
-            .Split(SearchTermSeparators, StringSplitOptions.RemoveEmptyEntries);
+        return SearchText.Trim().Split(SearchTermSeparators, StringSplitOptions.RemoveEmptyEntries);
     }
 
     private static bool MatchesSearch(IEnumerable<string> terms, params string[] fields)
