@@ -21,11 +21,6 @@
     <!-- Win11 Settings–like: flat section headers (Expander) + card rows -->
     <Window.Resources>
         <ResourceDictionary>
-            <!-- Fluent-style icons (filled paths, 24×24 box); globe from Material globe glyph -->
-            <StreamGeometry x:Key="GlobeGeometry">M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z</StreamGeometry>
-            <StreamGeometry x:Key="SearchGeometry">M9.5 3C5.91 3 3 5.91 3 9.5S5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l4.42 4.42 1.41-1.41-4.42-4.42A6.47 6.47 0 0 0 16 9.5C16 5.91 13.09 3 9.5 3zm0 2C11.99 5 14 7.01 14 9.5S11.99 14 9.5 14 5 11.99 5 9.5 7.01 5 9.5 5z</StreamGeometry>
-            <StreamGeometry x:Key="ClearSearchGeometry">M18.3 5.71 12 12l6.3 6.29-1.41 1.41L10.59 13.41 4.29 19.7 2.88 18.29 9.17 12 2.88 5.71 4.29 4.3l6.3 6.29 6.29-6.29z</StreamGeometry>
-
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="Win11ChromeBackgroundBrush" Color="#FF1C1C1C" />
@@ -182,9 +177,11 @@
             <Setter Property="Background" Value="{DynamicResource TitleBarIconPressedBrush}" />
         </Style>
 
-        <Style Selector="PathIcon.titlebar-glyph">
-            <Setter Property="Width" Value="16" />
-            <Setter Property="Height" Value="16" />
+        <Style Selector="TextBlock.titlebar-glyph-text">
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons,Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource TitleBarIconForegroundBrush}" />
         </Style>
 
@@ -251,10 +248,12 @@
                     Classes.search-active="{Binding IsSearchVisible}"
                     Click="SearchButton_OnClick"
                     ToolTip.Tip="{l:Localize SearchWatermark}">
-                    <PathIcon Classes="titlebar-glyph" Data="{StaticResource SearchGeometry}" />
+                    <!-- Segoe Fluent Icons: Find (E721) -->
+                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE721;" />
                 </Button>
                 <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Language}">
-                    <PathIcon Classes="titlebar-glyph" Data="{StaticResource GlobeGeometry}" />
+                    <!-- Segoe Fluent Icons: World / globe (E774) -->
+                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE774;" />
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuItem
@@ -273,7 +272,7 @@
                     </Button.Flyout>
                 </Button>
                 <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Theme}">
-                    <PathIcon Classes="titlebar-glyph" Data="{Binding CurrentThemeGlyph}" />
+                    <TextBlock Classes="titlebar-glyph-text" Text="{Binding CurrentThemeGlyph}" />
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuItem
@@ -320,11 +319,8 @@
                 Command="{Binding ClearSearchCommand}"
                 IsVisible="{Binding IsSearchActive}"
                 ToolTip.Tip="{l:Localize ClearSearch}">
-                <PathIcon
-                    Width="14"
-                    Height="14"
-                    Data="{StaticResource ClearSearchGeometry}"
-                    Foreground="{DynamicResource TitleBarIconForegroundBrush}" />
+                <!-- Segoe Fluent Icons: Clear (E894); 14 px to align with adjacent search row -->
+                <TextBlock Classes="titlebar-glyph-text" FontSize="14" Text="&#xE894;" />
             </Button>
         </Grid>
 

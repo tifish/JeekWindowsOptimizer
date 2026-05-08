@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -18,18 +17,10 @@ public partial class MainViewModel : ObservableObject
     private bool _uncheckedOptimizationItemsDirty;
     private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
 
-    /// <summary>Theme button glyph (sun / moon / half-circle for follow-system).</summary>
-    private static readonly Geometry ThemeLightGlyph = Geometry.Parse(
-        "M12 18c3.31 0 6-2.69 6-6s-2.69-6-6-6-6 2.69-6 6 2.69 6 6 6zm8-6h3v-2h-3v2zm-19 0H2v2h3v-2zm11 13v3h2v-3h-2zm0-19V2h2v3h-2z"
-    );
-
-    private static readonly Geometry ThemeDarkGlyph = Geometry.Parse(
-        "M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"
-    );
-
-    private static readonly Geometry ThemeSystemGlyph = Geometry.Parse(
-        "M12 2 A10 10 0 0 1 12 22 Z"
-    );
+    // Segoe Fluent Icons (Segoe MDL2 Assets fall-back on Win10): Brightness / QuietHours / Contrast.
+    private const string ThemeLightGlyph = "\uE706";
+    private const string ThemeDarkGlyph = "\uE708";
+    private const string ThemeSystemGlyph = "\uE7A1";
 
     public MainViewModel()
     {
@@ -54,7 +45,7 @@ public partial class MainViewModel : ObservableObject
     public partial bool IsSystemThemeMenuChecked { get; set; }
 
     [ObservableProperty]
-    public partial Geometry? CurrentThemeGlyph { get; set; }
+    public partial string CurrentThemeGlyph { get; set; } = ThemeSystemGlyph;
 
     private void RefreshLanguageMenuCheckState()
     {
