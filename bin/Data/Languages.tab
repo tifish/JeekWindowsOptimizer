@@ -4,6 +4,9 @@ zh	Chinese	中文
 ThemeLight	Light	浅色
 ThemeDark	Dark	深色
 ThemeSystem	Follow system	跟随系统
+SearchWatermark	Search settings and tools	搜索设置和工具
+ClearSearch	Clear search	清除搜索
+NoSearchResultsInCurrentTab	No matching results in the current tab.	当前标签页没有匹配结果。
 Language	Language	语言
 Theme	Theme	主题
 DefaultFontName	Microsoft YaHei UI, Segoe UI, sans-serif	Microsoft YaHei UI, Segoe UI, sans-serif

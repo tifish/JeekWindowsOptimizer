@@ -16,6 +16,7 @@ public partial class MainViewModel : ObservableObject
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
     private const int ToolsTabIndex = 3;
     private bool _uncheckedOptimizationItemsDirty;
+    private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
 
     /// <summary>Theme button glyph (sun / moon / half-circle for follow-system).</summary>
     private static readonly Geometry ThemeLightGlyph = Geometry.Parse(
@@ -91,19 +92,12 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(IsOptimizationTabSelected));
         OnPropertyChanged(nameof(IsToolsTabSelected));
         OnPropertyChanged(nameof(CanShowOptimizeButton));
+        OnPropertyChanged(nameof(IsNoSearchResultsVisible));
 
-        if (value == ToolsTabIndex)
-            return;
+        if (value != ToolsTabIndex)
+            _selectedCategory = (OptimizationItemCategory)value;
 
-        _selectedCategory = (OptimizationItemCategory)value;
-        var selectedGroup = _selectedCategory switch
-        {
-            OptimizationItemCategory.Default => OptimizingGroups,
-            OptimizationItemCategory.Antivirus => AntivirusGroups,
-            OptimizationItemCategory.Personal => PersonalGroups,
-            _ => throw new Exception("Invalid optimization item category"),
-        };
-        Groups.Replace(selectedGroup);
+        RefreshDisplayedGroups();
         UpdateOptimizeButtonText();
     }
 
@@ -111,7 +105,27 @@ public partial class MainViewModel : ObservableObject
     public List<OptimizationGroup> OptimizingGroups { get; } = [];
     public List<OptimizationGroup> AntivirusGroups { get; } = [];
     public List<OptimizationGroup> PersonalGroups { get; } = [];
+    public List<ToolGroup> AllToolGroups { get; } = [];
     public FastObservableCollection<ToolGroup> ToolGroups { get; } = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSearchActive))]
+    [NotifyPropertyChangedFor(nameof(IsNoSearchResultsVisible))]
+    public partial string SearchText { get; set; } = "";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNoSearchResultsVisible))]
+    public partial bool IsSearchVisible { get; set; }
+
+    public bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchText);
+
+    public bool IsNoSearchResultsVisible =>
+        IsSearchActive
+        && !IsBusy
+        && (
+            IsOptimizationTabSelected && Groups.Count == 0
+            || IsToolsTabSelected && ToolGroups.Count == 0
+        );
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = Localizer.Get("Initializing");
@@ -129,6 +143,15 @@ public partial class MainViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(CanShowOptimizeButton));
         OnPropertyChanged(nameof(AreOptimizationItemControlsEnabled));
+        OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+    }
+
+    partial void OnSearchTextChanged(string value)
+    {
+        RefreshDisplayedGroups();
+        UpdateOptimizationTabHeaders();
+        ClearSearchCommand.NotifyCanExecuteChanged();
+        UpdateOptimizeButtonText();
     }
 
     [RelayCommand]
@@ -138,7 +161,7 @@ public partial class MainViewModel : ObservableObject
 
         Localizer.LanguageChanged += (_, _) =>
         {
-            foreach (var group in Groups)
+            foreach (var group in GetAllOptimizationGroups())
             {
                 group.NotifyLanguageChanged();
 
@@ -146,19 +169,18 @@ public partial class MainViewModel : ObservableObject
                     item.NotifyLanguageChanged();
             }
 
-            UpdateItemStat(OptimizationItemCategory.Default);
-            UpdateItemStat(OptimizationItemCategory.Antivirus);
-            UpdateItemStat(OptimizationItemCategory.Personal);
+            foreach (var group in AllToolGroups)
+            {
+                group.NotifyLanguageChanged();
+
+                foreach (var item in group.Items)
+                    item.NotifyLanguageChanged();
+            }
+
+            RefreshDisplayedGroups();
+            UpdateOptimizationTabHeaders();
             UpdateOptimizeButtonText();
             ToolsTabHeader = Localizer.Get("Tools");
-
-            foreach (var group in ToolGroups)
-            {
-                group.NotifyLanguageChanged();
-
-                foreach (var item in group.Items)
-                    item.NotifyLanguageChanged();
-            }
         };
     }
 
@@ -258,10 +280,12 @@ public partial class MainViewModel : ObservableObject
 
     private IEnumerable<OptimizationItem> GetOptimizationItems()
     {
-        return OptimizingGroups
-            .Concat(AntivirusGroups)
-            .Concat(PersonalGroups)
-            .SelectMany(group => group.Items);
+        return GetAllOptimizationGroups().SelectMany(group => group.Items);
+    }
+
+    private IEnumerable<OptimizationGroup> GetAllOptimizationGroups()
+    {
+        return OptimizingGroups.Concat(AntivirusGroups).Concat(PersonalGroups);
     }
 
     private void RestoreUncheckedOptimizationItems()
@@ -329,32 +353,122 @@ public partial class MainViewModel : ObservableObject
 
         UpdateItemStat(item.Category);
         if (item.Category == _selectedCategory)
+        {
+            RefreshDisplayedOptimizationGroups();
             UpdateOptimizeButtonText();
+        }
     }
 
     private void AddToolItem(ToolItem item)
     {
-        foreach (var group in ToolGroups)
+        foreach (var group in AllToolGroups)
         {
             if (group.NameKey == item.GroupNameKey)
             {
                 group.Items.Add(item);
+                if (SelectedTabIndex == ToolsTabIndex)
+                    RefreshDisplayedToolGroups();
                 return;
             }
         }
 
-        ToolGroups.Add(new ToolGroup(item.GroupNameKey, [item]));
+        AllToolGroups.Add(new ToolGroup(item.GroupNameKey, [item]));
+        if (SelectedTabIndex == ToolsTabIndex)
+            RefreshDisplayedToolGroups();
     }
 
-    public void UpdateItemStat(OptimizationItemCategory category)
+    private IEnumerable<OptimizationGroup> GetSourceOptimizationGroups(
+        OptimizationItemCategory category
+    )
     {
-        var groups = category switch
+        return category switch
         {
             OptimizationItemCategory.Default => OptimizingGroups,
             OptimizationItemCategory.Antivirus => AntivirusGroups,
             OptimizationItemCategory.Personal => PersonalGroups,
             _ => throw new Exception("Invalid optimization item category"),
         };
+    }
+
+    private void RefreshDisplayedGroups()
+    {
+        if (SelectedTabIndex == ToolsTabIndex)
+            RefreshDisplayedToolGroups();
+        else
+            RefreshDisplayedOptimizationGroups();
+    }
+
+    private void RefreshDisplayedOptimizationGroups()
+    {
+        Groups.Replace(GetDisplayedOptimizationGroups(_selectedCategory));
+        OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+    }
+
+    private void RefreshDisplayedToolGroups()
+    {
+        if (!IsSearchActive)
+        {
+            ToolGroups.Replace(AllToolGroups);
+            OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+            return;
+        }
+
+        var terms = GetSearchTerms();
+        var filteredGroups = AllToolGroups
+            .Select(group =>
+            {
+                var items = group
+                    .Items.Where(item =>
+                        MatchesSearch(terms, group.Name, item.Name, item.Description)
+                    )
+                    .ToArray();
+                return new ToolGroup(group.NameKey, items);
+            })
+            .Where(group => group.Items.Count > 0);
+
+        ToolGroups.Replace(filteredGroups);
+        OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+    }
+
+    private IEnumerable<OptimizationGroup> GetDisplayedOptimizationGroups(
+        OptimizationItemCategory category
+    )
+    {
+        var sourceGroups = GetSourceOptimizationGroups(category).ToList();
+        if (!IsSearchActive)
+            return sourceGroups;
+
+        var terms = GetSearchTerms();
+        return sourceGroups
+            .Select(group =>
+            {
+                var items = group
+                    .Items.Where(item =>
+                        MatchesSearch(terms, group.Name, item.Name, item.Description)
+                    )
+                    .ToArray();
+                return new OptimizationGroup(group.NameKey, items);
+            })
+            .Where(group => group.Items.Count > 0);
+    }
+
+    private string[] GetSearchTerms()
+    {
+        return SearchText
+            .Trim()
+            .Split(SearchTermSeparators, StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    private static bool MatchesSearch(IEnumerable<string> terms, params string[] fields)
+    {
+        return terms.All(term =>
+            fields.Any(field => field.Contains(term, StringComparison.CurrentCultureIgnoreCase))
+        );
+    }
+
+    public void UpdateItemStat(OptimizationItemCategory category)
+    {
+        var groups = GetDisplayedOptimizationGroups(category).ToList();
 
         var totalItemsCount = groups.Sum(group => group.Items.Count);
         var optimizedItemCount = groups.Sum(group => group.Items.Count(it => it.IsOptimized));
@@ -369,6 +483,13 @@ public partial class MainViewModel : ObservableObject
         else
             OptimizingTabHeader =
                 $"{Localizer.Get("Optimizing")} ({optimizedItemCount}/{totalItemsCount})";
+    }
+
+    private void UpdateOptimizationTabHeaders()
+    {
+        UpdateItemStat(OptimizationItemCategory.Default);
+        UpdateItemStat(OptimizationItemCategory.Antivirus);
+        UpdateItemStat(OptimizationItemCategory.Personal);
     }
 
     [ObservableProperty]
@@ -388,15 +509,10 @@ public partial class MainViewModel : ObservableObject
 
     private void UpdateOptimizeButtonText()
     {
-        var groups = _selectedCategory switch
-        {
-            OptimizationItemCategory.Default => OptimizingGroups,
-            OptimizationItemCategory.Antivirus => AntivirusGroups,
-            OptimizationItemCategory.Personal => PersonalGroups,
-            _ => throw new Exception("Invalid optimization item category"),
-        };
+        if (SelectedTabIndex == ToolsTabIndex)
+            return;
 
-        var uncheckedItemCount = groups.Sum(group => group.Items.Count(it => !it.IsChecked));
+        var uncheckedItemCount = Groups.Sum(group => group.Items.Count(it => !it.IsChecked));
         OptimizeButtonText =
             uncheckedItemCount == 0
                 ? Localizer.Get("OptimizeSelectedItems")
@@ -410,14 +526,10 @@ public partial class MainViewModel : ObservableObject
     {
         OptimizationItem.InBatching = true;
         IsBusy = true;
-
-        var groups = _selectedCategory switch
-        {
-            OptimizationItemCategory.Default => OptimizingGroups,
-            OptimizationItemCategory.Personal => PersonalGroups,
-            OptimizationItemCategory.Antivirus => AntivirusGroups,
-            _ => throw new Exception("Invalid optimization item category"),
-        };
+        var itemsToOptimize = Groups
+            .SelectMany(group => group.Items)
+            .Where(item => item.IsChecked && !item.IsOptimized)
+            .ToList();
 
         try
         {
@@ -426,12 +538,8 @@ public partial class MainViewModel : ObservableObject
             var shouldTurnOffTamperProtection = false;
             var shouldTurnOffOnAccessProtection = false;
 
-            foreach (var group in groups)
-            foreach (var item in group.Items)
+            foreach (var item in itemsToOptimize)
             {
-                if (!item.IsChecked || item.IsOptimized)
-                    continue;
-
                 shouldTurnOffTamperProtection |= item.ShouldTurnOffTamperProtection;
                 shouldTurnOffOnAccessProtection |= item.ShouldTurnOffOnAccessProtection;
             }
@@ -448,12 +556,8 @@ public partial class MainViewModel : ObservableObject
             var shouldReboot = false;
             var shouldRestartExplorer = false;
 
-            foreach (var group in groups)
-            foreach (var item in group.Items)
+            foreach (var item in itemsToOptimize)
             {
-                if (!item.IsChecked || item.IsOptimized)
-                    continue;
-
                 StatusMessage = string.Format(Localizer.Get("OptimizingItem"), item.Name);
                 try
                 {
@@ -535,5 +639,38 @@ public partial class MainViewModel : ObservableObject
             AppSettingsStore.SetThemeVariant(ThemeVariant.Default);
         }
         RefreshThemeMenuCheckState();
+    }
+
+    private bool CanClearSearch()
+    {
+        return IsSearchActive;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanClearSearch))]
+    private void ClearSearch()
+    {
+        SearchText = "";
+    }
+
+    [RelayCommand]
+    private void ShowSearch()
+    {
+        IsSearchVisible = true;
+    }
+
+    [RelayCommand]
+    private void ToggleSearch()
+    {
+        if (IsSearchVisible)
+            ExitSearch();
+        else
+            ShowSearch();
+    }
+
+    [RelayCommand]
+    private void ExitSearch()
+    {
+        SearchText = "";
+        IsSearchVisible = false;
     }
 }

@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Jeek.Avalonia.Localization;
 using JeekTools;
 using Microsoft.Extensions.Logging;
@@ -61,6 +62,57 @@ public partial class MainWindow : Window
     private void UpdateFontFamily()
     {
         FontFamily = new FontFamily(Localizer.Get("DefaultFontName"));
+    }
+
+    private void Window_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.F || !e.KeyModifiers.HasFlag(KeyModifiers.Control))
+            return;
+
+        ShowSearchAndFocus();
+        e.Handled = true;
+    }
+
+    private void SearchButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        vm.ToggleSearchCommand.Execute(null);
+        if (vm.IsSearchVisible)
+            FocusSearchTextBox();
+    }
+
+    private void SearchTextBox_OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape)
+            return;
+
+        if (DataContext is MainViewModel vm)
+            vm.ExitSearchCommand.Execute(null);
+
+        e.Handled = true;
+    }
+
+    private void ShowSearchAndFocus()
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        vm.ShowSearchCommand.Execute(null);
+        FocusSearchTextBox();
+    }
+
+    private void FocusSearchTextBox()
+    {
+        Dispatcher.UIThread.Post(
+            () =>
+            {
+                SearchTextBox.Focus();
+                SearchTextBox.SelectAll();
+            },
+            DispatcherPriority.Input
+        );
     }
 
     // ReSharper disable once AsyncVoidMethod
