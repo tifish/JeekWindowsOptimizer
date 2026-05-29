@@ -1,4 +1,4 @@
-﻿GroupName	Name	Category	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue	ShouldTurnOffTamperProtection	ShouldUpdateGroupPolicy	ShouldReboot	shouldRestartExplorer
+GroupName	Name	Category	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue	ShouldTurnOffTamperProtection	ShouldUpdateGroupPolicy	ShouldReboot	shouldRestartExplorer
 Kernel	DisableWindowsRealTimeAntivirus	Antivirus	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableAntiSpyware	int	0	0	TRUE	TRUE	TRUE		
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableRoutinelyTakingAction	int	0	1	TRUE				
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableRealtimeMonitoring	int	0	1	TRUE				

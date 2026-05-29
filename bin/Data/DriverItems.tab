@@ -1,4 +1,4 @@
-﻿GroupName	Name	Category	DriverPathPattern
+GroupName	Name	Category	DriverPathPattern
 Kernel	KingsoftAntivirus	Antivirus	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
 	KingsoftAntivirus		c:\program files (x86)\kingsoft\kingsoft antivirus\security\kxescan\kdhacker64.sys
 	KingsoftAntivirus		C:\WINDOWS\system32\drivers\kisknl.sys
