@@ -28,7 +28,7 @@ Explorer	DoNotAddShortcutTextWhenCreatingShortcuts		HKEY_CURRENT_USER\Software\M
 Explorer	PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreen		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	EnableSnapBar	int	1	0					TRUE
 Taskbar	TurnOffSearchHighlights		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	EnableDynamicContentInWSB	int	1	0	TRUE				
 Taskbar	TurnOffWidgets		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Dsh	AllowNewsAndInterests	int	1	0	TRUE				
-Taskbar	HideTheSearchBox		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	SearchboxTaskbarMode	int	2	0					
+Taskbar	HideTheSearchBox		HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\Windows Search	SearchOnTaskbarMode	int	3	0	TRUE				TRUE
 Taskbar	HideTaskViewButton		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	ShowTaskViewButton	int	1	0					
 Taskbar	NeverCombineTaskbarIcons	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	TaskbarGlomLevel	int	0	2					TRUE
 	NeverCombineTaskbarIcons		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	MMTaskbarGlomLevel	int	0	2					

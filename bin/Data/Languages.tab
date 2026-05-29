@@ -92,7 +92,7 @@ TurnOffSearchHighlightsDescription	Search highlights in the search bar constantl
 TurnOffWidgetsName	Turn off widgets	关闭小组件
 TurnOffWidgetsDescription	Widgets display news and information on the taskbar’s left side.\nEffective immediately.	小组件显示在任务栏左侧，更新各种新闻和信息。\n立即生效。
 HideTheSearchBoxName	Hide the search box	隐藏搜索框
-HideTheSearchBoxDescription	The taskbar search box takes up space for multitask viewing, and the Start menu search is simpler.\nEffective immediately.	任务栏搜索框占用了多任务窗口的显示空间，而通过开始菜单搜索更简便。\n立即生效。
+HideTheSearchBoxDescription	The taskbar search box takes up space for multitask viewing, and the Start menu search is simpler.\nTakes effect after restarting Explorer.	任务栏搜索框占用了多任务窗口的显示空间，而通过开始菜单搜索更简便。\n重启资源管理器生效。
 HideTaskViewButtonName	Hide task view button	隐藏任务视图按钮
 HideTaskViewButtonDescription	Task View can be launched with the shortcut WIN+TAB, eliminating the need for an extra button.\nEffective immediately.	通过快捷键 WIN+TAB 即可启动任务视图，不需要额外的按钮。\n立即生效。
 NeverCombineTaskbarIconsName	Never combine taskbar icons	从不合并任务栏图标
