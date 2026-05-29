@@ -32,7 +32,7 @@ Taskbar	HideTheSearchBox		HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows
 Taskbar	HideTaskViewButton		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	ShowTaskViewButton	int	1	0					
 Taskbar	NeverCombineTaskbarIcons	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	TaskbarGlomLevel	int	0	2					TRUE
 	NeverCombineTaskbarIcons		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	MMTaskbarGlomLevel	int	0	2					
-StartMenu	PreventStartMenuFromSearchingTheWeb		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search	BingSearchEnabled	int	1	0	TRUE				
+StartMenu	PreventStartMenuFromSearchingTheWeb		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Explorer	DisableSearchBoxSuggestions	int	0	1	TRUE				TRUE
 StartMenu	PreventStartMenuFromSearchingCloudContent		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	AllowCloudSearch	int	1	0	TRUE				
 StartMenu	DisableRecommendedApps		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Start_IrisRecommendations	int	1	0					
 Security	DisableAutoPlay		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers	DisableAutoplay	int	0	1					

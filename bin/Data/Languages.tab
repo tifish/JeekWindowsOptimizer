@@ -98,7 +98,7 @@ HideTaskViewButtonDescription	Task View can be launched with the shortcut WIN+TA
 NeverCombineTaskbarIconsName	Never combine taskbar icons	从不合并任务栏图标
 NeverCombineTaskbarIconsDescription	Merging taskbar icons removes text labels, making it harder to distinguish between different windows of the same software. For higher work efficiency, it’s recommended never to merge them.\nTakes effect after restarting Explorer.	任务栏图标合并后没有文字描述，难以区分同一个软件的不同窗口，建议从不合并，工作效率更高。\n重启资源管理器生效。
 PreventStartMenuFromSearchingTheWebName	Prevent start menu from searching the web	禁止开始菜单搜索网页
-PreventStartMenuFromSearchingTheWebDescription	Start Menu input is generally for searching apps and system settings; web searches waste resources.\nEffective immediately.	开始菜单输入通常是为了搜索应用程序和系统设置，搜索网页浪费资源。\n立即生效。
+PreventStartMenuFromSearchingTheWebDescription	Start Menu input is generally for searching apps and system settings; web searches waste resources.\nTakes effect after restarting Explorer.	开始菜单输入通常是为了搜索应用程序和系统设置，搜索网页浪费资源。\n重启资源管理器后生效。
 PreventStartMenuFromSearchingCloudContentName	Prevent start menu from searching cloud content	禁止开始菜单搜索云端内容
 PreventStartMenuFromSearchingCloudContentDescription	Block searches of cloud information like OneDrive, SharePoint, Outlook, etc.\nEffective immediately.	阻止搜索 OneDrive、SharePoint、Outlook 等云端信息。\n立即生效。
 DisableRecommendedAppsName	Disable recommended apps	禁止推荐应用
