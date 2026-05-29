@@ -130,19 +130,11 @@ public partial class MainWindow : Window
         model.IsBusy = true;
         model.StatusMessage = string.Format(Localizer.Get("OperatingItem"), optimizationItem.Name);
 
+        var oldIsOptimized = optimizationItem.IsOptimized;
+
         try
         {
-            if (await optimizationItem.SetIsOptimized(isOptimized))
-                model.UpdateItemStat(optimizationItem.Category);
-            else
-                // Change the toggle immediately cause wrong UI status, so delay it
-                SynchronizationContext.Current!.Post(
-                    _ =>
-                    {
-                        toggleButton.IsChecked = optimizationItem.IsOptimized;
-                    },
-                    null
-                );
+            await optimizationItem.SetIsOptimized(isOptimized);
         }
         catch (Exception ex)
         {
@@ -153,6 +145,19 @@ public partial class MainWindow : Window
         }
         finally
         {
+            if (oldIsOptimized != optimizationItem.IsOptimized)
+                model.UpdateItemStat(optimizationItem.Category);
+
+            if (toggleButton.IsChecked != optimizationItem.IsOptimized)
+                // Changing the toggle immediately can leave a stale visual state, so delay it.
+                SynchronizationContext.Current!.Post(
+                    _ =>
+                    {
+                        toggleButton.IsChecked = optimizationItem.IsOptimized;
+                    },
+                    null
+                );
+
             model.IsBusy = false;
             model.StatusMessage = string.Format(
                 Localizer.Get("OperatingItemFinished"),
