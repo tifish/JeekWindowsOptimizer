@@ -1,7 +1,13 @@
+using JeekTools;
+using Microsoft.Extensions.Logging;
+using ZLogger;
+
 namespace JeekWindowsOptimizer;
 
 public class VisualEffectsItem : OptimizationItem
 {
+    private static readonly ILogger Log = LogManager.CreateLogger<VisualEffectsItem>();
+
     public override Task Initialize()
     {
         IsOptimized = Disabled;
@@ -10,8 +16,17 @@ public class VisualEffectsItem : OptimizationItem
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        Disabled = value;
-        return Task.FromResult(true);
+        try
+        {
+            Disabled = value;
+            var isApplied = Disabled;
+            return Task.FromResult(value ? isApplied : !isApplied);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogError(ex, $"Failed to change visual effects preset");
+            return Task.FromResult(false);
+        }
     }
 
     public override string GroupNameKey => "Display";
@@ -22,43 +37,13 @@ public class VisualEffectsItem : OptimizationItem
 
     public bool Disabled
     {
-        get =>
-            WindowsVisualEffects.CustomSetting
-            && !WindowsVisualEffects.ClientAreaAnimation
-            && !WindowsVisualEffects.WindowAnimation
-            && !WindowsVisualEffects.TaskBarAnimation
-            && !WindowsVisualEffects.AeroPeek
-            && !WindowsVisualEffects.FadeOrSlideMenusIntoView
-            && !WindowsVisualEffects.FadeOrSlideToolTipsIntoView
-            && !WindowsVisualEffects.FadeOutMenuItemsAfterClicking
-            && !WindowsVisualEffects.SaveTaskbarThumbnail
-            && WindowsVisualEffects.ShowShadowsUnderMousePointer
-            && WindowsVisualEffects.ShowShadowsUnderWindows
-            && WindowsVisualEffects.ShowTranslucentSelectionRectangle
-            && WindowsVisualEffects.ShowWindowContentWhileDragging
-            && !WindowsVisualEffects.SlideOpenComboBoxes
-            && WindowsVisualEffects.SmoothingFonts
-            && !WindowsVisualEffects.SmoothScrollListBoxes
-            && WindowsVisualEffects.UseDropShadowForIconLabels;
+        get => WindowsVisualEffects.IsOptimizedPresetApplied();
         set
         {
-            WindowsVisualEffects.CustomSetting = true;
-            WindowsVisualEffects.ClientAreaAnimation = !value;
-            WindowsVisualEffects.WindowAnimation = !value;
-            WindowsVisualEffects.TaskBarAnimation = !value;
-            WindowsVisualEffects.AeroPeek = !value;
-            WindowsVisualEffects.FadeOrSlideMenusIntoView = !value;
-            WindowsVisualEffects.FadeOrSlideToolTipsIntoView = !value;
-            WindowsVisualEffects.FadeOutMenuItemsAfterClicking = !value;
-            WindowsVisualEffects.SaveTaskbarThumbnail = !value;
-            WindowsVisualEffects.ShowShadowsUnderMousePointer = true;
-            WindowsVisualEffects.ShowShadowsUnderWindows = true;
-            WindowsVisualEffects.ShowTranslucentSelectionRectangle = true;
-            WindowsVisualEffects.ShowWindowContentWhileDragging = true;
-            WindowsVisualEffects.SlideOpenComboBoxes = !value;
-            WindowsVisualEffects.SmoothingFonts = true;
-            WindowsVisualEffects.SmoothScrollListBoxes = !value;
-            WindowsVisualEffects.UseDropShadowForIconLabels = true;
+            if (value)
+                WindowsVisualEffects.ApplyOptimizedPreset();
+            else
+                WindowsVisualEffects.ApplyDefaultPreset();
         }
     }
 }
