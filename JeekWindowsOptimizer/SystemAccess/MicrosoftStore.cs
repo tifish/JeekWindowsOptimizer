@@ -58,6 +58,26 @@ public static class MicrosoftStore
         }
     }
 
+    public static async Task<string?> GetPackageFullName(string packageName)
+    {
+        try
+        {
+            PowerShellService.Commands.Clear();
+            PowerShellService.Streams.ClearStreams();
+            PowerShellService
+                .Commands.AddCommand(GetPackageCommand(packageName))
+                .AddCommand("Select-Object")
+                .AddParameter("First", 1)
+                .AddParameter("ExpandProperty", "PackageFullName");
+            return (await PowerShellService.InvokeAsync()).FirstOrDefault()?.BaseObject as string;
+        }
+        catch (Exception e)
+        {
+            Log.ZLogError(e, $"Failed to get full name for package {packageName}");
+            return null;
+        }
+    }
+
     public static async Task UninstallPackage(string packageName)
     {
         PowerShellService.Commands.Clear();
