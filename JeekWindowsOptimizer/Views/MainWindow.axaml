@@ -251,6 +251,21 @@
                     <!-- Segoe Fluent Icons: Find (E721) -->
                     <TextBlock Classes="titlebar-glyph-text" Text="&#xE721;" />
                 </Button>
+                <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Update}">
+                    <!-- Segoe Fluent Icons: Sync (E895) -->
+                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE895;" />
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuItem
+                                Command="{Binding CheckForUpdatesCommand}"
+                                Header="{l:Localize CheckForUpdates}" />
+                            <MenuItem
+                                Header="{l:Localize AutoUpdate}"
+                                IsChecked="{Binding IsAutoUpdateEnabled, Mode=TwoWay}"
+                                ToggleType="CheckBox" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
                 <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Language}">
                     <!-- Segoe Fluent Icons: World / globe (E774) -->
                     <TextBlock Classes="titlebar-glyph-text" Text="&#xE774;" />

@@ -6,6 +6,9 @@ obj/
 /bin/Libs
 /bin/Logs
 /bin/*.*
+!/bin/AutoUpdate.ps1
+/version.txt
+/*.zip
 /BuildAndDeploy.cmd
 /Deploy.cmd
 /FastCopy.exe

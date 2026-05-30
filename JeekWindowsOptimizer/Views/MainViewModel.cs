@@ -1,21 +1,31 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
 using JeekTools;
 using Microsoft.Extensions.Logging;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Dto;
+using MsBox.Avalonia.Enums;
 using ZLogger;
 
 namespace JeekWindowsOptimizer;
 
-public partial class MainViewModel : ObservableObject
+public partial class MainViewModel : ObservableObject, IDisposable
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
     private const int ToolsTabIndex = 3;
     private bool _uncheckedOptimizationItemsDirty;
     private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
+    private static readonly TimeSpan UpdateInitialDelay = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan UpdateCheckInterval = TimeSpan.FromHours(1);
+    private readonly CancellationTokenSource _autoUpdateCancellation = new();
+    private bool _autoUpdateLoopStarted;
+    private bool _isLoadingAutoUpdateSetting;
+    private bool _updateInProgress;
 
     // Segoe Fluent Icons (Segoe MDL2 Assets fall-back on Win10): Brightness / QuietHours / Contrast.
     private const string ThemeLightGlyph = "\uE706";
@@ -27,6 +37,9 @@ public partial class MainViewModel : ObservableObject
         Localizer.LanguageChanged += (_, _) => RefreshLanguageMenuCheckState();
         RefreshLanguageMenuCheckState();
         RefreshThemeMenuCheckState();
+        _isLoadingAutoUpdateSetting = true;
+        IsAutoUpdateEnabled = AppSettingsStore.Current.AutoUpdate;
+        _isLoadingAutoUpdateSetting = false;
     }
 
     [ObservableProperty]
@@ -46,6 +59,15 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     public partial string CurrentThemeGlyph { get; set; } = ThemeSystemGlyph;
+
+    [ObservableProperty]
+    public partial bool IsAutoUpdateEnabled { get; set; }
+
+    partial void OnIsAutoUpdateEnabledChanged(bool value)
+    {
+        if (!_isLoadingAutoUpdateSetting)
+            AppSettingsStore.SetAutoUpdate(value);
+    }
 
     private void RefreshLanguageMenuCheckState()
     {
@@ -135,6 +157,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(CanShowOptimizeButton));
         OnPropertyChanged(nameof(AreOptimizationItemControlsEnabled));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+        CheckForUpdatesCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSearchTextChanged(string value)
@@ -149,6 +172,7 @@ public partial class MainViewModel : ObservableObject
     private async Task Loaded()
     {
         await InitializeItems();
+        StartAutoUpdateLoop();
 
         Localizer.LanguageChanged += (_, _) =>
         {
@@ -584,6 +608,173 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private void StartAutoUpdateLoop()
+    {
+        if (_autoUpdateLoopStarted || Design.IsDesignMode)
+            return;
+
+        _autoUpdateLoopStarted = true;
+        _ = RunAutoUpdateLoopAsync(_autoUpdateCancellation.Token);
+    }
+
+    private async Task RunAutoUpdateLoopAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(UpdateInitialDelay, cancellationToken);
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                if (IsAutoUpdateEnabled && !IsBusy)
+                    await CheckForUpdatesAsync(manual: false);
+
+                await Task.Delay(UpdateCheckInterval, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private bool CanCheckForUpdates()
+    {
+        return !_updateInProgress && !IsBusy;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanCheckForUpdates))]
+    private async Task CheckForUpdates()
+    {
+        await CheckForUpdatesAsync(manual: true);
+    }
+
+    private async Task CheckForUpdatesAsync(bool manual)
+    {
+        if (_updateInProgress)
+            return;
+
+        _updateInProgress = true;
+        CheckForUpdatesCommand.NotifyCanExecuteChanged();
+
+        try
+        {
+            if (manual)
+                StatusMessage = Localizer.Get("UpdateChecking");
+
+            Log.ZLogInformation($"AutoUpdate check started (manual={manual})");
+            var outcome = await AutoUpdate.HasUpdateAsync(AppSettingsStore.Current.DisableMirrorDownload);
+
+            switch (outcome)
+            {
+                case UpdateCheckOutcome.Available:
+                    await ConfirmAndLaunchUpdateAsync();
+                    break;
+
+                case UpdateCheckOutcome.UpToDate when manual:
+                    await ShowUpdateDialogAsync(
+                        Localizer.Get("UpdateNoneTitle"),
+                        Localizer.Get("UpdateNoneMessage"),
+                        ButtonEnum.Ok,
+                        MsBox.Avalonia.Enums.Icon.Info
+                    );
+                    break;
+
+                case UpdateCheckOutcome.Failed when manual:
+                    await ShowUpdateDialogAsync(
+                        Localizer.Get("UpdateFailedTitle"),
+                        string.Format(
+                            Localizer.Get("UpdateFailedMessage"),
+                            string.IsNullOrEmpty(AutoUpdate.FailureReason)
+                                ? "unknown"
+                                : AutoUpdate.FailureReason
+                        ),
+                        ButtonEnum.Ok,
+                        MsBox.Avalonia.Enums.Icon.Warning
+                    );
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.LogError(ex, "AutoUpdate check threw");
+            if (manual)
+            {
+                await ShowUpdateDialogAsync(
+                    Localizer.Get("UpdateFailedTitle"),
+                    string.Format(Localizer.Get("UpdateFailedMessage"), ex.Message),
+                    ButtonEnum.Ok,
+                    MsBox.Avalonia.Enums.Icon.Warning
+                );
+            }
+        }
+        finally
+        {
+            _updateInProgress = false;
+            CheckForUpdatesCommand.NotifyCanExecuteChanged();
+
+            if (manual)
+                StatusMessage = Localizer.Get("UpdateCheckFinished");
+        }
+    }
+
+    private async Task ConfirmAndLaunchUpdateAsync()
+    {
+        var remoteVersion =
+            AutoUpdate.RemoteCommitCount > 0 ? AutoUpdate.RemoteCommitCount.ToString() : "?";
+        var result = await ShowUpdateDialogAsync(
+            Localizer.Get("UpdateAvailableTitle"),
+            string.Format(Localizer.Get("UpdateAvailableMessage"), remoteVersion),
+            ButtonEnum.OkCancel,
+            MsBox.Avalonia.Enums.Icon.Info
+        );
+
+        if (result != ButtonResult.Ok)
+            return;
+
+        if (!AutoUpdate.LaunchUpdate())
+        {
+            await ShowUpdateDialogAsync(
+                Localizer.Get("UpdateFailedTitle"),
+                Localizer.Get("UpdateLaunchFailedMessage"),
+                ButtonEnum.Ok,
+                MsBox.Avalonia.Enums.Icon.Warning
+            );
+            return;
+        }
+
+        ShutdownApplication();
+    }
+
+    private static async Task<ButtonResult> ShowUpdateDialogAsync(
+        string title,
+        string message,
+        ButtonEnum buttons,
+        MsBox.Avalonia.Enums.Icon icon
+    )
+    {
+        return await MessageBoxManager
+            .GetMessageBoxStandard(
+                new MessageBoxStandardParams
+                {
+                    ContentTitle = title,
+                    ContentMessage = message,
+                    ButtonDefinitions = buttons,
+                    Icon = icon,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    Topmost = true,
+                    FontFamily = Localizer.Get("DefaultFontName"),
+                }
+            )
+            .ShowAsync();
+    }
+
+    private static void ShutdownApplication()
+    {
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            desktop.Shutdown();
+        else
+            Environment.Exit(0);
+    }
+
     [RelayCommand]
     private void SwitchToEnglish()
     {
@@ -662,5 +853,11 @@ public partial class MainViewModel : ObservableObject
     {
         SearchText = "";
         IsSearchVisible = false;
+    }
+
+    public void Dispose()
+    {
+        _autoUpdateCancellation.Cancel();
+        _autoUpdateCancellation.Dispose();
     }
 }

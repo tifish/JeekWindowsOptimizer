@@ -46,6 +46,8 @@ public partial class MainWindow : Window
     private void OnClosing(object? sender, WindowClosingEventArgs e)
     {
         SaveUncheckedOptimizationItemsIfChanged();
+        if (DataContext is IDisposable disposable)
+            disposable.Dispose();
     }
 
     private void SaveUncheckedOptimizationItemsIfChanged()

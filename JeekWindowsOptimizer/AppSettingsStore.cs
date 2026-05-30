@@ -10,6 +10,10 @@ internal sealed class AppSettings
     public string? Theme { get; set; }
 
     public List<string>? UncheckedOptimizationItemNameKeys { get; set; }
+
+    public bool AutoUpdate { get; set; } = true;
+
+    public bool DisableMirrorDownload { get; set; }
 }
 
 internal static class AppSettingsStore
@@ -133,6 +137,12 @@ internal static class AppSettingsStore
             themeVariant == ThemeVariant.Light ? LightThemeName
             : themeVariant == ThemeVariant.Dark ? DarkThemeName
             : SystemThemeName;
+        Save();
+    }
+
+    public static void SetAutoUpdate(bool enabled)
+    {
+        Current.AutoUpdate = enabled;
         Save();
     }
 }
