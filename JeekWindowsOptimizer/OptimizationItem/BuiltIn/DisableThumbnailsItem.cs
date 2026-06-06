@@ -19,7 +19,7 @@ public class DisableThumbnailsItem : OptimizationItem
         return Task.FromResult(true);
     }
 
-    public override string GroupNameKey => "Display";
+    public override string GroupNameKey => "Explorer";
 
     public override string NameKey => "DisableThumbnailsName";
 

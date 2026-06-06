@@ -93,12 +93,20 @@ DisableTaskbarAndWindowTransparencyName	Disable taskbar and window transparency	
 DisableTaskbarAndWindowTransparencyDescription	Transparency continuously consumes computing power, so it’s recommended to disable it.\nEffective immediately.	半透明会持续消耗计算性能，建议禁用。\n立即生效。
 ShowFileExtensionsName	Show file extensions	显示文件扩展名
 ShowFileExtensionsDescription	File extensions determine file types in Windows; enabling them helps better identify files.\nEffective immediately.	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。
+ReduceMenuDelayName	Reduce menu delay	降低菜单延迟
+ReduceMenuDelayDescription	Windows waits before opening some menus and submenus. Reducing the delay makes menus respond faster without disabling menu animations completely.\nTakes effect at next sign-in.	Windows 在打开部分菜单和子菜单前会等待一小段时间。降低延迟可以让菜单响应更快，同时不完全禁用菜单动画。\n下次登录生效。
+ReduceMouseHoverTimeName	Reduce mouse hover delay	降低鼠标悬停延迟
+ReduceMouseHoverTimeDescription	Windows waits before triggering hover actions such as tooltips and hover-open controls. Reducing the delay makes hover interactions respond faster.\nTakes effect at next sign-in.	Windows 在触发工具提示、悬停打开控件等悬停动作前会等待一小段时间。降低延迟可以让悬停交互响应更快。\n下次登录生效。
 DisplayThisPCWhenOpeningFileExplorerName	Display this PC when opening file explorer	打开文件资源管理器时显示我的电脑
 DisplayThisPCWhenOpeningFileExplorerDescription	Opening File Explorer usually involves searching for files, so showing ‘My Computer’ directly is quicker.\nEffective immediately.	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。
 DoNotAddShortcutTextWhenCreatingShortcutsName	Do not add “shortcut” text when creating shortcuts	创建快捷方式时不添加“快捷方式”文字
 DoNotAddShortcutTextWhenCreatingShortcutsDescription	Shortcut names already have an arrow indicator, so additional “Shortcut” text is unnecessary and inconvenient to manually remove each time. It’s recommended to disable this.\nEffective immediately.	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。
 PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenName	Prevent snap layouts from showing when dragging windows to the top of the screen	禁止窗口拖动到屏幕顶端时显示贴靠布局
 PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenDescription	Snap Layouts can cause lag while dragging windows and lead to misoperations, so it’s recommended to disable them.\nEffective immediately.	显示贴靠布局会导致拖动窗口时卡顿，也容易误操作，建议关闭。\n立即生效。
+DisableSnapAssistName	Disable Snap Assist	禁用贴靠助手
+DisableSnapAssistDescription	Snap Assist shows thumbnails of other open windows after you snap a window. Disabling it reduces shell popups and avoids interruptions while keeping edge and corner snapping available.\nTakes effect after restarting Explorer.	贴靠助手会在贴靠一个窗口后显示其他打开窗口的缩略图。禁用后可以减少系统弹层和操作打断，同时保留拖到屏幕边缘和角落的贴靠功能。\n重启资源管理器生效。
+DisablePreviewHandlersName	Disable File Explorer preview handlers	禁用文件资源管理器预览处理器
+DisablePreviewHandlersDescription	Preview handlers render document, PDF, email, and other file previews inside File Explorer. Disabling them reduces background parsing, file locks, and slow third-party preview extensions.\nTakes effect after restarting Explorer.	预览处理器会在文件资源管理器中渲染文档、PDF、邮件等文件预览。禁用后可减少后台解析、文件占用和缓慢的第三方预览扩展影响。\n重启资源管理器生效。
 TurnOffSearchHighlightsName	Turn off search highlights	关闭搜索热点
 TurnOffSearchHighlightsDescription	Search highlights in the search bar constantly update online trending topics.\nEffective immediately.	搜索热点在搜索栏右侧显示，会不断的更新网上的热点消息。\n立即生效。
 TurnOffWidgetsName	Turn off widgets	关闭小组件
