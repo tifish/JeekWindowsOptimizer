@@ -14,8 +14,10 @@ public static class ServiceItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 4)
-                continue;
+            if (row.Count != 5)
+                throw new InvalidDataException(
+                    $"ServiceItems.tab: expected 5 columns but got {row.Count} in row: {string.Join('\t', row)}"
+                );
 
             var groupNameKey = row[0];
             var nameKey = row[1] + "Name";
@@ -23,14 +25,25 @@ public static class ServiceItemManager
             if (!Enum.TryParse(row[2], out OptimizationItemCategory category))
                 category = OptimizationItemCategory.Default;
             var serviceName = row[3];
+            if (!Enum.TryParse(row[4], true, out WindowsService.StartMode defaultStartMode))
+                throw new InvalidDataException(
+                    $"ServiceItems.tab: invalid DefaultStartMode '{row[4]}' for service '{serviceName}'"
+                );
 
             var item = new ServiceItem(
                 groupNameKey,
                 nameKey,
                 descriptionKey,
                 category,
-                serviceName
+                serviceName,
+                defaultStartMode
             );
+
+            // Skip services that are not installed on this machine (e.g. Fax on some
+            // Windows 11 SKUs); otherwise they show up but can never be optimized.
+            if (!item.ServiceExists)
+                continue;
+
             Items.Add(item);
         }
     }

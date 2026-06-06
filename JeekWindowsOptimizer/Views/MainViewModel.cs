@@ -249,6 +249,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 AddOptimizationItem(new BestPerformancePowerModeItem());
             AddOptimizationItem(new SetIdleTimeItem());
             AddOptimizationItem(new DisableSystemSounds());
+            AddOptimizationItem(new DisableHibernationItem());
 
             await ServiceItemManager.Load();
             foreach (var item in ServiceItemManager.Items)

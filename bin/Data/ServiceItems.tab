@@ -1,7 +1,11 @@
-GroupName	Name	Category	ServiceName
-System	DisableProgramCompatibilityAssistantService		PcaSvc
-System	DisableDiagnosticPolicyService		DPS
-System	DisableWindowsSearchService		WSearch
-System	DisableSysMainService		SysMain
-System	DisableConnectedUserExperiencesAndTelemetryService		DiagTrack
-System	DisableWindowsErrorReportingService		WerSvc
+﻿GroupName	Name	Category	ServiceName	DefaultStartMode
+System	DisableProgramCompatibilityAssistantService		PcaSvc	Automatic
+System	DisableDiagnosticPolicyService		DPS	Automatic
+System	DisableWindowsSearchService		WSearch	Automatic
+System	DisableSysMainService		SysMain	Automatic
+System	DisableConnectedUserExperiencesAndTelemetryService		DiagTrack	Automatic
+System	DisableWindowsErrorReportingService		WerSvc	Manual
+System	DisableWapPushMessageRoutingService		dmwappushservice	Manual
+System	DisableDownloadedMapsManagerService		MapsBroker	Automatic
+System	DisableRetailDemoService		RetailDemo	Manual
+System	DisableFaxService		Fax	Manual

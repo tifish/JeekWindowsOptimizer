@@ -322,3 +322,23 @@ SyncSystemTimeName	Sync system time	同步系统时间
 SyncSystemTimeDescription	Synchronize the system clock to fix sign-in, certificate, update, or network errors caused by incorrect time.	同步系统时间，用于修复时间不准导致的登录、证书、更新或网络错误。
 ResetMicrosoftStoreCacheName	Reset Microsoft Store cache	重置 Microsoft Store 缓存
 ResetMicrosoftStoreCacheDescription	Clear Microsoft Store cache when Store pages, downloads, updates, or app installs are stuck or fail.	清理 Microsoft Store 缓存，用于修复商店页面、下载、更新或应用安装卡住和失败。
+ReduceStartupDelayName	Remove startup app delay	取消启动项延迟
+ReduceStartupDelayDescription	Windows delays auto-start apps for several seconds after the desktop loads. Removing the delay lets them start immediately.\nTakes effect at next sign-in.	Windows 在桌面加载后会延迟几秒再运行启动项，取消该延迟可让启动项立即运行。\n下次登录生效。
+DisableWindowsCopilotName	Disable Windows Copilot	禁用 Windows Copilot
+DisableWindowsCopilotDescription	Windows Copilot runs in the background and consumes resources. Disable it if you don't use it.\nTakes effect after restarting Explorer.	Windows Copilot 在后台运行并占用资源，不使用可以禁用。\n重启资源管理器生效。
+DisableRecallName	Disable Recall	禁用 Recall 回顾
+DisableRecallDescription	Recall periodically takes snapshots of your screen, using significant CPU and disk space. Disable it if you don't use it.\nEffective immediately.	Recall 回顾会定期截取屏幕快照，占用大量 CPU 和磁盘空间，不使用建议禁用。\n立即生效。
+DisableNtfs8Dot3NameCreationName	Disable 8.3 short file name creation	禁用 8.3 短文件名
+DisableNtfs8Dot3NameCreationDescription	Creating MS-DOS 8.3 short names for every file slows down folders that contain many files. Disabling it speeds up file creation and applies to newly created files.\nTakes effect after reboot.	为每个文件生成 MS-DOS 8.3 短文件名会拖慢包含大量文件的目录，禁用后可加快文件创建，仅对新建文件生效。\n重启生效。
+DisableNtfsLastAccessUpdateName	Disable NTFS last access timestamp	禁用 NTFS 末次访问时间
+DisableNtfsLastAccessUpdateDescription	Updating the last access time on every file read adds extra disk writes. Disabling it reduces disk I/O.\nTakes effect after reboot.	每次读取文件都更新末次访问时间会产生额外的磁盘写入，禁用后可减少磁盘 I/O。\n重启生效。
+DisableWapPushMessageRoutingServiceName	Disable the WAP Push Message Routing Service	禁用 WAP 推送消息路由服务
+DisableWapPushMessageRoutingServiceDescription	The dmwappushservice routes WAP push messages, mainly for device management and telemetry. Most home users can disable it.\nEffective immediately.	dmwappushservice 负责路由 WAP 推送消息，主要用于设备管理和遥测，多数家庭用户可以禁用。\n立即生效。
+DisableDownloadedMapsManagerServiceName	Disable the Downloaded Maps Manager Service	禁用下载的地图管理器服务
+DisableDownloadedMapsManagerServiceDescription	MapsBroker provides offline map data for the Maps app. Disable it if you don't use offline maps.\nEffective immediately.	MapsBroker 为地图应用提供离线地图数据，不使用离线地图可以禁用。\n立即生效。
+DisableRetailDemoServiceName	Disable the Retail Demo Service	禁用零售演示服务
+DisableRetailDemoServiceDescription	RetailDemo is only used for demo mode on store display machines and is useless on personal computers.\nEffective immediately.	RetailDemo 仅用于卖场样机的演示模式，个人电脑上没有用处。\n立即生效。
+DisableFaxServiceName	Disable the Fax Service	禁用传真服务
+DisableFaxServiceDescription	The Fax service supports sending and receiving faxes. Disable it if you have no fax hardware.\nEffective immediately.	传真服务用于收发传真，没有传真设备可以禁用。\n立即生效。
+DisableHibernationName	Disable hibernation	关闭休眠
+DisableHibernationDescription	Hibernation reserves a hiberfil.sys file as large as your RAM and enables Fast Startup. Disabling it frees that disk space and makes shutdown cleaner. Not recommended for laptops that rely on hibernation.\nEffective immediately.	休眠会占用一个与内存大小相当的 hiberfil.sys 文件，并启用快速启动。关闭后可释放该磁盘空间，并让关机更彻底。依赖休眠的笔记本不建议关闭。\n立即生效。

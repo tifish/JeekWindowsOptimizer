@@ -77,3 +77,8 @@ Software	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationConso
 Software	TortoiseSVNCacheType		HKEY_CURRENT_USER\SOFTWARE\TortoiseSVN	CacheType	int	2	2					
 Software	TortoiseGitCacheType		HKEY_CURRENT_USER\SOFTWARE\TortoiseGit	CacheType	int	2	2					
 Software	DisableRemoteDesktopSecurityWarning		HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Terminal Services\Client	RedirectionWarningDialogVersion	int	0	1	TRUE				
+System	ReduceStartupDelay		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize	StartupDelayInMSec	int	1	0	TRUE				
+System	DisableWindowsCopilot		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsCopilot	TurnOffWindowsCopilot	int	0	1	TRUE				TRUE
+System	DisableRecall		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI	DisableAIDataAnalysis	int	0	1	TRUE		TRUE		
+Kernel	DisableNtfs8Dot3NameCreation		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem	NtfsDisable8dot3NameCreation	int	2	1				TRUE	
+Kernel	DisableNtfsLastAccessUpdate		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem	NtfsDisableLastAccessUpdate	int	0	1	TRUE			TRUE	

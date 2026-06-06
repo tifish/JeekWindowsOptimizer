@@ -6,6 +6,19 @@ public class WindowsService(string serviceName)
 {
     private readonly ManagementObject _serviceObject = new($"Win32_Service.Name=\"{serviceName}\"");
 
+    public bool Exists()
+    {
+        try
+        {
+            _serviceObject.Get();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public bool Start()
     {
         return (uint)_serviceObject.InvokeMethod("StartService", null) == 0;

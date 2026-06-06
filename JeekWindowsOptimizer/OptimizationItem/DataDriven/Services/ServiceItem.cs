@@ -7,13 +7,15 @@ public class ServiceItem : OptimizationItem
     public override string DescriptionKey { get; }
 
     private readonly WindowsService _service;
+    private WindowsService.StartMode _restoreStartMode;
 
     public ServiceItem(
         string groupNameKey,
         string nameKey,
         string descriptionKey,
         OptimizationItemCategory category,
-        string serviceName
+        string serviceName,
+        WindowsService.StartMode defaultStartMode
     )
     {
         GroupNameKey = groupNameKey;
@@ -22,11 +24,25 @@ public class ServiceItem : OptimizationItem
         Category = category;
 
         _service = new WindowsService(serviceName);
+
+        // Windows default start mode from the data file, used as the restore value
+        // when the service is already disabled at startup (original mode unknown).
+        _restoreStartMode = defaultStartMode;
     }
+
+    public bool ServiceExists => _service.Exists();
 
     public override Task Initialize()
     {
-        IsOptimized = _service.GetStartMode() == WindowsService.StartMode.Disabled;
+        var startMode = _service.GetStartMode();
+        IsOptimized = startMode == WindowsService.StartMode.Disabled;
+
+        // Prefer the real current start mode as the restore value. If the service
+        // is already disabled we cannot read its original mode, so keep the Windows
+        // default supplied by the data file.
+        if (startMode != WindowsService.StartMode.Disabled)
+            _restoreStartMode = startMode;
+
         return Task.CompletedTask;
     }
 
@@ -34,15 +50,12 @@ public class ServiceItem : OptimizationItem
     {
         if (value)
         {
-            _service.Stop();
-            _service.SetStartMode(WindowsService.StartMode.Disabled);
-        }
-        else
-        {
-            _service.SetStartMode(WindowsService.StartMode.Automatic);
-            _service.Start();
+            _service.Stop(); // best-effort: the service may already be stopped
+            return Task.FromResult(_service.SetStartMode(WindowsService.StartMode.Disabled));
         }
 
-        return Task.FromResult(true);
+        var restored = _service.SetStartMode(_restoreStartMode);
+        _service.Start(); // best-effort
+        return Task.FromResult(restored);
     }
 }
