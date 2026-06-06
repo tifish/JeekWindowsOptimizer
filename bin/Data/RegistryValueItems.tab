@@ -58,6 +58,14 @@ Privacy	PreventWindowsFromTrackingFilesIOpen	Personal	HKEY_CURRENT_USER\Software
 Privacy	PreventWindowsFromTrackingMySystemSettings	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-338393Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353694Enabled	int	1	0					
 	PreventWindowsFromTrackingMySystemSettings		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-353696Enabled	int	1	0					
+Privacy	DisableWindowsSpotlight		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent	DisableSpotlightCollectionOnDesktop	int	0	1	TRUE	FALSE	TRUE	FALSE	FALSE
+	DisableWindowsSpotlight		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent	ConfigureWindowsSpotlight	int	1	2	TRUE	FALSE	TRUE	FALSE	FALSE
+Privacy	DisableMicrosoftConsumerFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\CloudContent	DisableWindowsConsumerFeatures	int	0	1	TRUE	FALSE	TRUE	FALSE	FALSE
+Privacy	DisableSuggestedAppInstallation		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SilentInstalledAppsEnabled	int	1	0	TRUE	FALSE	FALSE	FALSE	FALSE
+Privacy	DisableStartAndSettingsSuggestions		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent	DisableWindowsSpotlightOnSettings	int	0	1	TRUE	FALSE	TRUE	FALSE	FALSE
+	DisableStartAndSettingsSuggestions		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent	DisableWindowsSpotlightWindowsWelcomeExperience	int	0	1	TRUE	FALSE	TRUE	FALSE	FALSE
+	DisableStartAndSettingsSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\CloudContent	DisableSoftLanding	int	0	1	TRUE	FALSE	TRUE	FALSE	FALSE
+	DisableStartAndSettingsSuggestions		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\CloudContent	DisableThirdPartySuggestions	int	0	1	TRUE	FALSE	TRUE	FALSE	FALSE
 Privacy	DisableTelemetry		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection	AllowTelemetry	int	1	0	TRUE		TRUE		
 Privacy	DisablePowerShell7Telemetry		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment	POWERSHELL_TELEMETRY_OPTOUT	string		1	TRUE				
 Privacy	DisableActivityHistory		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System	PublishUserActivities	int	1	0	TRUE		TRUE		

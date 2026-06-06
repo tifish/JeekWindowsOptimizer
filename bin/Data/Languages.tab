@@ -154,6 +154,14 @@ PreventWindowsFromTrackingFilesIOpenName	Prevent windows from tracking files I o
 PreventWindowsFromTrackingFilesIOpenDescription	Effective immediately.	立即生效。
 PreventWindowsFromTrackingMySystemSettingsName	Prevent windows from tracking my system settings	禁止 Windows 跟踪我的系统设置
 PreventWindowsFromTrackingMySystemSettingsDescription	Effective immediately.	立即生效。
+DisableWindowsSpotlightName	Disable Windows Spotlight	禁用 Windows 聚焦
+DisableWindowsSpotlightDescription	Windows Spotlight downloads daily lock screen and desktop background content from Microsoft. Disable it if you do not use Spotlight backgrounds.\nEffective after group policy refresh.	Windows 聚焦会从 Microsoft 下载每日锁屏和桌面背景内容。不使用聚焦背景时可以禁用。\n刷新组策略后生效。
+DisableMicrosoftConsumerFeaturesName	Disable Microsoft consumer features	禁用微软消费者体验
+DisableMicrosoftConsumerFeaturesDescription	Microsoft consumer features can show Start suggestions, membership notifications, post-OOBE app installs, and redirect tiles. Disabling them reduces promotional content and background setup work.\nEffective after group policy refresh.	微软消费者体验可能显示开始菜单建议、会员通知、首次设置后的应用安装和跳转磁贴。禁用后可减少推广内容和后台设置任务。\n刷新组策略后生效。
+DisableSuggestedAppInstallationName	Disable suggested app installation	禁用推荐应用静默安装
+DisableSuggestedAppInstallationDescription	Windows may silently prepare or install suggested apps for the current user. Disabling this prevents those suggested app installs without changing existing installed apps.\nEffective immediately.	Windows 可能会为当前用户静默准备或安装推荐应用。禁用后可阻止这些推荐应用安装，不会改变已经安装的应用。\n立即生效。
+DisableStartAndSettingsSuggestionsName	Disable Start and Settings suggestions	禁用开始菜单和设置建议
+DisableStartAndSettingsSuggestionsDescription	Windows can show tips, third-party suggestions, Settings suggestions, and welcome experience content. Disabling these suggestions reduces promotional UI and notification noise.\nEffective after group policy refresh.	Windows 可能显示提示、第三方建议、设置应用建议和欢迎体验内容。禁用后可减少推广界面和通知干扰。\n刷新组策略后生效。
 UseClassicalContextMenuName	Use the classic right-click menu in Windows 10	使用 Win10 经典右键菜单
 UseClassicalContextMenuDescription	The default right-click menu in Windows 11 lacks many software features and has compatibility issues. Restarting File Explorer will apply the changes.	Windows 11 默认右键菜单少了许多软件的功能，兼容性不佳。\n重启资源管理器生效。
 DisableVisualEffectsName	Disable some visual effects	禁用部分视觉效果
