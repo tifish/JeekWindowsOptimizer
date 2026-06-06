@@ -21,6 +21,7 @@ System	DisableUAC		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\
 System	DisableWarningForOpeningDownloadedFiles		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\Zones\3	1806	int	1	0					
 System	ShowKeyboardAccessKeyUnderlines	Personal	HKEY_CURRENT_USER\Control Panel\Accessibility\Keyboard Preference	On	string	0	1				TRUE	
 System	TurnOnGameMode		HKEY_CURRENT_USER\Software\Microsoft\GameBar	AutoGameModeEnabled	int	1	1	TRUE				
+System	DisableGameDvrCapture		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\GameDVR	AllowGameDVR	int	1	0	TRUE		TRUE		
 Display	DisableTaskbarAndWindowTransparency		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize	EnableTransparency	int	1	0					
 Explorer	ShowFileExtensions		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	HideFileExt	int	1	0	FALSE				
 Explorer	DisplayThisPCWhenOpeningFileExplorer		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	LaunchTo	int	0	1	TRUE				
