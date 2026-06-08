@@ -34,7 +34,7 @@ public static class AutoUpdate
         DownloadUrl = "";
         RemoteCommitCount = 0;
         FailureReason = "";
-        LocalCommitCount = ReadLocalCommitCount();
+        LocalCommitCount = GetLocalCommitCount();
 
         try
         {
@@ -153,7 +153,7 @@ public static class AutoUpdate
         }
     }
 
-    private static int ReadLocalCommitCount()
+    public static int GetLocalCommitCount()
     {
         try
         {

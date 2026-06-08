@@ -17,6 +17,7 @@ namespace JeekWindowsOptimizer;
 public partial class MainViewModel : ObservableObject, IDisposable
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
+    private const string ApplicationTitle = "Jeek Windows Optimizer";
     private const int ToolsTabIndex = 3;
     private bool _uncheckedOptimizationItemsDirty;
     private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
@@ -34,12 +35,37 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public MainViewModel()
     {
-        Localizer.LanguageChanged += (_, _) => RefreshLanguageMenuCheckState();
+        Localizer.LanguageChanged += OnLanguageChanged;
         RefreshLanguageMenuCheckState();
         RefreshThemeMenuCheckState();
         _isLoadingAutoUpdateSetting = true;
         IsAutoUpdateEnabled = AppSettingsStore.Current.AutoUpdate;
         _isLoadingAutoUpdateSetting = false;
+    }
+
+    public string WindowTitle
+    {
+        get
+        {
+            var localCommitCount = AutoUpdate.GetLocalCommitCount();
+            return localCommitCount > 0
+                ? $"{ApplicationTitle} - {string.Format(Localizer.Get("BuildVersion"), localCommitCount)}"
+                : ApplicationTitle;
+        }
+    }
+
+    public string CurrentVersionMenuHeader =>
+        string.Format(Localizer.Get("CurrentVersionHeader"), VersionDisplay);
+
+    private static string VersionDisplay
+    {
+        get
+        {
+            var localCommitCount = AutoUpdate.GetLocalCommitCount();
+            return localCommitCount > 0
+                ? string.Format(Localizer.Get("BuildVersion"), localCommitCount)
+                : Localizer.Get("DevelopmentBuild");
+        }
     }
 
     [ObservableProperty]
@@ -81,6 +107,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
             "zh",
             StringComparison.OrdinalIgnoreCase
         );
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        RefreshLanguageMenuCheckState();
+        OnPropertyChanged(nameof(WindowTitle));
+        OnPropertyChanged(nameof(CurrentVersionMenuHeader));
     }
 
     private void RefreshThemeMenuCheckState()
@@ -859,6 +892,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public void Dispose()
     {
+        Localizer.LanguageChanged -= OnLanguageChanged;
         _autoUpdateCancellation.Cancel();
         _autoUpdateCancellation.Dispose();
     }

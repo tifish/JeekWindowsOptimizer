@@ -7,6 +7,9 @@ ThemeSystem	Follow system	跟随系统
 Update	Update	更新
 CheckForUpdates	Check for updates	检查更新
 AutoUpdate	Auto-update	自动更新
+CurrentVersionHeader	Current version: {0}	当前版本：{0}
+BuildVersion	Build {0}	构建 {0}
+DevelopmentBuild	Development build	开发构建
 UpdateChecking	Checking for updates...	正在检查更新...
 UpdateCheckFinished	Update check finished.	更新检查已完成。
 UpdateAvailableTitle	Update available	发现新版本

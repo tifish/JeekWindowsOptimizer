@@ -6,7 +6,7 @@
     xmlns:l="using:Jeek.Avalonia.Localization"
     xmlns:local="using:JeekWindowsOptimizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Jeek Windows Optimizer"
+    Title="{Binding WindowTitle}"
     Width="900"
     Height="2000"
     d:DesignHeight="450"
@@ -256,6 +256,10 @@
                     <TextBlock Classes="titlebar-glyph-text" Text="&#xE895;" />
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuItem
+                                Header="{Binding CurrentVersionMenuHeader}"
+                                IsEnabled="False" />
+                            <Separator />
                             <MenuItem
                                 Command="{Binding CheckForUpdatesCommand}"
                                 Header="{l:Localize CheckForUpdates}" />
