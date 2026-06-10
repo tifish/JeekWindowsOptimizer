@@ -258,6 +258,8 @@ AutorunsName	Autoruns	Autoruns
 AutorunsDescription	Inspect startup programs, services, drivers, scheduled tasks, and shell extensions that slow boot or add background load.	查看启动项、服务、驱动、计划任务和外壳扩展，用于排查开机变慢和后台占用。
 ProcessExplorerName	Process Explorer	Process Explorer
 ProcessExplorerDescription	Analyze running processes, handles, DLLs, and resource usage to find high CPU, file locks, or suspicious processes.	分析运行中的进程、句柄、DLL 和资源占用，用于定位高 CPU、文件占用或可疑进程。
+SystemActivatorName	System activation	系统激活
+SystemActivatorDescription	Run the packaged system activation tool.	运行随包的系统激活工具。
 TcpViewName	TCPView	TCPView
 TcpViewDescription	Inspect active TCP and UDP connections to see which process is using a port or making network connections.	查看当前 TCP 和 UDP 连接，用于定位端口占用或正在联网的进程。
 WinDirStatName	WinDirStat	WinDirStat

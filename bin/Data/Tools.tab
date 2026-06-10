@@ -5,6 +5,7 @@ Software	GeekUninstaller	PackagedExecutable	Geek Uninstaller\geek.exe			false	fa
 System	HotkeyDetective	PackagedExecutable	Hotkey Detective\Hotkey Detective.cmd		Hotkey Detective\x64\HotkeyDetective.exe	false	false	false	false
 System	Autoruns	PackagedExecutable	SysinternalsSuite\Autoruns64.exe			false	false	false	false
 System	ProcessExplorer	PackagedExecutable	SysinternalsSuite\procexp64.exe			false	false	false	false
+System	SystemActivator	PackagedExecutable	Activator\Run.cmd			true	true	false	false
 Network	TcpView	PackagedExecutable	SysinternalsSuite\tcpview64.exe			false	false	false	false
 Storage	WinDirStat	PackagedExecutable	WinDirStat\WinDirStat.exe			false	false	false	false
 System	RestartExplorer	BuiltInAction	RestartExplorer		%SystemRoot%\explorer.exe	false	true	false	false
