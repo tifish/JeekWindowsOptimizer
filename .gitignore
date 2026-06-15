@@ -6,7 +6,8 @@ obj/
 /bin/Libs
 /bin/Logs
 /bin/*.*
-!/bin/AutoUpdate.ps1
+!/bin/*.ps1
+!/bin/*.cmd
 /version.txt
 /*.zip
 /BuildAndDeploy.cmd
