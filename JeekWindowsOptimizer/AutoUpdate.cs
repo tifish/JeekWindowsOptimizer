@@ -115,7 +115,6 @@ public static class AutoUpdate
                     Arguments = $"-NoProfile -ExecutionPolicy Bypass -File \"{scriptPath}\" \"{DownloadUrl}\"",
                     WorkingDirectory = workDir,
                     UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Hidden,
                 }
             );
 
