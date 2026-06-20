@@ -19,21 +19,27 @@ public class DisableHibernationItem : OptimizationItem
         Category = OptimizationItemCategory.Personal;
     }
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = _hibernateEnabledValue.GetValue(1) == 0;
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () => _hibernateEnabledValue.GetValue(1) == 0
+        );
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
     {
         // powercfg toggles HibernateEnabled and adds/removes hiberfil.sys.
-        using var proc = Process.Start(
-            new ProcessStartInfo("powercfg.exe", value ? "/hibernate off" : "/hibernate on")
-            {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            }
+        using var proc = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+                Process.Start(
+                    new ProcessStartInfo("powercfg.exe", value ? "/hibernate off" : "/hibernate on")
+                    {
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                )
         );
 
         if (proc is null)

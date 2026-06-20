@@ -128,25 +128,33 @@ public sealed class VisualEffectItem : OptimizationItem
         Action<bool> setEnabled
     ) => new(nameKey, EnableDescriptionKey, getEnabled, setEnabled, true);
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = TargetStateApplied;
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () => TargetStateApplied
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        try
-        {
-            TargetStateApplied = value;
-            var isApplied = TargetStateApplied;
-            return Task.FromResult(value ? isApplied : !isApplied);
-        }
-        catch (Exception ex)
-        {
-            Log.ZLogError(ex, $"Failed to change visual effect '{_nameKey}'");
-            return Task.FromResult(false);
-        }
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                try
+                {
+                    TargetStateApplied = value;
+                    var isApplied = TargetStateApplied;
+                    return value ? isApplied : !isApplied;
+                }
+                catch (Exception ex)
+                {
+                    Log.ZLogError(ex, $"Failed to change visual effect '{_nameKey}'");
+                    return false;
+                }
+            }
+        );
     }
 
     public override string GroupNameKey => "Display";

@@ -13,21 +13,29 @@ public class SetIdleTimeItem : OptimizationItem
         Category = OptimizationItemCategory.Personal;
     }
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = SleepTime == 0 && HibernateTime == 0 && TurnOffDisplayTime == 30 * 60;
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () => SleepTime == 0 && HibernateTime == 0 && TurnOffDisplayTime == 30 * 60
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        if (!value)
-            return Task.FromResult(false);
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                if (!value)
+                    return false;
 
-        SleepTime = 0;
-        HibernateTime = 0;
-        TurnOffDisplayTime = 30 * 60;
-        return Task.FromResult(true);
+                SleepTime = 0;
+                HibernateTime = 0;
+                TurnOffDisplayTime = 30 * 60;
+                return true;
+            }
+        );
     }
 
     public static int SleepTime

@@ -2,9 +2,14 @@
 
 namespace JeekWindowsOptimizer;
 
-public class WindowsService(string serviceName)
+public class WindowsService(string serviceName) : IDisposable
 {
     private readonly ManagementObject _serviceObject = new($"Win32_Service.Name=\"{serviceName}\"");
+
+    public void Dispose()
+    {
+        _serviceObject.Dispose();
+    }
 
     public bool Exists()
     {

@@ -7,16 +7,24 @@ public class DisableThumbnailsItem : OptimizationItem
         Category = OptimizationItemCategory.Personal;
     }
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = Disabled;
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () => Disabled
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        Disabled = value;
-        return Task.FromResult(true);
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                Disabled = value;
+                return true;
+            }
+        );
     }
 
     public override string GroupNameKey => "Explorer";

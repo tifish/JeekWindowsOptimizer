@@ -13,20 +13,28 @@ public class UseClassicalContextMenuItem : OptimizationItem
         ""
     );
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
         ShouldRestartExplorer = true;
-        IsOptimized = _registryValue.HasKey();
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            _registryValue.HasKey
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        if (value)
-            _registryValue.SetValue("");
-        else
-            _registryValue.DeleteKey();
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+            {
+                if (value)
+                    _registryValue.SetValue("");
+                else
+                    _registryValue.DeleteKey();
 
-        return Task.FromResult(true);
+                return true;
+            }
+        );
     }
 }

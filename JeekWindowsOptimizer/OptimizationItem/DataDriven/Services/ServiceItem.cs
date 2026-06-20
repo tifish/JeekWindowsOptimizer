@@ -6,7 +6,7 @@ public class ServiceItem : OptimizationItem
     public override string NameKey { get; }
     public override string DescriptionKey { get; }
 
-    private readonly WindowsService _service;
+    private readonly string _serviceName;
     private WindowsService.StartMode _restoreStartMode;
 
     public ServiceItem(
@@ -23,18 +23,37 @@ public class ServiceItem : OptimizationItem
         DescriptionKey = descriptionKey;
         Category = category;
 
-        _service = new WindowsService(serviceName);
+        _serviceName = serviceName;
 
         // Windows default start mode from the data file, used as the restore value
         // when the service is already disabled at startup (original mode unknown).
         _restoreStartMode = defaultStartMode;
     }
 
-    public bool ServiceExists => _service.Exists();
+    private WindowsService CreateService() => new(_serviceName);
 
-    public override Task Initialize()
+    public Task<bool> ServiceExists()
     {
-        var startMode = _service.GetStartMode();
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                using var service = CreateService();
+                return service.Exists();
+            }
+        );
+    }
+
+    public override async Task Initialize()
+    {
+        var startMode = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                using var service = CreateService();
+                return service.GetStartMode();
+            }
+        );
         IsOptimized = startMode == WindowsService.StartMode.Disabled;
 
         // Prefer the real current start mode as the restore value. If the service
@@ -42,20 +61,25 @@ public class ServiceItem : OptimizationItem
         // default supplied by the data file.
         if (startMode != WindowsService.StartMode.Disabled)
             _restoreStartMode = startMode;
-
-        return Task.CompletedTask;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        if (value)
-        {
-            _service.Stop(); // best-effort: the service may already be stopped
-            return Task.FromResult(_service.SetStartMode(WindowsService.StartMode.Disabled));
-        }
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                using var service = CreateService();
+                if (value)
+                {
+                    service.Stop(); // best-effort: the service may already be stopped
+                    return service.SetStartMode(WindowsService.StartMode.Disabled);
+                }
 
-        var restored = _service.SetStartMode(_restoreStartMode);
-        _service.Start(); // best-effort
-        return Task.FromResult(restored);
+                var restored = service.SetStartMode(_restoreStartMode);
+                service.Start(); // best-effort
+                return restored;
+            }
+        );
     }
 }

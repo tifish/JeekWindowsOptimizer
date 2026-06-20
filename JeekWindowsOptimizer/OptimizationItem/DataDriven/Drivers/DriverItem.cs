@@ -41,10 +41,12 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
         return result;
     }
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = GetDriverPaths().Count == 0;
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () => GetDriverPaths().Count == 0
+        );
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
@@ -52,49 +54,67 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
         if (!value)
             return false;
 
-        var result = true;
-        try
-        {
-            var driverPaths = GetDriverPaths();
-
-            foreach (var driverPath in driverPaths)
+        var result = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
             {
-                if (File.Exists(driverPath))
-                    File.Delete(driverPath);
+                try
+                {
+                    var driverPaths = GetDriverPaths();
 
-                if (Directory.Exists(driverPath))
-                    Directory.Delete(driverPath, true);
+                    foreach (var driverPath in driverPaths)
+                    {
+                        if (File.Exists(driverPath))
+                            File.Delete(driverPath);
+
+                        if (Directory.Exists(driverPath))
+                            Directory.Delete(driverPath, true);
+                    }
+
+                    return driverPaths.All(path => !File.Exists(path) && !Directory.Exists(path));
+                }
+                catch
+                {
+                    return false;
+                }
             }
-
-            result = driverPaths.All(path => !File.Exists(path) && !Directory.Exists(path));
-        }
-        catch
-        {
-            result = false;
-        }
+        );
 
         if (!result)
         {
-            await MessageBoxManager
-                .GetMessageBoxStandard(
-                    new MessageBoxStandardParams
-                    {
-                        ContentMessage = string.Format(
-                            Localizer.Get("PleaseUninstallDriver"),
-                            Name
-                        ),
-                        ButtonDefinitions = ButtonEnum.Ok,
-                        Icon = Icon.Info,
-                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                        Topmost = true,
-                        FontFamily = "Microsoft YaHei",
-                    }
-                )
-                .ShowAsync();
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Ui,
+                async () =>
+                {
+                    await MessageBoxManager
+                        .GetMessageBoxStandard(
+                            new MessageBoxStandardParams
+                            {
+                                ContentMessage = string.Format(
+                                    Localizer.Get("PleaseUninstallDriver"),
+                                    Name
+                                ),
+                                ButtonDefinitions = ButtonEnum.Ok,
+                                Icon = Icon.Info,
+                                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                                Topmost = true,
+                                FontFamily = "Microsoft YaHei",
+                            }
+                        )
+                        .ShowAsync();
+                }
+            );
 
             // Show Windows' uninstall app panel
-            Process.Start(
-                new ProcessStartInfo("ms-settings:appsfeatures-app") { UseShellExecute = true }
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Background,
+                () =>
+                    Process.Start(
+                        new ProcessStartInfo("ms-settings:appsfeatures-app")
+                        {
+                            UseShellExecute = true,
+                        }
+                    )
             );
         }
 

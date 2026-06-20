@@ -7,18 +7,26 @@ public class RegistryItem(string groupNameKey, string nameKey, string descriptio
     public override string NameKey => nameKey;
     public override string DescriptionKey => descriptionKey;
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = RegistryValues.All(value => value.IsOptimized);
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () => RegistryValues.All(value => value.IsOptimized)
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        foreach (var registryValue in RegistryValues)
-            registryValue.IsOptimized = value;
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+            {
+                foreach (var registryValue in RegistryValues)
+                    registryValue.IsOptimized = value;
 
-        return Task.FromResult(true);
+                return true;
+            }
+        );
     }
 
     public List<OptimizationRegistryValue> RegistryValues { get; } = [];

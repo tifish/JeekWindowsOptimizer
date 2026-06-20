@@ -8,18 +8,26 @@ public class BestPerformancePowerModeItem : OptimizationItem
     public override string NameKey => "BestPerformancePowerModeName";
     public override string DescriptionKey => "BestPerformancePowerModeDescription";
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized =
-            PowerManager.ActivePowerPlan == PowerPlan.Balanced
-            && PowerManager.PowerMode == PowerMode.BestPerformance;
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+                PowerManager.ActivePowerPlan == PowerPlan.Balanced
+                && PowerManager.PowerMode == PowerMode.BestPerformance
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        PowerManager.ActivePowerPlan = PowerPlan.Balanced;
-        PowerManager.PowerMode = value ? PowerMode.BestPerformance : PowerMode.Balanced;
-        return Task.FromResult(true);
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                PowerManager.ActivePowerPlan = PowerPlan.Balanced;
+                PowerManager.PowerMode = value ? PowerMode.BestPerformance : PowerMode.Balanced;
+                return true;
+            }
+        );
     }
 }

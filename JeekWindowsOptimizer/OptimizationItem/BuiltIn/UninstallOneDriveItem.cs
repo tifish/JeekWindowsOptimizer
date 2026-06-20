@@ -16,14 +16,17 @@ public class UninstallOneDriveItem : OptimizationItem
         @"%SystemRoot%\SysWOW64\OneDriveSetup.exe"
     );
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = !File.Exists(
-            Environment.ExpandEnvironmentVariables(
-                @"%LOCALAPPDATA%\Microsoft\OneDrive\OneDrive.exe"
-            )
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+                !File.Exists(
+                    Environment.ExpandEnvironmentVariables(
+                        @"%LOCALAPPDATA%\Microsoft\OneDrive\OneDrive.exe"
+                    )
+                )
         );
-        return Task.CompletedTask;
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
@@ -31,16 +34,31 @@ public class UninstallOneDriveItem : OptimizationItem
         if (!value)
             return false;
 
-        var installerPath = _installerPath1;
-        if (!File.Exists(installerPath))
-        {
-            installerPath = _installerPath2;
-            if (!File.Exists(installerPath))
-                return false;
-        }
+        var installerPath = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+            {
+                var path = _installerPath1;
+                if (!File.Exists(path))
+                {
+                    path = _installerPath2;
+                    if (!File.Exists(path))
+                        return null;
+                }
 
-        using var proc = Process.Start(
-            new ProcessStartInfo(installerPath, "/uninstall") { UseShellExecute = true }
+                return path;
+            }
+        );
+
+        if (installerPath is null)
+            return false;
+
+        using var proc = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+                Process.Start(
+                    new ProcessStartInfo(installerPath, "/uninstall") { UseShellExecute = true }
+                )
         );
 
         if (proc is null)

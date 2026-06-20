@@ -19,48 +19,57 @@ public class DisableSystemSounds : OptimizationItem
         Category = OptimizationItemCategory.Personal;
     }
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = _systemSoundSchemeValue.GetValue("") == ".None";
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () => _systemSoundSchemeValue.GetValue("") == ".None"
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        _systemSoundSchemeValue.SetValue(value ? ".None" : ".Default");
-
-        using var rootKey = Reg.OpenKey(SystemSoundsRootKey, true);
-        if (rootKey == null)
-            return Task.FromResult(false);
-
-        foreach (var groupName in rootKey.GetSubKeyNames())
-        {
-            var groupKey = rootKey.OpenSubKey(groupName, true);
-            if (groupKey == null)
-                continue;
-
-            foreach (var soundName in groupKey.GetSubKeyNames())
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
             {
-                var soundKey = groupKey.OpenSubKey(soundName, true);
-                if (soundKey == null)
-                    continue;
+                _systemSoundSchemeValue.SetValue(value ? ".None" : ".Default");
 
-                var currentSoundKey =
-                    soundKey.OpenSubKey(".Current", true) ?? soundKey.CreateSubKey(".Current");
+                using var rootKey = Reg.OpenKey(SystemSoundsRootKey, true);
+                if (rootKey == null)
+                    return false;
 
-                if (value)
+                foreach (var groupName in rootKey.GetSubKeyNames())
                 {
-                    currentSoundKey.SetValue(null, "");
+                    var groupKey = rootKey.OpenSubKey(groupName, true);
+                    if (groupKey == null)
+                        continue;
+
+                    foreach (var soundName in groupKey.GetSubKeyNames())
+                    {
+                        var soundKey = groupKey.OpenSubKey(soundName, true);
+                        if (soundKey == null)
+                            continue;
+
+                        var currentSoundKey =
+                            soundKey.OpenSubKey(".Current", true)
+                            ?? soundKey.CreateSubKey(".Current");
+
+                        if (value)
+                        {
+                            currentSoundKey.SetValue(null, "");
+                        }
+                        else
+                        {
+                            var defaultSound = soundKey.OpenSubKey(".Default")?.GetValue(null);
+                            if (defaultSound != null)
+                                currentSoundKey.SetValue(null, defaultSound);
+                        }
+                    }
                 }
-                else
-                {
-                    var defaultSound = soundKey.OpenSubKey(".Default")?.GetValue(null);
-                    if (defaultSound != null)
-                        currentSoundKey.SetValue(null, defaultSound);
-                }
+
+                return true;
             }
-        }
-
-        return Task.FromResult(true);
+        );
     }
 }

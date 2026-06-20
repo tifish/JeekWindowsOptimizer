@@ -10,11 +10,13 @@ public class WindowsActivatorItem : OptimizationItem
 
     public override string DescriptionKey => "WindowsActivatorDescription";
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
         ShouldTurnOffOnAccessProtection = true;
-        IsOptimized = IsWindowsActivated();
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            IsWindowsActivated
+        );
     }
 
     private static bool IsWindowsActivated()
@@ -50,6 +52,9 @@ public class WindowsActivatorItem : OptimizationItem
             Path.Join(AppContext.BaseDirectory, @"Tools\Activator\Activate.cmd")
         );
 
-        return IsWindowsActivated();
+        return await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            IsWindowsActivated
+        );
     }
 }

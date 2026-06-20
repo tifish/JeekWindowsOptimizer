@@ -22,26 +22,40 @@ public class WindowsUpdateItem : OptimizationItem
         new(KeyPath, "PauseUpdatesStartTime"),
     ];
 
-    private readonly WindowsService _service = new("wuauserv");
+    private static WindowsService CreateWindowsUpdateService() => new("wuauserv");
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized =
-            _registryValues.All(value => !value.HasValue())
-            && _service.GetStartMode() != WindowsService.StartMode.Disabled;
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                if (!_registryValues.All(value => !value.HasValue()))
+                    return false;
+
+                using var service = CreateWindowsUpdateService();
+                return service.GetStartMode() != WindowsService.StartMode.Disabled;
+            }
+        );
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
     {
-        if (value)
-        {
-            _registryValues.ForEach(regValue => regValue.DeleteValue());
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                if (value)
+                {
+                    _registryValues.ForEach(regValue => regValue.DeleteValue());
 
-            if (_service.GetStartMode() == WindowsService.StartMode.Disabled)
-                _service.SetStartMode(WindowsService.StartMode.Manual);
-        }
+                    using var service = CreateWindowsUpdateService();
+                    if (service.GetStartMode() == WindowsService.StartMode.Disabled)
+                        service.SetStartMode(WindowsService.StartMode.Manual);
+                }
 
-        return Task.FromResult(value);
+                return value;
+            }
+        );
     }
 }

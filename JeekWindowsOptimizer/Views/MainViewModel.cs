@@ -27,6 +27,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _autoUpdateLoopStarted;
     private bool _isLoadingAutoUpdateSetting;
     private bool _updateInProgress;
+    private bool _suppressOptimizationRefresh;
 
     // Segoe Fluent Icons (Segoe MDL2 Assets fall-back on Win10): Brightness / QuietHours / Contrast.
     private const string ThemeLightGlyph = "\uE706";
@@ -262,6 +263,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 return;
             }
 
+            _suppressOptimizationRefresh = true;
+
             await RegistryItemManager.Load();
             foreach (var item in RegistryItemManager.Items)
                 AddOptimizationItem(item);
@@ -278,7 +281,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new UninstallOneDriveItem());
             AddOptimizationItem(new WindowsActivatorItem());
             AddOptimizationItem(new WindowsUpdateItem());
-            if (!Battery.HasBattery())
+            if (!await Battery.HasBatteryAsync())
                 AddOptimizationItem(new BestPerformancePowerModeItem());
             AddOptimizationItem(new SetIdleTimeItem());
             AddOptimizationItem(new DisableSystemSounds());
@@ -313,16 +316,20 @@ public partial class MainViewModel : ObservableObject, IDisposable
                     {
                         Log.ZLogError(ex, $"Failed to initialize {item.Name}");
                     }
-
-                    UpdateItemStat(item.Category);
                 }
             }
+
+            _suppressOptimizationRefresh = false;
+            RefreshDisplayedOptimizationGroups();
+            UpdateOptimizationTabHeaders();
+            UpdateOptimizeButtonText();
 
             IsBusy = false;
             StatusMessage = Localizer.Get("InitializationFinished");
         }
         catch (Exception ex)
         {
+            _suppressOptimizationRefresh = false;
             Log.ZLogError(ex, $"Failed to initialize items");
             IsBusy = false;
             StatusMessage = Localizer.Get("InitializationFailed");
@@ -401,6 +408,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             if (item.Category == _selectedCategory)
                 Groups.Add(newGroup);
         }
+
+        if (_suppressOptimizationRefresh)
+            return;
 
         UpdateItemStat(item.Category);
         if (item.Category == _selectedCategory)
@@ -630,7 +640,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 await OptimizationItem.UpdateGroupPolicy();
 
             if (shouldRestartExplorer)
-                OptimizationItem.RestartExplorer();
+                await OptimizationItem.RestartExplorer();
 
             if (shouldReboot)
                 await OptimizationItem.PromptReboot();

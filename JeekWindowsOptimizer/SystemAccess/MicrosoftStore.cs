@@ -11,26 +11,32 @@ public static class MicrosoftStore
 
     public static async Task Initialize()
     {
-        try
-        {
-            PowerShellService.Commands.Clear();
-            await PowerShellService
-                .AddCommand("Set-ExecutionPolicy")
-                .AddParameter("Scope", "Process")
-                .AddParameter("ExecutionPolicy", "Bypass")
-                .InvokeAsync();
+        await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            async () =>
+            {
+                try
+                {
+                    PowerShellService.Commands.Clear();
+                    await PowerShellService
+                        .AddCommand("Set-ExecutionPolicy")
+                        .AddParameter("Scope", "Process")
+                        .AddParameter("ExecutionPolicy", "Bypass")
+                        .InvokeAsync();
 
-            PowerShellService.Commands.Clear();
-            await PowerShellService
-                .AddCommand("Import-Module")
-                .AddParameter("Name", "AppX")
-                .AddParameter("UseWindowsPowerShell")
-                .InvokeAsync();
-        }
-        catch (Exception e)
-        {
-            Log.ZLogError(e, $"Failed to set execution policy");
-        }
+                    PowerShellService.Commands.Clear();
+                    await PowerShellService
+                        .AddCommand("Import-Module")
+                        .AddParameter("Name", "AppX")
+                        .AddParameter("UseWindowsPowerShell")
+                        .InvokeAsync();
+                }
+                catch (Exception e)
+                {
+                    Log.ZLogError(e, $"Failed to set execution policy");
+                }
+            }
+        );
     }
 
     private static Command GetPackageCommand(string packageName) =>
@@ -45,45 +51,64 @@ public static class MicrosoftStore
 
     public static async Task<bool> HasPackage(string packageName)
     {
-        try
-        {
-            PowerShellService.Commands.Clear();
-            PowerShellService.Commands.AddCommand(GetPackageCommand(packageName));
-            return (await PowerShellService.InvokeAsync()).Count > 0;
-        }
-        catch (Exception e)
-        {
-            Log.ZLogError(e, $"Failed to check if package {packageName} exists");
-            return false;
-        }
+        return await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            async () =>
+            {
+                try
+                {
+                    PowerShellService.Commands.Clear();
+                    PowerShellService.Commands.AddCommand(GetPackageCommand(packageName));
+                    return (await PowerShellService.InvokeAsync()).Count > 0;
+                }
+                catch (Exception e)
+                {
+                    Log.ZLogError(e, $"Failed to check if package {packageName} exists");
+                    return false;
+                }
+            }
+        );
     }
 
     public static async Task<string?> GetPackageFullName(string packageName)
     {
-        try
-        {
-            PowerShellService.Commands.Clear();
-            PowerShellService.Streams.ClearStreams();
-            PowerShellService
-                .Commands.AddCommand(GetPackageCommand(packageName))
-                .AddCommand("Select-Object")
-                .AddParameter("First", 1)
-                .AddParameter("ExpandProperty", "PackageFullName");
-            return (await PowerShellService.InvokeAsync()).FirstOrDefault()?.BaseObject as string;
-        }
-        catch (Exception e)
-        {
-            Log.ZLogError(e, $"Failed to get full name for package {packageName}");
-            return null;
-        }
+        return await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            async () =>
+            {
+                try
+                {
+                    PowerShellService.Commands.Clear();
+                    PowerShellService.Streams.ClearStreams();
+                    PowerShellService
+                        .Commands.AddCommand(GetPackageCommand(packageName))
+                        .AddCommand("Select-Object")
+                        .AddParameter("First", 1)
+                        .AddParameter("ExpandProperty", "PackageFullName");
+                    return (await PowerShellService.InvokeAsync()).FirstOrDefault()?.BaseObject
+                        as string;
+                }
+                catch (Exception e)
+                {
+                    Log.ZLogError(e, $"Failed to get full name for package {packageName}");
+                    return null;
+                }
+            }
+        );
     }
 
     public static async Task UninstallPackage(string packageName)
     {
-        PowerShellService.Commands.Clear();
-        PowerShellService
-            .Commands.AddCommand(GetPackageCommand(packageName))
-            .AddCommand("Remove-AppxPackage");
-        await PowerShellService.InvokeAsync();
+        await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            async () =>
+            {
+                PowerShellService.Commands.Clear();
+                PowerShellService
+                    .Commands.AddCommand(GetPackageCommand(packageName))
+                    .AddCommand("Remove-AppxPackage");
+                await PowerShellService.InvokeAsync();
+            }
+        );
     }
 }

@@ -26,10 +26,12 @@ public class PreventStartMenuFromSearchingMicrosoftStoreItem : OptimizationItem
     public override string DescriptionKey =>
         "PreventStartMenuFromSearchingMicrosoftStoreDescription";
 
-    public override Task Initialize()
+    public override async Task Initialize()
     {
-        IsOptimized = !HasWindowsSearchAppService();
-        return Task.CompletedTask;
+        IsOptimized = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () => !HasWindowsSearchAppService()
+        );
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
@@ -37,12 +39,22 @@ public class PreventStartMenuFromSearchingMicrosoftStoreItem : OptimizationItem
         try
         {
             if (value)
-                DisableWindowsSearchAppServices();
+                await OptimizationExecutionScheduler.RunAsync(
+                    OptimizationExecutionAffinity.ExclusiveBackground,
+                    DisableWindowsSearchAppServices
+                );
             else
                 await RestoreWindowsSearchAppServices();
 
-            RestartSearchShellProcesses();
-            return value ? !HasWindowsSearchAppService() : HasWindowsSearchAppService();
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Background,
+                RestartSearchShellProcesses
+            );
+
+            return await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.ExclusiveBackground,
+                () => value ? !HasWindowsSearchAppService() : HasWindowsSearchAppService()
+            );
         }
         catch (Exception ex)
         {
@@ -64,17 +76,33 @@ public class PreventStartMenuFromSearchingMicrosoftStoreItem : OptimizationItem
 
     private static async Task RestoreWindowsSearchAppServices()
     {
-        foreach (var registration in FindStoreAppServices(DisabledWindowsSearchServiceName))
-            SetServiceName(registration, WindowsSearchServiceName);
+        await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                foreach (var registration in FindStoreAppServices(DisabledWindowsSearchServiceName))
+                    SetServiceName(registration, WindowsSearchServiceName);
+            }
+        );
 
-        if (HasWindowsSearchAppService())
+        if (
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.ExclusiveBackground,
+                HasWindowsSearchAppService
+            )
+        )
             return;
 
-        var packageId =
-            GetStorePackageIds().FirstOrDefault()
-            ?? await MicrosoftStore.GetPackageFullName(StorePackageName);
+        var packageId = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () => GetStorePackageIds().FirstOrDefault()
+        );
+        packageId ??= await MicrosoftStore.GetPackageFullName(StorePackageName);
         if (!string.IsNullOrEmpty(packageId))
-            CreateWindowsSearchAppService(packageId);
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.ExclusiveBackground,
+                () => CreateWindowsSearchAppService(packageId)
+            );
     }
 
     private static void SetServiceName(

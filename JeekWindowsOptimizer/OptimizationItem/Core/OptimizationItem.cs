@@ -72,7 +72,7 @@ public abstract partial class OptimizationItem : ObservableObject
                 await UpdateGroupPolicy();
 
             if (ShouldRestartExplorer)
-                RestartExplorer();
+                await RestartExplorer();
 
             if (ShouldReboot)
                 await PromptReboot();
@@ -90,35 +90,55 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static async Task<bool> TurnOffTamperProtection()
     {
-        if (TamperProtectionRegistryValue.GetValue(0) is 0 or 4)
+        if (await IsTamperProtectionOff())
             return true;
 
-        if (AntiVirus.HasThirdPartyAntivirusInstalled())
+        if (
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.ExclusiveBackground,
+                AntiVirus.HasThirdPartyAntivirusInstalled
+            )
+        )
             return true;
 
-        OpenDefenderSettings();
+        await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            OpenDefenderSettings
+        );
 
-        while (TamperProtectionRegistryValue.GetValue(0) is not (0 or 4))
+        while (!await IsTamperProtectionOff())
         {
-            var msgResult = await MessageBoxManager
-                .GetMessageBoxStandard(
-                    new MessageBoxStandardParams
-                    {
-                        ContentMessage = "请关闭防病毒设置中的篡改防护，然后按确定继续。",
-                        ButtonDefinitions = ButtonEnum.OkCancel,
-                        Icon = Icon.Info,
-                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                        Topmost = true,
-                        FontFamily = "Microsoft YaHei",
-                    }
-                )
-                .ShowAsync();
+            var msgResult = await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Ui,
+                () =>
+                    MessageBoxManager
+                        .GetMessageBoxStandard(
+                            new MessageBoxStandardParams
+                            {
+                                ContentMessage = "请关闭防病毒设置中的篡改防护，然后按确定继续。",
+                                ButtonDefinitions = ButtonEnum.OkCancel,
+                                Icon = Icon.Info,
+                                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                                Topmost = true,
+                                FontFamily = "Microsoft YaHei",
+                            }
+                        )
+                        .ShowAsync()
+            );
 
             if (msgResult == ButtonResult.Cancel)
                 return false;
         }
 
         return true;
+    }
+
+    private static Task<bool> IsTamperProtectionOff()
+    {
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () => TamperProtectionRegistryValue.GetValue(0) is 0 or 4
+        );
     }
 
     private static readonly RegistryValue DisableOnAccessProtectionRegistryValue = new(
@@ -128,12 +148,20 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static async Task<bool> TurnOffOnAccessProtection()
     {
-        if (DisableOnAccessProtectionRegistryValue.GetValue(0) is 1)
+        if (
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Background,
+                () => DisableOnAccessProtectionRegistryValue.GetValue(0) is 1
+            )
+        )
             return true;
 
         await TurnOffTamperProtection();
 
-        DisableOnAccessProtectionRegistryValue.SetValue(1);
+        await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () => DisableOnAccessProtectionRegistryValue.SetValue(1)
+        );
 
         return true;
     }
@@ -150,34 +178,50 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static async Task UpdateGroupPolicy()
     {
-        using var proc = Process.Start(
-            new ProcessStartInfo { FileName = "gpupdate.exe", Arguments = "/force" }
+        using var proc = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+                Process.Start(
+                    new ProcessStartInfo { FileName = "gpupdate.exe", Arguments = "/force" }
+                )
         );
         await proc!.WaitForExitAsync();
     }
 
-    public static void RestartExplorer()
+    public static Task RestartExplorer()
     {
-        // Kill all explorer.exe processes
-        foreach (var process in Process.GetProcessesByName("explorer"))
-            process.Kill();
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            () =>
+            {
+                // Kill all explorer.exe processes
+                foreach (var process in Process.GetProcessesByName("explorer"))
+                    process.Kill();
+            }
+        );
     }
 
     public static async Task PromptReboot()
     {
-        await MessageBoxManager
-            .GetMessageBoxStandard(
-                new MessageBoxStandardParams
-                {
-                    ContentMessage = "需要重启生效。",
-                    ButtonDefinitions = ButtonEnum.Ok,
-                    Icon = Icon.Info,
-                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                    Topmost = true,
-                    FontFamily = "Microsoft YaHei",
-                }
-            )
-            .ShowAsync();
+        await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Ui,
+            async () =>
+            {
+                await MessageBoxManager
+                    .GetMessageBoxStandard(
+                        new MessageBoxStandardParams
+                        {
+                            ContentMessage = "需要重启生效。",
+                            ButtonDefinitions = ButtonEnum.Ok,
+                            Icon = Icon.Info,
+                            WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                            Topmost = true,
+                            FontFamily = "Microsoft YaHei",
+                        }
+                    )
+                    .ShowAsync();
+            }
+        );
     }
 
     [ObservableProperty]
