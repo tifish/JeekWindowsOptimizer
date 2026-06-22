@@ -51,8 +51,7 @@ public class App : Application
 
     private void ApplyStoredSettings()
     {
-        if (AppSettingsStore.TryGetLanguage(out var language))
-            Localizer.Language = language;
+        Localizer.Language = AppSettingsStore.ResolveEffectiveLanguage(Localizer.Languages);
 
         if (AppSettingsStore.TryGetThemeVariant(out var themeVariant))
             RequestedThemeVariant = themeVariant;

@@ -347,3 +347,15 @@ DisableFaxServiceName	Disable the Fax Service	禁用传真服务
 DisableFaxServiceDescription	The Fax service supports sending and receiving faxes. Disable it if you have no fax hardware.\nEffective immediately.	传真服务用于收发传真，没有传真设备可以禁用。\n立即生效。
 DisableHibernationName	Disable hibernation	关闭休眠
 DisableHibernationDescription	Hibernation reserves a hiberfil.sys file as large as your RAM and enables Fast Startup. Disabling it frees that disk space and makes shutdown cleaner. Not recommended for laptops that rely on hibernation.\nEffective immediately.	休眠会占用一个与内存大小相当的 hiberfil.sys 文件，并启用快速启动。关闭后可释放该磁盘空间，并让关机更彻底。依赖休眠的笔记本不建议关闭。\n立即生效。
+LanguageSystem	Follow system	跟随系统
+Settings	Settings	设置
+StorageMode	Storage mode	存储模式
+StorageModeDefault	Default (Roaming)	默认（漫游）
+StorageModePortable	Portable	便携
+StorageModeCustom	Custom…	自定义…
+StorageModeCustomPickerTitle	Select a folder to store settings	选择保存设置的文件夹
+UpdateInterval	Check interval	检查间隔
+UpdateIntervalEvery6Hours	Every 6 hours	每 6 小时
+UpdateIntervalDaily	Daily	每天
+UpdateIntervalWeekly	Weekly	每周
+UpdateIntervalNever	Never	无

@@ -5,6 +5,7 @@ obj/
 *.user
 /bin/Libs
 /bin/Logs
+/bin/Config
 /bin/*.*
 !/bin/*.ps1
 !/bin/*.cmd

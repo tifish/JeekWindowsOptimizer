@@ -267,6 +267,32 @@
                                 Header="{l:Localize AutoUpdate}"
                                 IsChecked="{Binding IsAutoUpdateEnabled, Mode=TwoWay}"
                                 ToggleType="CheckBox" />
+                            <MenuItem Header="{l:Localize UpdateInterval}">
+                                <MenuItem
+                                    Command="{Binding SetUpdateIntervalTo6HoursCommand}"
+                                    GroupName="UpdateInterval"
+                                    Header="{l:Localize UpdateIntervalEvery6Hours}"
+                                    IsChecked="{Binding IsUpdateInterval6HoursChecked, Mode=OneWay}"
+                                    ToggleType="Radio" />
+                                <MenuItem
+                                    Command="{Binding SetUpdateIntervalToDailyCommand}"
+                                    GroupName="UpdateInterval"
+                                    Header="{l:Localize UpdateIntervalDaily}"
+                                    IsChecked="{Binding IsUpdateIntervalDailyChecked, Mode=OneWay}"
+                                    ToggleType="Radio" />
+                                <MenuItem
+                                    Command="{Binding SetUpdateIntervalToWeeklyCommand}"
+                                    GroupName="UpdateInterval"
+                                    Header="{l:Localize UpdateIntervalWeekly}"
+                                    IsChecked="{Binding IsUpdateIntervalWeeklyChecked, Mode=OneWay}"
+                                    ToggleType="Radio" />
+                                <MenuItem
+                                    Command="{Binding SetUpdateIntervalToNeverCommand}"
+                                    GroupName="UpdateInterval"
+                                    Header="{l:Localize UpdateIntervalNever}"
+                                    IsChecked="{Binding IsUpdateIntervalNeverChecked, Mode=OneWay}"
+                                    ToggleType="Radio" />
+                            </MenuItem>
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
@@ -275,6 +301,13 @@
                     <TextBlock Classes="titlebar-glyph-text" Text="&#xE774;" />
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuItem
+                                Command="{Binding SwitchToSystemLanguageCommand}"
+                                GroupName="Language"
+                                Header="{l:Localize LanguageSystem}"
+                                IsChecked="{Binding IsSystemLanguageMenuChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                            <Separator />
                             <MenuItem
                                 Command="{Binding SwitchToEnglishCommand}"
                                 GroupName="Language"
@@ -311,6 +344,34 @@
                                 GroupName="Theme"
                                 Header="{l:Localize ThemeSystem}"
                                 IsChecked="{Binding IsSystemThemeMenuChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+                <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Settings}">
+                    <!-- Segoe Fluent Icons: Settings (E713) -->
+                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE713;" />
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuItem Header="{l:Localize StorageMode}" IsEnabled="False" />
+                            <Separator />
+                            <MenuItem
+                                Command="{Binding SwitchToDefaultStorageCommand}"
+                                GroupName="StorageMode"
+                                Header="{l:Localize StorageModeDefault}"
+                                IsChecked="{Binding IsStorageModeDefaultChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                            <MenuItem
+                                Command="{Binding SwitchToPortableStorageCommand}"
+                                GroupName="StorageMode"
+                                Header="{l:Localize StorageModePortable}"
+                                IsChecked="{Binding IsStorageModePortableChecked, Mode=OneWay}"
+                                ToggleType="Radio" />
+                            <MenuItem
+                                Click="StorageModeCustom_OnClick"
+                                GroupName="StorageMode"
+                                Header="{l:Localize StorageModeCustom}"
+                                IsChecked="{Binding IsStorageModeCustomChecked, Mode=OneWay}"
                                 ToggleType="Radio" />
                         </MenuFlyout>
                     </Button.Flyout>

@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Jeek.Avalonia.Localization;
 using JeekTools;
@@ -54,6 +55,41 @@ public partial class MainWindow : Window
     {
         if (DataContext is MainViewModel vm)
             vm.SaveUncheckedOptimizationItemsIfChanged();
+    }
+
+    // ReSharper disable once AsyncVoidMethod
+    private async void StorageModeCustom_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm)
+            return;
+
+        try
+        {
+            var folders = await StorageProvider.OpenFolderPickerAsync(
+                new FolderPickerOpenOptions
+                {
+                    Title = Localizer.Get("StorageModeCustomPickerTitle"),
+                    AllowMultiple = false,
+                }
+            );
+
+            if (folders.Count == 0)
+                return;
+
+            var path = folders[0].TryGetLocalPath();
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            AppSettingsStore.SwitchStorageMode(StorageMode.Custom, path);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogError(ex, $"Failed to switch to custom storage directory");
+        }
+        finally
+        {
+            vm.RefreshStorageModeMenuCheckState();
+        }
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)

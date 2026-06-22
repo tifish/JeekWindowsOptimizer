@@ -22,7 +22,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _uncheckedOptimizationItemsDirty;
     private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
     private static readonly TimeSpan UpdateInitialDelay = TimeSpan.FromSeconds(5);
-    private static readonly TimeSpan UpdateCheckInterval = TimeSpan.FromHours(1);
+    private static readonly TimeSpan UpdatePollInterval = TimeSpan.FromMinutes(15);
+    private DateTime _lastUpdateCheckUtc = DateTime.MinValue;
     private readonly CancellationTokenSource _autoUpdateCancellation = new();
     private bool _autoUpdateLoopStarted;
     private bool _isLoadingAutoUpdateSetting;
@@ -39,8 +40,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         Localizer.LanguageChanged += OnLanguageChanged;
         RefreshLanguageMenuCheckState();
         RefreshThemeMenuCheckState();
+        RefreshUpdateIntervalMenuCheckState();
+        RefreshStorageModeMenuCheckState();
         _isLoadingAutoUpdateSetting = true;
-        IsAutoUpdateEnabled = AppSettingsStore.Current.AutoUpdate;
+        IsAutoUpdateEnabled = AppSettingsStore.Roaming.AutoUpdate;
         _isLoadingAutoUpdateSetting = false;
     }
 
@@ -70,6 +73,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [ObservableProperty]
+    public partial bool IsSystemLanguageMenuChecked { get; set; }
+
+    [ObservableProperty]
     public partial bool IsEnglishMenuChecked { get; set; }
 
     [ObservableProperty]
@@ -96,18 +102,54 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AppSettingsStore.SetAutoUpdate(value);
     }
 
+    [ObservableProperty]
+    public partial bool IsUpdateInterval6HoursChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsUpdateIntervalDailyChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsUpdateIntervalWeeklyChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsUpdateIntervalNeverChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsStorageModeDefaultChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsStorageModePortableChecked { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsStorageModeCustomChecked { get; set; }
+
     private void RefreshLanguageMenuCheckState()
     {
-        IsEnglishMenuChecked = string.Equals(
-            Localizer.Language,
-            "en",
-            StringComparison.OrdinalIgnoreCase
-        );
-        IsChineseMenuChecked = string.Equals(
-            Localizer.Language,
-            "zh",
-            StringComparison.OrdinalIgnoreCase
-        );
+        var followSystem = AppSettingsStore.IsFollowSystemLanguage;
+        IsSystemLanguageMenuChecked = followSystem;
+        IsEnglishMenuChecked =
+            !followSystem
+            && string.Equals(Localizer.Language, "en", StringComparison.OrdinalIgnoreCase);
+        IsChineseMenuChecked =
+            !followSystem
+            && string.Equals(Localizer.Language, "zh", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void RefreshUpdateIntervalMenuCheckState()
+    {
+        var interval = AppSettingsStore.Roaming.AutoUpdateInterval;
+        IsUpdateInterval6HoursChecked = interval == AutoUpdateInterval.Every6Hours;
+        IsUpdateIntervalDailyChecked = interval == AutoUpdateInterval.Daily;
+        IsUpdateIntervalWeeklyChecked = interval == AutoUpdateInterval.Weekly;
+        IsUpdateIntervalNeverChecked = interval == AutoUpdateInterval.Never;
+    }
+
+    public void RefreshStorageModeMenuCheckState()
+    {
+        var mode = AppSettingsStore.EffectiveStorageMode;
+        IsStorageModeDefaultChecked = mode == StorageMode.Default;
+        IsStorageModePortableChecked = mode == StorageMode.Portable;
+        IsStorageModeCustomChecked = mode == StorageMode.Custom;
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
@@ -668,17 +710,43 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             await Task.Delay(UpdateInitialDelay, cancellationToken);
 
+            // Always check once at startup when auto-update is enabled.
+            if (IsAutoUpdateEnabled && !IsBusy)
+            {
+                await CheckForUpdatesAsync(manual: false);
+                _lastUpdateCheckUtc = DateTime.UtcNow;
+            }
+
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (IsAutoUpdateEnabled && !IsBusy)
-                    await CheckForUpdatesAsync(manual: false);
+                await Task.Delay(UpdatePollInterval, cancellationToken);
 
-                await Task.Delay(UpdateCheckInterval, cancellationToken);
+                if (!IsAutoUpdateEnabled || IsBusy)
+                    continue;
+
+                var interval = AppSettingsStore.Roaming.AutoUpdateInterval;
+                if (interval == AutoUpdateInterval.Never)
+                    continue;
+
+                if (DateTime.UtcNow - _lastUpdateCheckUtc < IntervalToTimeSpan(interval))
+                    continue;
+
+                await CheckForUpdatesAsync(manual: false);
+                _lastUpdateCheckUtc = DateTime.UtcNow;
             }
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) { }
+    }
+
+    private static TimeSpan IntervalToTimeSpan(AutoUpdateInterval interval)
+    {
+        return interval switch
         {
-        }
+            AutoUpdateInterval.Every6Hours => TimeSpan.FromHours(6),
+            AutoUpdateInterval.Daily => TimeSpan.FromDays(1),
+            AutoUpdateInterval.Weekly => TimeSpan.FromDays(7),
+            _ => TimeSpan.FromDays(1),
+        };
     }
 
     private bool CanCheckForUpdates()
@@ -706,7 +774,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 StatusMessage = Localizer.Get("UpdateChecking");
 
             Log.ZLogInformation($"AutoUpdate check started (manual={manual})");
-            var outcome = await AutoUpdate.HasUpdateAsync(AppSettingsStore.Current.DisableMirrorDownload);
+            var outcome = await AutoUpdate.HasUpdateAsync(
+                AppSettingsStore.Roaming.DisableMirrorDownload
+            );
 
             switch (outcome)
             {
@@ -821,6 +891,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    private void SwitchToSystemLanguage()
+    {
+        AppSettingsStore.SetLanguage(null);
+        Localizer.Language = AppSettingsStore.ResolveEffectiveLanguage(Localizer.Languages);
+        RefreshLanguageMenuCheckState();
+    }
+
+    [RelayCommand]
     private void SwitchToEnglish()
     {
         Localizer.Language = "en";
@@ -865,6 +943,50 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AppSettingsStore.SetThemeVariant(ThemeVariant.Default);
         }
         RefreshThemeMenuCheckState();
+    }
+
+    private void ApplyUpdateInterval(AutoUpdateInterval interval)
+    {
+        AppSettingsStore.SetAutoUpdateInterval(interval);
+        RefreshUpdateIntervalMenuCheckState();
+    }
+
+    [RelayCommand]
+    private void SetUpdateIntervalTo6Hours()
+    {
+        ApplyUpdateInterval(AutoUpdateInterval.Every6Hours);
+    }
+
+    [RelayCommand]
+    private void SetUpdateIntervalToDaily()
+    {
+        ApplyUpdateInterval(AutoUpdateInterval.Daily);
+    }
+
+    [RelayCommand]
+    private void SetUpdateIntervalToWeekly()
+    {
+        ApplyUpdateInterval(AutoUpdateInterval.Weekly);
+    }
+
+    [RelayCommand]
+    private void SetUpdateIntervalToNever()
+    {
+        ApplyUpdateInterval(AutoUpdateInterval.Never);
+    }
+
+    [RelayCommand]
+    private void SwitchToDefaultStorage()
+    {
+        AppSettingsStore.SwitchStorageMode(StorageMode.Default);
+        RefreshStorageModeMenuCheckState();
+    }
+
+    [RelayCommand]
+    private void SwitchToPortableStorage()
+    {
+        AppSettingsStore.SwitchStorageMode(StorageMode.Portable);
+        RefreshStorageModeMenuCheckState();
     }
 
     private bool CanClearSearch()
