@@ -333,6 +333,128 @@ DisableWindowsCopilotName	Disable Windows Copilot	禁用 Windows Copilot
 DisableWindowsCopilotDescription	Windows Copilot runs in the background and consumes resources. Disable it if you don't use it.\nTakes effect after restarting Explorer.	Windows Copilot 在后台运行并占用资源，不使用可以禁用。\n重启资源管理器生效。
 DisableRecallName	Disable Recall	禁用 Recall 回顾
 DisableRecallDescription	Recall periodically takes snapshots of your screen, using significant CPU and disk space. Disable it if you don't use it.\nEffective immediately.	Recall 回顾会定期截取屏幕快照，占用大量 CPU 和磁盘空间，不使用建议禁用。\n立即生效。
+DisableClickToDoName	Disable Click to Do	禁用点击即用 (Click to Do)
+DisableClickToDoDescription	Click to Do is a Windows AI feature that analyzes on-screen content when you click. Disable it if you do not use it.\nEffective immediately.	点击即用是 Windows 的 AI 功能，点击时会分析屏幕内容。不使用可以禁用。\n立即生效。
+DisableEdgeAIFeaturesName	Disable Edge AI features	禁用 Edge AI 功能
+DisableEdgeAIFeaturesDescription	Disables Copilot, sidebar, compose, and other AI features in Microsoft Edge to reduce background work and promotional AI UI.\nEffective after group policy refresh.	禁用 Microsoft Edge 中的 Copilot、侧边栏、撰写等 AI 功能，减少后台占用和 AI 推广界面。\n刷新组策略后生效。
+DisablePaintAIFeaturesName	Disable Paint AI features	禁用画图 AI 功能
+DisablePaintAIFeaturesDescription	Disables Cocreator, generative fill, image creator, and related AI tools in Microsoft Paint.\nEffective immediately.	禁用微软画图中的共同创作、生成式填充、图像创建器等相关 AI 功能。\n立即生效。
+DisableNotepadAIFeaturesName	Disable Notepad AI features	禁用记事本 AI 功能
+DisableNotepadAIFeaturesDescription	Disables AI rewrite and related features in Windows Notepad.\nEffective immediately.	禁用 Windows 记事本中的 AI 改写等相关功能。\n立即生效。
+DisableEdgeAdsAndSuggestionsName	Disable Edge ads and suggestions	禁用 Edge 广告与建议
+DisableEdgeAdsAndSuggestionsDescription	Disables new-tab content, shopping assistant, recommendations, diagnostics personalization, and similar Edge promotional features.\nEffective after group policy refresh.	禁用新标签页内容、购物助手、推荐、诊断个性化等 Edge 推广功能。\n刷新组策略后生效。
+EnableTaskbarEndTaskName	Enable End Task on the taskbar	启用任务栏结束任务
+EnableTaskbarEndTaskDescription	Adds End Task to the taskbar app right-click menu so you can force-close unresponsive apps without Task Manager.\nEffective immediately.	在任务栏应用右键菜单中增加“结束任务”，无需打开任务管理器即可强制关闭无响应应用。\n立即生效。
+EnableLastActiveClickName	Enable Last Active Click on the taskbar	启用任务栏上次活动点击
+EnableLastActiveClickDescription	Clicking a taskbar app with multiple windows focuses the last active window and cycles through open windows of that app.\nEffective immediately.	点击有多个窗口的任务栏图标时，直接聚焦上次活动窗口，并可重复点击在该应用窗口间切换。\n立即生效。
+HideChatTaskbarButtonName	Hide Chat / Teams taskbar button	隐藏任务栏聊天/Teams 按钮
+HideChatTaskbarButtonDescription	Hides the Chat or Meet Now button from the taskbar.\nEffective immediately.	从任务栏隐藏聊天或立即开会按钮。\n立即生效。
+DisableLockScreenTipsName	Disable lock screen tips and fun facts	禁用锁屏提示与趣闻
+DisableLockScreenTipsDescription	Stops Windows from showing tips, fun facts, and similar overlays on the lock screen.\nEffective immediately.	禁止 Windows 在锁屏上显示提示、趣闻等覆盖内容。\n立即生效。
+DisableSettings365AdsName	Disable Microsoft 365 ads in Settings	禁用设置中的 Microsoft 365 广告
+DisableSettings365AdsDescription	Hides Microsoft account and Microsoft 365 promotional content on the Settings Home page.\nEffective after group policy refresh.	隐藏设置主页上的 Microsoft 帐户与 Microsoft 365 推广内容。\n刷新组策略后生效。
+HideSettingsHomePageName	Hide Settings Home page	隐藏设置主页
+HideSettingsHomePageDescription	Hides the Settings Home page, which is mainly promotional content, and opens Settings to System instead.\nEffective immediately.	隐藏以推广内容为主的设置主页，打开设置时直接进入系统页。\n立即生效。
+DisableLocationServicesName	Disable location services	禁用位置服务
+DisableLocationServicesDescription	Turns off Windows location services system-wide for privacy and to reduce background location access.\nEffective after group policy refresh.	在系统范围关闭 Windows 位置服务，提升隐私并减少后台位置访问。\n刷新组策略后生效。
+DisableFindMyDeviceName	Disable Find My Device	禁用查找我的设备
+DisableFindMyDeviceDescription	Stops Find My Device location tracking for this PC.\nEffective after group policy refresh.	停止本机的“查找我的设备”位置跟踪。\n刷新组策略后生效。
+DisableSearchHistoryName	Disable Windows search history	禁用 Windows 搜索历史
+DisableSearchHistoryDescription	Stops Windows Search from saving device search history.\nEffective immediately.	禁止 Windows 搜索保存本机搜索历史。\n立即生效。
+ShowHiddenFilesAndFoldersName	Show hidden files and folders	显示隐藏的文件和文件夹
+ShowHiddenFilesAndFoldersDescription	Shows files and folders marked as hidden in File Explorer.\nEffective immediately.	在文件资源管理器中显示标记为隐藏的文件和文件夹。\n立即生效。
+HideHomeFromExplorerName	Hide Home from File Explorer navigation pane	隐藏资源管理器导航窗格中的主页
+HideHomeFromExplorerDescription	Removes the Home entry from the File Explorer navigation pane.\nTakes effect after restarting Explorer.	从文件资源管理器导航窗格移除“主页”项。\n重启资源管理器生效。
+HideGalleryFromExplorerName	Hide Gallery from File Explorer navigation pane	隐藏资源管理器导航窗格中的图库
+HideGalleryFromExplorerDescription	Removes the Gallery entry from the File Explorer navigation pane.\nTakes effect after restarting Explorer.	从文件资源管理器导航窗格移除“图库”项。\n重启资源管理器生效。
+HideOneDriveFromExplorerName	Hide OneDrive from File Explorer navigation pane	隐藏资源管理器导航窗格中的 OneDrive
+HideOneDriveFromExplorerDescription	Removes the OneDrive entry from the File Explorer navigation pane without uninstalling OneDrive.\nTakes effect after restarting Explorer.	从文件资源管理器导航窗格移除 OneDrive 项，不会卸载 OneDrive。\n重启资源管理器生效。
+DisableStickyKeysShortcutName	Disable Sticky Keys shortcut	禁用粘滞键快捷方式
+DisableStickyKeysShortcutDescription	Prevents the Sticky Keys prompt from appearing when Shift is pressed five times.\nEffective immediately.	禁止连续按五次 Shift 时弹出粘滞键提示。\n立即生效。
+DisableBitLockerAutoEncryptionName	Disable BitLocker automatic device encryption	禁用 BitLocker 自动设备加密
+DisableBitLockerAutoEncryptionDescription	Prevents Windows from automatically enabling device encryption on new setups. Does not decrypt an already encrypted drive.\nEffective immediately.	阻止 Windows 在新系统上自动启用设备加密。不会解密已经加密的驱动器。\n立即生效。
+DisableModernStandbyNetworkingName	Disable network during Modern Standby	禁用新式待机时的网络连接
+DisableModernStandbyNetworkingDescription	Disconnects networking during Modern Standby (S0 low power idle) to reduce battery drain on supported devices.\nEffective after group policy refresh.	在支持的设备上，于新式待机（S0 低功耗空闲）期间断开网络，以减少耗电。\n刷新组策略后生效。
+DisableShareDragTrayName	Disable share Drag Tray	禁用拖放共享托盘
+DisableShareDragTrayDescription	Disables the Windows 11 Drag Tray that appears when dragging files for sharing or moving.\nEffective immediately.	禁用 Windows 11 在拖动文件共享或移动时出现的拖放托盘。\n立即生效。
+DisableGameBarIntegrationName	Disable Xbox Game Bar integration	禁用 Xbox Game Bar 集成
+DisableGameBarIntegrationDescription	Stops the controller shortcut and related Game Bar integration from opening Game Bar. Pair with Disable Game DVR capture for a fuller disable.\nEffective immediately.	禁止通过手柄快捷键及相关集成打开 Game Bar。可与“禁用 Game DVR 捕获”一起使用以更彻底关闭。\n立即生效。
+DisableUpdateAsSoonAsAvailableName	Do not get updates as soon as they are available	不要尽快获取更新
+DisableUpdateAsSoonAsAvailableDescription	Turns off continuous innovation opt-in so Windows does not pull the latest updates as soon as they are available.\nEffective immediately.	关闭持续创新选项，避免 Windows 一有最新更新就立刻获取。\n立即生效。
+PreventDeviceCompanionAppAutoInstallName	Prevent automatic companion app installs	禁止自动安装设备配套应用
+PreventDeviceCompanionAppAutoInstallDescription	Prevents Windows from downloading device metadata and companion apps from the network for connected hardware.\nEffective after group policy refresh.	禁止 Windows 从网络下载已连接硬件的设备元数据和配套应用。\n刷新组策略后生效。
+DisablePhoneLinkInStartName	Disable Phone Link in Start menu	禁用开始菜单中的手机连接
+DisablePhoneLinkInStartDescription	Hides the mobile device / Phone Link companion section in the Start menu.\nEffective immediately.	隐藏开始菜单中的移动设备/手机连接区域。\n立即生效。
+DisableCortanaInSearchName	Disable Cortana in Windows Search	禁用 Windows 搜索中的 Cortana
+DisableCortanaInSearchDescription	Disables Cortana integration and consent in Windows Search policy.\nEffective after group policy refresh.	通过策略禁用 Windows 搜索中的 Cortana 集成与同意项。\n刷新组策略后生效。
+DisableWSAIFabricServiceName	Disable the Windows AI Fabric Service	禁用 Windows AI Fabric 服务
+DisableWSAIFabricServiceDescription	WSAIFabricSvc supports Windows AI features. Disable it if you do not use system AI features, to reduce background services.\nEffective immediately.	WSAIFabricSvc 为 Windows AI 功能提供支持。不使用系统 AI 功能时可禁用，以减少后台服务。\n立即生效。
+UninstallCopilotName	Uninstall Microsoft Copilot	卸载 Microsoft Copilot
+UninstallCopilotDescription	Removes the Microsoft Copilot app package. Use with Disable Windows Copilot for a fuller cleanup.	卸载 Microsoft Copilot 应用包。可与“禁用 Windows Copilot”一起使用以更彻底清理。
+UninstallAIHubName	Uninstall Copilot+ AI Hub	卸载 Copilot+ AI 中心
+UninstallAIHubDescription	Removes the Copilot+ AI Hub app on supported Windows 11 builds.	卸载受支持 Windows 11 版本上的 Copilot+ AI 中心应用。
+UninstallClipchampName	Uninstall Clipchamp	卸载 Clipchamp
+UninstallClipchampDescription	Removes the preinstalled Clipchamp video editor.	卸载预装的 Clipchamp 视频编辑器。
+UninstallTeamsName	Uninstall Microsoft Teams	卸载 Microsoft Teams
+UninstallTeamsDescription	Removes the new Microsoft Teams app if installed.	卸载新版 Microsoft Teams 应用（若已安装）。
+UninstallTeamsLegacyName	Uninstall legacy Microsoft Teams	卸载旧版 Microsoft Teams
+UninstallTeamsLegacyDescription	Removes the older Microsoft Store Teams package if present.	卸载旧版 Microsoft Store Teams 包（若存在）。
+UninstallPhoneLinkName	Uninstall Phone Link	卸载手机连接
+UninstallPhoneLinkDescription	Removes Phone Link (Your Phone) for connecting Android/iOS devices.	卸载用于连接 Android/iOS 设备的手机连接（Your Phone）。
+UninstallOutlookForWindowsName	Uninstall new Outlook for Windows	卸载新版 Outlook
+UninstallOutlookForWindowsDescription	Removes the new Outlook for Windows mail client package.	卸载新版 Outlook for Windows 邮件客户端包。
+UninstallBingNewsName	Uninstall Bing News	卸载 Bing 新闻
+UninstallBingNewsDescription	Removes the Bing News app.	卸载 Bing 新闻应用。
+UninstallMicrosoftNewsName	Uninstall Microsoft News	卸载 Microsoft 新闻
+UninstallMicrosoftNewsDescription	Removes the Microsoft News / Start news app.	卸载 Microsoft 新闻/Start 新闻应用。
+UninstallBingWeatherName	Uninstall Bing Weather	卸载 Bing 天气
+UninstallBingWeatherDescription	Removes the Bing Weather app.	卸载 Bing 天气应用。
+UninstallSolitaireName	Uninstall Microsoft Solitaire Collection	卸载微软纸牌
+UninstallSolitaireDescription	Removes the Microsoft Solitaire Collection games.	卸载微软纸牌合集游戏。
+Uninstall3DViewerName	Uninstall 3D Viewer	卸载 3D 查看器
+Uninstall3DViewerDescription	Removes the 3D Viewer app.	卸载 3D 查看器应用。
+UninstallPaint3DName	Uninstall Paint 3D	卸载画图 3D
+UninstallPaint3DDescription	Removes Paint 3D. The classic Paint app is not removed.	卸载画图 3D，不会卸载经典画图应用。
+UninstallPeopleName	Uninstall People	卸载人脉
+UninstallPeopleDescription	Removes the People contacts app.	卸载人脉通讯录应用。
+UninstallFeedbackHubName	Uninstall Feedback Hub	卸载反馈中心
+UninstallFeedbackHubDescription	Removes the Feedback Hub app used to send feedback to Microsoft.	卸载用于向微软发送反馈的反馈中心应用。
+UninstallGetStartedName	Uninstall Get Started	卸载开始使用
+UninstallGetStartedDescription	Removes the Get Started tips app. On some Windows 11 builds uninstall may not be allowed.	卸载“开始使用”提示应用。部分 Windows 11 版本可能不允许卸载。
+UninstallMapsName	Uninstall Windows Maps	卸载 Windows 地图
+UninstallMapsDescription	Removes the Windows Maps app.	卸载 Windows 地图应用。
+UninstallXboxConsoleCompanionName	Uninstall Xbox Console Companion	卸载 Xbox 主机伴侣
+UninstallXboxConsoleCompanionDescription	Removes the discontinued Xbox Console Companion app.	卸载已停用的 Xbox 主机伴侣应用。
+UninstallXboxGamingAppName	Uninstall Xbox Gaming App	卸载 Xbox 游戏应用
+UninstallXboxGamingAppDescription	Removes the modern Xbox app used for the Xbox PC library and some game installs. Reinstall from Microsoft Store if needed.	卸载用于 Xbox PC 库和部分游戏安装的新版 Xbox 应用。需要时可从微软商店重装。
+UninstallXboxGameBarName	Uninstall Xbox Game Bar	卸载 Xbox Game Bar
+UninstallXboxGameBarDescription	Removes Xbox Game Bar (XboxGamingOverlay). Stops Win+G overlay and game recording UI. Some games may reinstall related components.	卸载 Xbox Game Bar（XboxGamingOverlay）。关闭 Win+G 叠加层和游戏录制界面。部分游戏可能会重新安装相关组件。
+UninstallXboxGameOverlayName	Uninstall Xbox Game Overlay	卸载 Xbox 游戏叠加层
+UninstallXboxGameOverlayDescription	Removes the older Xbox game overlay package used with Game Bar.	卸载与 Game Bar 配套的旧版 Xbox 游戏叠加层包。
+UninstallXboxSpeechToTextOverlayName	Uninstall Xbox Speech to Text Overlay	卸载 Xbox 语音转文字叠加层
+UninstallXboxSpeechToTextOverlayDescription	Removes the Xbox speech-to-text overlay. Some games use it for accessibility; reinstall may be difficult on some systems.	卸载 Xbox 语音转文字叠加层。部分游戏用于无障碍功能，部分系统上可能较难重装。
+UninstallXboxIdentityProviderName	Uninstall Xbox Identity Provider	卸载 Xbox 身份提供程序
+UninstallXboxIdentityProviderDescription	Removes Xbox sign-in framework. Some Microsoft Store games and Xbox services may stop working until reinstalled.	卸载 Xbox 登录框架。部分微软商店游戏和 Xbox 服务在重装前可能无法使用。
+UninstallXboxTcuiName	Uninstall Xbox TCUI	卸载 Xbox TCUI
+UninstallXboxTcuiDescription	Removes Xbox title-callable UI framework. May affect Microsoft Store, Photos, or certain games that depend on Xbox UI components.	卸载 Xbox 标题可调用 UI 框架。可能影响依赖 Xbox UI 组件的微软商店、照片或某些游戏。
+UninstallOfficeHubName	Uninstall Office Hub	卸载 Office 中心
+UninstallOfficeHubDescription	Removes the Microsoft Office Hub / 365 entry-point app.	卸载 Microsoft Office 中心 / 365 入口应用。
+UninstallPowerAutomateName	Uninstall Power Automate	卸载 Power Automate
+UninstallPowerAutomateDescription	Removes Power Automate Desktop if installed.	卸载 Power Automate Desktop（若已安装）。
+UninstallToDoName	Uninstall Microsoft To Do	卸载 Microsoft To Do
+UninstallToDoDescription	Removes the Microsoft To Do task app.	卸载 Microsoft To Do 任务应用。
+UninstallDevHomeName	Uninstall Dev Home	卸载 Dev Home
+UninstallDevHomeDescription	Removes the discontinued Dev Home developer dashboard.	卸载已停用的 Dev Home 开发者仪表板。
+UninstallPCManagerName	Uninstall Microsoft PC Manager	卸载微软电脑管家
+UninstallPCManagerDescription	Removes Microsoft PC Manager if preinstalled.	卸载预装的微软电脑管家（若存在）。
+UninstallQuickAssistName	Uninstall Quick Assist	卸载快速助手
+UninstallQuickAssistDescription	Removes the Quick Assist remote help app.	卸载快速助手远程协助应用。
+UninstallFamilySafetyName	Uninstall Family Safety	卸载家庭安全
+UninstallFamilySafetyDescription	Removes the Microsoft Family Safety app.	卸载 Microsoft 家庭安全应用。
+UninstallMixedRealityPortalName	Uninstall Mixed Reality Portal	卸载混合现实门户
+UninstallMixedRealityPortalDescription	Removes the Mixed Reality Portal app.	卸载混合现实门户应用。
+UninstallMoviesAndTVName	Uninstall Movies & TV	卸载电影和电视
+UninstallMoviesAndTVDescription	Removes the Movies & TV / Films & TV app.	卸载电影和电视应用。
 DisableNtfs8Dot3NameCreationName	Disable 8.3 short file name creation	禁用 8.3 短文件名
 DisableNtfs8Dot3NameCreationDescription	Creating MS-DOS 8.3 short names for every file slows down folders that contain many files. Disabling it speeds up file creation and applies to newly created files.\nTakes effect after reboot.	为每个文件生成 MS-DOS 8.3 短文件名会拖慢包含大量文件的目录，禁用后可加快文件创建，仅对新建文件生效。\n重启生效。
 DisableNtfsLastAccessUpdateName	Disable NTFS last access timestamp	禁用 NTFS 末次访问时间

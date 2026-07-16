@@ -9,3 +9,4 @@ System	DisableWapPushMessageRoutingService		dmwappushservice	Manual
 System	DisableDownloadedMapsManagerService		MapsBroker	Automatic
 System	DisableRetailDemoService		RetailDemo	Manual
 System	DisableFaxService		Fax	Manual
+System	DisableWSAIFabricService		WSAIFabricSvc	Manual

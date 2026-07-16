@@ -79,6 +79,58 @@ Software	TortoiseGitCacheType		HKEY_CURRENT_USER\SOFTWARE\TortoiseGit	CacheType	
 Software	DisableRemoteDesktopSecurityWarning		HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Terminal Services\Client	RedirectionWarningDialogVersion	int	0	1	TRUE				
 System	ReduceStartupDelay		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize	StartupDelayInMSec	int	1	0	TRUE				
 System	DisableWindowsCopilot		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsCopilot	TurnOffWindowsCopilot	int	0	1	TRUE				TRUE
+	DisableWindowsCopilot		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot	TurnOffWindowsCopilot	int	0	1	TRUE				
+	DisableWindowsCopilot		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	ShowCopilotButton	int	1	0					
 System	DisableRecall		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI	DisableAIDataAnalysis	int	0	1	TRUE		TRUE		
+System	DisableClickToDo		HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsAI	DisableClickToDo	int	0	1	TRUE				
+	DisableClickToDo		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI	DisableClickToDo	int	0	1	TRUE				
+Software	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	CopilotCDPPageContext	int	1	0	TRUE		TRUE		
+	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	CopilotPageContext	int	1	0	TRUE				
+	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	HubsSidebarEnabled	int	1	0	TRUE				
+	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	EdgeEntraCopilotPageContext	int	1	0	TRUE				
+	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	EdgeHistoryAISearchEnabled	int	1	0	TRUE				
+	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	ComposeInlineEnabled	int	1	0	TRUE				
+	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	GenAILocalFoundationalModelSettings	int	0	1	TRUE				
+	DisableEdgeAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	NewTabPageBingChatEnabled	int	1	0	TRUE				
+Software	DisablePaintAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint	DisableCocreator	int	0	1	TRUE				
+	DisablePaintAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint	DisableGenerativeFill	int	0	1	TRUE				
+	DisablePaintAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint	DisableImageCreator	int	0	1	TRUE				
+	DisablePaintAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint	DisableGenerativeErase	int	0	1	TRUE				
+	DisablePaintAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint	DisableRemoveBackground	int	0	1	TRUE				
+Software	DisableNotepadAIFeatures		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\WindowsNotepad	DisableAIFeatures	int	0	1	TRUE				
+Software	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	NewTabPageContentEnabled	int	1	0	TRUE		TRUE		
+	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	NewTabPageHideDefaultTopSites	int	0	1	TRUE				
+	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	EdgeShoppingAssistantEnabled	int	1	0	TRUE				
+	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	ShowRecommendationsEnabled	int	1	0	TRUE				
+	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	HideFirstRunExperience	int	1	0	TRUE				
+	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	SpotlightExperiencesAndRecommendationsEnabled	int	1	0	TRUE				
+	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	PersonalizationReportingEnabled	int	1	0	TRUE				
+	DisableEdgeAdsAndSuggestions		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	DiagnosticData	int	1	0	TRUE				
+Taskbar	EnableTaskbarEndTask		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings	TaskbarEndTask	int	0	1	TRUE				
+Taskbar	EnableLastActiveClick		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	LastActiveClick	int	0	1	TRUE				
+Taskbar	HideChatTaskbarButton		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	TaskbarMn	int	1	0					
+	HideChatTaskbarButton		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer	HideSCAMeetNow	int	0	1	TRUE				
+Privacy	DisableLockScreenTips		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-338387Enabled	int	1	0					
+	DisableLockScreenTips		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	RotatingLockScreenOverlayEnabled	int	1	0					
+Privacy	DisableSettings365Ads		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\CloudContent	DisableConsumerAccountStateContent	int	0	1	TRUE		TRUE		
+Privacy	HideSettingsHomePage		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer	SettingsPageVisibility	string		hide:home	TRUE				
+Privacy	DisableLocationServices		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors	DisableLocation	int	0	1	TRUE		TRUE		
+Privacy	DisableFindMyDevice		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FindMyDevice	AllowFindMyDevice	int	1	0	TRUE		TRUE		
+Privacy	DisableSearchHistory		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\SearchSettings	IsDeviceSearchHistoryEnabled	int	1	0					
+Explorer	ShowHiddenFilesAndFolders	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Hidden	int	2	1					
+Explorer	HideHomeFromExplorer		HKEY_CURRENT_USER\Software\Classes\CLSID\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}	System.IsPinnedToNameSpaceTree	int	1	0					TRUE
+Explorer	HideGalleryFromExplorer		HKEY_CURRENT_USER\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}	System.IsPinnedToNameSpaceTree	int	1	0					TRUE
+Explorer	HideOneDriveFromExplorer		HKEY_CURRENT_USER\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}	System.IsPinnedToNameSpaceTree	int	1	0					TRUE
+System	DisableStickyKeysShortcut		HKEY_CURRENT_USER\Control Panel\Accessibility\StickyKeys	Flags	string	510	506					
+System	DisableBitLockerAutoEncryption		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\BitLocker	PreventDeviceEncryption	int	0	1	TRUE				
+System	DisableModernStandbyNetworking		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9	ACSettingIndex	int	1	0	TRUE		TRUE		
+	DisableModernStandbyNetworking		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9	DCSettingIndex	int	1	0	TRUE				
+System	DisableShareDragTray		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\CDP	DragTrayEnabled	int	1	0					
+System	DisableGameBarIntegration		HKEY_CURRENT_USER\SOFTWARE\Microsoft\GameBar	UseNexusForGameBarEnabled	int	1	0					
+Security	DisableUpdateAsSoonAsAvailable		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings	IsContinuousInnovationOptedIn	int	1	0					
+Security	PreventDeviceCompanionAppAutoInstall		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Device Metadata	PreventDeviceMetadataFromNetwork	int	0	1	TRUE		TRUE		
+StartMenu	DisablePhoneLinkInStart		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start\Companions\Microsoft.YourPhone_8wekyb3d8bbwe	IsEnabled	int	1	0					
+StartMenu	DisableCortanaInSearch		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	AllowCortana	int	1	0	TRUE		TRUE		
+	DisableCortanaInSearch		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	CortanaConsent	int	1	0	TRUE				
 Kernel	DisableNtfs8Dot3NameCreation		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem	NtfsDisable8dot3NameCreation	int	2	1				TRUE	
 Kernel	DisableNtfsLastAccessUpdate		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem	NtfsDisableLastAccessUpdate	int	0	1	TRUE			TRUE	

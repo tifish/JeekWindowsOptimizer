@@ -32,7 +32,7 @@ Storage	DiskManagement	ShellOpen	diskmgmt.msc		%SystemRoot%\System32\dmdskres.dl
 Storage	CleanWindowsTemp	BuiltInAction	CleanWindowsTemp		%SystemRoot%\System32\cleanmgr.exe	false	true	true	false
 Storage	CleanWindowsUpdateCache	BuiltInAction	CleanWindowsUpdateCache		%SystemRoot%\System32\cleanmgr.exe	false	true	true	false
 Storage	DiskCleanup	SystemCommand	cleanmgr.exe			false	false	false	false
-Storage	StorageSense	ShellOpen	ms-settings:storagesense		%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe	false	false	false	false
+Storage	StorageSense	ShellOpen	ms-settings:storagepolicies		%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe	false	false	false	false
 Repair	SystemFileChecker	SystemCommand	sfc.exe	/scannow		true	false	true	true
 Repair	DismRestoreHealth	SystemCommand	DISM.exe	/Online /Cleanup-Image /RestoreHealth		true	false	true	true
 Network	EditHostsFile	SystemCommand	notepad.exe	%SystemRoot%\System32\drivers\etc\hosts		true	false	false	false
