@@ -1,8 +1,8 @@
 namespace JeekWindowsOptimizer;
 
-public class DisableThumbnailsItem : OptimizationItem
+public class ShowThumbnailsItem : OptimizationItem
 {
-    public DisableThumbnailsItem()
+    public ShowThumbnailsItem()
     {
         Category = OptimizationItemCategory.Personal;
     }
@@ -11,7 +11,7 @@ public class DisableThumbnailsItem : OptimizationItem
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
-            () => Disabled
+            () => Enabled
         );
     }
 
@@ -21,7 +21,7 @@ public class DisableThumbnailsItem : OptimizationItem
             OptimizationExecutionAffinity.ExclusiveBackground,
             () =>
             {
-                Disabled = value;
+                Enabled = value;
                 return true;
             }
         );
@@ -29,19 +29,17 @@ public class DisableThumbnailsItem : OptimizationItem
 
     public override string GroupNameKey => "Explorer";
 
-    public override string NameKey => "DisableThumbnailsName";
+    public override string NameKey => "ShowThumbnailsName";
 
-    public override string DescriptionKey => "DisableThumbnailsDescription";
+    public override string DescriptionKey => "ShowThumbnailsDescription";
 
-    public bool Disabled
+    public bool Enabled
     {
-        get =>
-            WindowsVisualEffects.CustomSetting
-            && !WindowsVisualEffects.ShowThumbnailsInsteadOfIcons;
+        get => WindowsVisualEffects.ShowThumbnailsInsteadOfIcons;
         set
         {
             WindowsVisualEffects.CustomSetting = true;
-            WindowsVisualEffects.ShowThumbnailsInsteadOfIcons = !value;
+            WindowsVisualEffects.ShowThumbnailsInsteadOfIcons = value;
         }
     }
 }

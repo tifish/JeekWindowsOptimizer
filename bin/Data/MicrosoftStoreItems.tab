@@ -19,12 +19,12 @@ Uninstall	UninstallFeedbackHub		Microsoft.WindowsFeedbackHub
 Uninstall	UninstallGetStarted		Microsoft.Getstarted
 Uninstall	UninstallMaps		Microsoft.WindowsMaps
 Uninstall	UninstallXboxConsoleCompanion		Microsoft.XboxApp
-Uninstall	UninstallXboxGamingApp		Microsoft.GamingApp
-Uninstall	UninstallXboxGameBar		Microsoft.XboxGamingOverlay
-Uninstall	UninstallXboxGameOverlay		Microsoft.XboxGameOverlay
-Uninstall	UninstallXboxSpeechToTextOverlay		Microsoft.XboxSpeechToTextOverlay
-Uninstall	UninstallXboxIdentityProvider		Microsoft.XboxIdentityProvider
-Uninstall	UninstallXboxTcui		Microsoft.Xbox.TCUI
+Uninstall	UninstallXboxGamingApp	Personal	Microsoft.GamingApp
+Uninstall	UninstallXboxGameBar	Personal	Microsoft.XboxGamingOverlay
+Uninstall	UninstallXboxGameOverlay	Personal	Microsoft.XboxGameOverlay
+Uninstall	UninstallXboxSpeechToTextOverlay	Personal	Microsoft.XboxSpeechToTextOverlay
+Uninstall	UninstallXboxIdentityProvider	Personal	Microsoft.XboxIdentityProvider
+Uninstall	UninstallXboxTcui	Personal	Microsoft.Xbox.TCUI
 Uninstall	UninstallOfficeHub		Microsoft.MicrosoftOfficeHub
 Uninstall	UninstallPowerAutomate		Microsoft.PowerAutomateDesktop
 Uninstall	UninstallToDo		Microsoft.Todos

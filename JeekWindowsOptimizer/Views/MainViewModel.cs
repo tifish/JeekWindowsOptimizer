@@ -318,7 +318,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new DisableWindowsDefenderPUAProtectionItem());
             foreach (var item in VisualEffectItem.CreateItems())
                 AddOptimizationItem(item);
-            AddOptimizationItem(new DisableThumbnailsItem());
+            AddOptimizationItem(new ShowThumbnailsItem());
             AddOptimizationItem(new UseClassicalContextMenuItem());
             AddOptimizationItem(new UninstallOneDriveItem());
             AddOptimizationItem(new WindowsActivatorItem());
