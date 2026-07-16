@@ -192,7 +192,7 @@ WindowsUpdateDescription	Windows Update can fix system vulnerabilities and impro
 BestPerformancePowerModeName	Best performance power mode	最佳性能电源模式
 BestPerformancePowerModeDescription	The best performance power mode ensures that the system operates in a high-performance state while avoiding incorrect big-little core scheduling.\nEffective immediately.	最佳性能电源模式能保证系统运行在高性能状态，同时避免错误的大小核调度。\n立即生效。
 SetIdleTimeName	The computer does not automatically sleep.	电脑不自动休眠
-SetIdleTimeDescription	Set the computer not to sleep automatically, and turn off the screen after 30 minutes, and apply only when plugged in..\nEffective immediately.	设置电脑不自动休眠，30 分钟关闭屏幕，仅在插电时生效。\n立即生效。
+SetIdleTimeDescription	Set the computer not to sleep or hibernate automatically. Does not change when the screen turns off. Applies only when plugged in.\nEffective immediately.	设置电脑不自动睡眠或休眠，不修改关闭屏幕时间。仅在插电时生效。\n立即生效。
 DisableSystemSoundsName	Disable system sounds.	禁止系统音效
 DisableSystemSoundsDescription	The system often makes various notification sounds, which can be quite annoying.\nEffective immediately.	系统经常会发出各种提示音，比较烦人。\n立即生效。
 DisableEdgeFromRunningInBackgroundName	Prevent Edge Browser from Running in the Background	禁止 Edge 浏览器在后台运行

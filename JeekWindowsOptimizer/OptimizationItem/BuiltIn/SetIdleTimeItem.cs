@@ -17,7 +17,7 @@ public class SetIdleTimeItem : OptimizationItem
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
-            () => SleepTime == 0 && HibernateTime == 0 && TurnOffDisplayTime == 30 * 60
+            () => SleepTime == 0 && HibernateTime == 0
         );
     }
 
@@ -32,7 +32,6 @@ public class SetIdleTimeItem : OptimizationItem
 
                 SleepTime = 0;
                 HibernateTime = 0;
-                TurnOffDisplayTime = 30 * 60;
                 return true;
             }
         );
@@ -77,24 +76,5 @@ public class SetIdleTimeItem : OptimizationItem
                 (uint)value
             );
     }
-
-    public static int TurnOffDisplayTime
-    {
-        get =>
-            (int)
-                PowerManager.GetPlanSetting(
-                    PowerManager.GetActivePlan(),
-                    SettingSubgroup.VIDEO_SUBGROUP,
-                    Setting.VIDEOIDLE,
-                    PowerSource.AC
-                );
-        set =>
-            PowerManager.SetPlanSetting(
-                PowerManager.GetActivePlan(),
-                SettingSubgroup.VIDEO_SUBGROUP,
-                Setting.VIDEOIDLE,
-                PowerSource.AC,
-                (uint)value
-            );
-    }
 }
+
