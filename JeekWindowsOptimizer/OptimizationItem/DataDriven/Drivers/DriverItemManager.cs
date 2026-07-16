@@ -16,7 +16,7 @@ public static class DriverItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 4)
+            if (row.Count != 5)
                 continue;
 
             var index = -1;
@@ -26,7 +26,11 @@ public static class DriverItemManager
             var descriptionKey = row[index] + "Description";
             if (!Enum.TryParse<OptimizationItemCategory>(row[++index], out var category))
                 category = OptimizationItemCategory.Default;
-            var driverPathPattern = row[++index];
+            var kind = row[++index];
+            var value = row[++index];
+
+            if (string.IsNullOrWhiteSpace(value))
+                continue;
 
             if (!itemsDict.TryGetValue(nameKey, out var item))
             {
@@ -38,7 +42,10 @@ public static class DriverItemManager
                 Items.Add(item);
             }
 
-            item.DriverPathPatterns.Add(driverPathPattern);
+            if (kind.Equals("Service", StringComparison.OrdinalIgnoreCase))
+                item.ServiceNames.Add(value);
+            else if (kind.Equals("Driver", StringComparison.OrdinalIgnoreCase))
+                item.DriverPathPatterns.Add(value);
         }
     }
 }

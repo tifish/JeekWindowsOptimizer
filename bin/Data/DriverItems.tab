@@ -1,46 +1,205 @@
-GroupName	Name	Category	DriverPathPattern
-Kernel	KingsoftAntivirus	Antivirus	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
-	KingsoftAntivirus		c:\program files (x86)\kingsoft\kingsoft antivirus\security\kxescan\kdhacker64.sys
-	KingsoftAntivirus		C:\WINDOWS\system32\drivers\kisknl.sys
-	KingsoftAntivirus		c:\program files (x86)\kingsoft\kingsoft antivirus\security\ksde\kisnetflt64.sys
-	KingsoftAntivirus		C:\WINDOWS\system32\drivers\ksapi64.sys
-	KingsoftAntivirus		C:\WINDOWS\system32\Drivers\ksthlp64.sys
-Kernel	HuoRongSecurity	Antivirus	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
-	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\hrwfpdrv.sys
-	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\sysdiag.sys
-	HuoRongSecurity		C:\WINDOWS\system32\DRIVERS\nxeng.sys
-Kernel	360Antivirus	Antivirus	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys
-Kernel	DASEDR	Antivirus	C:\windows\SYSTEM32\drivers\nfw_*.sys
-	DASEDR		C:\windows\SYSTEM32\drivers\sysmon?.sys
-	DASEDR		C:\windows\SYSTEM32\drivers\dasnfw.sys
-	DASEDR		C:\Windows\ShellExt.dll
-	DASEDR		C:\Windows\ShellExt.dll.bak
-	DASEDR		C:\Windows\dasec
-	DASEDR		C:\Program Files (x86)\DBAppSecurity
-Kernel	YunTianEDR	Antivirus	C:\Windows\sedisk.sys
-	YunTianEDR		C:\Windows\SYSTEM32\ProcMon.sys
-	YunTianEDR		C:\windows\SYSTEM32\vgwdrv.sys
-	YunTianEDR		C:\Windows\SYSTEM32\ytdisk.sys
-	YunTianEDR		C:\windows\SYSTEM32\YtMiniFilter.sys
-	YunTianEDR		C:\Windows\SYSTEM32\drivers\ProcMon.sys
-	YunTianEDR		C:\windows\SYSTEM32\drivers\vgwdrv.sys
-	YunTianEDR		C:\Windows\SYSTEM32\drivers\ytdisk.sys
-	YunTianEDR		C:\windows\SYSTEM32\drivers\YtMiniFilter.sys
-	YunTianEDR		C:\Windows\SysWOW64\ProcMon.sys
-	YunTianEDR		C:\windows\SysWOW64\vgwdrv.sys
-	YunTianEDR		C:\Windows\SysWOW64\ytdisk.sys
-	YunTianEDR		C:\windows\SysWOW64\YtMiniFilter.sys
-	YunTianEDR		C:\Windows\SysWOW64\drivers\ProcMon.sys
-	YunTianEDR		C:\windows\SysWOW64\drivers\vgwdrv.sys
-	YunTianEDR		C:\Windows\SysWOW64\drivers\ytdisk.sys
-	YunTianEDR		C:\windows\SysWOW64\drivers\YtMiniFilter.sys
-	YunTianEDR		C:\windows\SysWOW64\MANC.exe
-	YunTianEDR		C:\windows\SysWOW64\msres
-Kernel	RisingAntivirus	Antivirus	C:\WINDOWS\system32\drivers\esmshield.sys
-	RisingAntivirus		C:\Program Files (x86)\Rising\REC\ep\hookesm.sys
-	RisingAntivirus		C:\Program Files (x86)\Rising\REC\xav\rsutils.sys
-Kernel	TencentPCManager	Antivirus	C:\WINDOWS\system32\drivers\qmbsecx64.sys
-	TencentPCManager		C:\WINDOWS\system32\Drivers\TAOAcceleratorEx64_ev.sys
-	TencentPCManager		C:\WINDOWS\system32\Drivers\TAOKernelEx64_ev.sys
-	TencentPCManager		C:\WINDOWS\system32\Drivers\TFsFltX64_ev.sys
-	TencentPCManager		C:\Program Files (x86)\Tencent\QQPCMgr
+GroupName	Name	Category	Kind	Value
+Kernel	KingsoftAntivirus	Antivirus	Driver	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
+	KingsoftAntivirus		Driver	c:\program files (x86)\kingsoft\kingsoft antivirus\security\kxescan\kdhacker64.sys
+	KingsoftAntivirus		Driver	C:\WINDOWS\system32\drivers\kisknl.sys
+	KingsoftAntivirus		Driver	c:\program files (x86)\kingsoft\kingsoft antivirus\security\ksde\kisnetflt64.sys
+	KingsoftAntivirus		Driver	C:\WINDOWS\system32\drivers\ksapi64.sys
+	KingsoftAntivirus		Driver	C:\WINDOWS\system32\Drivers\ksthlp64.sys
+	KingsoftAntivirus		Driver	C:\WINDOWS\system32\drivers\kisnetflt64.sys
+	KingsoftAntivirus		Service	KSafeSvc
+	KingsoftAntivirus		Service	kxescore
+	KingsoftAntivirus		Service	KWatchSvc
+	KingsoftAntivirus		Service	KSDE1.0.0.1003
+Kernel	HuoRongSecurity	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
+	HuoRongSecurity		Driver	C:\WINDOWS\system32\DRIVERS\hrwfpdrv.sys
+	HuoRongSecurity		Driver	C:\WINDOWS\system32\DRIVERS\sysdiag.sys
+	HuoRongSecurity		Driver	C:\WINDOWS\system32\DRIVERS\nxeng.sys
+	HuoRongSecurity		Driver	C:\WINDOWS\system32\DRIVERS\hrdevflt.sys
+	HuoRongSecurity		Service	HipsDaemon
+	HuoRongSecurity		Service	wsctrlsvc
+	HuoRongSecurity		Service	HrAppXSrv
+Kernel	360Antivirus	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys
+	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360Box64.sys
+	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360FsFlt.sys
+	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360Hvm64.sys
+	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360netmon.sys
+	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360AntiHacker64.sys
+	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360AntiSteal64.sys
+	360Antivirus		Driver	C:\Program Files (x86)\360\360safe
+	360Antivirus		Driver	C:\Program Files\360\360safe
+	360Antivirus		Service	ZhuDongFangYu
+	360Antivirus		Service	360rp
+	360Antivirus		Service	360sd
+	360Antivirus		Service	QHActiveDefense
+	360Antivirus		Service	QHSafeMainSvc
+Kernel	DASEDR	Antivirus	Driver	C:\windows\SYSTEM32\drivers\nfw_*.sys
+	DASEDR		Driver	C:\windows\SYSTEM32\drivers\sysmon?.sys
+	DASEDR		Driver	C:\windows\SYSTEM32\drivers\dasnfw.sys
+	DASEDR		Driver	C:\Windows\ShellExt.dll
+	DASEDR		Driver	C:\Windows\ShellExt.dll.bak
+	DASEDR		Driver	C:\Windows\dasec
+	DASEDR		Driver	C:\Program Files (x86)\DBAppSecurity
+	DASEDR		Service	DASAgent
+	DASEDR		Service	dasnfw
+Kernel	YunTianEDR	Antivirus	Driver	C:\Windows\sedisk.sys
+	YunTianEDR		Driver	C:\Windows\SYSTEM32\ProcMon.sys
+	YunTianEDR		Driver	C:\windows\SYSTEM32\vgwdrv.sys
+	YunTianEDR		Driver	C:\Windows\SYSTEM32\ytdisk.sys
+	YunTianEDR		Driver	C:\windows\SYSTEM32\YtMiniFilter.sys
+	YunTianEDR		Driver	C:\Windows\SYSTEM32\drivers\ProcMon.sys
+	YunTianEDR		Driver	C:\windows\SYSTEM32\drivers\vgwdrv.sys
+	YunTianEDR		Driver	C:\Windows\SYSTEM32\drivers\ytdisk.sys
+	YunTianEDR		Driver	C:\windows\SYSTEM32\drivers\YtMiniFilter.sys
+	YunTianEDR		Driver	C:\Windows\SysWOW64\ProcMon.sys
+	YunTianEDR		Driver	C:\windows\SysWOW64\vgwdrv.sys
+	YunTianEDR		Driver	C:\Windows\SysWOW64\ytdisk.sys
+	YunTianEDR		Driver	C:\windows\SysWOW64\YtMiniFilter.sys
+	YunTianEDR		Driver	C:\Windows\SysWOW64\drivers\ProcMon.sys
+	YunTianEDR		Driver	C:\windows\SysWOW64\drivers\vgwdrv.sys
+	YunTianEDR		Driver	C:\Windows\SysWOW64\drivers\ytdisk.sys
+	YunTianEDR		Driver	C:\windows\SysWOW64\drivers\YtMiniFilter.sys
+	YunTianEDR		Driver	C:\windows\SysWOW64\MANC.exe
+	YunTianEDR		Driver	C:\windows\SysWOW64\msres
+	YunTianEDR		Service	YtSvc
+	YunTianEDR		Service	YtMiniFilter
+	YunTianEDR		Service	MANC
+Kernel	RisingAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\esmshield.sys
+	RisingAntivirus		Driver	C:\Program Files (x86)\Rising\REC\ep\hookesm.sys
+	RisingAntivirus		Driver	C:\Program Files (x86)\Rising\REC\xav\rsutils.sys
+	RisingAntivirus		Driver	C:\Program Files\Rising
+	RisingAntivirus		Driver	C:\Program Files (x86)\Rising
+	RisingAntivirus		Service	RsMain
+	RisingAntivirus		Service	rsmain
+	RisingAntivirus		Service	RsWatchDog
+Kernel	TencentPCManager	Antivirus	Driver	C:\WINDOWS\system32\drivers\qmbsecx64.sys
+	TencentPCManager		Driver	C:\WINDOWS\system32\Drivers\TAOAcceleratorEx64_ev.sys
+	TencentPCManager		Driver	C:\WINDOWS\system32\Drivers\TAOKernelEx64_ev.sys
+	TencentPCManager		Driver	C:\WINDOWS\system32\Drivers\TFsFltX64_ev.sys
+	TencentPCManager		Driver	C:\WINDOWS\system32\Drivers\QQSysMonX64_EV.sys
+	TencentPCManager		Driver	C:\Program Files (x86)\Tencent\QQPCMgr
+	TencentPCManager		Driver	C:\Program Files\Tencent\QQPCMgr
+	TencentPCManager		Service	QQPCRTP
+	TencentPCManager		Service	QQPCTRV
+	TencentPCManager		Service	QQPCMgrUpdateSvc
+	TencentPCManager		Service	QPCore
+Kernel	KasperskyAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\klif.sys
+	KasperskyAntivirus		Driver	C:\WINDOWS\system32\drivers\klflt.sys
+	KasperskyAntivirus		Driver	C:\WINDOWS\system32\drivers\klim6.sys
+	KasperskyAntivirus		Driver	C:\WINDOWS\system32\drivers\klbackupdisk.sys
+	KasperskyAntivirus		Driver	C:\WINDOWS\system32\drivers\klbackupflt.sys
+	KasperskyAntivirus		Driver	C:\Program Files (x86)\Kaspersky Lab
+	KasperskyAntivirus		Driver	C:\Program Files\Kaspersky Lab
+	KasperskyAntivirus		Service	AVP
+	KasperskyAntivirus		Service	klnagent
+	KasperskyAntivirus		Service	klif
+Kernel	AvastAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\aswSnx.sys
+	AvastAntivirus		Driver	C:\WINDOWS\system32\drivers\aswSP.sys
+	AvastAntivirus		Driver	C:\WINDOWS\system32\drivers\aswRdr2.sys
+	AvastAntivirus		Driver	C:\WINDOWS\system32\drivers\aswStm.sys
+	AvastAntivirus		Driver	C:\WINDOWS\system32\drivers\aswVmm.sys
+	AvastAntivirus		Driver	C:\Program Files\AVAST Software
+	AvastAntivirus		Driver	C:\Program Files (x86)\AVAST Software
+	AvastAntivirus		Service	avast! Antivirus
+	AvastAntivirus		Service	aswToolsSvc
+	AvastAntivirus		Service	AvastWscReporter
+	AvastAntivirus		Service	aswBcc
+Kernel	AvgAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avgidsdriverx.sys
+	AvgAntivirus		Driver	C:\WINDOWS\system32\drivers\avgldx64.sys
+	AvgAntivirus		Driver	C:\WINDOWS\system32\drivers\avgmfx64.sys
+	AvgAntivirus		Driver	C:\Program Files\AVG
+	AvgAntivirus		Driver	C:\Program Files (x86)\AVG
+	AvgAntivirus		Service	AVG Antivirus
+	AvgAntivirus		Service	avgwd
+	AvgAntivirus		Service	AVGSvc
+Kernel	BitdefenderAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\bdsvm.sys
+	BitdefenderAntivirus		Driver	C:\WINDOWS\system32\drivers\bdselfpr.sys
+	BitdefenderAntivirus		Driver	C:\WINDOWS\system32\drivers\atc.sys
+	BitdefenderAntivirus		Driver	C:\WINDOWS\system32\drivers\gzflt.sys
+	BitdefenderAntivirus		Driver	C:\Program Files\Bitdefender
+	BitdefenderAntivirus		Driver	C:\Program Files\Bitdefender Agent
+	BitdefenderAntivirus		Service	VSSERV
+	BitdefenderAntivirus		Service	bdredline
+	BitdefenderAntivirus		Service	BDUpdateService
+	BitdefenderAntivirus		Service	EPSecurityService
+Kernel	EsetAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\eamonm.sys
+	EsetAntivirus		Driver	C:\WINDOWS\system32\drivers\ehdrv.sys
+	EsetAntivirus		Driver	C:\WINDOWS\system32\drivers\epfwwfp.sys
+	EsetAntivirus		Driver	C:\WINDOWS\system32\drivers\eamonm.sys
+	EsetAntivirus		Driver	C:\Program Files\ESET
+	EsetAntivirus		Driver	C:\Program Files (x86)\ESET
+	EsetAntivirus		Service	ekrn
+	EsetAntivirus		Service	eamonm
+	EsetAntivirus		Service	ekrnEpfw
+Kernel	McAfeeAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mfehidk.sys
+	McAfeeAntivirus		Driver	C:\WINDOWS\system32\drivers\mfefirek.sys
+	McAfeeAntivirus		Driver	C:\WINDOWS\system32\drivers\mfeelamk.sys
+	McAfeeAntivirus		Driver	C:\WINDOWS\system32\drivers\mfencbdc.sys
+	McAfeeAntivirus		Driver	C:\Program Files\McAfee
+	McAfeeAntivirus		Driver	C:\Program Files (x86)\McAfee
+	McAfeeAntivirus		Service	masvc
+	McAfeeAntivirus		Service	McAfeeFramework
+	McAfeeAntivirus		Service	mfemms
+	McAfeeAntivirus		Service	mfevtp
+	McAfeeAntivirus		Service	mfefire
+Kernel	NortonAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BHDrvx64.sys
+	NortonAntivirus		Driver	C:\WINDOWS\system32\drivers\SYMEFASI64.sys
+	NortonAntivirus		Driver	C:\WINDOWS\system32\drivers\SYMEVENT64x86.sys
+	NortonAntivirus		Driver	C:\WINDOWS\system32\drivers\SymDS64.sys
+	NortonAntivirus		Driver	C:\Program Files\Norton
+	NortonAntivirus		Driver	C:\Program Files (x86)\Norton
+	NortonAntivirus		Driver	C:\Program Files\NortonSecurity
+	NortonAntivirus		Service	Norton Security
+	NortonAntivirus		Service	NortonSecurity
+	NortonAntivirus		Service	ccSvcHst
+	NortonAntivirus		Service	NS
+Kernel	MalwarebytesAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mbam.sys
+	MalwarebytesAntivirus		Driver	C:\WINDOWS\system32\drivers\MBAMSwissArmy.sys
+	MalwarebytesAntivirus		Driver	C:\WINDOWS\system32\drivers\mbamchameleon.sys
+	MalwarebytesAntivirus		Driver	C:\WINDOWS\system32\drivers\farflt.sys
+	MalwarebytesAntivirus		Driver	C:\Program Files\Malwarebytes
+	MalwarebytesAntivirus		Driver	C:\Program Files (x86)\Malwarebytes
+	MalwarebytesAntivirus		Service	MBAMService
+	MalwarebytesAntivirus		Service	MBAMProtection
+	MalwarebytesAntivirus		Service	MBAMWebProtection
+Kernel	TrendMicroAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\tmcomm.sys
+	TrendMicroAntivirus		Driver	C:\WINDOWS\system32\drivers\tmevtmgr.sys
+	TrendMicroAntivirus		Driver	C:\WINDOWS\system32\drivers\tmactmon.sys
+	TrendMicroAntivirus		Driver	C:\WINDOWS\system32\drivers\tmebc64.sys
+	TrendMicroAntivirus		Driver	C:\Program Files\Trend Micro
+	TrendMicroAntivirus		Driver	C:\Program Files (x86)\Trend Micro
+	TrendMicroAntivirus		Service	TmCCSF
+	TrendMicroAntivirus		Service	ntrtscan
+	TrendMicroAntivirus		Service	TmPfw
+	TrendMicroAntivirus		Service	TMBMServer
+Kernel	AviraAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avipbb.sys
+	AviraAntivirus		Driver	C:\WINDOWS\system32\drivers\avkmgr.sys
+	AviraAntivirus		Driver	C:\WINDOWS\system32\drivers\avgntflt.sys
+	AviraAntivirus		Driver	C:\Program Files\Avira
+	AviraAntivirus		Driver	C:\Program Files (x86)\Avira
+	AviraAntivirus		Service	Avira.ServiceHost
+	AviraAntivirus		Service	AntiVirService
+	AviraAntivirus		Service	Avira.ShadowCopyService
+Kernel	Security2345	Antivirus	Driver	C:\WINDOWS\system32\drivers\2345NetFirewall.sys
+	Security2345		Driver	C:\WINDOWS\system32\drivers\2345FsFlt.sys
+	Security2345		Driver	C:\Program Files (x86)\2345Soft\2345PCSafe
+	Security2345		Driver	C:\Program Files\2345Soft\2345PCSafe
+	Security2345		Service	2345SafeSvc
+	Security2345		Service	2345SafeTray
+	Security2345		Service	2345ScoutSvc
+Kernel	BaiduAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BDsdKit.sys
+	BaiduAntivirus		Driver	C:\WINDOWS\system32\drivers\BDFileDefend.sys
+	BaiduAntivirus		Driver	C:\Program Files (x86)\Baidu\BaiduSd
+	BaiduAntivirus		Driver	C:\Program Files\Baidu\BaiduSd
+	BaiduAntivirus		Driver	C:\Program Files (x86)\Baidu\BaiduAn
+	BaiduAntivirus		Service	BaiduSdSvc
+	BaiduAntivirus		Service	BaiduAnSvc
+	BaiduAntivirus		Service	BDProtect
+Kernel	QiAnXinTianqing	Antivirus	Driver	C:\WINDOWS\system32\drivers\qax*.sys
+	QiAnXinTianqing		Driver	C:\Program Files (x86)\Qianxin
+	QiAnXinTianqing		Driver	C:\Program Files\Qianxin
+	QiAnXinTianqing		Driver	C:\Program Files (x86)\QiAnXin
+	QiAnXinTianqing		Driver	C:\Program Files\QiAnXin
+	QiAnXinTianqing		Service	QAXEntClient
+	QiAnXinTianqing		Service	QAXSafe
+	QiAnXinTianqing		Service	QaxFwFilter
+	QiAnXinTianqing		Service	qaxnetmon

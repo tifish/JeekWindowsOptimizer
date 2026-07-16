@@ -204,23 +204,49 @@ DisableGameDvrCaptureDescription	Game DVR capture enables Xbox Game Bar game rec
 ShowThumbnailsName	Show image thumbnails	显示图片预览
 ShowThumbnailsDescription	Show image thumbnails in File Explorer instead of generic icons, so you can preview images when browsing folders.\nEffective immediately.	在文件资源管理器中显示图片缩略图而不是通用图标，浏览文件夹时便于预览图片。\n立即生效。
 KingsoftAntivirusName	Uninstall Kingsoft Antivirus	卸载金山毒霸
-KingsoftAntivirusDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+KingsoftAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect file I/O and system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响文件 I/O 与系统性能。
 HuoRongSecurityName	Uninstall HuoRong Security	卸载火绒安全
-HuoRongSecurityDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
-360AntivirusName	Uninstall 360 Antivirus	卸载 360 杀毒
-360AntivirusDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+HuoRongSecurityDescription	Detected by known drivers or services. Third-party antivirus can significantly affect file I/O and system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响文件 I/O 与系统性能。
+360AntivirusName	Uninstall 360 Security / Antivirus	卸载 360 安全卫士/杀毒
+360AntivirusDescription	Detected by known drivers or services. 360 security products can significantly affect system performance.	通过已知驱动或服务检测。360 安全产品会显著影响系统性能。
 DASEDRName	Uninstall DAS EDR	卸载明御终端安全及防病毒系统
-DASEDRDescription	EDR software can significantly affect system performance.	EDR 软件会显著影响系统性能。
+DASEDRDescription	Detected by known drivers or services. EDR software can significantly affect system performance.	通过已知驱动或服务检测。EDR 软件会显著影响系统性能。
 RisingAntivirusName	Uninstall Rising Antivirus	卸载瑞星杀毒
-RisingAntivirusDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+RisingAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
 TencentPCManagerName	Uninstall Tencent PC Manager	卸载腾讯电脑管家
-TencentPCManagerDescription	Antivirus software can significantly affect system performance.	杀毒软件会显著影响系统性能。
+TencentPCManagerDescription	Detected by known drivers or services. PC manager / antivirus suites can significantly affect system performance.	通过已知驱动或服务检测。电脑管家类产品会显著影响系统性能。
+KasperskyAntivirusName	Uninstall Kaspersky	卸载卡巴斯基
+KasperskyAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+AvastAntivirusName	Uninstall Avast	卸载 Avast
+AvastAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+AvgAntivirusName	Uninstall AVG	卸载 AVG
+AvgAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+BitdefenderAntivirusName	Uninstall Bitdefender	卸载 Bitdefender
+BitdefenderAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+EsetAntivirusName	Uninstall ESET	卸载 ESET
+EsetAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+McAfeeAntivirusName	Uninstall McAfee	卸载 McAfee
+McAfeeAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+NortonAntivirusName	Uninstall Norton	卸载诺顿
+NortonAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+MalwarebytesAntivirusName	Uninstall Malwarebytes	卸载 Malwarebytes
+MalwarebytesAntivirusDescription	Detected by known drivers or services. Security suites can significantly affect system performance.	通过已知驱动或服务检测。安全套件会显著影响系统性能。
+TrendMicroAntivirusName	Uninstall Trend Micro	卸载趋势科技
+TrendMicroAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+AviraAntivirusName	Uninstall Avira	卸载 Avira
+AviraAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+Security2345Name	Uninstall 2345 Security	卸载 2345 安全卫士
+Security2345Description	Detected by known drivers or services. PC manager / security suites can significantly affect system performance.	通过已知驱动或服务检测。电脑管家类安全软件会显著影响系统性能。
+BaiduAntivirusName	Uninstall Baidu Antivirus / Guard	卸载百度杀毒/卫士
+BaiduAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+QiAnXinTianqingName	Uninstall QiAnXin Tianqing	卸载奇安信天擎
+QiAnXinTianqingDescription	Detected by known drivers or services. Enterprise endpoint security can significantly affect system performance.	通过已知驱动或服务检测。企业终端安全产品会显著影响系统性能。
 UseWindowsTerminalName	Use Windows Terminal instead of legacy Windows Console Host	使用 Windows Terminal 代替旧版的 Windows 控制台
 UseWindowsTerminalDescription	Windows Terminal is a modern, powerful, and customizable terminal application. It supports multiple tabs, themes, and plugins, making it a better alternative to the legacy Windows Console Host.	Windows Terminal 是一个现代、强大且可定制的终端应用程序。它支持多个标签页、主题和插件，是一个比旧版 Windows 控制台更好的替代品。
 WindowsTerminalUseNewWindowName	Create new window when opening Windows Terminal	使用新窗口打开 Windows Terminal
 WindowsTerminalUseNewWindowDescription	When opening Windows Terminal, a new window is created by default, providing better compatibility and less interference.	打开 Windows Terminal 时，默认打开一个新窗口，有更好的兼容性，干扰更少。
 YunTianEDRName	Uninstall YunTian EDR	卸载云天 EDR
-YunTianEDRDescription	EDR software can significantly affect system performance.	EDR 软件会显著影响系统性能。
+YunTianEDRDescription	Detected by known drivers or services. EDR software can significantly affect system performance.	通过已知驱动或服务检测。EDR 软件会显著影响系统性能。
 TortoiseSVNCacheTypeName	TortoiseSVN use simple cache	TortoiseSVN 使用简单缓存
 TortoiseSVNCacheTypeDescription	For large repositories, simple cache strategies avoid large CPU and disk usage in the background.	对于大型仓库，简单缓存策略避免了后台的大量 CPU 和磁盘占用。
 TortoiseGitCacheTypeName	TortoiseGit use simple cache	TortoiseGit 使用简单缓存

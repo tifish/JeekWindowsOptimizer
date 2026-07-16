@@ -15,6 +15,7 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
     public override string DescriptionKey => descriptionKey;
 
     public List<string> DriverPathPatterns { get; } = [];
+    public List<string> ServiceNames { get; } = [];
 
     public List<string> GetDriverPaths()
     {
@@ -22,30 +23,68 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
 
         foreach (var pattern in DriverPathPatterns)
         {
-            if (pattern.Contains('*') || pattern.Contains('?'))
+            try
             {
-                var folderPath = Path.GetDirectoryName(pattern);
-                var namePattern = Path.GetFileName(pattern);
+                if (pattern.Contains('*') || pattern.Contains('?'))
+                {
+                    var folderPath = Path.GetDirectoryName(pattern);
+                    var namePattern = Path.GetFileName(pattern);
 
-                if (folderPath == null)
-                    continue;
+                    if (string.IsNullOrEmpty(folderPath) || string.IsNullOrEmpty(namePattern))
+                        continue;
+                    if (!Directory.Exists(folderPath))
+                        continue;
 
-                result.AddRange(Directory.GetFileSystemEntries(folderPath, namePattern));
+                    result.AddRange(Directory.GetFileSystemEntries(folderPath, namePattern));
+                }
+                else if (Directory.Exists(pattern) || File.Exists(pattern))
+                {
+                    result.Add(pattern);
+                }
             }
-            else if (Directory.Exists(pattern) || File.Exists(pattern))
+            catch
             {
-                result.Add(pattern);
+                // Ignore inaccessible or invalid patterns.
             }
         }
 
         return result;
     }
 
+    public List<string> GetExistingServiceNames()
+    {
+        var result = new List<string>();
+
+        foreach (var serviceName in ServiceNames)
+        {
+            if (string.IsNullOrWhiteSpace(serviceName))
+                continue;
+
+            try
+            {
+                using var service = new WindowsService(serviceName);
+                if (service.Exists())
+                    result.Add(serviceName);
+            }
+            catch
+            {
+                // Ignore individual service probe failures.
+            }
+        }
+
+        return result;
+    }
+
+    public bool IsProductPresent()
+    {
+        return GetDriverPaths().Count > 0 || GetExistingServiceNames().Count > 0;
+    }
+
     public override async Task Initialize()
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.Background,
-            () => GetDriverPaths().Count == 0
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () => !IsProductPresent()
         );
     }
 
@@ -55,7 +94,7 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
             return false;
 
         var result = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.Background,
+            OptimizationExecutionAffinity.ExclusiveBackground,
             () =>
             {
                 try
@@ -71,7 +110,8 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
                             Directory.Delete(driverPath, true);
                     }
 
-                    return driverPaths.All(path => !File.Exists(path) && !Directory.Exists(path));
+                    // Drivers may be locked; services usually remain until the product is uninstalled.
+                    return !IsProductPresent();
                 }
                 catch
                 {

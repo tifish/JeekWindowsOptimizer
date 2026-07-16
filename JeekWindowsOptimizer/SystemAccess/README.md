@@ -11,7 +11,7 @@
 
 ## 工具类概览
 
-- `AntiVirus`：通过 WMI 查询系统安全中心中的防病毒产品，用于判断是否安装第三方杀毒软件。
+- `AntiVirus`：通过 WMI `SecurityCenter2` 查询防病毒产品；识别 Microsoft Defender 时兼容常见英文产品名，查询失败时安全回退。第三方杀软卸载项的存在性检测见 `DriverItem`（驱动路径或服务）。
 - `Battery`：通过 WMI 查询 `Win32_Battery`，用于判断当前设备是否有电池。
 - `MicrosoftStore`：通过共享 PowerShell 实例导入 `AppX` 模块，检查和卸载 Microsoft Store 包。
 - `PowerShellService`：提供全局共享的 `PowerShellService` 实例，供需要执行 PowerShell 命令的模块复用。
