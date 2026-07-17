@@ -50,6 +50,8 @@ NotOptimized	Not optimized	未优化
 Uninstall	Uninstall	卸载
 Kernel	Kernel	内核
 System	System	系统
+Services	Services	服务
+ScheduledTasks	Scheduled Tasks	计划任务
 Display	Display	显示
 Explorer	Explorer	文件资源管理器
 Taskbar	Taskbar	任务栏

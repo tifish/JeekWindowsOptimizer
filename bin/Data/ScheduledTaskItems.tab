@@ -1,28 +1,28 @@
 GroupName	Name	Category	TaskPath	DefaultEnabled
-System	DisableApplicationExperienceTasks		\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser	true
+ScheduledTasks	DisableApplicationExperienceTasks		\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser	true
 	DisableApplicationExperienceTasks		\Microsoft\Windows\Application Experience\ProgramDataUpdater	true
 	DisableApplicationExperienceTasks		\Microsoft\Windows\Application Experience\PcaPatchDbTask	true
 	DisableApplicationExperienceTasks		\Microsoft\Windows\Application Experience\StartupAppTask	true
-System	DisableCustomerExperienceTasks		\Microsoft\Windows\Customer Experience Improvement Program\Consolidator	true
+ScheduledTasks	DisableCustomerExperienceTasks		\Microsoft\Windows\Customer Experience Improvement Program\Consolidator	true
 	DisableCustomerExperienceTasks		\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip	true
 	DisableCustomerExperienceTasks		\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask	true
 	DisableCustomerExperienceTasks		\Microsoft\Windows\Autochk\Proxy	true
 	DisableCustomerExperienceTasks		\Microsoft\Windows\PI\Sqm-Tasks	true
-System	DisableDiskDiagnosticTasks		\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector	true
+ScheduledTasks	DisableDiskDiagnosticTasks		\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector	true
 	DisableDiskDiagnosticTasks		\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticResolver	true
-System	DisableMapsScheduledTasks		\Microsoft\Windows\Maps\MapsToastTask	true
+ScheduledTasks	DisableMapsScheduledTasks		\Microsoft\Windows\Maps\MapsToastTask	true
 	DisableMapsScheduledTasks		\Microsoft\Windows\Maps\MapsUpdateTask	true
-System	DisableFeedbackScheduledTasks		\Microsoft\Windows\Feedback\Siuf\DmClient	true
+ScheduledTasks	DisableFeedbackScheduledTasks		\Microsoft\Windows\Feedback\Siuf\DmClient	true
 	DisableFeedbackScheduledTasks		\Microsoft\Windows\Feedback\Siuf\DmClientOnScenarioDownload	true
-System	DisableFamilySafetyScheduledTasks	Personal	\Microsoft\Windows\Shell\FamilySafetyMonitor	true
+ScheduledTasks	DisableFamilySafetyScheduledTasks		\Microsoft\Windows\Shell\FamilySafetyMonitor	true
 	DisableFamilySafetyScheduledTasks		\Microsoft\Windows\Shell\FamilySafetyRefreshTask	true
 	DisableFamilySafetyScheduledTasks		\Microsoft\Windows\Shell\FamilySafetyUpload	true
-System	DisableWerQueueReportingTask		\Microsoft\Windows\Windows Error Reporting\QueueReporting	true
-System	DisablePowerEfficiencyDiagnosticTasks		\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem	true
-System	DisableDiskFootprintDiagnosticTasks		\Microsoft\Windows\DiskFootprint\Diagnostics	true
-System	DisableCloudExperienceHostTasks		\Microsoft\Windows\CloudExperienceHost\CreateObjectTask	true
-System	DisableSustainabilityTelemetryTasks		\Microsoft\Windows\Sustainability\SustainabilityTelemetry	true
-System	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent FallBack	true
+ScheduledTasks	DisableWerQueueReportingTask		\Microsoft\Windows\Windows Error Reporting\QueueReporting	true
+ScheduledTasks	DisablePowerEfficiencyDiagnosticTasks		\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem	true
+ScheduledTasks	DisableDiskFootprintDiagnosticTasks		\Microsoft\Windows\DiskFootprint\Diagnostics	true
+ScheduledTasks	DisableCloudExperienceHostTasks		\Microsoft\Windows\CloudExperienceHost\CreateObjectTask	true
+ScheduledTasks	DisableSustainabilityTelemetryTasks		\Microsoft\Windows\Sustainability\SustainabilityTelemetry	true
+ScheduledTasks	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent FallBack	true
 	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent FallBack2016	true
 	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent LogOn	true
 	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent LogOn2016	true

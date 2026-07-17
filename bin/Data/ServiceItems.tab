@@ -1,25 +1,25 @@
-﻿GroupName	Name	Category	ServiceName	DefaultStartMode
-System	DisableProgramCompatibilityAssistantService		PcaSvc	Automatic
-System	DisableDiagnosticPolicyService		DPS	Automatic
-System	DisableWindowsSearchService		WSearch	Automatic
-System	DisableSysMainService		SysMain	Automatic
-System	DisableConnectedUserExperiencesAndTelemetryService		DiagTrack	Automatic
-System	DisableWindowsErrorReportingService		WerSvc	Manual
-System	DisableWapPushMessageRoutingService		dmwappushservice	Manual
-System	DisableDownloadedMapsManagerService		MapsBroker	Automatic
-System	DisableRetailDemoService		RetailDemo	Manual
-System	DisableFaxService		Fax	Manual
-System	DisableWSAIFabricService		WSAIFabricSvc	Manual
-System	DisableConnectedDevicesPlatformService		CDPSvc	Automatic
-System	DisableConnectedDevicesPlatformUserService		CDPUserSvc*	Automatic
-System	DisableXboxAuthManagerService	Personal	XblAuthManager	Manual
-System	DisableXboxGameSaveService	Personal	XblGameSave	Manual
-System	DisableXboxNetApiService	Personal	XboxNetApiSvc	Manual
-System	DisableXboxGipService	Personal	XboxGipSvc	Manual
-System	DisableGeolocationService	Personal	lfsvc	Manual
-System	DisablePhoneService	Personal	PhoneSvc	Manual
-System	DisableWindowsMediaPlayerNetworkSharingService	Personal	WMPNetworkSvc	Manual
-System	DisableOfflineFilesService	Personal	CscService	Manual
-System	DisableRemoteRegistryService	Personal	RemoteRegistry	Disabled
-System	DisableWindowsInsiderService	Personal	wisvc	Manual
-System	DisableSecondaryLogonService	Personal	seclogon	Manual
+GroupName	Name	Category	ServiceName	DefaultStartMode
+Services	DisableProgramCompatibilityAssistantService		PcaSvc	Automatic
+Services	DisableDiagnosticPolicyService		DPS	Automatic
+Services	DisableWindowsSearchService		WSearch	Automatic
+Services	DisableSysMainService		SysMain	Automatic
+Services	DisableConnectedUserExperiencesAndTelemetryService		DiagTrack	Automatic
+Services	DisableWindowsErrorReportingService		WerSvc	Manual
+Services	DisableWapPushMessageRoutingService		dmwappushservice	Manual
+Services	DisableDownloadedMapsManagerService		MapsBroker	Automatic
+Services	DisableRetailDemoService		RetailDemo	Manual
+Services	DisableFaxService		Fax	Manual
+Services	DisableWSAIFabricService		WSAIFabricSvc	Manual
+Services	DisableConnectedDevicesPlatformService		CDPSvc	Automatic
+Services	DisableConnectedDevicesPlatformUserService		CDPUserSvc*	Automatic
+Services	DisableXboxAuthManagerService	Personal	XblAuthManager	Manual
+Services	DisableXboxGameSaveService	Personal	XblGameSave	Manual
+Services	DisableXboxNetApiService	Personal	XboxNetApiSvc	Manual
+Services	DisableXboxGipService	Personal	XboxGipSvc	Manual
+Services	DisableGeolocationService		lfsvc	Manual
+Services	DisablePhoneService		PhoneSvc	Manual
+Services	DisableWindowsMediaPlayerNetworkSharingService		WMPNetworkSvc	Manual
+Services	DisableOfflineFilesService		CscService	Manual
+Services	DisableRemoteRegistryService		RemoteRegistry	Disabled
+Services	DisableWindowsInsiderService		wisvc	Manual
+Services	DisableSecondaryLogonService	Personal	seclogon	Manual

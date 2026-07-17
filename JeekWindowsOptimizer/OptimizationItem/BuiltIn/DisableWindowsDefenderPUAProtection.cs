@@ -14,6 +14,11 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
 
     public override string DescriptionKey => "DisableWindowsDefenderPUAProtectionDescription";
 
+    public DisableWindowsDefenderPUAProtectionItem()
+    {
+        Category = OptimizationItemCategory.Antivirus;
+    }
+
     public override async Task Initialize()
     {
         var currentValue = IsOptimized;
