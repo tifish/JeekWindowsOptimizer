@@ -24,6 +24,9 @@ ClearSearch	Clear search	清除搜索
 NoSearchResultsInCurrentTab	No matching results in the current tab.	当前标签页没有匹配结果。
 ShowOnlyNotOptimized	Show only not optimized	仅显示未优化
 NoUnoptimizedItemsInCurrentTab	All items in the current tab are optimized.	当前标签页的项目均已优化。
+GroupsNavTitle	Groups	分组
+ExpandAllGroups	Expand all	全部展开
+CollapseAllGroups	Collapse all	全部折叠
 Language	Language	语言
 Theme	Theme	主题
 DefaultFontName	Microsoft YaHei UI, Segoe UI, sans-serif	Microsoft YaHei UI, Segoe UI, sans-serif

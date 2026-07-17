@@ -29,6 +29,13 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _isLoadingAutoUpdateSetting;
     private bool _updateInProgress;
     private bool _suppressOptimizationRefresh;
+    private bool _suppressGroupNavSelection;
+    private string? _selectedOptimizationNavKey;
+    private string? _selectedToolNavKey;
+    private readonly Dictionary<string, bool> _optimizationGroupExpanded = new(
+        StringComparer.Ordinal
+    );
+    private readonly Dictionary<string, bool> _toolGroupExpanded = new(StringComparer.Ordinal);
 
     // Segoe Fluent Icons (Segoe MDL2 Assets fall-back on Win10): Brightness / QuietHours / Contrast.
     private const string ThemeLightGlyph = "\uE706";
@@ -203,11 +210,107 @@ public partial class MainViewModel : ObservableObject, IDisposable
         };
 
     public FastObservableCollection<OptimizationGroup> Groups { get; } = [];
+    public FastObservableCollection<GroupNavItem> GroupNavItems { get; } = [];
     public List<OptimizationGroup> OptimizingGroups { get; } = [];
     public List<OptimizationGroup> AntivirusGroups { get; } = [];
     public List<OptimizationGroup> PersonalGroups { get; } = [];
     public List<ToolGroup> AllToolGroups { get; } = [];
     public FastObservableCollection<ToolGroup> ToolGroups { get; } = [];
+    public FastObservableCollection<GroupNavItem> ToolGroupNavItems { get; } = [];
+
+    /// <summary>
+    /// Raised when the left nav should scroll the content pane to a group.
+    /// </summary>
+    public event EventHandler<object>? ScrollToGroupRequested;
+
+    [ObservableProperty]
+    public partial GroupNavItem? SelectedGroupNavItem { get; set; }
+
+    [ObservableProperty]
+    public partial GroupNavItem? SelectedToolGroupNavItem { get; set; }
+
+    partial void OnSelectedGroupNavItemChanged(GroupNavItem? value)
+    {
+        if (_suppressGroupNavSelection)
+            return;
+
+        _selectedOptimizationNavKey = value?.NameKey;
+        RequestScrollToNavTarget(value, isTools: false);
+    }
+
+    partial void OnSelectedToolGroupNavItemChanged(GroupNavItem? value)
+    {
+        if (_suppressGroupNavSelection)
+            return;
+
+        _selectedToolNavKey = value?.NameKey;
+        RequestScrollToNavTarget(value, isTools: true);
+    }
+
+    private void RequestScrollToNavTarget(GroupNavItem? value, bool isTools)
+    {
+        if (value is null)
+            return;
+
+        if (isTools)
+        {
+            if (value.ToolGroup is not { } toolGroup)
+                return;
+            toolGroup.IsExpanded = true;
+            _toolGroupExpanded[toolGroup.NameKey] = true;
+            ScrollToGroupRequested?.Invoke(this, toolGroup);
+        }
+        else
+        {
+            if (value.OptimizationGroup is not { } group)
+                return;
+            group.IsExpanded = true;
+            _optimizationGroupExpanded[group.NameKey] = true;
+            ScrollToGroupRequested?.Invoke(this, group);
+        }
+    }
+
+    [RelayCommand]
+    private void ExpandAllGroups()
+    {
+        if (IsToolsTabSelected)
+        {
+            foreach (var group in ToolGroups)
+            {
+                group.IsExpanded = true;
+                _toolGroupExpanded[group.NameKey] = true;
+            }
+        }
+        else
+        {
+            foreach (var group in Groups)
+            {
+                group.IsExpanded = true;
+                _optimizationGroupExpanded[group.NameKey] = true;
+            }
+        }
+    }
+
+    [RelayCommand]
+    private void CollapseAllGroups()
+    {
+        if (IsToolsTabSelected)
+        {
+            foreach (var group in ToolGroups)
+            {
+                group.IsExpanded = false;
+                _toolGroupExpanded[group.NameKey] = false;
+            }
+        }
+        else
+        {
+            foreach (var group in Groups)
+            {
+                group.IsExpanded = false;
+                _optimizationGroupExpanded[group.NameKey] = false;
+            }
+        }
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSearchActive))]
@@ -315,6 +418,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
             ToolsTabHeader = Localizer.Get("Tools");
             OnPropertyChanged(nameof(NoResultsMessage));
             OnPropertyChanged(nameof(SelectedTabDescription));
+            foreach (var nav in GroupNavItems)
+                nav.NotifyDisplayChanged();
+            foreach (var nav in ToolGroupNavItems)
+                nav.NotifyDisplayChanged();
         };
     }
 
@@ -559,34 +666,106 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private void RefreshDisplayedOptimizationGroups()
     {
-        Groups.Replace(GetDisplayedOptimizationGroups(_selectedCategory));
+        CaptureOptimizationExpandedState();
+        var displayed = GetDisplayedOptimizationGroups(_selectedCategory).ToList();
+        foreach (var group in displayed)
+            ApplyOptimizationExpandedState(group);
+
+        Groups.Replace(displayed);
+        RebuildOptimizationGroupNav();
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
     }
 
     private void RefreshDisplayedToolGroups()
     {
+        CaptureToolExpandedState();
+
+        IEnumerable<ToolGroup> displayed;
         if (!IsSearchActive)
         {
-            ToolGroups.Replace(AllToolGroups);
-            OnPropertyChanged(nameof(IsNoSearchResultsVisible));
-            return;
+            displayed = AllToolGroups;
+        }
+        else
+        {
+            var terms = GetSearchTerms();
+            displayed = AllToolGroups
+                .Select(group =>
+                {
+                    var items = group
+                        .Items.Where(item =>
+                            MatchesSearch(terms, group.Name, item.Name, item.Description)
+                        )
+                        .ToArray();
+                    return new ToolGroup(group.NameKey, items);
+                })
+                .Where(group => group.Items.Count > 0);
         }
 
-        var terms = GetSearchTerms();
-        var filteredGroups = AllToolGroups
-            .Select(group =>
-            {
-                var items = group
-                    .Items.Where(item =>
-                        MatchesSearch(terms, group.Name, item.Name, item.Description)
-                    )
-                    .ToArray();
-                return new ToolGroup(group.NameKey, items);
-            })
-            .Where(group => group.Items.Count > 0);
+        var list = displayed.ToList();
+        foreach (var group in list)
+            ApplyToolExpandedState(group);
 
-        ToolGroups.Replace(filteredGroups);
+        ToolGroups.Replace(list);
+        RebuildToolGroupNav();
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+    }
+
+    private void CaptureOptimizationExpandedState()
+    {
+        foreach (var group in Groups)
+            _optimizationGroupExpanded[group.NameKey] = group.IsExpanded;
+    }
+
+    private void ApplyOptimizationExpandedState(OptimizationGroup group)
+    {
+        group.IsExpanded =
+            _optimizationGroupExpanded.TryGetValue(group.NameKey, out var expanded) && expanded;
+    }
+
+    private void CaptureToolExpandedState()
+    {
+        foreach (var group in ToolGroups)
+            _toolGroupExpanded[group.NameKey] = group.IsExpanded;
+    }
+
+    private void ApplyToolExpandedState(ToolGroup group)
+    {
+        group.IsExpanded =
+            _toolGroupExpanded.TryGetValue(group.NameKey, out var expanded) && expanded;
+    }
+
+    private void RebuildOptimizationGroupNav()
+    {
+        var navItems = Groups.Select(GroupNavItem.FromOptimizationGroup).ToList();
+
+        _suppressGroupNavSelection = true;
+        GroupNavItems.Replace(navItems);
+        SelectedGroupNavItem = ResolveNavSelection(navItems, _selectedOptimizationNavKey);
+        _suppressGroupNavSelection = false;
+    }
+
+    private void RebuildToolGroupNav()
+    {
+        var navItems = ToolGroups.Select(GroupNavItem.FromToolGroup).ToList();
+
+        _suppressGroupNavSelection = true;
+        ToolGroupNavItems.Replace(navItems);
+        SelectedToolGroupNavItem = ResolveNavSelection(navItems, _selectedToolNavKey);
+        _suppressGroupNavSelection = false;
+    }
+
+    private static GroupNavItem? ResolveNavSelection(
+        IReadOnlyList<GroupNavItem> navItems,
+        string? selectedNameKey
+    )
+    {
+        if (navItems.Count == 0)
+            return null;
+
+        if (selectedNameKey is null)
+            return navItems[0];
+
+        return navItems.FirstOrDefault(item => item.NameKey == selectedNameKey) ?? navItems[0];
     }
 
     private IEnumerable<OptimizationGroup> GetDisplayedOptimizationGroups(

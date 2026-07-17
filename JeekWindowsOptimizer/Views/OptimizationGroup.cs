@@ -1,18 +1,29 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Jeek.Avalonia.Localization;
 
 namespace JeekWindowsOptimizer;
 
-public class OptimizationGroup(string nameKey, OptimizationItem[] items) : ObservableObject
+public partial class OptimizationGroup(string nameKey, OptimizationItem[] items) : ObservableObject
 {
     public string NameKey => nameKey;
     public string Name => Localizer.Get(NameKey);
 
     public ObservableCollection<OptimizationItem> Items { get; } = [.. items];
 
+    /// <summary>
+    /// Whether this group's expander is open in the content pane.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsExpanded { get; set; }
+
+    public int ItemCount => Items.Count;
+
+    public string NavDisplayName => $"{Name} ({Items.Count})";
+
     public void NotifyLanguageChanged()
     {
         OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(NavDisplayName));
     }
 }

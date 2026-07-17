@@ -17,6 +17,8 @@ public partial class MainWindow : Window
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
 
+    private MainViewModel? _subscribedViewModel;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -24,6 +26,7 @@ public partial class MainWindow : Window
         Localizer.LanguageChanged += OnLanguageChanged;
         UpdateFontFamily();
 
+        DataContextChanged += OnDataContextChanged;
         Loaded += OnLoaded;
         Deactivated += OnDeactivated;
         Closing += OnClosing;
@@ -31,6 +34,21 @@ public partial class MainWindow : Window
 #if DEBUG
         Application.Current?.AttachDeveloperTools();
 #endif
+    }
+
+    private void OnDataContextChanged(object? sender, EventArgs e)
+    {
+        if (_subscribedViewModel is not null)
+        {
+            _subscribedViewModel.ScrollToGroupRequested -= OnScrollToGroupRequested;
+            _subscribedViewModel = null;
+        }
+
+        if (DataContext is MainViewModel vm)
+        {
+            _subscribedViewModel = vm;
+            vm.ScrollToGroupRequested += OnScrollToGroupRequested;
+        }
     }
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
@@ -47,8 +65,51 @@ public partial class MainWindow : Window
     private void OnClosing(object? sender, WindowClosingEventArgs e)
     {
         SaveUncheckedOptimizationItemsIfChanged();
+        if (_subscribedViewModel is not null)
+        {
+            _subscribedViewModel.ScrollToGroupRequested -= OnScrollToGroupRequested;
+            _subscribedViewModel = null;
+        }
         if (DataContext is IDisposable disposable)
             disposable.Dispose();
+    }
+
+    private void OnScrollToGroupRequested(object? sender, object? group)
+    {
+        if (group is null)
+            return;
+
+        // Wait for expander expand / layout so BringIntoView lands on final position.
+        Dispatcher.UIThread.Post(
+            () => ScrollContentToGroup(group),
+            DispatcherPriority.Loaded
+        );
+    }
+
+    private void ScrollContentToGroup(object group)
+    {
+        ItemsControl? itemsControl = group switch
+        {
+            OptimizationGroup => OptimizationGroupsItemsControl,
+            ToolGroup => ToolGroupsItemsControl,
+            _ => null,
+        };
+
+        if (itemsControl is null)
+            return;
+
+        var container = itemsControl.ContainerFromItem(group);
+        if (container is null)
+        {
+            // Container may not exist yet right after collection replace; retry once.
+            Dispatcher.UIThread.Post(
+                () => itemsControl.ContainerFromItem(group)?.BringIntoView(),
+                DispatcherPriority.Render
+            );
+            return;
+        }
+
+        container.BringIntoView();
     }
 
     private void SaveUncheckedOptimizationItemsIfChanged()
