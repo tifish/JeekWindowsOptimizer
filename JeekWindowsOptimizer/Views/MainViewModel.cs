@@ -371,6 +371,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new SetIdleTimeItem());
             AddOptimizationItem(new DisableSystemSounds());
             AddOptimizationItem(new DisableHibernationItem());
+            AddOptimizationItem(new DisableNtfsLastAccessUpdateItem());
+            AddOptimizationItem(new DisableSearchHistoryItem());
 
             await ServiceItemManager.Load();
             foreach (var item in ServiceItemManager.Items)

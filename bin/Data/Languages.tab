@@ -393,6 +393,7 @@ DisableFindMyDeviceName	Disable Find My Device	禁用查找我的设备
 DisableFindMyDeviceDescription	Stops Find My Device location tracking for this PC.\nEffective after group policy refresh.	停止本机的“查找我的设备”位置跟踪。\n刷新组策略后生效。
 DisableSearchHistoryName	Disable Windows search history	禁用 Windows 搜索历史
 DisableSearchHistoryDescription	Stops Windows Search from saving device search history.\nEffective immediately.	禁止 Windows 搜索保存本机搜索历史。\n立即生效。
+DisableSearchHistoryUcpdMessage	Automatic apply failed (Windows UCPD is blocking registry writes to SearchSettings).\n\nSettings → Privacy & security → Search permissions has been opened.\nTurn off "Search history on this device", then toggle this item again or restart the app.	自动应用失败（Windows UCPD 阻止写入 SearchSettings）。\n\n已打开「设置 → 隐私和安全性 → 搜索权限」。\n请关闭「此设备上的搜索历史记录」，然后重新切换本项或重启本程序。
 ShowHiddenFilesAndFoldersName	Show hidden files and folders	显示隐藏的文件和文件夹
 ShowHiddenFilesAndFoldersDescription	Shows files and folders marked as hidden in File Explorer.\nEffective immediately.	在文件资源管理器中显示标记为隐藏的文件和文件夹。\n立即生效。
 HideHomeFromExplorerName	Hide Home from File Explorer navigation pane	隐藏资源管理器导航窗格中的主页
@@ -490,7 +491,7 @@ UninstallMoviesAndTVDescription	Removes the Movies & TV / Films & TV app.	卸载
 DisableNtfs8Dot3NameCreationName	Disable 8.3 short file name creation	禁用 8.3 短文件名
 DisableNtfs8Dot3NameCreationDescription	Creating MS-DOS 8.3 short names for every file slows down folders that contain many files. Disabling it speeds up file creation and applies to newly created files.\nTakes effect after reboot.	为每个文件生成 MS-DOS 8.3 短文件名会拖慢包含大量文件的目录，禁用后可加快文件创建，仅对新建文件生效。\n重启生效。
 DisableNtfsLastAccessUpdateName	Disable NTFS last access timestamp	禁用 NTFS 末次访问时间
-DisableNtfsLastAccessUpdateDescription	Updating the last access time on every file read adds extra disk writes. Disabling it reduces disk I/O.\nTakes effect after reboot.	每次读取文件都更新末次访问时间会产生额外的磁盘写入，禁用后可减少磁盘 I/O。\n重启生效。
+DisableNtfsLastAccessUpdateDescription	Updating the last access time on every file read adds extra disk writes. Disabling it reduces disk I/O.\nUses the modern user-managed flag (0x80000001) so the setting persists across reboot.	每次读取文件都更新末次访问时间会产生额外的磁盘写入，禁用后可减少磁盘 I/O。\n使用现代用户管理标志 (0x80000001)，重启后设置仍会保持。
 DisableWapPushMessageRoutingServiceName	Disable the WAP Push Message Routing Service	禁用 WAP 推送消息路由服务
 DisableWapPushMessageRoutingServiceDescription	The dmwappushservice routes WAP push messages, mainly for device management and telemetry. Most home users can disable it.\nEffective immediately.	dmwappushservice 负责路由 WAP 推送消息，主要用于设备管理和遥测，多数家庭用户可以禁用。\n立即生效。
 DisableDownloadedMapsManagerServiceName	Disable the Downloaded Maps Manager Service	禁用下载的地图管理器服务

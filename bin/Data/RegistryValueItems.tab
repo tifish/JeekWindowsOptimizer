@@ -116,7 +116,6 @@ Privacy	DisableSettings365Ads		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Wi
 Privacy	HideSettingsHomePage		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer	SettingsPageVisibility	string		hide:home	TRUE				
 Privacy	DisableLocationServices		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LocationAndSensors	DisableLocation	int	0	1	TRUE		TRUE		
 Privacy	DisableFindMyDevice		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FindMyDevice	AllowFindMyDevice	int	1	0	TRUE		TRUE		
-Privacy	DisableSearchHistory		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\SearchSettings	IsDeviceSearchHistoryEnabled	int	1	0					
 Explorer	ShowHiddenFilesAndFolders	Personal	HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced	Hidden	int	2	1					
 Explorer	HideHomeFromExplorer		HKEY_CURRENT_USER\Software\Classes\CLSID\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}	System.IsPinnedToNameSpaceTree	int	1	0					TRUE
 Explorer	HideGalleryFromExplorer		HKEY_CURRENT_USER\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}	System.IsPinnedToNameSpaceTree	int	1	0					TRUE
@@ -133,4 +132,3 @@ StartMenu	DisablePhoneLinkInStart		HKEY_CURRENT_USER\Software\Microsoft\Windows\
 StartMenu	DisableCortanaInSearch		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	AllowCortana	int	1	0	TRUE		TRUE		
 	DisableCortanaInSearch		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	CortanaConsent	int	1	0	TRUE				
 Kernel	DisableNtfs8Dot3NameCreation		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem	NtfsDisable8dot3NameCreation	int	2	1				TRUE	
-Kernel	DisableNtfsLastAccessUpdate		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem	NtfsDisableLastAccessUpdate	int	0	1	TRUE			TRUE	
