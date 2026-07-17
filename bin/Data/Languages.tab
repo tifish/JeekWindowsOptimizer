@@ -40,8 +40,11 @@ PostOptimizationProcessing	Post-optimization processing…	优化后处理…
 OptimizationCompleted	Optimization completed!	优化已完成！
 PleaseUninstallDriver	Please {0} and restart to continue.	请 {0} 并重启后重试。
 Optimizing	Optimizing	优化
+OptimizingDescription	Recommended performance and usability tweaks for most PCs. Enable items you need to make Windows snappier and cleaner.	面向大多数电脑的性能与使用体验优化项。按需开启，让 Windows 更流畅、更干净。
 Antivirus	Antivirus	防病毒
+AntivirusDescription	Antivirus has a huge impact on system performance—especially file access and app startup. This page mainly detects installed security products; uninstall requires your manual action. Review risks carefully.	防病毒对系统性能影响巨大，尤其是文件访问与应用启动。本页主要负责检测已安装的安全产品，卸载需你手工操作；请仔细权衡风险。
 Personal	Personal	个性化
+PersonalDescription	Also optimization items, tailored to personal preference. Review each option and enable only what fits your habits.	同样是优化项，但更贴合个人使用习惯。请逐项查看，按需开启适合自己的选项。
 Optimized	Optimized	已优化
 NotOptimized	Not optimized	未优化
 Uninstall	Uninstall	卸载
@@ -268,6 +271,7 @@ DisableConnectedUserExperiencesAndTelemetryServiceDescription	The DiagTrack serv
 DisableWindowsErrorReportingServiceName	Disable the Windows Error Reporting Service	禁用 Windows 错误报告服务
 DisableWindowsErrorReportingServiceDescription	Stops the system from uploading application crash reports to Microsoft.\nEffective immediately.	停止将应用崩溃报告上传到微软。\n立即生效。
 Tools	Tools	工具
+ToolsDescription	Built-in and packaged utilities for diagnosis, cleanup, network fixes, and everyday maintenance.	内置与随包工具，用于诊断、清理、网络修复和日常维护。
 Other	Other	其他
 Storage	Storage	存储
 Network	Network	网络

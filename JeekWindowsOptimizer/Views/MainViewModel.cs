@@ -183,6 +183,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsToolsTabSelected));
         OnPropertyChanged(nameof(CanShowOptimizeButton));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+        OnPropertyChanged(nameof(SelectedTabDescription));
 
         if (value != ToolsTabIndex)
             _selectedCategory = (OptimizationItemCategory)value;
@@ -190,6 +191,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
         RefreshDisplayedGroups();
         UpdateOptimizeButtonText();
     }
+
+    public string SelectedTabDescription =>
+        SelectedTabIndex switch
+        {
+            0 => Localizer.Get("OptimizingDescription"),
+            1 => Localizer.Get("AntivirusDescription"),
+            2 => Localizer.Get("PersonalDescription"),
+            ToolsTabIndex => Localizer.Get("ToolsDescription"),
+            _ => "",
+        };
 
     public FastObservableCollection<OptimizationGroup> Groups { get; } = [];
     public List<OptimizationGroup> OptimizingGroups { get; } = [];
@@ -303,6 +314,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             UpdateOptimizeButtonText();
             ToolsTabHeader = Localizer.Get("Tools");
             OnPropertyChanged(nameof(NoResultsMessage));
+            OnPropertyChanged(nameof(SelectedTabDescription));
         };
     }
 

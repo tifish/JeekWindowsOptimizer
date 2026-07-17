@@ -443,108 +443,118 @@
             VerticalAlignment="Stretch"
             VerticalScrollBarVisibility="Visible">
 
-            <!--  Groups  -->
-            <ItemsControl ItemsSource="{Binding Groups}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" Spacing="12" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
+            <StackPanel Orientation="Vertical" Spacing="12">
+                <!--  Tab intro  -->
+                <TextBlock
+                    Margin="0,0,0,4"
+                    FontSize="14"
+                    Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                    Text="{Binding SelectedTabDescription}"
+                    TextWrapping="Wrap" />
 
-                        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
-                            <Expander.Header>
-                                <TextBlock
-                                    Margin="0,4,0,0"
-                                    FontSize="22"
-                                    FontWeight="SemiBold"
-                                    Text="{Binding Name}" />
-                            </Expander.Header>
+                <!--  Groups  -->
+                <ItemsControl ItemsSource="{Binding Groups}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" Spacing="12" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
 
-                            <!--  Items  -->
-                            <ItemsControl ItemsSource="{Binding Items}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Vertical" Spacing="8" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
+                            <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        FontSize="22"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Name}" />
+                                </Expander.Header>
 
-                                        <Border
-                                            Padding="14,12"
-                                            Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
-                                            BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
-                                            BorderThickness="1"
-                                            CornerRadius="6">
+                                <!--  Items  -->
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" Spacing="8" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
 
-                                            <Grid ColumnDefinitions="* Auto">
-                                                <Grid
-                                                    ColumnDefinitions="Auto *"
-                                                    RowDefinitions="Auto Auto">
-                                                    <CheckBox
-                                                        Grid.Column="0"
-                                                        Grid.Row="0"
-                                                        VerticalAlignment="Center"
-                                                        IsChecked="{Binding IsChecked}"
-                                                        IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
-                                                    <TextBlock
-                                                        Grid.Column="1"
-                                                        Grid.Row="0"
-                                                        VerticalAlignment="Center"
-                                                        Background="Transparent"
-                                                        FontSize="17"
-                                                        FontWeight="SemiBold"
-                                                        PointerPressed="OptimizationItemTitle_OnPointerPressed"
-                                                        Text="{Binding Name}" />
-                                                    <TextBlock
-                                                        Grid.Column="1"
-                                                        Grid.Row="1"
-                                                        Margin="0,6,20,0"
-                                                        FontSize="14"
-                                                        Foreground="{DynamicResource Win11SecondaryTextBrush}"
-                                                        Text="{Binding Description}"
-                                                        TextWrapping="Wrap" />
-                                                </Grid>
-                                                <StackPanel
-                                                    Grid.Column="1"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Orientation="Horizontal"
-                                                    Spacing="12">
-                                                    <Grid VerticalAlignment="Center">
-                                                        <TextBlock
+                                            <Border
+                                                Padding="14,12"
+                                                Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                                                BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="6">
+
+                                                <Grid ColumnDefinitions="* Auto">
+                                                    <Grid
+                                                        ColumnDefinitions="Auto *"
+                                                        RowDefinitions="Auto Auto">
+                                                        <CheckBox
+                                                            Grid.Column="0"
+                                                            Grid.Row="0"
                                                             VerticalAlignment="Center"
-                                                            FontSize="14"
-                                                            IsVisible="{Binding IsOptimized}"
-                                                            Text="{l:Localize Optimized}" />
+                                                            IsChecked="{Binding IsChecked}"
+                                                            IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
                                                         <TextBlock
+                                                            Grid.Column="1"
+                                                            Grid.Row="0"
                                                             VerticalAlignment="Center"
+                                                            Background="Transparent"
+                                                            FontSize="17"
+                                                            FontWeight="SemiBold"
+                                                            PointerPressed="OptimizationItemTitle_OnPointerPressed"
+                                                            Text="{Binding Name}" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            Grid.Row="1"
+                                                            Margin="0,6,20,0"
                                                             FontSize="14"
-                                                            IsVisible="{Binding !IsOptimized}"
-                                                            Text="{l:Localize NotOptimized}" />
+                                                            Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                            Text="{Binding Description}"
+                                                            TextWrapping="Wrap" />
                                                     </Grid>
-                                                    <ToggleSwitch
+                                                    <StackPanel
+                                                        Grid.Column="1"
+                                                        HorizontalAlignment="Right"
                                                         VerticalAlignment="Center"
-                                                        OffContent=""
-                                                        OnContent=""
-                                                        IsChecked="{Binding IsOptimized, Mode=OneWay}"
-                                                        IsCheckedChanged="ToggleButton_OnIsCheckedChanged"
-                                                        IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
-                                                </StackPanel>
-                                            </Grid>
-                                        </Border>
+                                                        Orientation="Horizontal"
+                                                        Spacing="12">
+                                                        <Grid VerticalAlignment="Center">
+                                                            <TextBlock
+                                                                VerticalAlignment="Center"
+                                                                FontSize="14"
+                                                                IsVisible="{Binding IsOptimized}"
+                                                                Text="{l:Localize Optimized}" />
+                                                            <TextBlock
+                                                                VerticalAlignment="Center"
+                                                                FontSize="14"
+                                                                IsVisible="{Binding !IsOptimized}"
+                                                                Text="{l:Localize NotOptimized}" />
+                                                        </Grid>
+                                                        <ToggleSwitch
+                                                            VerticalAlignment="Center"
+                                                            OffContent=""
+                                                            OnContent=""
+                                                            IsChecked="{Binding IsOptimized, Mode=OneWay}"
+                                                            IsCheckedChanged="ToggleButton_OnIsCheckedChanged"
+                                                            IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
 
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
-                        </Expander>
+                            </Expander>
 
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
 
         <ScrollViewer
@@ -553,95 +563,105 @@
             VerticalAlignment="Stretch"
             VerticalScrollBarVisibility="Visible">
 
-            <!--  Tool Groups  -->
-            <ItemsControl ItemsSource="{Binding ToolGroups}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" Spacing="12" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
+            <StackPanel Orientation="Vertical" Spacing="12">
+                <!--  Tab intro  -->
+                <TextBlock
+                    Margin="0,0,0,4"
+                    FontSize="14"
+                    Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                    Text="{Binding SelectedTabDescription}"
+                    TextWrapping="Wrap" />
 
-                        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
-                            <Expander.Header>
-                                <TextBlock
-                                    Margin="0,4,0,0"
-                                    FontSize="22"
-                                    FontWeight="SemiBold"
-                                    Text="{Binding Name}" />
-                            </Expander.Header>
+                <!--  Tool Groups  -->
+                <ItemsControl ItemsSource="{Binding ToolGroups}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" Spacing="12" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
 
-                            <!--  Tools  -->
-                            <ItemsControl ItemsSource="{Binding Items}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Vertical" Spacing="8" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate x:DataType="local:ToolItem">
+                            <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock
+                                        Margin="0,4,0,0"
+                                        FontSize="22"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Name}" />
+                                </Expander.Header>
 
-                                        <Button Classes="tool-card" Command="{Binding RunCommand}">
+                                <!--  Tools  -->
+                                <ItemsControl ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" Spacing="8" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="local:ToolItem">
 
-                                            <Grid ColumnDefinitions="Auto * Auto">
-                                                <Image
-                                                    Grid.Column="0"
-                                                    Width="24"
-                                                    Height="24"
-                                                    Margin="0,2,10,0"
-                                                    VerticalAlignment="Top"
-                                                    IsVisible="{Binding HasToolIcon}"
-                                                    RenderOptions.BitmapInterpolationMode="MediumQuality"
-                                                    Source="{Binding ToolIcon}" />
-                                                <StackPanel Grid.Column="1" Orientation="Vertical" Spacing="6">
-                                                    <TextBlock
+                                            <Button Classes="tool-card" Command="{Binding RunCommand}">
+
+                                                <Grid ColumnDefinitions="Auto * Auto">
+                                                    <Image
+                                                        Grid.Column="0"
+                                                        Width="24"
+                                                        Height="24"
+                                                        Margin="0,2,10,0"
+                                                        VerticalAlignment="Top"
+                                                        IsVisible="{Binding HasToolIcon}"
+                                                        RenderOptions.BitmapInterpolationMode="MediumQuality"
+                                                        Source="{Binding ToolIcon}" />
+                                                    <StackPanel Grid.Column="1" Orientation="Vertical" Spacing="6">
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            FontSize="17"
+                                                            FontWeight="SemiBold"
+                                                            Text="{Binding Name}" />
+                                                        <TextBlock
+                                                            Margin="0,0,20,0"
+                                                            FontSize="14"
+                                                            Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                            Text="{Binding Description}"
+                                                            TextWrapping="Wrap" />
+                                                        <TextBlock
+                                                            Margin="0,0,20,0"
+                                                            FontSize="13"
+                                                            Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                            IsVisible="{Binding HasDisplayStatus}"
+                                                            Text="{Binding DisplayStatus}"
+                                                            TextWrapping="Wrap" />
+                                                    </StackPanel>
+                                                    <Border
+                                                        Grid.Column="2"
+                                                        Padding="16,8"
+                                                        Background="{DynamicResource ToolRunHintBackgroundBrush}"
+                                                        BorderBrush="{DynamicResource ToolRunHintBorderBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        HorizontalAlignment="Right"
                                                         VerticalAlignment="Center"
-                                                        FontSize="17"
-                                                        FontWeight="SemiBold"
-                                                        Text="{Binding Name}" />
-                                                    <TextBlock
-                                                        Margin="0,0,20,0"
-                                                        FontSize="14"
-                                                        Foreground="{DynamicResource Win11SecondaryTextBrush}"
-                                                        Text="{Binding Description}"
-                                                        TextWrapping="Wrap" />
-                                                    <TextBlock
-                                                        Margin="0,0,20,0"
-                                                        FontSize="13"
-                                                        Foreground="{DynamicResource Win11SecondaryTextBrush}"
-                                                        IsVisible="{Binding HasDisplayStatus}"
-                                                        Text="{Binding DisplayStatus}"
-                                                        TextWrapping="Wrap" />
-                                                </StackPanel>
-                                                <Border
-                                                    Grid.Column="2"
-                                                    Padding="16,8"
-                                                    Background="{DynamicResource ToolRunHintBackgroundBrush}"
-                                                    BorderBrush="{DynamicResource ToolRunHintBorderBrush}"
-                                                    BorderThickness="1"
-                                                    CornerRadius="6"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    IsHitTestVisible="False">
-                                                    <TextBlock
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        Foreground="{DynamicResource ToolRunHintForegroundBrush}"
-                                                        Text="{l:Localize RunTool}" />
-                                                </Border>
-                                            </Grid>
-                                        </Button>
+                                                        IsHitTestVisible="False">
+                                                        <TextBlock
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Foreground="{DynamicResource ToolRunHintForegroundBrush}"
+                                                            Text="{l:Localize RunTool}" />
+                                                    </Border>
+                                                </Grid>
+                                            </Button>
 
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
-                        </Expander>
+                            </Expander>
 
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
 
         <TextBlock
