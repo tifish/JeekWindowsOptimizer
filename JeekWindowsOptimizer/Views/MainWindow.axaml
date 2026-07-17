@@ -43,6 +43,8 @@
                     <SolidColorBrush x:Key="TitleBarIconForegroundBrush" Color="#FFE8E8E8" />
                     <SolidColorBrush x:Key="TitleBarIconPointerOverBrush" Color="#14FFFFFF" />
                     <SolidColorBrush x:Key="TitleBarIconPressedBrush" Color="#22000000" />
+                    <SolidColorBrush x:Key="TitleBarFilterActiveBackgroundBrush" Color="#4048B2E9" />
+                    <SolidColorBrush x:Key="TitleBarFilterActiveBackgroundPointerOverBrush" Color="#5548B2E9" />
 
                     <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#00000000" />
                     <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#14FFFFFF" />
@@ -104,6 +106,8 @@
                     <SolidColorBrush x:Key="TitleBarIconForegroundBrush" Color="#FF202020" />
                     <SolidColorBrush x:Key="TitleBarIconPointerOverBrush" Color="#08000000" />
                     <SolidColorBrush x:Key="TitleBarIconPressedBrush" Color="#14000000" />
+                    <SolidColorBrush x:Key="TitleBarFilterActiveBackgroundBrush" Color="#330067C0" />
+                    <SolidColorBrush x:Key="TitleBarFilterActiveBackgroundPointerOverBrush" Color="#440067C0" />
 
                     <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#00000000" />
                     <SolidColorBrush x:Key="ExpanderHeaderBackgroundPointerOver" Color="#08000000" />
@@ -175,6 +179,17 @@
         </Style>
         <Style Selector="Button.titlebar-icon.search-active">
             <Setter Property="Background" Value="{DynamicResource TitleBarIconPressedBrush}" />
+        </Style>
+
+        <Style Selector="Button.titlebar-icon.filter-active">
+            <Setter Property="Background" Value="{DynamicResource TitleBarFilterActiveBackgroundBrush}" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style Selector="Button.titlebar-icon.filter-active:pointerover">
+            <Setter Property="Background" Value="{DynamicResource TitleBarFilterActiveBackgroundPointerOverBrush}" />
+        </Style>
+        <Style Selector="Button.titlebar-icon.filter-active:pressed">
+            <Setter Property="Background" Value="{DynamicResource TitleBarFilterActiveBackgroundBrush}" />
         </Style>
 
         <Style Selector="TextBlock.titlebar-glyph-text">
@@ -250,6 +265,14 @@
                     ToolTip.Tip="{l:Localize SearchWatermark}">
                     <!-- Segoe Fluent Icons: Find (E721) -->
                     <TextBlock Classes="titlebar-glyph-text" Text="&#xE721;" />
+                </Button>
+                <Button
+                    Classes="titlebar-icon"
+                    Classes.filter-active="{Binding ShowOnlyNotOptimized}"
+                    Command="{Binding ToggleShowOnlyNotOptimizedCommand}"
+                    ToolTip.Tip="{l:Localize ShowOnlyNotOptimized}">
+                    <!-- Segoe Fluent Icons: Filter (E71C) -->
+                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE71C;" />
                 </Button>
                 <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Update}">
                     <!-- Segoe Fluent Icons: Sync (E895) -->
@@ -629,7 +652,7 @@
             FontSize="14"
             Foreground="{DynamicResource Win11SecondaryTextBrush}"
             IsVisible="{Binding IsNoSearchResultsVisible}"
-            Text="{l:Localize NoSearchResultsInCurrentTab}" />
+            Text="{Binding NoResultsMessage}" />
 
     </Grid>
 

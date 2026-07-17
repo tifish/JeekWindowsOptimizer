@@ -45,6 +45,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         _isLoadingAutoUpdateSetting = true;
         IsAutoUpdateEnabled = AppSettingsStore.Roaming.AutoUpdate;
         _isLoadingAutoUpdateSetting = false;
+        ShowOnlyNotOptimized = AppSettingsStore.Roaming.ShowOnlyNotOptimized;
     }
 
     public string WindowTitle
@@ -206,15 +207,25 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(IsNoSearchResultsVisible))]
     public partial bool IsSearchVisible { get; set; }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNoSearchResultsVisible))]
+    public partial bool ShowOnlyNotOptimized { get; set; }
+
     public bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchText);
 
     public bool IsNoSearchResultsVisible =>
-        IsSearchActive
-        && !IsBusy
+        !IsBusy
         && (
-            IsOptimizationTabSelected && Groups.Count == 0
-            || IsToolsTabSelected && ToolGroups.Count == 0
+            IsOptimizationTabSelected
+                && Groups.Count == 0
+                && (IsSearchActive || ShowOnlyNotOptimized)
+            || IsToolsTabSelected && ToolGroups.Count == 0 && IsSearchActive
         );
+
+    public string NoResultsMessage =>
+        IsSearchActive
+            ? Localizer.Get("NoSearchResultsInCurrentTab")
+            : Localizer.Get("NoUnoptimizedItemsInCurrentTab");
 
     [ObservableProperty]
     public partial string StatusMessage { get; set; } = Localizer.Get("Initializing");
@@ -242,6 +253,25 @@ public partial class MainViewModel : ObservableObject, IDisposable
         UpdateOptimizationTabHeaders();
         ClearSearchCommand.NotifyCanExecuteChanged();
         UpdateOptimizeButtonText();
+        OnPropertyChanged(nameof(NoResultsMessage));
+    }
+
+    partial void OnShowOnlyNotOptimizedChanged(bool value)
+    {
+        AppSettingsStore.SetShowOnlyNotOptimized(value);
+        if (IsOptimizationTabSelected)
+        {
+            RefreshDisplayedOptimizationGroups();
+            UpdateOptimizeButtonText();
+        }
+        OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+        OnPropertyChanged(nameof(NoResultsMessage));
+    }
+
+    [RelayCommand]
+    private void ToggleShowOnlyNotOptimized()
+    {
+        ShowOnlyNotOptimized = !ShowOnlyNotOptimized;
     }
 
     [RelayCommand]
@@ -272,6 +302,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             UpdateOptimizationTabHeaders();
             UpdateOptimizeButtonText();
             ToolsTabHeader = Localizer.Get("Tools");
+            OnPropertyChanged(nameof(NoResultsMessage));
         };
     }
 
@@ -537,18 +568,56 @@ public partial class MainViewModel : ObservableObject, IDisposable
         OptimizationItemCategory category
     )
     {
+        return GetFilteredOptimizationGroups(
+            category,
+            applySearch: true,
+            applyNotOptimizedFilter: true
+        );
+    }
+
+    /// <summary>
+    /// Tab headers count optimized/total without the "only not optimized" view filter,
+    /// so progress still reflects the full (search-filtered) category.
+    /// </summary>
+    private IEnumerable<OptimizationGroup> GetStatOptimizationGroups(
+        OptimizationItemCategory category
+    )
+    {
+        return GetFilteredOptimizationGroups(
+            category,
+            applySearch: true,
+            applyNotOptimizedFilter: false
+        );
+    }
+
+    private IEnumerable<OptimizationGroup> GetFilteredOptimizationGroups(
+        OptimizationItemCategory category,
+        bool applySearch,
+        bool applyNotOptimizedFilter
+    )
+    {
         var sourceGroups = GetSourceOptimizationGroups(category).ToList();
-        if (!IsSearchActive)
+        var terms = applySearch && IsSearchActive ? GetSearchTerms() : null;
+        var onlyNotOptimized = applyNotOptimizedFilter && ShowOnlyNotOptimized;
+
+        if (terms is null && !onlyNotOptimized)
             return sourceGroups;
 
-        var terms = GetSearchTerms();
         return sourceGroups
             .Select(group =>
             {
                 var items = group
                     .Items.Where(item =>
-                        MatchesSearch(terms, group.Name, item.Name, item.Description)
-                    )
+                    {
+                        if (onlyNotOptimized && item.IsOptimized)
+                            return false;
+                        if (
+                            terms is not null
+                            && !MatchesSearch(terms, group.Name, item.Name, item.Description)
+                        )
+                            return false;
+                        return true;
+                    })
                     .ToArray();
                 return new OptimizationGroup(group.NameKey, items);
             })
@@ -569,7 +638,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public void UpdateItemStat(OptimizationItemCategory category)
     {
-        var groups = GetDisplayedOptimizationGroups(category).ToList();
+        var groups = GetStatOptimizationGroups(category).ToList();
 
         var totalItemsCount = groups.Sum(group => group.Items.Count);
         var optimizedItemCount = groups.Sum(group => group.Items.Count(it => it.IsOptimized));
@@ -692,6 +761,23 @@ public partial class MainViewModel : ObservableObject, IDisposable
             OptimizationItem.InBatching = false;
             IsBusy = false;
             StatusMessage = Localizer.Get("OptimizationCompleted");
+            if (ShowOnlyNotOptimized)
+                RefreshDisplayedOptimizationGroups();
+            UpdateOptimizeButtonText();
+        }
+    }
+
+    /// <summary>
+    /// Call after an item's <see cref="OptimizationItem.IsOptimized"/> changes so the
+    /// "show only not optimized" filter can hide newly optimized rows.
+    /// </summary>
+    public void OnOptimizationItemStatusChanged(OptimizationItemCategory category)
+    {
+        UpdateItemStat(category);
+        if (ShowOnlyNotOptimized && category == _selectedCategory)
+        {
+            RefreshDisplayedOptimizationGroups();
+            UpdateOptimizeButtonText();
         }
     }
 

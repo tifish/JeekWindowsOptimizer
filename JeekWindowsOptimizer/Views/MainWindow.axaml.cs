@@ -184,7 +184,7 @@ public partial class MainWindow : Window
         finally
         {
             if (oldIsOptimized != optimizationItem.IsOptimized)
-                model.UpdateItemStat(optimizationItem.Category);
+                model.OnOptimizationItemStatusChanged(optimizationItem.Category);
 
             if (toggleButton.IsChecked != optimizationItem.IsOptimized)
                 // Changing the toggle immediately can leave a stale visual state, so delay it.

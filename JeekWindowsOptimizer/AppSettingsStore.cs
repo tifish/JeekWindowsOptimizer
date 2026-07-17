@@ -52,6 +52,8 @@ internal sealed class RoamingSettings
     public bool DisableMirrorDownload { get; set; }
 
     public List<string>? UncheckedOptimizationItemNameKeys { get; set; }
+
+    public bool ShowOnlyNotOptimized { get; set; }
 }
 
 internal static class AppSettingsStore
@@ -372,6 +374,12 @@ internal static class AppSettingsStore
             .Distinct(StringComparer.Ordinal)
             .Order(StringComparer.Ordinal)
             .ToList();
+        SaveRoaming();
+    }
+
+    public static void SetShowOnlyNotOptimized(bool value)
+    {
+        Roaming.ShowOnlyNotOptimized = value;
         SaveRoaming();
     }
 }
