@@ -72,6 +72,7 @@ Privacy	DisableActivityHistory		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\W
 Privacy	DisableFeedbackPrompts		HKEY_CURRENT_USER\Software\Microsoft\Siuf\Rules	NumberOfSIUFInPeriod	int	1	0					
 Software	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main	AllowPrelaunch	int	1	0	TRUE		TRUE		
 	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	StartupBoostEnabled	int	1	0	TRUE				
+	DisableEdgeFromRunningInBackground		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge	BackgroundModeEnabled	int	1	0	TRUE				
 Software	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationConsole	string	{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}	{2EACA947-7F5F-4CFA-BA87-8F7FBEEFBE69}					
 	UseWindowsTerminal		HKEY_CURRENT_USER\Console\%%Startup	DelegationTerminal	string	{B23D10C0-E52E-411E-9D5B-C09FDF709C7D}	{E12CFF52-A866-4C77-9A90-F570A7AA2C6B}					
 Software	TortoiseSVNCacheType		HKEY_CURRENT_USER\SOFTWARE\TortoiseSVN	CacheType	int	2	2					
@@ -137,3 +138,17 @@ System	DisableAutomaticMaintenance		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Window
 System	DisablePowerThrottling		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling	PowerThrottlingOff	int	0	1	TRUE			TRUE	
 System	EnableHardwareAcceleratedGpuScheduling		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers	HwSchMode	int	1	2				TRUE	
 System	PreferProgramsProcessorScheduling		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\PriorityControl	Win32PrioritySeparation	int	24	2					
+System	DisableNearbySharing		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\CDP	NearShareChannelUserAuthzPolicy	int	1	0					
+System	DisableCloudClipboardSync		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System	AllowCrossDeviceClipboard	int	1	0	TRUE		TRUE		
+	DisableCloudClipboardSync		HKEY_CURRENT_USER\Software\Microsoft\Clipboard	EnableCloudClipboard	int	0	0	TRUE				
+System	DisableSharedExperiences		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\CDP	RomeSdkChannelUserAuthzPolicy	int	1	0					
+Privacy	DisableWindowsTipsAndSuggestions		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SoftLandingEnabled	int	1	0					
+	DisableWindowsTipsAndSuggestions		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SystemPaneSuggestionsEnabled	int	1	0					
+	DisableWindowsTipsAndSuggestions		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-338389Enabled	int	1	0					
+	DisableWindowsTipsAndSuggestions		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager	SubscribedContent-310093Enabled	int	1	0					
+Privacy	DisableAccountNotifications		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\SystemSettings\AccountNotifications	EnableAccountNotifications	int	1	0	TRUE				
+Privacy	DisableScoobeStartupExperience		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement	ScoobeSystemSettingEnabled	int	1	0	TRUE				
+Software	DisableOfficeTelemetry		HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\Common\ClientTelemetry	DisableTelemetry	int	0	1	TRUE				
+	DisableOfficeTelemetry		HKEY_CURRENT_USER\Software\Microsoft\Office\Common\ClientTelemetry	DisableTelemetry	int	0	1	TRUE				
+	DisableOfficeTelemetry		HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\osm	Enablelogging	int	1	0	TRUE				
+	DisableOfficeTelemetry		HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\osm	EnableUpload	int	1	0	TRUE				

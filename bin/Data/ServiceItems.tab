@@ -16,3 +16,10 @@ System	DisableXboxAuthManagerService	Personal	XblAuthManager	Manual
 System	DisableXboxGameSaveService	Personal	XblGameSave	Manual
 System	DisableXboxNetApiService	Personal	XboxNetApiSvc	Manual
 System	DisableXboxGipService	Personal	XboxGipSvc	Manual
+System	DisableGeolocationService	Personal	lfsvc	Manual
+System	DisablePhoneService	Personal	PhoneSvc	Manual
+System	DisableWindowsMediaPlayerNetworkSharingService	Personal	WMPNetworkSvc	Manual
+System	DisableOfflineFilesService	Personal	CscService	Manual
+System	DisableRemoteRegistryService	Personal	RemoteRegistry	Disabled
+System	DisableWindowsInsiderService	Personal	wisvc	Manual
+System	DisableSecondaryLogonService	Personal	seclogon	Manual

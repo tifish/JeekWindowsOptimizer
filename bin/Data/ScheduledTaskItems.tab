@@ -18,3 +18,11 @@ System	DisableFamilySafetyScheduledTasks	Personal	\Microsoft\Windows\Shell\Famil
 	DisableFamilySafetyScheduledTasks		\Microsoft\Windows\Shell\FamilySafetyRefreshTask	true
 	DisableFamilySafetyScheduledTasks		\Microsoft\Windows\Shell\FamilySafetyUpload	true
 System	DisableWerQueueReportingTask		\Microsoft\Windows\Windows Error Reporting\QueueReporting	true
+System	DisablePowerEfficiencyDiagnosticTasks		\Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem	true
+System	DisableDiskFootprintDiagnosticTasks		\Microsoft\Windows\DiskFootprint\Diagnostics	true
+System	DisableCloudExperienceHostTasks		\Microsoft\Windows\CloudExperienceHost\CreateObjectTask	true
+System	DisableSustainabilityTelemetryTasks		\Microsoft\Windows\Sustainability\SustainabilityTelemetry	true
+System	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent FallBack	true
+	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent FallBack2016	true
+	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent LogOn	true
+	DisableOfficeTelemetryTasks		\Microsoft\Office\Office Telemetry Agent LogOn2016	true
