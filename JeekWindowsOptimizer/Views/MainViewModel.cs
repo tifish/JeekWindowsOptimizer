@@ -378,6 +378,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
             foreach (var item in ServiceItemManager.Items)
                 AddOptimizationItem(item);
 
+            await ScheduledTaskItemManager.Load();
+            foreach (var item in ScheduledTaskItemManager.Items)
+                AddOptimizationItem(item);
+
             await MicrosoftStore.Initialize();
             AddOptimizationItem(new PreventStartMenuFromSearchingMicrosoftStoreItem());
             await MicrosoftStoreItemManager.Load();

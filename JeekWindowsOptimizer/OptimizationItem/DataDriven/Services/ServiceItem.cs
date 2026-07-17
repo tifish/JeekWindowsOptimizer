@@ -1,4 +1,4 @@
-﻿namespace JeekWindowsOptimizer;
+namespace JeekWindowsOptimizer;
 
 public class ServiceItem : OptimizationItem
 {
@@ -6,8 +6,12 @@ public class ServiceItem : OptimizationItem
     public override string NameKey { get; }
     public override string DescriptionKey { get; }
 
-    private readonly string _serviceName;
-    private WindowsService.StartMode _restoreStartMode;
+    private readonly string _servicePattern;
+    private readonly bool _isPrefix;
+    private readonly WindowsService.StartMode _defaultStartMode;
+    private readonly Dictionary<string, WindowsService.StartMode> _restoreStartModes = new(
+        StringComparer.OrdinalIgnoreCase
+    );
 
     public ServiceItem(
         string groupNameKey,
@@ -23,14 +27,18 @@ public class ServiceItem : OptimizationItem
         DescriptionKey = descriptionKey;
         Category = category;
 
-        _serviceName = serviceName;
-
-        // Windows default start mode from the data file, used as the restore value
-        // when the service is already disabled at startup (original mode unknown).
-        _restoreStartMode = defaultStartMode;
+        _isPrefix = serviceName.EndsWith('*');
+        _servicePattern = _isPrefix ? serviceName[..^1] : serviceName;
+        _defaultStartMode = defaultStartMode;
     }
 
-    private WindowsService CreateService() => new(_serviceName);
+    private List<string> ResolveServiceNames()
+    {
+        if (_isPrefix)
+            return WindowsService.FindNamesByPrefix(_servicePattern);
+
+        return [_servicePattern];
+    }
 
     public Task<bool> ServiceExists()
     {
@@ -38,7 +46,10 @@ public class ServiceItem : OptimizationItem
             OptimizationExecutionAffinity.ExclusiveBackground,
             () =>
             {
-                using var service = CreateService();
+                if (_isPrefix)
+                    return WindowsService.FindNamesByPrefix(_servicePattern).Count > 0;
+
+                using var service = new WindowsService(_servicePattern);
                 return service.Exists();
             }
         );
@@ -46,21 +57,40 @@ public class ServiceItem : OptimizationItem
 
     public override async Task Initialize()
     {
-        var startMode = await OptimizationExecutionScheduler.RunAsync(
+        await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
             () =>
             {
-                using var service = CreateService();
-                return service.GetStartMode();
+                var names = ResolveServiceNames();
+                if (names.Count == 0)
+                {
+                    IsOptimized = false;
+                    return;
+                }
+
+                var allDisabled = true;
+                foreach (var name in names)
+                {
+                    using var service = new WindowsService(name);
+                    if (!service.Exists())
+                        continue;
+
+                    var startMode = service.GetStartMode();
+                    if (startMode == WindowsService.StartMode.Disabled)
+                    {
+                        if (!_restoreStartModes.ContainsKey(name))
+                            _restoreStartModes[name] = _defaultStartMode;
+                    }
+                    else
+                    {
+                        allDisabled = false;
+                        _restoreStartModes[name] = startMode;
+                    }
+                }
+
+                IsOptimized = allDisabled;
             }
         );
-        IsOptimized = startMode == WindowsService.StartMode.Disabled;
-
-        // Prefer the real current start mode as the restore value. If the service
-        // is already disabled we cannot read its original mode, so keep the Windows
-        // default supplied by the data file.
-        if (startMode != WindowsService.StartMode.Disabled)
-            _restoreStartMode = startMode;
     }
 
     protected override Task<bool> IsOptimizedChanging(bool value)
@@ -69,16 +99,39 @@ public class ServiceItem : OptimizationItem
             OptimizationExecutionAffinity.ExclusiveBackground,
             () =>
             {
-                using var service = CreateService();
-                if (value)
+                var names = ResolveServiceNames();
+                if (names.Count == 0)
+                    return false;
+
+                var ok = true;
+                foreach (var name in names)
                 {
-                    service.Stop(); // best-effort: the service may already be stopped
-                    return service.SetStartMode(WindowsService.StartMode.Disabled);
+                    using var service = new WindowsService(name);
+                    if (!service.Exists())
+                        continue;
+
+                    if (value)
+                    {
+                        var current = service.GetStartMode();
+                        if (current != WindowsService.StartMode.Disabled)
+                            _restoreStartModes[name] = current;
+
+                        service.Stop(); // best-effort: the service may already be stopped
+                        if (!service.SetStartMode(WindowsService.StartMode.Disabled))
+                            ok = false;
+                    }
+                    else
+                    {
+                        if (!_restoreStartModes.TryGetValue(name, out var restoreMode))
+                            restoreMode = _defaultStartMode;
+
+                        if (!service.SetStartMode(restoreMode))
+                            ok = false;
+                        service.Start(); // best-effort
+                    }
                 }
 
-                var restored = service.SetStartMode(_restoreStartMode);
-                service.Start(); // best-effort
-                return restored;
+                return ok;
             }
         );
     }

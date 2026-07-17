@@ -10,3 +10,9 @@ System	DisableDownloadedMapsManagerService		MapsBroker	Automatic
 System	DisableRetailDemoService		RetailDemo	Manual
 System	DisableFaxService		Fax	Manual
 System	DisableWSAIFabricService		WSAIFabricSvc	Manual
+System	DisableConnectedDevicesPlatformService		CDPSvc	Automatic
+System	DisableConnectedDevicesPlatformUserService		CDPUserSvc*	Automatic
+System	DisableXboxAuthManagerService	Personal	XblAuthManager	Manual
+System	DisableXboxGameSaveService	Personal	XblGameSave	Manual
+System	DisableXboxNetApiService	Personal	XboxNetApiSvc	Manual
+System	DisableXboxGipService	Personal	XboxGipSvc	Manual

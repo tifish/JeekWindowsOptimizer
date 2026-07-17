@@ -132,3 +132,8 @@ StartMenu	DisablePhoneLinkInStart		HKEY_CURRENT_USER\Software\Microsoft\Windows\
 StartMenu	DisableCortanaInSearch		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	AllowCortana	int	1	0	TRUE		TRUE		
 	DisableCortanaInSearch		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search	CortanaConsent	int	1	0	TRUE				
 Kernel	DisableNtfs8Dot3NameCreation		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem	NtfsDisable8dot3NameCreation	int	2	1				TRUE	
+System	DisableBackgroundApps		HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications	GlobalUserDisabled	int	0	1	TRUE				
+System	DisableAutomaticMaintenance		HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\Maintenance	MaintenanceDisabled	int	0	1	TRUE				
+System	DisablePowerThrottling		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling	PowerThrottlingOff	int	0	1	TRUE			TRUE	
+System	EnableHardwareAcceleratedGpuScheduling		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers	HwSchMode	int	1	2				TRUE	
+System	PreferProgramsProcessorScheduling		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\PriorityControl	Win32PrioritySeparation	int	24	2					

@@ -502,6 +502,42 @@ DisableFaxServiceName	Disable the Fax Service	禁用传真服务
 DisableFaxServiceDescription	The Fax service supports sending and receiving faxes. Disable it if you have no fax hardware.\nEffective immediately.	传真服务用于收发传真，没有传真设备可以禁用。\n立即生效。
 DisableHibernationName	Disable hibernation	关闭休眠
 DisableHibernationDescription	Hibernation reserves a hiberfil.sys file as large as your RAM and enables Fast Startup. Disabling it frees that disk space and makes shutdown cleaner. Not recommended for laptops that rely on hibernation.\nEffective immediately.	休眠会占用一个与内存大小相当的 hiberfil.sys 文件，并启用快速启动。关闭后可释放该磁盘空间，并让关机更彻底。依赖休眠的笔记本不建议关闭。\n立即生效。
+DisableBackgroundAppsName	Disable background apps	禁用应用后台运行
+DisableBackgroundAppsDescription	Stops UWP and Store apps from running in the background when closed, reducing idle CPU, memory, and network use.\nEffective immediately for most apps.	禁止 UWP/商店应用在关闭后继续在后台运行，降低空闲时的 CPU、内存和网络占用。\n对多数应用立即生效。
+DisableAutomaticMaintenanceName	Disable automatic maintenance	禁用自动维护
+DisableAutomaticMaintenanceDescription	Windows Automatic Maintenance runs diagnostics, updates, and other tasks during idle time and can cause sudden disk or CPU spikes. Disable it if you prefer to maintain the PC yourself.\nEffective immediately.	Windows 自动维护会在空闲时运行诊断、更新等任务，可能造成突然的磁盘或 CPU 高峰。若你自行维护电脑，可以禁用。\n立即生效。
+DisablePowerThrottlingName	Disable power throttling	禁用电源限流
+DisablePowerThrottlingDescription	Power throttling reduces CPU for background processes to save power. Disabling it keeps background work more responsive on desktops and plugged-in PCs.\nTakes effect after reboot.	电源限流会降低后台进程的 CPU 占用以省电。禁用后，台式机和插电电脑上的后台任务更跟手。\n重启生效。
+EnableHardwareAcceleratedGpuSchedulingName	Enable hardware-accelerated GPU scheduling	启用硬件加速 GPU 计划
+EnableHardwareAcceleratedGpuSchedulingDescription	Lets the GPU manage its own video memory scheduling (HAGS), which can lower latency in games and GPU-heavy apps. Requires a compatible GPU and driver; disable if you see instability.\nTakes effect after reboot.	让 GPU 自行管理显存调度（HAGS），可降低游戏和 GPU 密集应用的延迟。需要兼容的 GPU 与驱动；若出现不稳定可关闭。\n重启生效。
+PreferProgramsProcessorSchedulingName	Prefer programs for processor scheduling	处理器计划优先程序
+PreferProgramsProcessorSchedulingDescription	Sets Win32PrioritySeparation so foreground programs get higher CPU priority than background services (the usual desktop default). Useful if the PC was switched to “Background services”.\nApplies to new processes.	将 Win32PrioritySeparation 设为前台程序优先于后台服务（桌面系统常见默认）。若曾改为“后台服务”优先，可用此项恢复。\n对新进程生效。
+DisableConnectedDevicesPlatformServiceName	Disable the Connected Devices Platform Service	禁用连接设备平台服务
+DisableConnectedDevicesPlatformServiceDescription	CDPSvc supports nearby sharing, cross-device experiences, and related background connectivity. Disable it if you do not use those features.\nEffective immediately.	CDPSvc 支持附近共享、跨设备体验及相关后台连接。不使用这些功能可以禁用。\n立即生效。
+DisableConnectedDevicesPlatformUserServiceName	Disable the Connected Devices Platform User Service	禁用连接设备平台用户服务
+DisableConnectedDevicesPlatformUserServiceDescription	CDPUserSvc is the per-user companion to CDPSvc (name may include a suffix). Disabling it reduces cross-device and sharing background work for the current user sessions.\nEffective immediately.	CDPUserSvc 是 CDPSvc 的每用户配套服务（名称可能带后缀）。禁用后可减少当前用户会话的跨设备与共享后台工作。\n立即生效。
+DisableXboxAuthManagerServiceName	Disable the Xbox Live Auth Manager Service	禁用 Xbox Live 身份验证管理器服务
+DisableXboxAuthManagerServiceDescription	XblAuthManager handles Xbox Live sign-in. Disable it if you do not use Xbox apps, Game Pass, or Xbox PC games.\nEffective immediately.	XblAuthManager 负责 Xbox Live 登录。不使用 Xbox 应用、Game Pass 或 Xbox PC 游戏可以禁用。\n立即生效。
+DisableXboxGameSaveServiceName	Disable the Xbox Live Game Save Service	禁用 Xbox Live 游戏保存服务
+DisableXboxGameSaveServiceDescription	XblGameSave syncs Xbox game saves to the cloud. Disable it if you do not use Xbox cloud saves.\nEffective immediately.	XblGameSave 将 Xbox 游戏存档同步到云端。不使用 Xbox 云存档可以禁用。\n立即生效。
+DisableXboxNetApiServiceName	Disable the Xbox Live Networking Service	禁用 Xbox Live 网络服务
+DisableXboxNetApiServiceDescription	XboxNetApiSvc provides Xbox Live networking support. Disable it if you do not use Xbox online features.\nEffective immediately.	XboxNetApiSvc 提供 Xbox Live 网络支持。不使用 Xbox 联机功能可以禁用。\n立即生效。
+DisableXboxGipServiceName	Disable the Xbox Accessory Management Service	禁用 Xbox 配件管理服务
+DisableXboxGipServiceDescription	XboxGipSvc manages Xbox game controllers and accessories. Disable it if you do not use Xbox input devices.\nEffective immediately.	XboxGipSvc 管理 Xbox 手柄与配件。不使用 Xbox 输入设备可以禁用。\n立即生效。
+DisableApplicationExperienceTasksName	Disable Application Experience scheduled tasks	禁用应用程序兼容性相关计划任务
+DisableApplicationExperienceTasksDescription	Disables Microsoft Compatibility Appraiser and related Application Experience tasks that scan software and send compatibility telemetry in the background.\nEffective immediately.	禁用 Microsoft Compatibility Appraiser 等应用程序体验计划任务，减少后台扫描软件与上报兼容性遥测。\n立即生效。
+DisableCustomerExperienceTasksName	Disable Customer Experience Improvement scheduled tasks	禁用客户体验改善计划任务
+DisableCustomerExperienceTasksDescription	Disables CEIP/SQM related scheduled tasks (Consolidator, UsbCeip, Autochk Proxy, etc.) that collect and upload usage data.\nEffective immediately.	禁用 CEIP/SQM 相关计划任务（Consolidator、UsbCeip、Autochk Proxy 等），减少使用数据的收集与上传。\n立即生效。
+DisableDiskDiagnosticTasksName	Disable Disk Diagnostic scheduled tasks	禁用磁盘诊断计划任务
+DisableDiskDiagnosticTasksDescription	Disables Windows Disk Diagnostic data collector and resolver tasks that run scheduled disk health checks in the background.\nEffective immediately.	禁用 Windows 磁盘诊断数据收集与解析计划任务，减少后台磁盘健康检查。\n立即生效。
+DisableMapsScheduledTasksName	Disable Maps scheduled tasks	禁用地图计划任务
+DisableMapsScheduledTasksDescription	Disables Maps toast and update tasks used by Windows Maps offline data and notifications.\nEffective immediately.	禁用 Windows 地图用于离线数据与通知的 toast/更新计划任务。\n立即生效。
+DisableFeedbackScheduledTasksName	Disable feedback scheduled tasks	禁用反馈计划任务
+DisableFeedbackScheduledTasksDescription	Disables Feedback Hub / SIUF tasks that prompt for satisfaction surveys and download feedback scenarios.\nEffective immediately.	禁用反馈中心/SIUF 相关计划任务，减少满意度调查提示与反馈场景下载。\n立即生效。
+DisableFamilySafetyScheduledTasksName	Disable Family Safety scheduled tasks	禁用家庭安全计划任务
+DisableFamilySafetyScheduledTasksDescription	Disables Family Safety monitor/refresh/upload tasks. Only for accounts that do not use Microsoft Family Safety.\nEffective immediately.	禁用家庭安全监视/刷新/上传计划任务。仅适用于不使用 Microsoft 家庭安全的帐户。\n立即生效。
+DisableWerQueueReportingTaskName	Disable Windows Error Reporting queue task	禁用 Windows 错误报告队列任务
+DisableWerQueueReportingTaskDescription	Disables the scheduled task that uploads queued Windows Error Reporting data. Pairs well with disabling the WER service.\nEffective immediately.	禁用用于上传 Windows 错误报告队列数据的计划任务。可与禁用 WER 服务一起使用。\n立即生效。
 LanguageSystem	Follow system	跟随系统
 Settings	Settings	设置
 StorageMode	Storage mode	存储模式
