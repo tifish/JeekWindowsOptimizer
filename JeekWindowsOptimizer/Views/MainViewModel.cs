@@ -350,9 +350,16 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
             _suppressOptimizationRefresh = true;
 
+            // Desktop-only: power performance tweaks are not suitable for laptops.
+            var hasBattery = await Battery.HasBatteryAsync();
+
             await RegistryItemManager.Load();
             foreach (var item in RegistryItemManager.Items)
+            {
+                if (hasBattery && item.NameKey is "DisablePowerThrottlingName")
+                    continue;
                 AddOptimizationItem(item);
+            }
 
             await DriverItemManager.Load();
             foreach (var item in DriverItemManager.Items)
@@ -366,7 +373,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new UninstallOneDriveItem());
             AddOptimizationItem(new WindowsActivatorItem());
             AddOptimizationItem(new WindowsUpdateItem());
-            if (!await Battery.HasBatteryAsync())
+            if (!hasBattery)
                 AddOptimizationItem(new BestPerformancePowerModeItem());
             AddOptimizationItem(new SetIdleTimeItem());
             AddOptimizationItem(new DisableSystemSounds());
