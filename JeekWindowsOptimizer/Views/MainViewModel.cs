@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Jeek.Avalonia.Localization;
@@ -1134,6 +1135,29 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         if (result != ButtonResult.Ok)
             return;
+
+        StatusMessage = string.Format(Localizer.Get("UpdateDownloading"), 0);
+        var staged = await AutoUpdate.DownloadAndStageAsync(percent =>
+            Dispatcher.UIThread.Post(() =>
+                StatusMessage = string.Format(Localizer.Get("UpdateDownloading"), (int)percent)
+            )
+        );
+
+        if (!staged)
+        {
+            await ShowUpdateDialogAsync(
+                Localizer.Get("UpdateFailedTitle"),
+                string.Format(
+                    Localizer.Get("UpdateDownloadFailedMessage"),
+                    string.IsNullOrEmpty(AutoUpdate.FailureReason)
+                        ? "unknown"
+                        : AutoUpdate.FailureReason
+                ),
+                ButtonEnum.Ok,
+                MsBox.Avalonia.Enums.Icon.Warning
+            );
+            return;
+        }
 
         if (!AutoUpdate.LaunchUpdate())
         {

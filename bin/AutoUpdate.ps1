@@ -1,15 +1,14 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 $appName = "JeekWindowsOptimizer"
 
 if ($args.Count -eq 0) {
     Exit 1
 }
 
-$downloadUrl = $args[0]
+# The app has already downloaded, extracted and validated the update package.
+$stageDir = $args[0]
 $installDir = $PSScriptRoot
-$packPath = Join-Path $env:TEMP "$appName-update.zip"
-$stageRoot = Join-Path $env:TEMP "$appName-update"
-$stageDir = Join-Path $stageRoot "package"
+$stageRoot = Split-Path -Parent $stageDir
 
 $Host.UI.RawUI.WindowTitle = "$appName Updater"
 
@@ -22,7 +21,13 @@ Write-Host "when the update is finished."
 Write-Host ""
 
 try {
-    Write-Host "[1/5] Waiting for $appName to exit..."
+    if (-not (Test-Path -LiteralPath (Join-Path $stageDir "$appName.exe"))) {
+        Write-Host "Staged update package is missing $appName.exe." -ForegroundColor Red
+        Start-Sleep -Seconds 5
+        Exit 1
+    }
+
+    Write-Host "[1/3] Waiting for $appName to exit..."
     Get-Process -Name $appName -ErrorAction SilentlyContinue | ForEach-Object {
         try {
             $_.WaitForExit()
@@ -30,33 +35,7 @@ try {
         catch {}
     }
 
-    Write-Host "[2/5] Preparing temporary folders..."
-    Remove-Item -Recurse -Force -LiteralPath $stageRoot -ErrorAction SilentlyContinue
-    Remove-Item -Force -LiteralPath $packPath -ErrorAction SilentlyContinue
-    New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
-
-    Write-Host "[3/5] Downloading update package..."
-    Write-Host "      $downloadUrl"
-    $client = New-Object System.Net.WebClient
-    $client.Headers.Add("User-Agent", "$appName-Updater/1.0")
-    $client.DownloadFile($downloadUrl, $packPath)
-
-    if (-not (Test-Path -LiteralPath $packPath)) {
-        Write-Host "Download failed." -ForegroundColor Red
-        Start-Sleep -Seconds 5
-        Exit 1
-    }
-
-    Write-Host "[4/5] Extracting and installing files..."
-    Expand-Archive -Path $packPath -DestinationPath $stageDir -Force
-
-    $stagedExe = Join-Path $stageDir "$appName.exe"
-    if (-not (Test-Path -LiteralPath $stagedExe)) {
-        Write-Host "Update package is missing $appName.exe." -ForegroundColor Red
-        Start-Sleep -Seconds 5
-        Exit 1
-    }
-
+    Write-Host "[2/3] Installing files..."
     # Preserve portable user data, logs, and the updater itself.
     $preserveNames = @("Config", "Logs", "AutoUpdate.ps1")
     Get-ChildItem -LiteralPath $installDir -Force -ErrorAction SilentlyContinue |
@@ -66,9 +45,8 @@ try {
     Copy-Item -Path (Join-Path $stageDir "*") -Destination $installDir -Recurse -Force
 
     Remove-Item -Recurse -Force -LiteralPath $stageRoot -ErrorAction SilentlyContinue
-    Remove-Item -Force -LiteralPath $packPath -ErrorAction SilentlyContinue
 
-    Write-Host "[5/5] Restarting $appName..."
+    Write-Host "[3/3] Restarting $appName..."
     $exePath = Join-Path $installDir "$appName.exe"
     if (Test-Path -LiteralPath $exePath) {
         Start-Process -FilePath $exePath
