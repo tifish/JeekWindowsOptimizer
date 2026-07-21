@@ -4,12 +4,19 @@ using Jeek.Avalonia.Localization;
 
 namespace JeekWindowsOptimizer;
 
-public partial class OptimizationGroup(string nameKey, OptimizationItem[] items) : ObservableObject
+public partial class OptimizationGroup : ObservableObject
 {
-    public string NameKey => nameKey;
+    public OptimizationGroup(string nameKey, OptimizationItem[] items)
+    {
+        NameKey = nameKey;
+        Items = [.. items];
+        IsExpanded = true;
+    }
+
+    public string NameKey { get; }
     public string Name => Localizer.Get(NameKey);
 
-    public ObservableCollection<OptimizationItem> Items { get; } = [.. items];
+    public ObservableCollection<OptimizationItem> Items { get; }
 
     /// <summary>
     /// Whether this group's expander is open in the content pane.

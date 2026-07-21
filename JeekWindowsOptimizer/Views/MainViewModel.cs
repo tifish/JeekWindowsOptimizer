@@ -719,7 +719,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void ApplyOptimizationExpandedState(OptimizationGroup group)
     {
         group.IsExpanded =
-            _optimizationGroupExpanded.TryGetValue(group.NameKey, out var expanded) && expanded;
+            !_optimizationGroupExpanded.TryGetValue(group.NameKey, out var expanded) || expanded;
     }
 
     private void CaptureToolExpandedState()
@@ -731,7 +731,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void ApplyToolExpandedState(ToolGroup group)
     {
         group.IsExpanded =
-            _toolGroupExpanded.TryGetValue(group.NameKey, out var expanded) && expanded;
+            !_toolGroupExpanded.TryGetValue(group.NameKey, out var expanded) || expanded;
     }
 
     private void RebuildOptimizationGroupNav()
