@@ -1,4 +1,5 @@
-﻿using Avalonia;
+﻿using System.Diagnostics;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
@@ -19,6 +20,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
     private const string ApplicationTitle = "Jeek Windows Optimizer";
+    private const string ProjectHomepageUrl = "https://github.com/tifish/JeekWindowsOptimizer";
     private const int ToolsTabIndex = 3;
     private bool _uncheckedOptimizationItemsDirty;
     private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
@@ -1037,6 +1039,19 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AutoUpdateInterval.Weekly => TimeSpan.FromDays(7),
             _ => TimeSpan.FromDays(1),
         };
+    }
+
+    [RelayCommand]
+    private void OpenProjectHomepage()
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(ProjectHomepageUrl) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Log.LogError(ex, "Failed to open project homepage");
+        }
     }
 
     private bool CanCheckForUpdates()

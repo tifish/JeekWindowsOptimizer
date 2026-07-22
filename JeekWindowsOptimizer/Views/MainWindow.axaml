@@ -311,6 +311,9 @@
                             <MenuItem
                                 Header="{Binding CurrentVersionMenuHeader}"
                                 IsEnabled="False" />
+                            <MenuItem
+                                Command="{Binding OpenProjectHomepageCommand}"
+                                Header="{l:Localize ProjectHomepage}" />
                             <Separator />
                             <MenuItem
                                 Command="{Binding CheckForUpdatesCommand}"
