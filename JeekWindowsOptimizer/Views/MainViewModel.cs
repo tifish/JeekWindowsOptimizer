@@ -498,7 +498,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 AddOptimizationItem(item);
 
             await MicrosoftStore.Initialize();
-            AddOptimizationItem(new PreventStartMenuFromSearchingMicrosoftStoreItem());
             await MicrosoftStoreItemManager.Load();
             foreach (var item in MicrosoftStoreItemManager.Items)
                 AddOptimizationItem(item);
