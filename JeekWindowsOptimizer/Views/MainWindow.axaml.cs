@@ -141,7 +141,7 @@ public partial class MainWindow : Window
             if (string.IsNullOrEmpty(path))
                 return;
 
-            AppSettingsStore.SwitchStorageMode(StorageMode.Custom, path);
+            await vm.SwitchStorageLocationAsync(StorageLocation.CustomDirectory, path);
         }
         catch (Exception ex)
         {

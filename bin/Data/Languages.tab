@@ -595,6 +595,9 @@ StorageModeDefault	Default (Roaming)	默认（漫游）
 StorageModePortable	Portable	便携
 StorageModeCustom	Custom…	自定义…
 StorageModeCustomPickerTitle	Select a folder to store settings	选择保存设置的文件夹
+StorageSwitchTitle	Switch storage mode	切换存储模式
+StorageSwitchMoveFilesMessage	Move the existing settings files to the new location?\nChoose No to keep the old files and use the new location directly.	是否将现有设置文件移动到新位置？\n选择“否”将保留旧文件，直接使用新位置存储。
+StorageSwitchPortableMustMoveMessage	Leaving portable mode requires moving the settings files, otherwise the app will switch back to portable mode on next start. Move the files and continue?	离开便携模式必须移动设置文件，否则下次启动会自动变回便携模式。是否移动文件并继续？
 UpdateInterval	Check interval	检查间隔
 UpdateIntervalEvery6Hours	Every 6 hours	每 6 小时
 UpdateIntervalDaily	Daily	每天

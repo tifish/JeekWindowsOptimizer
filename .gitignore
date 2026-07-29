@@ -2,6 +2,7 @@
 /.idea
 /.vscode
 obj/
+tools/*/bin/
 *.user
 /bin/Libs
 /bin/Logs

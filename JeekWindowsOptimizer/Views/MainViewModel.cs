@@ -48,6 +48,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public MainViewModel()
     {
         Localizer.LanguageChanged += OnLanguageChanged;
+        AppSettingsStore.RoamingSettingsReloaded += OnRoamingSettingsReloaded;
         RefreshLanguageMenuCheckState();
         RefreshThemeMenuCheckState();
         RefreshUpdateIntervalMenuCheckState();
@@ -56,6 +57,21 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IsAutoUpdateEnabled = AppSettingsStore.Roaming.AutoUpdate;
         _isLoadingAutoUpdateSetting = false;
         ShowOnlyNotOptimized = AppSettingsStore.Roaming.ShowOnlyNotOptimized;
+    }
+
+    private void OnRoamingSettingsReloaded()
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            RefreshLanguageMenuCheckState();
+            RefreshThemeMenuCheckState();
+            RefreshUpdateIntervalMenuCheckState();
+            RefreshStorageModeMenuCheckState();
+            _isLoadingAutoUpdateSetting = true;
+            IsAutoUpdateEnabled = AppSettingsStore.Roaming.AutoUpdate;
+            _isLoadingAutoUpdateSetting = false;
+            ShowOnlyNotOptimized = AppSettingsStore.Roaming.ShowOnlyNotOptimized;
+        });
     }
 
     public string WindowTitle
@@ -157,10 +173,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public void RefreshStorageModeMenuCheckState()
     {
-        var mode = AppSettingsStore.EffectiveStorageMode;
-        IsStorageModeDefaultChecked = mode == StorageMode.Default;
-        IsStorageModePortableChecked = mode == StorageMode.Portable;
-        IsStorageModeCustomChecked = mode == StorageMode.Custom;
+        var location = AppSettingsStore.EffectiveStorageLocation;
+        IsStorageModeDefaultChecked = location == StorageLocation.UserDirectory;
+        IsStorageModePortableChecked = location == StorageLocation.ProgramDirectory;
+        IsStorageModeCustomChecked = location == StorageLocation.CustomDirectory;
     }
 
     private void OnLanguageChanged(object? sender, EventArgs e)
@@ -1304,17 +1320,79 @@ public partial class MainViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void SwitchToDefaultStorage()
+    private Task SwitchToDefaultStorage()
     {
-        AppSettingsStore.SwitchStorageMode(StorageMode.Default);
-        RefreshStorageModeMenuCheckState();
+        return SwitchStorageLocationAsync(StorageLocation.UserDirectory);
     }
 
     [RelayCommand]
-    private void SwitchToPortableStorage()
+    private Task SwitchToPortableStorage()
     {
-        AppSettingsStore.SwitchStorageMode(StorageMode.Portable);
-        RefreshStorageModeMenuCheckState();
+        return SwitchStorageLocationAsync(StorageLocation.ProgramDirectory);
+    }
+
+    /// <summary>
+    ///     Switch the roaming settings storage location, asking whether to move the
+    ///     existing files. Leaving portable mode always moves them, because a
+    ///     Config folder next to the executable forces portable mode back on at
+    ///     the next start.
+    /// </summary>
+    public async Task SwitchStorageLocationAsync(
+        StorageLocation newLocation,
+        string? customDir = null
+    )
+    {
+        try
+        {
+            var current = AppSettingsStore.EffectiveStorageLocation;
+            var isSameLocation =
+                newLocation == current
+                && (
+                    newLocation != StorageLocation.CustomDirectory
+                    || string.Equals(
+                        customDir,
+                        AppSettingsStore.Machine.CustomStoragePath,
+                        StringComparison.OrdinalIgnoreCase
+                    )
+                );
+            if (isSameLocation)
+                return;
+
+            bool moveFiles;
+            if (current == StorageLocation.ProgramDirectory)
+            {
+                var result = await ShowUpdateDialogAsync(
+                    Localizer.Get("StorageSwitchTitle"),
+                    Localizer.Get("StorageSwitchPortableMustMoveMessage"),
+                    ButtonEnum.OkCancel,
+                    MsBox.Avalonia.Enums.Icon.Question
+                );
+                if (result != ButtonResult.Ok)
+                    return;
+
+                moveFiles = true;
+            }
+            else
+            {
+                var result = await ShowUpdateDialogAsync(
+                    Localizer.Get("StorageSwitchTitle"),
+                    Localizer.Get("StorageSwitchMoveFilesMessage"),
+                    ButtonEnum.YesNo,
+                    MsBox.Avalonia.Enums.Icon.Question
+                );
+                moveFiles = result == ButtonResult.Yes;
+            }
+
+            AppSettingsStore.SwitchStorageLocation(newLocation, customDir, moveFiles);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogError(ex, $"Failed to switch storage location");
+        }
+        finally
+        {
+            RefreshStorageModeMenuCheckState();
+        }
     }
 
     private bool CanClearSearch()
@@ -1353,6 +1431,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         Localizer.LanguageChanged -= OnLanguageChanged;
+        AppSettingsStore.RoamingSettingsReloaded -= OnRoamingSettingsReloaded;
         _autoUpdateCancellation.Cancel();
         _autoUpdateCancellation.Dispose();
     }

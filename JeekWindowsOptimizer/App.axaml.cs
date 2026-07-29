@@ -5,8 +5,10 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
+using Avalonia.Threading;
 using Jeek.Avalonia.Localization;
 using JeekTools;
+using JeekWindowsOptimizer.Mcp;
 using JeekWindowsOptimizer.Views;
 using Microsoft.Extensions.Logging;
 
@@ -37,14 +39,18 @@ public class App : Application
         );
         AppSettingsStore.Load();
         ApplyStoredSettings();
+        AppSettingsStore.RoamingSettingsReloaded += () =>
+            Dispatcher.UIThread.Post(ApplyStoredSettings);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow { DataContext = new MainViewModel() };
             PositionMainWindow(desktop.MainWindow);
+            desktop.Exit += (_, _) => DebugMcpServer.Stop();
         }
 
         ApplyWin11FluentControlAccentPalettes();
+        DebugMcpServer.Start();
 
         base.OnFrameworkInitializationCompleted();
     }
@@ -53,8 +59,9 @@ public class App : Application
     {
         Localizer.Language = AppSettingsStore.ResolveEffectiveLanguage(Localizer.Languages);
 
-        if (AppSettingsStore.TryGetThemeVariant(out var themeVariant))
-            RequestedThemeVariant = themeVariant;
+        RequestedThemeVariant = AppSettingsStore.TryGetThemeVariant(out var themeVariant)
+            ? themeVariant
+            : ThemeVariant.Default;
     }
 
     private void ApplyWin11FluentControlAccentPalettes()
