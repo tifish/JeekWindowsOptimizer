@@ -1,5 +1,5 @@
 GroupName	Name	Category	Kind	Value
-Kernel	KingsoftAntivirus	Antivirus	Driver	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
+ThirdParty	KingsoftAntivirus	Antivirus	Driver	C:\WINDOWS\system32\Drivers\KAVBootC64.sys
 	KingsoftAntivirus		Driver	c:\program files (x86)\kingsoft\kingsoft antivirus\security\kxescan\kdhacker64.sys
 	KingsoftAntivirus		Driver	C:\WINDOWS\system32\drivers\kisknl.sys
 	KingsoftAntivirus		Driver	c:\program files (x86)\kingsoft\kingsoft antivirus\security\ksde\kisnetflt64.sys
@@ -10,7 +10,7 @@ Kernel	KingsoftAntivirus	Antivirus	Driver	C:\WINDOWS\system32\Drivers\KAVBootC64
 	KingsoftAntivirus		Service	kxescore
 	KingsoftAntivirus		Service	KWatchSvc
 	KingsoftAntivirus		Service	KSDE1.0.0.1003
-Kernel	HuoRongSecurity	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
+ThirdParty	HuoRongSecurity	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
 	HuoRongSecurity		Driver	C:\WINDOWS\system32\DRIVERS\hrwfpdrv.sys
 	HuoRongSecurity		Driver	C:\WINDOWS\system32\DRIVERS\sysdiag.sys
 	HuoRongSecurity		Driver	C:\WINDOWS\system32\DRIVERS\nxeng.sys
@@ -18,7 +18,7 @@ Kernel	HuoRongSecurity	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\hrdevmon.sys
 	HuoRongSecurity		Service	HipsDaemon
 	HuoRongSecurity		Service	wsctrlsvc
 	HuoRongSecurity		Service	HrAppXSrv
-Kernel	360Antivirus	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys
+ThirdParty	360Antivirus	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys
 	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360Box64.sys
 	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360FsFlt.sys
 	360Antivirus		Driver	C:\WINDOWS\system32\DRIVERS\360Hvm64.sys
@@ -32,7 +32,7 @@ Kernel	360Antivirus	Antivirus	Driver	C:\WINDOWS\system32\DRIVERS\360AvFlt.sys
 	360Antivirus		Service	360sd
 	360Antivirus		Service	QHActiveDefense
 	360Antivirus		Service	QHSafeMainSvc
-Kernel	DASEDR	Antivirus	Driver	C:\windows\SYSTEM32\drivers\nfw_*.sys
+ThirdParty	DASEDR	Antivirus	Driver	C:\windows\SYSTEM32\drivers\nfw_*.sys
 	DASEDR		Driver	C:\windows\SYSTEM32\drivers\sysmon?.sys
 	DASEDR		Driver	C:\windows\SYSTEM32\drivers\dasnfw.sys
 	DASEDR		Driver	C:\Windows\ShellExt.dll
@@ -41,7 +41,7 @@ Kernel	DASEDR	Antivirus	Driver	C:\windows\SYSTEM32\drivers\nfw_*.sys
 	DASEDR		Driver	C:\Program Files (x86)\DBAppSecurity
 	DASEDR		Service	DASAgent
 	DASEDR		Service	dasnfw
-Kernel	YunTianEDR	Antivirus	Driver	C:\Windows\sedisk.sys
+ThirdParty	YunTianEDR	Antivirus	Driver	C:\Windows\sedisk.sys
 	YunTianEDR		Driver	C:\Windows\SYSTEM32\ProcMon.sys
 	YunTianEDR		Driver	C:\windows\SYSTEM32\vgwdrv.sys
 	YunTianEDR		Driver	C:\Windows\SYSTEM32\ytdisk.sys
@@ -63,7 +63,7 @@ Kernel	YunTianEDR	Antivirus	Driver	C:\Windows\sedisk.sys
 	YunTianEDR		Service	YtSvc
 	YunTianEDR		Service	YtMiniFilter
 	YunTianEDR		Service	MANC
-Kernel	RisingAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\esmshield.sys
+ThirdParty	RisingAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\esmshield.sys
 	RisingAntivirus		Driver	C:\Program Files (x86)\Rising\REC\ep\hookesm.sys
 	RisingAntivirus		Driver	C:\Program Files (x86)\Rising\REC\xav\rsutils.sys
 	RisingAntivirus		Driver	C:\Program Files\Rising
@@ -71,7 +71,7 @@ Kernel	RisingAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\esmshield.sy
 	RisingAntivirus		Service	RsMain
 	RisingAntivirus		Service	rsmain
 	RisingAntivirus		Service	RsWatchDog
-Kernel	TencentPCManager	Antivirus	Driver	C:\WINDOWS\system32\drivers\qmbsecx64.sys
+ThirdParty	TencentPCManager	Antivirus	Driver	C:\WINDOWS\system32\drivers\qmbsecx64.sys
 	TencentPCManager		Driver	C:\WINDOWS\system32\Drivers\TAOAcceleratorEx64_ev.sys
 	TencentPCManager		Driver	C:\WINDOWS\system32\Drivers\TAOKernelEx64_ev.sys
 	TencentPCManager		Driver	C:\WINDOWS\system32\Drivers\TFsFltX64_ev.sys
@@ -82,7 +82,7 @@ Kernel	TencentPCManager	Antivirus	Driver	C:\WINDOWS\system32\drivers\qmbsecx64.s
 	TencentPCManager		Service	QQPCTRV
 	TencentPCManager		Service	QQPCMgrUpdateSvc
 	TencentPCManager		Service	QPCore
-Kernel	KasperskyAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\klif.sys
+ThirdParty	KasperskyAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\klif.sys
 	KasperskyAntivirus		Driver	C:\WINDOWS\system32\drivers\klflt.sys
 	KasperskyAntivirus		Driver	C:\WINDOWS\system32\drivers\klim6.sys
 	KasperskyAntivirus		Driver	C:\WINDOWS\system32\drivers\klbackupdisk.sys
@@ -92,7 +92,7 @@ Kernel	KasperskyAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\klif.sys
 	KasperskyAntivirus		Service	AVP
 	KasperskyAntivirus		Service	klnagent
 	KasperskyAntivirus		Service	klif
-Kernel	AvastAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\aswSnx.sys
+ThirdParty	AvastAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\aswSnx.sys
 	AvastAntivirus		Driver	C:\WINDOWS\system32\drivers\aswSP.sys
 	AvastAntivirus		Driver	C:\WINDOWS\system32\drivers\aswRdr2.sys
 	AvastAntivirus		Driver	C:\WINDOWS\system32\drivers\aswStm.sys
@@ -103,7 +103,7 @@ Kernel	AvastAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\aswSnx.sys
 	AvastAntivirus		Service	aswToolsSvc
 	AvastAntivirus		Service	AvastWscReporter
 	AvastAntivirus		Service	aswBcc
-Kernel	AvgAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avgidsdriverx.sys
+ThirdParty	AvgAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avgidsdriverx.sys
 	AvgAntivirus		Driver	C:\WINDOWS\system32\drivers\avgldx64.sys
 	AvgAntivirus		Driver	C:\WINDOWS\system32\drivers\avgmfx64.sys
 	AvgAntivirus		Driver	C:\Program Files\AVG
@@ -111,7 +111,7 @@ Kernel	AvgAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avgidsdriverx.s
 	AvgAntivirus		Service	AVG Antivirus
 	AvgAntivirus		Service	avgwd
 	AvgAntivirus		Service	AVGSvc
-Kernel	BitdefenderAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\bdsvm.sys
+ThirdParty	BitdefenderAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\bdsvm.sys
 	BitdefenderAntivirus		Driver	C:\WINDOWS\system32\drivers\bdselfpr.sys
 	BitdefenderAntivirus		Driver	C:\WINDOWS\system32\drivers\atc.sys
 	BitdefenderAntivirus		Driver	C:\WINDOWS\system32\drivers\gzflt.sys
@@ -121,7 +121,7 @@ Kernel	BitdefenderAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\bdsvm.s
 	BitdefenderAntivirus		Service	bdredline
 	BitdefenderAntivirus		Service	BDUpdateService
 	BitdefenderAntivirus		Service	EPSecurityService
-Kernel	EsetAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\eamonm.sys
+ThirdParty	EsetAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\eamonm.sys
 	EsetAntivirus		Driver	C:\WINDOWS\system32\drivers\ehdrv.sys
 	EsetAntivirus		Driver	C:\WINDOWS\system32\drivers\epfwwfp.sys
 	EsetAntivirus		Driver	C:\WINDOWS\system32\drivers\eamonm.sys
@@ -130,7 +130,7 @@ Kernel	EsetAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\eamonm.sys
 	EsetAntivirus		Service	ekrn
 	EsetAntivirus		Service	eamonm
 	EsetAntivirus		Service	ekrnEpfw
-Kernel	McAfeeAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mfehidk.sys
+ThirdParty	McAfeeAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mfehidk.sys
 	McAfeeAntivirus		Driver	C:\WINDOWS\system32\drivers\mfefirek.sys
 	McAfeeAntivirus		Driver	C:\WINDOWS\system32\drivers\mfeelamk.sys
 	McAfeeAntivirus		Driver	C:\WINDOWS\system32\drivers\mfencbdc.sys
@@ -141,7 +141,7 @@ Kernel	McAfeeAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mfehidk.sys
 	McAfeeAntivirus		Service	mfemms
 	McAfeeAntivirus		Service	mfevtp
 	McAfeeAntivirus		Service	mfefire
-Kernel	NortonAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BHDrvx64.sys
+ThirdParty	NortonAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BHDrvx64.sys
 	NortonAntivirus		Driver	C:\WINDOWS\system32\drivers\SYMEFASI64.sys
 	NortonAntivirus		Driver	C:\WINDOWS\system32\drivers\SYMEVENT64x86.sys
 	NortonAntivirus		Driver	C:\WINDOWS\system32\drivers\SymDS64.sys
@@ -152,7 +152,7 @@ Kernel	NortonAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BHDrvx64.sys
 	NortonAntivirus		Service	NortonSecurity
 	NortonAntivirus		Service	ccSvcHst
 	NortonAntivirus		Service	NS
-Kernel	MalwarebytesAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mbam.sys
+ThirdParty	MalwarebytesAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mbam.sys
 	MalwarebytesAntivirus		Driver	C:\WINDOWS\system32\drivers\MBAMSwissArmy.sys
 	MalwarebytesAntivirus		Driver	C:\WINDOWS\system32\drivers\mbamchameleon.sys
 	MalwarebytesAntivirus		Driver	C:\WINDOWS\system32\drivers\farflt.sys
@@ -161,7 +161,7 @@ Kernel	MalwarebytesAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\mbam.s
 	MalwarebytesAntivirus		Service	MBAMService
 	MalwarebytesAntivirus		Service	MBAMProtection
 	MalwarebytesAntivirus		Service	MBAMWebProtection
-Kernel	TrendMicroAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\tmcomm.sys
+ThirdParty	TrendMicroAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\tmcomm.sys
 	TrendMicroAntivirus		Driver	C:\WINDOWS\system32\drivers\tmevtmgr.sys
 	TrendMicroAntivirus		Driver	C:\WINDOWS\system32\drivers\tmactmon.sys
 	TrendMicroAntivirus		Driver	C:\WINDOWS\system32\drivers\tmebc64.sys
@@ -171,7 +171,7 @@ Kernel	TrendMicroAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\tmcomm.s
 	TrendMicroAntivirus		Service	ntrtscan
 	TrendMicroAntivirus		Service	TmPfw
 	TrendMicroAntivirus		Service	TMBMServer
-Kernel	AviraAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avipbb.sys
+ThirdParty	AviraAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avipbb.sys
 	AviraAntivirus		Driver	C:\WINDOWS\system32\drivers\avkmgr.sys
 	AviraAntivirus		Driver	C:\WINDOWS\system32\drivers\avgntflt.sys
 	AviraAntivirus		Driver	C:\Program Files\Avira
@@ -179,14 +179,14 @@ Kernel	AviraAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\avipbb.sys
 	AviraAntivirus		Service	Avira.ServiceHost
 	AviraAntivirus		Service	AntiVirService
 	AviraAntivirus		Service	Avira.ShadowCopyService
-Kernel	Security2345	Antivirus	Driver	C:\WINDOWS\system32\drivers\2345NetFirewall.sys
+ThirdParty	Security2345	Antivirus	Driver	C:\WINDOWS\system32\drivers\2345NetFirewall.sys
 	Security2345		Driver	C:\WINDOWS\system32\drivers\2345FsFlt.sys
 	Security2345		Driver	C:\Program Files (x86)\2345Soft\2345PCSafe
 	Security2345		Driver	C:\Program Files\2345Soft\2345PCSafe
 	Security2345		Service	2345SafeSvc
 	Security2345		Service	2345SafeTray
 	Security2345		Service	2345ScoutSvc
-Kernel	BaiduAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BDsdKit.sys
+ThirdParty	BaiduAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BDsdKit.sys
 	BaiduAntivirus		Driver	C:\WINDOWS\system32\drivers\BDFileDefend.sys
 	BaiduAntivirus		Driver	C:\Program Files (x86)\Baidu\BaiduSd
 	BaiduAntivirus		Driver	C:\Program Files\Baidu\BaiduSd
@@ -194,7 +194,7 @@ Kernel	BaiduAntivirus	Antivirus	Driver	C:\WINDOWS\system32\drivers\BDsdKit.sys
 	BaiduAntivirus		Service	BaiduSdSvc
 	BaiduAntivirus		Service	BaiduAnSvc
 	BaiduAntivirus		Service	BDProtect
-Kernel	QiAnXinTianqing	Antivirus	Driver	C:\WINDOWS\system32\drivers\qax*.sys
+ThirdParty	QiAnXinTianqing	Antivirus	Driver	C:\WINDOWS\system32\drivers\qax*.sys
 	QiAnXinTianqing		Driver	C:\Program Files (x86)\Qianxin
 	QiAnXinTianqing		Driver	C:\Program Files\Qianxin
 	QiAnXinTianqing		Driver	C:\Program Files (x86)\QiAnXin

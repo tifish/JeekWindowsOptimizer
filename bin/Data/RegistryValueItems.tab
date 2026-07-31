@@ -1,5 +1,5 @@
 GroupName	Name	Category	KeyPath	ValueName	ValueType	DefaultValue	OptimizingValue	DeleteDefaultValue	ShouldTurnOffTamperProtection	ShouldUpdateGroupPolicy	ShouldReboot	shouldRestartExplorer
-Kernel	DisableWindowsRealTimeAntivirus	Antivirus	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableAntiSpyware	int	0	0	TRUE	TRUE	TRUE		
+System	DisableWindowsRealTimeAntivirus	Antivirus	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableAntiSpyware	int	0	0	TRUE	TRUE	TRUE	FALSE	FALSE
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender	DisableRoutinelyTakingAction	int	0	1	TRUE				
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableRealtimeMonitoring	int	0	1	TRUE				
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableBehaviorMonitoring	int	0	1	TRUE				
@@ -10,7 +10,7 @@ Kernel	DisableMeltdownAndSpectrePatches		HKEY_LOCAL_MACHINE\SYSTEM\CurrentContro
 	DisableMeltdownAndSpectrePatches		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverrideMask	int	0	3	TRUE				
 Kernel	DisableKernelMemoryIntegrityProtection		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity	Enabled	int	1	0	TRUE			TRUE	
 Kernel	DisableWindowsDefenderApplicationControl		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\CI\Policy	VerifiedAndReputablePolicyState	int	1	0	TRUE				
-Kernel	DisableSmartScreen	Antivirus	HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer	SmartScreenEnabled	string	Warn	Off		TRUE			
+System	DisableSmartScreen	Antivirus	HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Explorer	SmartScreenEnabled	string	Warn	Off	FALSE	TRUE	FALSE	FALSE	FALSE
 	DisableSmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenEnabled		int	1	0					
 	DisableSmartScreen		HKEY_CURRENT_USER\Software\Microsoft\Edge\SmartScreenPuaEnabled		int	1	0					
 Kernel	DisableFastStartup		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power	HiberbootEnabled	int	1	0					

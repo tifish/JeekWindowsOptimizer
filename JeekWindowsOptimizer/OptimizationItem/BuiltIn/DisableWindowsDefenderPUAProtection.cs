@@ -9,7 +9,7 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
     private static readonly ILogger Log =
         LogManager.CreateLogger<DisableWindowsDefenderPUAProtectionItem>();
 
-    public override string GroupNameKey => "Kernel";
+    public override string GroupNameKey => "System";
     public override string NameKey => "DisableWindowsDefenderPUAProtectionName";
 
     public override string DescriptionKey => "DisableWindowsDefenderPUAProtectionDescription";
