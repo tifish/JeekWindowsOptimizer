@@ -83,11 +83,6 @@ public abstract partial class OptimizationItem : ObservableObject
 
     protected abstract Task<bool> IsOptimizedChanging(bool value);
 
-    private static readonly RegistryValue TamperProtectionRegistryValue = new(
-        @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features",
-        "TamperProtection"
-    );
-
     public static async Task<bool> TurnOffTamperProtection()
     {
         if (await IsTamperProtectionOff())
@@ -133,12 +128,9 @@ public abstract partial class OptimizationItem : ObservableObject
         return true;
     }
 
-    private static Task<bool> IsTamperProtectionOff()
+    private static async Task<bool> IsTamperProtectionOff()
     {
-        return OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.Background,
-            () => TamperProtectionRegistryValue.GetValue(0) is 0 or 4
-        );
+        return (await DefenderProtection.GetTamperProtectionStatus()).IsOff;
     }
 
     private static readonly RegistryValue DisableOnAccessProtectionRegistryValue = new(
@@ -156,14 +148,17 @@ public abstract partial class OptimizationItem : ObservableObject
         )
             return true;
 
-        await TurnOffTamperProtection();
+        if (!await TurnOffTamperProtection())
+            return false;
 
-        await OptimizationExecutionScheduler.RunAsync(
+        return await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.Background,
-            () => DisableOnAccessProtectionRegistryValue.SetValue(1)
+            () =>
+            {
+                DisableOnAccessProtectionRegistryValue.SetValue(1);
+                return DisableOnAccessProtectionRegistryValue.GetValue(0) is 1;
+            }
         );
-
-        return true;
     }
 
     private static void OpenDefenderSettings()

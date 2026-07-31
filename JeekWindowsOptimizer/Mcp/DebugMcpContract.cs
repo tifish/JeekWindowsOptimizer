@@ -56,6 +56,9 @@ public static class DebugMcpContract
                 ["lines"] = Prop("integer", "Lines, 1-2000 (default 200)."),
                 ["filter"] = Prop("string", "Case-insensitive filter."),
             }),
+        Tool("defender_status",
+            "Read the effective Defender tamper-protection state, its runtime source, and the registry fallback.",
+            new()),
         Tool("optimization_items",
             "List the optimization groups and items with their optimized/checked state.",
             new()

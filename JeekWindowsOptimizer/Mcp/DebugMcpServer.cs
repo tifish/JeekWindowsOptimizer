@@ -81,6 +81,7 @@ internal static class DebugMcpServer
 
         host.AddTool("visual_tree", VisualTreeAsync);
         host.AddTool("screenshot", _ => ScreenshotAsync());
+        host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
         return host;
     }
@@ -283,6 +284,24 @@ internal static class DebugMcpServer
     #endregion
 
     #region App probe tools
+
+    private static async Task<JsonObject> DefenderStatusAsync(JsonObject args)
+    {
+        var status = await DefenderProtection.GetTamperProtectionStatus();
+        var hasThirdPartyAntivirus = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            AntiVirus.HasThirdPartyAntivirusInstalled
+        );
+
+        var runtimeValue = status.RuntimeIsEnabled?.ToString() ?? "unavailable";
+        return ToolText(
+            $"runtimeIsTamperProtected={runtimeValue}\n"
+            + $"registryTamperProtection={status.RegistryValue}\n"
+            + $"effectiveTamperProtectionOff={status.IsOff}\n"
+            + $"detectionSource={status.DetectionSource}\n"
+            + $"hasThirdPartyAntivirus={hasThirdPartyAntivirus}"
+        );
+    }
 
     private static async Task<JsonObject> OptimizationItemsAsync(JsonObject args)
     {
