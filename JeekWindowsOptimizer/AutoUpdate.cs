@@ -3,7 +3,7 @@ using JeekTools;
 namespace JeekWindowsOptimizer;
 
 /// <summary>App-side wrapper around the JeekTools <see cref="AutoUpdater" />:
-/// fixed release URLs, Debug builds disabled, staged-package bookkeeping.</summary>
+/// fixed release URLs, Debug builds disabled, staged-package bookkeeping under LocalAppData.</summary>
 public static class AutoUpdate
 {
     public const string ReleaseZipUrl =
@@ -22,6 +22,12 @@ public static class AutoUpdate
 #if DEBUG
             Disabled = true,
 #endif
+            // Keep postponed packages outside the system temp folder so they
+            // survive reboots and temp cleanups until the user installs.
+            UpdateRoot = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "JeekWindowsOptimizer",
+                "Update"),
         }
     );
 

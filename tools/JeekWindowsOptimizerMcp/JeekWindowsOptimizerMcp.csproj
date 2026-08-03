@@ -19,8 +19,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Single source of truth for pipe names, shared with the app. -->
+    <!-- Single source of truth for pipe names and instance registry, shared with the app. -->
     <Compile Include="..\..\JeekWindowsOptimizer\Mcp\McpPipeNames.cs" Link="McpPipeNames.cs" />
+    <Compile Include="..\..\JeekWindowsOptimizer\Mcp\McpAdapterRegistry.cs" Link="McpAdapterRegistry.cs" />
   </ItemGroup>
 
 </Project>

@@ -1154,18 +1154,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private async Task ConfirmAndLaunchUpdateAsync()
     {
-        var remoteVersion =
-            AutoUpdate.RemoteCommitCount > 0 ? AutoUpdate.RemoteCommitCount.ToString() : "?";
-        var result = await ShowUpdateDialogAsync(
-            Localizer.Get("UpdateAvailableTitle"),
-            string.Format(Localizer.Get("UpdateAvailableMessage"), remoteVersion),
-            ButtonEnum.OkCancel,
-            MsBox.Avalonia.Enums.Icon.Info
-        );
-
-        if (result != ButtonResult.Ok)
-            return;
-
+        // Spec: do not ask before download; stage the package first (or reuse a
+        // still-valid postponed package), then ask once whether to install now.
         StatusMessage = string.Format(Localizer.Get("UpdateDownloading"), 0);
         var staged = await AutoUpdate.DownloadAndStageAsync(percent =>
             Dispatcher.UIThread.Post(() =>
@@ -1188,6 +1178,18 @@ public partial class MainViewModel : ObservableObject, IDisposable
             );
             return;
         }
+
+        var remoteVersion =
+            AutoUpdate.RemoteCommitCount > 0 ? AutoUpdate.RemoteCommitCount.ToString() : "?";
+        var result = await ShowUpdateDialogAsync(
+            Localizer.Get("UpdateAvailableTitle"),
+            string.Format(Localizer.Get("UpdateAvailableMessage"), remoteVersion),
+            ButtonEnum.OkCancel,
+            MsBox.Avalonia.Enums.Icon.Info
+        );
+
+        if (result != ButtonResult.Ok)
+            return;
 
         if (!AutoUpdate.LaunchUpdate())
         {

@@ -22,10 +22,10 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.1.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.0" />
+    <PackageReference Include="Avalonia" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1" />
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageReference Include="Jeek.Avalonia.Localization" Version="12.0.2" />
@@ -84,4 +84,64 @@
     <!-- <BeautyGitCDN>https://gitee.com/liesauer/HostFXRPatcher</BeautyGitCDN> -->
     <!-- <BeautyGitTree>master</BeautyGitTree> -->
   </PropertyGroup>
+
+  <!--
+    JeekWindowsOptimizerMcp is the MCP stdio adapter. Agents launch the fixed per-user
+    copy under LocalAppData (or the repo-root JeekWindowsOptimizerDebugMcp.cmd which does);
+    the file next to the app is only build output that the app installs to the fixed path on
+    startup — not during build.
+    Publish it into the same output/publish directory so archives cannot omit it.
+
+    Before overwriting, rename any existing exe (Windows allows renaming a running image). That
+    way a leftover side-by-side MCP process cannot fail the main project build.
+  -->
+  <Target
+    Name="PublishJeekWindowsOptimizerMcpAfterBuild"
+    AfterTargets="Build"
+    Condition="'$(DesignTimeBuild)' != 'true' and '$(PublishDir)' == '$(OutDir)'">
+    <PropertyGroup>
+      <JeekWindowsOptimizerMcpBuildDir>$([System.IO.Path]::GetFullPath('$(OutDir)', '$(MSBuildProjectDirectory)'))</JeekWindowsOptimizerMcpBuildDir>
+      <_McpUnlockExe>$([System.IO.Path]::Combine('$(JeekWindowsOptimizerMcpBuildDir)', 'JeekWindowsOptimizerMcp.exe'))</_McpUnlockExe>
+      <_McpUnlockStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff'))</_McpUnlockStamp>
+    </PropertyGroup>
+    <Exec
+      Condition="Exists('$(_McpUnlockExe)')"
+      Command="move /Y &quot;$(_McpUnlockExe)&quot; &quot;$(_McpUnlockExe).$(_McpUnlockStamp).old&quot;"
+      IgnoreExitCode="true"
+      StandardOutputImportance="low"
+      StandardErrorImportance="low" />
+    <ItemGroup>
+      <_McpUnlockOld Include="$(JeekWindowsOptimizerMcpBuildDir)\JeekWindowsOptimizerMcp.exe.*.old" />
+    </ItemGroup>
+    <Delete Files="@(_McpUnlockOld)" TreatErrorsAsWarnings="true" ContinueOnError="true" />
+    <MSBuild
+      Projects="..\tools\JeekWindowsOptimizerMcp\JeekWindowsOptimizerMcp.csproj"
+      Targets="Restore;Publish"
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=true;PublishDir=$(JeekWindowsOptimizerMcpBuildDir)" />
+  </Target>
+
+  <Target
+    Name="PublishJeekWindowsOptimizerMcpAfterPublish"
+    AfterTargets="Publish"
+    Condition="'$(DesignTimeBuild)' != 'true' and '$(PublishDir)' != '$(OutDir)'">
+    <PropertyGroup>
+      <JeekWindowsOptimizerMcpPublishDir>$([System.IO.Path]::GetFullPath('$(PublishDir)', '$(MSBuildProjectDirectory)'))</JeekWindowsOptimizerMcpPublishDir>
+      <_McpUnlockExe>$([System.IO.Path]::Combine('$(JeekWindowsOptimizerMcpPublishDir)', 'JeekWindowsOptimizerMcp.exe'))</_McpUnlockExe>
+      <_McpUnlockStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff'))</_McpUnlockStamp>
+    </PropertyGroup>
+    <Exec
+      Condition="Exists('$(_McpUnlockExe)')"
+      Command="move /Y &quot;$(_McpUnlockExe)&quot; &quot;$(_McpUnlockExe).$(_McpUnlockStamp).old&quot;"
+      IgnoreExitCode="true"
+      StandardOutputImportance="low"
+      StandardErrorImportance="low" />
+    <ItemGroup>
+      <_McpUnlockOld Include="$(JeekWindowsOptimizerMcpPublishDir)\JeekWindowsOptimizerMcp.exe.*.old" />
+    </ItemGroup>
+    <Delete Files="@(_McpUnlockOld)" TreatErrorsAsWarnings="true" ContinueOnError="true" />
+    <MSBuild
+      Projects="..\tools\JeekWindowsOptimizerMcp\JeekWindowsOptimizerMcp.csproj"
+      Targets="Restore;Publish"
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=true;PublishDir=$(JeekWindowsOptimizerMcpPublishDir)" />
+  </Target>
 </Project>

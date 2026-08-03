@@ -1,14 +1,17 @@
 $ErrorActionPreference = "Stop"
 $appName = "JeekWindowsOptimizer"
 
+# The app has already downloaded, extracted, and verified the update package
+# into a staging folder before launching this script. All that remains here is
+# the short critical window: wait for the app to exit, swap the files, restart.
+
 if ($args.Count -eq 0) {
     Exit 1
 }
 
-# The app has already downloaded, extracted and validated the update package.
 $stageDir = $args[0]
 $installDir = $PSScriptRoot
-$stageRoot = Split-Path -Parent $stageDir
+$exePath = Join-Path $installDir "$appName.exe"
 
 $Host.UI.RawUI.WindowTitle = "$appName Updater"
 
@@ -22,32 +25,38 @@ Write-Host ""
 
 try {
     if (-not (Test-Path -LiteralPath (Join-Path $stageDir "$appName.exe"))) {
-        Write-Host "Staged update package is missing $appName.exe." -ForegroundColor Red
-        Start-Sleep -Seconds 5
-        Exit 1
+        throw "Staged update package is missing $appName.exe: $stageDir"
     }
 
     Write-Host "[1/3] Waiting for $appName to exit..."
     Get-Process -Name $appName -ErrorAction SilentlyContinue | ForEach-Object {
         try {
             $_.WaitForExit()
-        }
-        catch {}
+        } catch {}
     }
 
     Write-Host "[2/3] Installing files..."
-    # Preserve portable user data, logs, and the updater itself.
+    # Preserve portable user data, logs, and this script so it is not deleted mid-run.
+    # Matches install.ps1's robocopy /XD list.
     $preserveNames = @("Config", "Logs", "AutoUpdate.ps1")
     Get-ChildItem -LiteralPath $installDir -Force -ErrorAction SilentlyContinue |
-    Where-Object { $preserveNames -notcontains $_.Name } |
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        Where-Object { $preserveNames -notcontains $_.Name } |
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 
     Copy-Item -Path (Join-Path $stageDir "*") -Destination $installDir -Recurse -Force
 
-    Remove-Item -Recurse -Force -LiteralPath $stageRoot -ErrorAction SilentlyContinue
+    # Remove the update root the app created (typically
+    # %LOCALAPPDATA%\JeekWindowsOptimizer\Update containing package\ + version.txt).
+    # Fall back to deleting only the package folder for legacy layouts.
+    $updateRoot = Split-Path -Parent $stageDir
+    $updateRootName = Split-Path -Leaf $updateRoot
+    if ($updateRootName -eq "Update" -or $updateRootName -eq "$appName-update") {
+        Remove-Item -Recurse -Force -LiteralPath $updateRoot -ErrorAction SilentlyContinue
+    } else {
+        Remove-Item -Recurse -Force -LiteralPath $stageDir -ErrorAction SilentlyContinue
+    }
 
     Write-Host "[3/3] Restarting $appName..."
-    $exePath = Join-Path $installDir "$appName.exe"
     if (Test-Path -LiteralPath $exePath) {
         Start-Process -FilePath $exePath
     }
@@ -58,6 +67,10 @@ try {
 catch {
     Write-Host ""
     Write-Host "Update failed: $($_.Exception.Message)" -ForegroundColor Red
+    # Best effort: bring the app back even if the install failed.
+    if (Test-Path -LiteralPath $exePath) {
+        Start-Process -FilePath $exePath
+    }
     Start-Sleep -Seconds 5
     Exit 1
 }

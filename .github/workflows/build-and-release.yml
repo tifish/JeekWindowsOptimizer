@@ -43,11 +43,14 @@ jobs:
                   Write-Host "commit count = $count"
 
             - name: Build
-              run: dotnet publish --configuration Release ${{ env.PROJECT_NAME }}.sln /p:Version=${{ steps.ver.outputs.count }}
+              run: dotnet publish --configuration Release ${{ env.PROJECT_NAME }}\${{ env.PROJECT_NAME }}.csproj /p:Version=${{ steps.ver.outputs.count }}
 
             - name: Zip files
               shell: pwsh
               run: |
+                  if (-not (Test-Path -LiteralPath bin\JeekWindowsOptimizerMcp.exe)) {
+                      throw "Published package is missing JeekWindowsOptimizerMcp.exe"
+                  }
                   Get-ChildItem -Path bin -Filter *.pdb -Recurse -ErrorAction SilentlyContinue | Remove-Item -Force
                   Compress-Archive -Path bin\* -DestinationPath ${{ env.PROJECT_NAME }}.zip -Force
 

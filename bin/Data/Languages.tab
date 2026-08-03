@@ -14,7 +14,7 @@ DevelopmentBuild	Development version	开发版本
 UpdateChecking	Checking for updates...	正在检查更新...
 UpdateCheckFinished	Update check finished.	更新检查已完成。
 UpdateAvailableTitle	Update available	发现新版本
-UpdateAvailableMessage	Version {0} is available. Install it now? The update will be downloaded first, then the app will restart.	发现版本 {0}。是否立即安装？将先下载更新，然后应用会关闭并重启。
+UpdateAvailableMessage	Version {0} is ready. Restart and install now?	版本 {0} 已就绪。是否立即重启并安装？
 UpdateNoneTitle	No updates	没有更新
 UpdateNoneMessage	You are already using the latest version.	当前已经是最新版本。
 UpdateFailedTitle	Update check failed	更新检查失败

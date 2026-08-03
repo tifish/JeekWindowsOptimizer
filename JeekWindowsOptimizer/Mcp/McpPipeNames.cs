@@ -23,8 +23,8 @@ public static class McpPipeNames
 
     /// <summary>
     /// Stable 12-hex identity of an installation, hashed from its executable
-    /// directory. The adapter lives in the same folder as the app, so it derives
-    /// the same value without being told which instance to talk to.
+    /// directory. The fixed adapter derives this from <c>--app</c> (or HKCU
+    /// registration); a side-by-side copy next to the app uses its own folder.
     /// </summary>
     public static string InstanceId(string executableDirectory) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(

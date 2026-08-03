@@ -19,10 +19,11 @@ namespace JeekWindowsOptimizer.Mcp;
 /// visual-tree lookup, the Avalonia tools (visual_tree, screenshot), and the
 /// optimization-item probe. Compiled into all configurations so Debug and
 /// Release behave identically, but the listener only starts in Debug builds.
-/// Agents reach it through <c>bin\JeekWindowsOptimizerMcp.exe --surface debug</c>,
-/// which forwards stdio to this instance's named pipe — the pipe name carries
-/// the worktree's instance id, so parallel Debug builds never answer for each
-/// other and there is no port to collide over.
+/// Agents reach it through the repo-root <c>JeekWindowsOptimizerDebugMcp.cmd</c>
+/// (or the fixed per-user adapter with <c>--surface debug --app</c>), which
+/// forwards stdio to this instance's named pipe — the pipe name carries the
+/// worktree's instance id, so parallel Debug builds never answer for each other
+/// and there is no port to collide over.
 /// </summary>
 internal static class DebugMcpServer
 {

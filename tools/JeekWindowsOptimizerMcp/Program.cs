@@ -1,19 +1,26 @@
 using System.Diagnostics;
 using System.IO.Pipes;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.Json.Nodes;
 using JeekWindowsOptimizer.Mcp;
+
+[assembly: SupportedOSPlatform("windows")]
 
 // JeekWindowsOptimizer MCP stdio adapter.
 //
 // An agent launches this executable as an ordinary stdio MCP server; it forwards JSON-RPC
 // to the running app over a named pipe. Nothing here knows about ports, so the client
-// config never goes stale:
+// config a user puts in their project never goes stale:
 //
-//   { "command": "C:\\...\\bin\\JeekWindowsOptimizerMcp.exe", "args": ["--surface", "debug"] }
+//   { "command": "%LocalAppData%\\JeekWindowsOptimizer\\Mcp\\JeekWindowsOptimizerMcp.exe",
+//     "args": ["--surface", "product"] }
 //
-// The adapter lives beside the app, so it derives the same instance id from its own folder
-// and talks to the instance it shipped with — parallel Debug worktrees stay separate.
+// The stable per-user install is the agent entrypoint (so builds can overwrite bin\ without
+// fighting a running MCP process). It reads the app path and pipe names from HKCU; Release is
+// the default route. Debug worktrees pass --instance <id> or --app <worktree\bin\app.exe> so
+// parallel instances stay separate. A side-by-side copy next to the app remains supported for
+// packaging and first-run install into the fixed path.
 
 var options = AdapterOptions.Parse(args);
 
@@ -174,20 +181,61 @@ internal sealed record AdapterOptions(
         }
 
         var baseDirectory = AppContext.BaseDirectory;
-        appPath ??= Path.Combine(baseDirectory, "JeekWindowsOptimizer.exe");
+        var sideBySideAppPath = Path.Combine(baseDirectory, "JeekWindowsOptimizer.exe");
+        var isSideBySide = File.Exists(sideBySideAppPath);
 
-        // Debug builds suffix the folder hash and the adapter cannot tell which build sits
-        // next to it — so try the specific name first and fall back to the bare one.
+        // Explicit --app pins a worktree/install even when this process is the fixed per-user
+        // adapter (not side-by-side). Instance id is always derived from the app directory.
+        string? appDirectory = null;
+        if (appPath is { Length: > 0 })
+        {
+            appPath = Path.GetFullPath(appPath);
+            appDirectory = Path.GetDirectoryName(appPath);
+        }
+
+        var routeInstance = instance
+                            ?? (appDirectory is { Length: > 0 }
+                                ? McpPipeNames.InstanceId(appDirectory)
+                                : null)
+                            ?? (isSideBySide ? McpPipeNames.InstanceId(baseDirectory) : "release");
+        var explicitlyRouted = instance is not null || appDirectory is { Length: > 0 };
+
+        McpRegisteredInstance? registered = null;
+        if (!isSideBySide
+            && McpAdapterRegistry.TryReadInstance(routeInstance, out var resolved))
+        {
+            registered = resolved;
+        }
+
+        appPath ??= registered?.AppPath ?? sideBySideAppPath;
+
+        // A fixed adapter uses the exact registered pipe. A side-by-side development adapter can
+        // derive its Debug id, but still tries the bare Release pipe as a compatibility fallback.
         List<string> pipes;
         if (pipe is { Length: > 0 })
         {
             pipes = [pipe];
         }
+        else if (registered is not null)
+        {
+            var registeredPipe = surface.Equals("debug", StringComparison.OrdinalIgnoreCase)
+                ? registered.DebugPipeName
+                : registered.ProductPipeName;
+            pipes =
+            [
+                registeredPipe.Length > 0
+                    ? registeredPipe
+                    : McpPipeNames.Resolve(surface, routeInstance),
+            ];
+        }
         else
         {
-            var derived = McpPipeNames.Resolve(surface, instance ?? McpPipeNames.InstanceId(baseDirectory));
+            var derived = McpPipeNames.Resolve(surface, routeInstance);
             var bare = McpPipeNames.Resolve(surface, null);
-            pipes = derived == bare ? [bare] : [derived, bare];
+            // An explicitly routed or fixed adapter must never fall back to Release: if a Debug
+            // worktree is offline, reaching the user's installed instance would be dangerous.
+            var strictRoute = explicitlyRouted || !isSideBySide;
+            pipes = derived == bare || strictRoute ? [derived] : [derived, bare];
         }
 
         // Debug worktrees are driven by a developer who already has the app open; only the

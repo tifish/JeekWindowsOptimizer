@@ -44,6 +44,17 @@ public class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            try
+            {
+                // Install/refresh the fixed per-user MCP adapter and register this
+                // worktree/install so agents can route without locking bin\.
+                McpAdapterRegistration.RegisterCurrentInstance();
+            }
+            catch (Exception ex)
+            {
+                Log.LogWarning(ex, "Could not register the fixed MCP adapter");
+            }
+
             desktop.MainWindow = new MainWindow { DataContext = new MainViewModel() };
             PositionMainWindow(desktop.MainWindow);
             desktop.Exit += (_, _) => DebugMcpServer.Stop();

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "jeek-windows-optimizer-debug": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        ".\\JeekWindowsOptimizerDebugMcp.cmd"
+      ],
+      "cwd": "."
+    }
+  }
+}
