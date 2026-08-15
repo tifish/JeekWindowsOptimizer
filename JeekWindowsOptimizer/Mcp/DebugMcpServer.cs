@@ -84,6 +84,7 @@ internal static class DebugMcpServer
         host.AddTool("screenshot", _ => ScreenshotAsync());
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
+        host.AddTool("time_sync_status", TimeSyncStatusAsync);
         return host;
     }
 
@@ -350,6 +351,49 @@ internal static class DebugMcpServer
         });
 
         return ToolText(text);
+    }
+
+    private static async Task<JsonObject> TimeSyncStatusAsync(JsonObject args)
+    {
+        var status = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            WindowsTimeSynchronization.GetStatus
+        );
+
+        var itemText = await OnUiAsync(() =>
+        {
+            if (Desktop?.MainWindow?.DataContext is not MainViewModel vm)
+                return "item=unavailable (MainViewModel is not available yet.)";
+
+            for (var groupIndex = 0; groupIndex < vm.OptimizingGroups.Count; groupIndex++)
+            {
+                var group = vm.OptimizingGroups[groupIndex];
+                for (var itemIndex = 0; itemIndex < group.Items.Count; itemIndex++)
+                {
+                    var item = group.Items[itemIndex];
+                    if (item.NameKey != "EnableTimeSynchronizationName")
+                        continue;
+
+                    return $"itemNameKey={item.NameKey}\n"
+                        + $"itemName={item.Name}\n"
+                        + $"itemIsOptimized={item.IsOptimized}\n"
+                        + $"itemIsChecked={item.IsChecked}\n"
+                        + $"itemPath=MainVm.OptimizingGroups[{groupIndex}].Items[{itemIndex}]";
+                }
+            }
+
+            return "item=not registered";
+        });
+
+        return ToolText(
+            $"serviceExists={status.ServiceExists}\n"
+            + $"serviceStartMode={status.ServiceStartMode}\n"
+            + $"triggerCount={status.TriggerCount}\n"
+            + $"type={status.Type}\n"
+            + $"ntpClientEnabled={status.NtpClientEnabled}\n"
+            + $"isEnabled={status.IsEnabled}\n"
+            + itemText
+        );
     }
 
     #endregion

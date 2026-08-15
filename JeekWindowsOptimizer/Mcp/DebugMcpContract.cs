@@ -65,7 +65,10 @@ public static class DebugMcpContract
             {
                 ["category"] = Prop("string", "Optional tab filter: Optimizing | Antivirus | Personal."),
                 ["only_not_optimized"] = Prop("boolean", "Only list items that are not optimized (default false)."),
-            }));
+            }),
+        Tool("time_sync_status",
+            "Read Windows Time (W32Time) sync state: service start mode, trigger count, NTP Type, NtpClient, and the matching optimization item.",
+            new()));
 
     private static JsonObject Tool(string name, string description, JsonObject properties, string[]? required = null)
     {

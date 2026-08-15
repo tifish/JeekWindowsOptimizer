@@ -499,6 +499,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new UninstallOneDriveItem());
             AddOptimizationItem(new WindowsActivatorItem());
             AddOptimizationItem(new WindowsUpdateItem());
+            AddOptimizationItem(new EnableTimeSynchronizationItem());
             if (!hasBattery)
                 AddOptimizationItem(new BestPerformancePowerModeItem());
             AddOptimizationItem(new SetIdleTimeItem());
