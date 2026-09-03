@@ -53,6 +53,9 @@ public partial class MainWindow : Window
 
     private void OnLoaded(object? sender, RoutedEventArgs e)
     {
+        // The shell's folder-move progress dialog parents itself to this window.
+        UserFolderRelocationItem.OwnerWindowHandle = TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
+
         if (DataContext is MainViewModel vm && vm.LoadedCommand.CanExecute(null))
             vm.LoadedCommand.Execute(null);
     }
@@ -92,6 +95,7 @@ public partial class MainWindow : Window
         {
             OptimizationGroup => OptimizationGroupsItemsControl,
             ToolGroup => ToolGroupsItemsControl,
+            DiskSpaceGroup => DiskSpaceGroupsItemsControl,
             _ => null,
         };
 
@@ -263,6 +267,18 @@ public partial class MainWindow : Window
                 optimizationItem.Name
             );
         }
+    }
+
+    private void DiskSpaceItemTitle_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            return;
+
+        if (sender is not Control { DataContext: DiskSpaceCleanupItem { IsBusy: false } item })
+            return;
+
+        item.ToggleChecked();
+        e.Handled = true;
     }
 
     private void OptimizationItemTitle_OnPointerPressed(object? sender, PointerPressedEventArgs e)

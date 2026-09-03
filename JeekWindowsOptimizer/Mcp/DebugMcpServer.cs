@@ -85,6 +85,11 @@ internal static class DebugMcpServer
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
         host.AddTool("time_sync_status", TimeSyncStatusAsync);
+        host.AddTool("disk_space_items", _ => DiskSpaceItemsAsync());
+        host.AddTool("disk_space_scan", DiskSpaceScanAsync);
+        host.AddTool("disk_space_clean", DiskSpaceCleanAsync);
+        host.AddTool("disk_space_relocation_check", DiskSpaceRelocationCheckAsync);
+        host.AddTool("disk_space_relocate", DiskSpaceRelocateAsync);
         return host;
     }
 
@@ -394,6 +399,214 @@ internal static class DebugMcpServer
             + $"isEnabled={status.IsEnabled}\n"
             + itemText
         );
+    }
+
+    #endregion
+
+    #region Disk space tools
+
+    private static MainViewModel RequireMainVm()
+    {
+        return Desktop?.MainWindow?.DataContext as MainViewModel
+            ?? throw new InvalidOperationException("MainViewModel is not available yet.");
+    }
+
+    private static string DescribeDiskSpaceItems(MainViewModel vm)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"systemDriveUsage={vm.SystemDriveUsageText}");
+        sb.AppendLine($"summary={vm.DiskSpaceSummaryText}");
+        sb.AppendLine($"busy={vm.IsDiskSpaceBusy}");
+
+        for (var groupIndex = 0; groupIndex < vm.AllDiskSpaceGroups.Count; groupIndex++)
+        {
+            var group = vm.AllDiskSpaceGroups[groupIndex];
+            sb.AppendLine($"[{group.NameKey}] {group.Name} ({group.Items.Count})");
+            for (var itemIndex = 0; itemIndex < group.Items.Count; itemIndex++)
+            {
+                var item = group.Items[itemIndex];
+                sb.Append($"  {item.NameKey}: state={item.State} size={item.SizeText}");
+                if (item.SizeBytes is { } bytes)
+                    sb.Append($" bytes={bytes}");
+                switch (item)
+                {
+                    case DiskSpaceCleanupItem cleanup:
+                        sb.Append($" checked={cleanup.IsChecked} slow={cleanup.IsSlow}");
+                        if (cleanup.FreedBytes > 0)
+                            sb.Append($" freed={cleanup.FreedBytes}");
+                        break;
+                    case DiskSpaceRelocationItem relocation:
+                        sb.Append($" onSystemDrive={relocation.IsOnSystemDrive}");
+                        sb.Append($" location=\"{relocation.CurrentLocation}\"");
+                        sb.Append($" drives=[{string.Join(", ", relocation.TargetDrives.Select(d => d.Letter))}]");
+                        if (relocation.SelectedTargetDrive is { } drive)
+                            sb.Append($" target=\"{relocation.GetTargetPath(drive)}\"");
+                        sb.Append($" canMove={relocation.CanMove}");
+                        break;
+                }
+                if (!string.IsNullOrEmpty(item.ErrorMessage))
+                    sb.Append($" error=\"{item.ErrorMessage}\"");
+                if (item.HasStatusText)
+                    sb.Append($" status=\"{item.StatusText}\"");
+                sb.Append($" path=MainVm.AllDiskSpaceGroups[{groupIndex}].Items[{itemIndex}]");
+                sb.AppendLine();
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    private static async Task<JsonObject> DiskSpaceItemsAsync()
+    {
+        var text = await OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            vm.EnsureDiskSpaceItems();
+            return DescribeDiskSpaceItems(vm);
+        });
+        return ToolText(text);
+    }
+
+    private static async Task<JsonObject> DiskSpaceScanAsync(JsonObject args)
+    {
+        var timeout = TimeSpan.FromSeconds(Math.Clamp(args["timeout_seconds"]?.GetValue<int>() ?? 600, 1, 3600));
+
+        // Start on the UI thread, wait off it: the UI invoker has its own short timeout.
+        var scan = await OnUiAsync(() => RequireMainVm().ScanDiskSpaceAsync());
+        var timedOut = await Task.WhenAny(scan, Task.Delay(timeout)) != scan;
+
+        var text = await OnUiAsync(() => DescribeDiskSpaceItems(RequireMainVm()));
+        return ToolText((timedOut ? "TIMED OUT waiting for the scan; it keeps running.\n" : "") + text, timedOut);
+    }
+
+    private static async Task<JsonObject> DiskSpaceCleanAsync(JsonObject args)
+    {
+        var keys = args["items"] is JsonArray array
+            ? array.Select(node => node?.GetValue<string>()).OfType<string>().ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : [];
+        if (keys.Count == 0)
+            return ToolText("'items' must list at least one cleanup item NameKey.", isError: true);
+
+        var timeout = TimeSpan.FromSeconds(Math.Clamp(args["timeout_seconds"]?.GetValue<int>() ?? 1800, 1, 7200));
+
+        var (clean, missing) = await OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            vm.EnsureDiskSpaceItems();
+            var items = vm.DiskSpaceCleanupItems.Where(item => keys.Contains(item.NameKey)).ToList();
+            var unknown = keys.Except(items.Select(i => i.NameKey), StringComparer.OrdinalIgnoreCase).ToList();
+            return (vm.CleanDiskSpaceItemsAsync(items, confirm: false), unknown);
+        });
+
+        var timedOut = await Task.WhenAny(clean, Task.Delay(timeout)) != clean;
+        var freed = timedOut ? -1 : await clean;
+
+        var text = await OnUiAsync(() => DescribeDiskSpaceItems(RequireMainVm()));
+        var header = new StringBuilder();
+        if (missing.Count > 0)
+            header.AppendLine($"unknownItems={string.Join(", ", missing)}");
+        header.AppendLine(timedOut ? "TIMED OUT waiting for the cleanup; it keeps running." : $"freedBytes={freed}");
+        return ToolText(header + text, timedOut);
+    }
+
+    private static async Task<(DiskSpaceRelocationItem Item, DriveOption? Drive)> ResolveRelocationTargetAsync(
+        string key, string? driveArg)
+    {
+        return await OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            vm.EnsureDiskSpaceItems();
+            var found = vm.DiskSpaceRelocationItems.FirstOrDefault(i =>
+                string.Equals(i.NameKey, key, StringComparison.OrdinalIgnoreCase))
+                ?? throw new InvalidOperationException($"Unknown relocation item '{key}'.");
+
+            DriveOption? target;
+            if (string.IsNullOrWhiteSpace(driveArg))
+            {
+                target = found.SelectedTargetDrive;
+            }
+            else
+            {
+                var letter = driveArg.Trim().TrimEnd('\\', '/', ':').ToUpperInvariant();
+                target = found.TargetDrives.FirstOrDefault(d =>
+                        d.Letter.TrimEnd(':').Equals(letter, StringComparison.OrdinalIgnoreCase))
+                    ?? DiskSpaceItemManager.GetTargetDrives().FirstOrDefault(d =>
+                        d.Letter.TrimEnd(':').Equals(letter, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return (found, target);
+        });
+    }
+
+    private static async Task<JsonObject> DiskSpaceRelocationCheckAsync(JsonObject args)
+    {
+        var key = McpHost.RequiredString(args, "item");
+        var (item, drive) = await ResolveRelocationTargetAsync(key, args["drive"]?.GetValue<string>());
+
+        if (drive is null)
+            return ToolText("No target drive: pass 'drive' or scan first so the item has a selected drive.", isError: true);
+
+        var targetPath = await OnUiAsync(() => item.GetTargetPath(drive));
+        var (ok, error) = await OnUiAsync(() => item.CheckAsync(drive)).Unwrap();
+
+        return ToolText(
+            $"item={item.NameKey}\n"
+            + $"currentLocation={item.CurrentLocation}\n"
+            + $"onSystemDrive={item.IsOnSystemDrive}\n"
+            + $"drive={drive.Letter}\n"
+            + $"targetPath={targetPath}\n"
+            + $"requiresReboot={item.RequiresReboot}\n"
+            + $"validationPassed={ok}\n"
+            + $"validationError={error ?? ""}"
+        );
+    }
+
+    private static async Task<JsonObject> DiskSpaceRelocateAsync(JsonObject args)
+    {
+        var key = McpHost.RequiredString(args, "item");
+        var targetPath = args["target_path"]?.GetValue<string>();
+        var timeout = TimeSpan.FromSeconds(Math.Clamp(args["timeout_seconds"]?.GetValue<int>() ?? 1800, 1, 7200));
+
+        var (item, drive) = await ResolveRelocationTargetAsync(key, args["drive"]?.GetValue<string>());
+
+        Task<(bool Succeeded, string? Error)> work;
+        string describedTarget;
+        if (!string.IsNullOrWhiteSpace(targetPath))
+        {
+            if (item is not UserFolderRelocationItem folder)
+                return ToolText("'target_path' is only supported for user folder items.", isError: true);
+            describedTarget = targetPath;
+            work = OnUiAsync(() => folder.RedirectToAsync(targetPath)).Unwrap();
+        }
+        else
+        {
+            if (drive is null)
+                return ToolText("No target drive: pass 'drive' or 'target_path', or scan first.", isError: true);
+            describedTarget = await OnUiAsync(() => item.GetTargetPath(drive));
+            work = OnUiAsync(async () =>
+            {
+                var ok = await RequireMainVm().MoveDiskSpaceItemAsync(item, drive, confirm: false);
+                return (ok, ok ? null : item.ErrorMessage);
+            }).Unwrap();
+        }
+
+        var timedOut = await Task.WhenAny(work, Task.Delay(timeout)) != work;
+        var (succeeded, error) = timedOut ? (false, "TIMED OUT; the operation keeps running.") : await work;
+
+        // Re-read so the report shows where the folder is now.
+        if (!timedOut)
+            await OnUiAsync(() => item.RefreshAsync()).Unwrap();
+
+        var state = await OnUiAsync(() =>
+            $"item={item.NameKey}\n"
+            + $"target={describedTarget}\n"
+            + $"succeeded={succeeded}\n"
+            + $"error={error ?? ""}\n"
+            + $"currentLocation={item.CurrentLocation}\n"
+            + $"onSystemDrive={item.IsOnSystemDrive}\n"
+            + $"state={item.State}\n"
+            + $"status={item.StatusText}");
+        return ToolText(state, !succeeded);
     }
 
     #endregion

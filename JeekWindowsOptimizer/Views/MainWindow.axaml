@@ -466,6 +466,7 @@
             <TabItem Header="{Binding OptimizingTabHeader}" />
             <TabItem Header="{Binding AntivirusTabHeader}" />
             <TabItem Header="{Binding PersonalTabHeader}" />
+            <TabItem Header="{Binding DiskSpaceTabHeader}" />
             <TabItem Header="{Binding ToolsTabHeader}" />
         </TabStrip>
 
@@ -625,6 +626,326 @@
                                                 </Border>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- Disk space tab: left group nav + right content -->
+        <Grid
+            Grid.Row="3"
+            ColumnDefinitions="220 *"
+            IsVisible="{Binding IsDiskSpaceTabSelected}">
+            <Border
+                Grid.Column="0"
+                Margin="0,0,12,0"
+                Padding="0,0,8,0"
+                BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                BorderThickness="0,0,1,0">
+                <DockPanel>
+                    <TextBlock
+                        DockPanel.Dock="Top"
+                        Margin="4,0,0,10"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                        Text="{l:Localize GroupsNavTitle}" />
+                    <ListBox
+                        Classes="group-nav"
+                        ItemsSource="{Binding DiskSpaceGroupNavItems}"
+                        SelectedItem="{Binding SelectedDiskSpaceGroupNavItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="local:GroupNavItem">
+                                <TextBlock
+                                    FontSize="14"
+                                    Text="{Binding DisplayText}"
+                                    TextWrapping="NoWrap"
+                                    TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <Grid Grid.Column="1" RowDefinitions="Auto Auto Auto *">
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,8"
+                    FontSize="14"
+                    Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                    Text="{Binding SelectedTabDescription}"
+                    TextWrapping="Wrap" />
+
+                <!-- System drive usage + reclaimable summary -->
+                <Border
+                    Grid.Row="1"
+                    Margin="0,0,0,10"
+                    Padding="14,12"
+                    Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                    BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <Grid ColumnDefinitions="* Auto" RowDefinitions="Auto Auto">
+                        <TextBlock
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="{Binding SystemDriveUsageText}"
+                            TextWrapping="Wrap" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Margin="16,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Text="{Binding DiskSpaceSummaryText}" />
+                        <ProgressBar
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Grid.Row="1"
+                            Height="6"
+                            Margin="0,10,0,0"
+                            Maximum="100"
+                            Minimum="0"
+                            Value="{Binding SystemDriveUsedPercent}" />
+                    </Grid>
+                </Border>
+
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="0,0,0,10"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Button
+                        Classes="group-toolbar"
+                        Command="{Binding ScanDiskSpaceCommand}"
+                        Content="{l:Localize ScanDiskSpace}" />
+                    <Button
+                        Padding="12,6"
+                        Classes="accent"
+                        Command="{Binding CleanCheckedDiskSpaceItemsCommand}"
+                        Content="{l:Localize CleanCheckedDiskSpaceItems}"
+                        CornerRadius="6"
+                        FontSize="13"
+                        FontWeight="SemiBold" />
+                    <Button
+                        Classes="group-toolbar"
+                        Command="{Binding ExpandAllGroupsCommand}"
+                        Content="{l:Localize ExpandAllGroups}" />
+                    <Button
+                        Classes="group-toolbar"
+                        Command="{Binding CollapseAllGroupsCommand}"
+                        Content="{l:Localize CollapseAllGroups}" />
+                    <ProgressBar
+                        Width="140"
+                        VerticalAlignment="Center"
+                        IsIndeterminate="True"
+                        IsVisible="{Binding IsDiskSpaceBusy}" />
+                </StackPanel>
+
+                <ScrollViewer
+                    x:Name="DiskSpaceContentScrollViewer"
+                    Grid.Row="3"
+                    VerticalAlignment="Stretch"
+                    VerticalScrollBarVisibility="Visible">
+                    <ItemsControl x:Name="DiskSpaceGroupsItemsControl" ItemsSource="{Binding DiskSpaceGroups}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" Spacing="12" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="local:DiskSpaceGroup">
+                                <Expander
+                                    HorizontalAlignment="Stretch"
+                                    IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                                    <Expander.Header>
+                                        <TextBlock
+                                            Margin="0,4,0,0"
+                                            FontSize="22"
+                                            FontWeight="SemiBold"
+                                            Text="{Binding Name}" />
+                                    </Expander.Header>
+
+                                    <ItemsControl ItemsSource="{Binding Items}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical" Spacing="8" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.DataTemplates>
+                                            <!-- Reclaimable-space row: checkbox + size -->
+                                            <DataTemplate DataType="local:DiskSpaceCleanupItem" x:DataType="local:DiskSpaceCleanupItem">
+                                                <Border
+                                                    Padding="14,12"
+                                                    Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                                                    BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6">
+                                                    <Grid ColumnDefinitions="* Auto">
+                                                        <Grid
+                                                            ColumnDefinitions="Auto *"
+                                                            RowDefinitions="Auto Auto Auto">
+                                                            <CheckBox
+                                                                Grid.Column="0"
+                                                                Grid.Row="0"
+                                                                VerticalAlignment="Center"
+                                                                IsChecked="{Binding IsChecked}"
+                                                                IsEnabled="{Binding !IsBusy}" />
+                                                            <TextBlock
+                                                                Grid.Column="1"
+                                                                Grid.Row="0"
+                                                                VerticalAlignment="Center"
+                                                                Background="Transparent"
+                                                                FontSize="17"
+                                                                FontWeight="SemiBold"
+                                                                PointerPressed="DiskSpaceItemTitle_OnPointerPressed"
+                                                                Text="{Binding Name}" />
+                                                            <TextBlock
+                                                                Grid.Column="1"
+                                                                Grid.Row="1"
+                                                                Margin="0,6,20,0"
+                                                                FontSize="14"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                Text="{Binding Description}"
+                                                                TextWrapping="Wrap" />
+                                                            <TextBlock
+                                                                Grid.Column="1"
+                                                                Grid.Row="2"
+                                                                Margin="0,6,20,0"
+                                                                FontSize="13"
+                                                                IsVisible="{Binding HasStatusText}"
+                                                                Text="{Binding StatusText}"
+                                                                TextWrapping="Wrap" />
+                                                        </Grid>
+                                                        <StackPanel
+                                                            Grid.Column="1"
+                                                            MinWidth="90"
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center"
+                                                            Orientation="Vertical"
+                                                            Spacing="4">
+                                                            <TextBlock
+                                                                HorizontalAlignment="Right"
+                                                                FontSize="17"
+                                                                FontWeight="SemiBold"
+                                                                Text="{Binding SizeText}" />
+                                                            <TextBlock
+                                                                HorizontalAlignment="Right"
+                                                                FontSize="12"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                IsVisible="{Binding IsSlow}"
+                                                                Text="{l:Localize DiskSpaceSlowHint}" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+
+                                            <!-- Move-to-other-drive row: current location + drive picker -->
+                                            <DataTemplate DataType="local:DiskSpaceRelocationItem" x:DataType="local:DiskSpaceRelocationItem">
+                                                <Border
+                                                    Padding="14,12"
+                                                    Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                                                    BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6">
+                                                    <Grid ColumnDefinitions="* Auto">
+                                                        <StackPanel
+                                                            Grid.Column="0"
+                                                            Orientation="Vertical"
+                                                            Spacing="6">
+                                                            <TextBlock
+                                                                FontSize="17"
+                                                                FontWeight="SemiBold"
+                                                                Text="{Binding Name}" />
+                                                            <TextBlock
+                                                                Margin="0,0,20,0"
+                                                                FontSize="14"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                Text="{Binding Description}"
+                                                                TextWrapping="Wrap" />
+                                                            <TextBlock
+                                                                Margin="0,0,20,0"
+                                                                FontSize="13"
+                                                                IsVisible="{Binding HasCurrentLocation}"
+                                                                Text="{Binding CurrentLocationText}"
+                                                                TextWrapping="Wrap" />
+                                                            <TextBlock
+                                                                Margin="0,0,20,0"
+                                                                FontSize="13"
+                                                                IsVisible="{Binding HasStatusText}"
+                                                                Text="{Binding StatusText}"
+                                                                TextWrapping="Wrap" />
+                                                        </StackPanel>
+                                                        <StackPanel
+                                                            Grid.Column="1"
+                                                            MinWidth="90"
+                                                            Margin="0,0,6,0"
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center"
+                                                            Orientation="Vertical"
+                                                            Spacing="6">
+                                                            <TextBlock
+                                                                HorizontalAlignment="Right"
+                                                                FontSize="17"
+                                                                FontWeight="SemiBold"
+                                                                Text="{Binding SizeText}" />
+                                                            <StackPanel
+                                                                HorizontalAlignment="Right"
+                                                                IsVisible="{Binding ShowMoveControls}"
+                                                                Orientation="Horizontal"
+                                                                Spacing="8">
+                                                                <ComboBox
+                                                                    MinWidth="150"
+                                                                    VerticalAlignment="Center"
+                                                                    IsEnabled="{Binding !IsBusy}"
+                                                                    ItemsSource="{Binding TargetDrives}"
+                                                                    SelectedItem="{Binding SelectedTargetDrive}">
+                                                                    <ComboBox.ItemTemplate>
+                                                                        <DataTemplate x:DataType="local:DriveOption">
+                                                                            <TextBlock Text="{Binding Label}" />
+                                                                        </DataTemplate>
+                                                                    </ComboBox.ItemTemplate>
+                                                                </ComboBox>
+                                                                <Button
+                                                                    Padding="14,6"
+                                                                    VerticalAlignment="Center"
+                                                                    Classes="accent"
+                                                                    Command="{Binding $parent[Window].((local:MainViewModel)DataContext).MoveDiskSpaceItemCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Content="{l:Localize DiskSpaceMove}"
+                                                                    CornerRadius="6"
+                                                                    IsEnabled="{Binding CanMove}" />
+                                                            </StackPanel>
+                                                            <TextBlock
+                                                                HorizontalAlignment="Right"
+                                                                FontSize="12"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                IsVisible="{Binding ShowMoveControls}"
+                                                                Text="{Binding TargetPreview}" />
+                                                            <TextBlock
+                                                                HorizontalAlignment="Right"
+                                                                FontSize="13"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                IsVisible="{Binding ShowNotOnSystemDrive}"
+                                                                Text="{l:Localize DiskSpaceNotOnSystemDrive}" />
+                                                            <TextBlock
+                                                                HorizontalAlignment="Right"
+                                                                FontSize="13"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                IsVisible="{Binding ShowNoTargetDrive}"
+                                                                Text="{l:Localize DiskSpaceNoTargetDrive}" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.DataTemplates>
                                     </ItemsControl>
                                 </Expander>
                             </DataTemplate>

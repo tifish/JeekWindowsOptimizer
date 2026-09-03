@@ -68,7 +68,44 @@ public static class DebugMcpContract
             }),
         Tool("time_sync_status",
             "Read Windows Time (W32Time) sync state: service start mode, trigger count, NTP Type, NtpClient, and the matching optimization item.",
-            new()));
+            new()),
+        Tool("disk_space_items",
+            "List the Disk Space tab's items (cleanup and relocation) with state, size, checked flag, current location, target drives, and object paths. Creates the items if the tab has not been shown yet.",
+            new()),
+        Tool("disk_space_scan",
+            "Run the Disk Space scan (all items in parallel, DISM analysis included) and wait for it, then return the item list.",
+            new()
+            {
+                ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 600)."),
+            }),
+        Tool("disk_space_clean",
+            "Clean the given Disk Space cleanup items without the GUI confirmation. Destructive; debug surface only.",
+            new()
+            {
+                ["items"] = new JsonObject
+                {
+                    ["type"] = "array",
+                    ["items"] = Prop("string", "Cleanup item NameKey, e.g. TempFilesCleanupName."),
+                    ["description"] = "NameKeys of the cleanup items to run.",
+                },
+                ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
+            }, ["items"]),
+        Tool("disk_space_relocation_check",
+            "Dry-run a relocation item against a drive: reports the current location, the computed target path, and the local validation verdict. Changes nothing.",
+            new()
+            {
+                ["item"] = Prop("string", "Relocation item NameKey, e.g. DownloadsRelocationName."),
+                ["drive"] = Prop("string", "Target drive letter or root, e.g. D or D:\\ (default: the item's selected drive)."),
+            }, ["item"]),
+        Tool("disk_space_relocate",
+            "Perform a relocation without the GUI confirmation. Destructive; debug surface only. Pass 'drive' to move like the GUI does, or 'target_path' (user folders only) to redirect to an explicit folder, e.g. to move a folder back.",
+            new()
+            {
+                ["item"] = Prop("string", "Relocation item NameKey."),
+                ["drive"] = Prop("string", "Target drive letter or root (default: the item's selected drive)."),
+                ["target_path"] = Prop("string", "User folders only: explicit target folder; overrides 'drive'."),
+                ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
+            }, ["item"]));
 
     private static JsonObject Tool(string name, string description, JsonObject properties, string[]? required = null)
     {

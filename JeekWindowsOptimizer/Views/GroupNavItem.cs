@@ -4,7 +4,7 @@ using Jeek.Avalonia.Localization;
 namespace JeekWindowsOptimizer;
 
 /// <summary>
-/// Left-rail navigation entry for a concrete optimization/tool group.
+/// Left-rail navigation entry for a concrete optimization/tool/disk-space group.
 /// </summary>
 public partial class GroupNavItem : ObservableObject
 {
@@ -16,12 +16,19 @@ public partial class GroupNavItem : ObservableObject
 
     public ToolGroup? ToolGroup { get; private init; }
 
+    public DiskSpaceGroup? DiskSpaceGroup { get; private init; }
+
     public string DisplayText
     {
         get
         {
-            var name = OptimizationGroup?.Name ?? ToolGroup?.Name ?? NameKey;
-            var count = OptimizationGroup?.Items.Count ?? ToolGroup?.Items.Count ?? 0;
+            var name =
+                OptimizationGroup?.Name ?? ToolGroup?.Name ?? DiskSpaceGroup?.Name ?? NameKey;
+            var count =
+                OptimizationGroup?.Items.Count
+                ?? ToolGroup?.Items.Count
+                ?? DiskSpaceGroup?.Items.Count
+                ?? 0;
             return $"{name} ({count})";
         }
     }
@@ -38,6 +45,13 @@ public partial class GroupNavItem : ObservableObject
         {
             NameKey = group.NameKey,
             ToolGroup = group,
+        };
+
+    public static GroupNavItem FromDiskSpaceGroup(DiskSpaceGroup group) =>
+        new()
+        {
+            NameKey = group.NameKey,
+            DiskSpaceGroup = group,
         };
 
     public void NotifyDisplayChanged()

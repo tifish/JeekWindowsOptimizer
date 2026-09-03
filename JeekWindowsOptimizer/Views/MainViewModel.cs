@@ -21,7 +21,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
     private const string ApplicationTitle = "Jeek Windows Optimizer";
     private const string ProjectHomepageUrl = "https://github.com/tifish/JeekWindowsOptimizer";
-    private const int ToolsTabIndex = 3;
+    private const int DiskSpaceTabIndex = 3;
+    private const int ToolsTabIndex = 4;
     private bool _uncheckedOptimizationItemsDirty;
     private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
     private static readonly TimeSpan UpdateInitialDelay = TimeSpan.FromSeconds(5);
@@ -206,16 +207,20 @@ public partial class MainViewModel : ObservableObject, IDisposable
     partial void OnSelectedTabIndexChanged(int value)
     {
         OnPropertyChanged(nameof(IsOptimizationTabSelected));
+        OnPropertyChanged(nameof(IsDiskSpaceTabSelected));
         OnPropertyChanged(nameof(IsToolsTabSelected));
         OnPropertyChanged(nameof(CanShowOptimizeButton));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
         OnPropertyChanged(nameof(SelectedTabDescription));
 
-        if (value != ToolsTabIndex)
+        if (value < DiskSpaceTabIndex)
             _selectedCategory = (OptimizationItemCategory)value;
 
         RefreshDisplayedGroups();
         UpdateOptimizeButtonText();
+
+        if (value == DiskSpaceTabIndex)
+            OnDiskSpaceTabSelected();
     }
 
     public string SelectedTabDescription =>
@@ -224,6 +229,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             0 => Localizer.Get("OptimizingDescription"),
             1 => Localizer.Get("AntivirusDescription"),
             2 => Localizer.Get("PersonalDescription"),
+            DiskSpaceTabIndex => Localizer.Get("DiskSpaceDescription"),
             ToolsTabIndex => Localizer.Get("ToolsDescription"),
             _ => "",
         };
@@ -292,7 +298,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ExpandAllGroups()
     {
-        if (IsToolsTabSelected)
+        if (IsDiskSpaceTabSelected)
+        {
+            SetDiskSpaceGroupsExpanded(true);
+        }
+        else if (IsToolsTabSelected)
         {
             foreach (var group in ToolGroups)
             {
@@ -313,7 +323,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void CollapseAllGroups()
     {
-        if (IsToolsTabSelected)
+        if (IsDiskSpaceTabSelected)
+        {
+            SetDiskSpaceGroupsExpanded(false);
+        }
+        else if (IsToolsTabSelected)
         {
             foreach (var group in ToolGroups)
             {
@@ -353,6 +367,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 && Groups.Count == 0
                 && (IsSearchActive || ShowOnlyNotOptimized)
             || IsToolsTabSelected && ToolGroups.Count == 0 && IsSearchActive
+            || IsDiskSpaceTabSelected && DiskSpaceGroups.Count == 0 && IsSearchActive
         );
 
     public string NoResultsMessage =>
@@ -366,7 +381,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     public partial bool IsBusy { get; set; } = true;
 
-    public bool IsOptimizationTabSelected => SelectedTabIndex != ToolsTabIndex;
+    public bool IsOptimizationTabSelected => SelectedTabIndex < DiskSpaceTabIndex;
     public bool IsToolsTabSelected => SelectedTabIndex == ToolsTabIndex;
     public bool CanShowOptimizeButton => !IsBusy && IsOptimizationTabSelected;
 
@@ -430,6 +445,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 foreach (var item in group.Items)
                     item.NotifyLanguageChanged();
             }
+
+            NotifyDiskSpaceLanguageChanged();
 
             RefreshDisplayedGroups();
             UpdateOptimizationTabHeaders();
@@ -679,6 +696,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         if (SelectedTabIndex == ToolsTabIndex)
             RefreshDisplayedToolGroups();
+        else if (SelectedTabIndex == DiskSpaceTabIndex)
+            RefreshDisplayedDiskSpaceGroups();
         else
             RefreshDisplayedOptimizationGroups();
     }
@@ -902,7 +921,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     private void UpdateOptimizeButtonText()
     {
-        if (SelectedTabIndex == ToolsTabIndex)
+        if (!IsOptimizationTabSelected)
             return;
 
         var uncheckedItemCount = Groups.Sum(group => group.Items.Count(it => !it.IsChecked));

@@ -27,10 +27,7 @@ Network	FirewallAdvancedSettings	ShellOpen	wf.msc		%SystemRoot%\System32\AuthFWG
 Network	ResetWinsock	SystemCommand	netsh.exe	winsock reset		true	false	true	true
 Network	ResetTcpIp	SystemCommand	netsh.exe	int ip reset		true	false	true	true
 Network	ReleaseRenewIp	SystemCommand	cmd.exe	/k "ipconfig.exe /release & ipconfig.exe /renew"		true	false	true	false
-Storage	EmptyRecycleBin	BuiltInAction	EmptyRecycleBin		%SystemRoot%\System32\imageres.dll,-54	false	true	true	false
 Storage	DiskManagement	ShellOpen	diskmgmt.msc		%SystemRoot%\System32\dmdskres.dll,0	false	false	false	false
-Storage	CleanWindowsTemp	BuiltInAction	CleanWindowsTemp		%SystemRoot%\System32\cleanmgr.exe	false	true	true	false
-Storage	CleanWindowsUpdateCache	BuiltInAction	CleanWindowsUpdateCache		%SystemRoot%\System32\cleanmgr.exe	false	true	true	false
 Storage	DiskCleanup	SystemCommand	cleanmgr.exe			false	false	false	false
 Storage	StorageSense	ShellOpen	ms-settings:storagepolicies		%SystemRoot%\ImmersiveControlPanel\SystemSettings.exe	false	false	false	false
 Repair	SystemFileChecker	SystemCommand	sfc.exe	/scannow		true	false	true	true
