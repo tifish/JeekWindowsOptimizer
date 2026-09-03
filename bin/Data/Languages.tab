@@ -630,9 +630,8 @@ DiskSpaceMoved	Moved to {0}	已移动到 {0}
 DiskSpaceMovedRebootRequired	Set to {0}; takes effect after reboot	已设置为 {0}，重启后生效
 DiskSpaceMoveCompleted	Move finished: {0}	移动完成：{0}
 DiskSpaceMoveFailed	Move failed: {0}	移动失败：{0}
-DiskSpaceNotOnSystemDrive	Not on the system drive	不在系统盘，无需迁移
 DiskSpaceNoTargetDrive	No other NTFS drive available	没有可用的其他 NTFS 磁盘
-DiskSpaceDriveLabel	{0} ({1} free)	{0}（可用 {1}）
+DiskSpaceDriveLabel	{0} ({1}, {2} free)	{0}（{1}，可用 {2}）
 DiskSpaceMoveConfirmTitle	Move to another drive	移动到其他磁盘
 DiskSpaceMoveConfirmMessage	Move "{0}" ({3})\nfrom: {1}\nto: {2}\nContinue?	将把“{0}”（{3}）\n从：{1}\n移动到：{2}\n是否继续？
 RecycleBinCleanupName	Recycle Bin	回收站
@@ -671,3 +670,23 @@ PagingFileNone	No paging file	未启用页面文件
 DiskSpaceMoveTargetExistsNote	The target folder already exists and is not empty; its contents will be merged with the moved files.	目标文件夹已存在且不为空，移动的文件将与其中的内容合并。
 DiskSpaceMoveProgressCopying	Copying… {0} / {1}	正在复制… {0} / {1}
 DiskSpaceMoveProgressDeleting	Removing source files…	正在删除源文件…
+MoveCheckedDiskSpaceItems	Move checked items	移动选中项
+DiskSpaceMoveSummary	checked to move: {0}	已选中迁移 {0}
+DiskSpaceRestoreDefault	Restore default location	恢复默认位置
+DiskSpaceRestoreDefaultConfirmTitle	Restore default location	恢复默认位置
+DiskSpaceRestoreDefaultConfirmMessage	Move "{0}" ({3})\nfrom: {1}\nback to: {2}\nContinue?	将把“{0}”（{3}）\n从：{1}\n移回：{2}\n是否继续？
+DiskSpaceRestoringItem	Restoring: {0}…	正在恢复：{0}…
+DiskSpaceRestoreCompleted	Restored: {0}	已恢复默认位置：{0}
+DiskSpaceRestoreFailed	Restore failed: {0}	恢复失败：{0}
+DiskSpaceNoItemsCheckedToMove	No relocation items are checked.	没有选中任何迁移项。
+DiskSpaceBatchMoveConfirmTitle	Move checked items	移动选中项
+DiskSpaceBatchMoveConfirmMessage	{0} item(s), {1} in total, will be moved:\n{2}\nContinue?	将移动 {0} 项，共 {1}：\n{2}\n是否继续？
+DiskSpaceBatchMoveLine	{0}: {1} → {2} ({3})	{0}：{1} → {2}（{3}）
+DiskSpaceBatchMoveInsufficientSpace	Not enough free space on {0}: {1} needed, {2} available.	{0} 剩余空间不足：需要 {1}，可用 {2}。
+DiskSpaceBatchMoveCompleted	Move finished: {0} succeeded, {1} failed.	移动完成：{0} 项成功，{1} 项失败。
+PagingFileDefaultLocation	Automatically managed (system drive)	自动管理（系统盘）
+DriveTypeSsd	SSD	固态硬盘
+DriveTypeHdd	HDD	机械硬盘
+DriveTypeUnknown	disk	硬盘
+DiskSpaceRestored	Restored to default location: {0}	已恢复默认位置：{0}
+DiskSpaceRestoredRebootRequired	Restored to default ({0}); takes effect after reboot	已恢复默认（{0}），重启后生效

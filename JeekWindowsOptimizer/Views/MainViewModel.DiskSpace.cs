@@ -37,6 +37,7 @@ public partial class MainViewModel
     [NotifyPropertyChangedFor(nameof(CanCleanDiskSpace))]
     [NotifyCanExecuteChangedFor(nameof(ScanDiskSpaceCommand))]
     [NotifyCanExecuteChangedFor(nameof(CleanCheckedDiskSpaceItemsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(MoveCheckedDiskSpaceItemsCommand))]
     public partial bool IsDiskSpaceBusy { get; set; }
 
     [ObservableProperty]
@@ -92,12 +93,11 @@ public partial class MainViewModel
             else
                 group.Items.Add(item);
 
-            if (item is DiskSpaceCleanupItem cleanupItem)
-                cleanupItem.PropertyChanged += (_, args) =>
-                {
-                    if (args.PropertyName == nameof(DiskSpaceCleanupItem.IsChecked))
-                        UpdateDiskSpaceSummary();
-                };
+            item.PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked))
+                    UpdateDiskSpaceSummary();
+            };
         }
 
         RefreshSystemDriveUsage();
@@ -168,6 +168,11 @@ public partial class MainViewModel
 
     private long CheckedReclaimableBytes =>
         DiskSpaceCleanupItems.Where(item => item.IsChecked).Sum(item => item.ReclaimableBytes);
+
+    private List<DiskSpaceRelocationItem> CheckedRelocationItems =>
+        DiskSpaceRelocationItems.Where(item => item.IsChecked && item.CanMove).ToList();
+
+    private long CheckedRelocationBytes => CheckedRelocationItems.Sum(item => item.SizeBytes ?? 0);
 
     [RelayCommand(CanExecute = nameof(CanCleanDiskSpace))]
     private Task CleanCheckedDiskSpaceItems()
@@ -286,16 +291,203 @@ public partial class MainViewModel
                 return false;
         }
 
+        var (succeeded, _) = await RunRelocationBatchAsync([(item, drive)]);
+        return succeeded == 1;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanCleanDiskSpace))]
+    private Task MoveCheckedDiskSpaceItems()
+    {
+        return MoveCheckedDiskSpaceItemsAsync(confirm: true);
+    }
+
+    /// <summary>
+    ///     Moves every checked relocation item to its own selected drive, user folders
+    ///     first and the paging file last so the reboot prompt comes once at the end.
+    ///     Refuses up front when a target drive lacks room for everything headed there.
+    /// </summary>
+    public async Task<(int Succeeded, int Failed)> MoveCheckedDiskSpaceItemsAsync(bool confirm)
+    {
+        EnsureDiskSpaceItems();
+        if (IsDiskSpaceBusy)
+            return (0, 0);
+
+        var moves = CheckedRelocationItems
+            .Where(item => item.SelectedTargetDrive is not null)
+            .OrderBy(item => item.RequiresReboot ? 1 : 0)
+            .Select(item => (Item: item, Drive: item.SelectedTargetDrive!))
+            .ToList();
+
+        if (moves.Count == 0)
+        {
+            StatusMessage = Localizer.Get("DiskSpaceNoItemsCheckedToMove");
+            return (0, 0);
+        }
+
+        // Free-space check per target drive, against a fresh reading rather than the
+        // number captured at scan time.
+        foreach (var group in moves.GroupBy(m => m.Drive.Root, StringComparer.OrdinalIgnoreCase))
+        {
+            var needed = group.Sum(m => m.Item.SizeBytes ?? 0);
+            long available;
+            try
+            {
+                available = new DriveInfo(group.Key).AvailableFreeSpace;
+            }
+            catch
+            {
+                available = group.First().Drive.FreeBytes;
+            }
+
+            if (needed > available)
+            {
+                var text = string.Format(
+                    Localizer.Get("DiskSpaceBatchMoveInsufficientSpace"),
+                    group.First().Drive.Letter,
+                    ByteSize.Format(needed),
+                    ByteSize.Format(available)
+                );
+                StatusMessage = text;
+                if (confirm)
+                    await ShowUpdateDialogAsync(
+                        Localizer.Get("DiskSpaceBatchMoveConfirmTitle"),
+                        text,
+                        ButtonEnum.Ok,
+                        MsBox.Avalonia.Enums.Icon.Warning
+                    );
+                return (0, 0);
+            }
+        }
+
+        if (confirm)
+        {
+            var lines = string.Join(
+                "\n",
+                moves.Select(m =>
+                    string.Format(
+                        Localizer.Get("DiskSpaceBatchMoveLine"),
+                        m.Item.Name,
+                        m.Item.CurrentLocation,
+                        m.Item.GetTargetPath(m.Drive),
+                        m.Item.SizeText
+                    )
+                )
+            );
+            var message = string.Format(
+                Localizer.Get("DiskSpaceBatchMoveConfirmMessage"),
+                moves.Count,
+                ByteSize.Format(moves.Sum(m => m.Item.SizeBytes ?? 0)),
+                lines
+            );
+            if (moves.Any(m => m.Item.TargetHasContent(m.Drive)))
+                message += "\n" + Localizer.Get("DiskSpaceMoveTargetExistsNote");
+
+            var result = await ShowUpdateDialogAsync(
+                Localizer.Get("DiskSpaceBatchMoveConfirmTitle"),
+                message,
+                ButtonEnum.YesNo,
+                MsBox.Avalonia.Enums.Icon.Question
+            );
+            if (result != ButtonResult.Yes)
+                return (0, 0);
+        }
+
+        return await RunRelocationBatchAsync(moves);
+    }
+
+    private async Task<(int Succeeded, int Failed)> RunRelocationBatchAsync(
+        IReadOnlyList<(DiskSpaceRelocationItem Item, DriveOption Drive)> moves
+    )
+    {
         IsDiskSpaceBusy = true;
-        StatusMessage = string.Format(Localizer.Get("DiskSpaceMovingItem"), item.Name);
+        var succeeded = 0;
+        var failed = 0;
+        var rebootNeeded = false;
+        string? lastError = null;
+        try
+        {
+            foreach (var (item, drive) in moves)
+            {
+                StatusMessage = string.Format(Localizer.Get("DiskSpaceMovingItem"), item.Name);
+                var ok = false;
+                try
+                {
+                    ok = await item.MoveAsync(drive);
+                }
+                catch (Exception ex)
+                {
+                    Log.ZLogError(ex, $"Failed to move {item.NameKey}");
+                }
+
+                if (ok)
+                {
+                    succeeded++;
+                    rebootNeeded |= item.RequiresReboot;
+                }
+                else
+                {
+                    failed++;
+                    lastError = item.ErrorMessage;
+                }
+            }
+        }
+        finally
+        {
+            IsDiskSpaceBusy = false;
+            RefreshSystemDriveUsage();
+            UpdateDiskSpaceSummary();
+            StatusMessage = moves.Count == 1
+                ? succeeded == 1
+                    ? string.Format(Localizer.Get("DiskSpaceMoveCompleted"), moves[0].Item.Name)
+                    : string.Format(Localizer.Get("DiskSpaceMoveFailed"), lastError ?? "")
+                : string.Format(Localizer.Get("DiskSpaceBatchMoveCompleted"), succeeded, failed);
+        }
+
+        if (rebootNeeded)
+            await OptimizationItem.PromptReboot();
+
+        return (succeeded, failed);
+    }
+
+    [RelayCommand]
+    private Task RestoreDiskSpaceItemDefault(DiskSpaceRelocationItem? item)
+    {
+        return item is null ? Task.CompletedTask : RestoreDiskSpaceItemDefaultAsync(item, confirm: true);
+    }
+
+    public async Task<bool> RestoreDiskSpaceItemDefaultAsync(DiskSpaceRelocationItem item, bool confirm)
+    {
+        if (IsDiskSpaceBusy || !item.CanRestoreDefault)
+            return false;
+
+        if (confirm)
+        {
+            var result = await ShowUpdateDialogAsync(
+                Localizer.Get("DiskSpaceRestoreDefaultConfirmTitle"),
+                string.Format(
+                    Localizer.Get("DiskSpaceRestoreDefaultConfirmMessage"),
+                    item.Name,
+                    item.CurrentLocation,
+                    item.DefaultLocationText,
+                    item.SizeText
+                ),
+                ButtonEnum.YesNo,
+                MsBox.Avalonia.Enums.Icon.Question
+            );
+            if (result != ButtonResult.Yes)
+                return false;
+        }
+
+        IsDiskSpaceBusy = true;
+        StatusMessage = string.Format(Localizer.Get("DiskSpaceRestoringItem"), item.Name);
         var succeeded = false;
         try
         {
-            succeeded = await item.MoveAsync(drive);
+            succeeded = await item.RestoreDefaultAsync();
         }
         catch (Exception ex)
         {
-            Log.ZLogError(ex, $"Failed to move {item.NameKey}");
+            Log.ZLogError(ex, $"Failed to restore {item.NameKey}");
         }
         finally
         {
@@ -303,8 +495,8 @@ public partial class MainViewModel
             RefreshSystemDriveUsage();
             UpdateDiskSpaceSummary();
             StatusMessage = succeeded
-                ? string.Format(Localizer.Get("DiskSpaceMoveCompleted"), item.Name)
-                : string.Format(Localizer.Get("DiskSpaceMoveFailed"), item.ErrorMessage ?? "");
+                ? string.Format(Localizer.Get("DiskSpaceRestoreCompleted"), item.Name)
+                : string.Format(Localizer.Get("DiskSpaceRestoreFailed"), item.ErrorMessage ?? "");
         }
 
         if (succeeded && item.RequiresReboot)
@@ -342,16 +534,21 @@ public partial class MainViewModel
         else
         {
             var total = ByteSize.Format(TotalReclaimableBytes);
-            DiskSpaceSummaryText = string.Format(
+            var summary = string.Format(
                 Localizer.Get("DiskSpaceReclaimableSummary"),
                 total,
                 ByteSize.Format(CheckedReclaimableBytes)
             );
+            var moveBytes = CheckedRelocationBytes;
+            if (moveBytes > 0)
+                summary += "  " + string.Format(Localizer.Get("DiskSpaceMoveSummary"), ByteSize.Format(moveBytes));
+            DiskSpaceSummaryText = summary;
             DiskSpaceTabHeader = $"{DiskSpaceTabTitle} ({total})";
         }
 
         OnPropertyChanged(nameof(CanCleanDiskSpace));
         CleanCheckedDiskSpaceItemsCommand.NotifyCanExecuteChanged();
+        MoveCheckedDiskSpaceItemsCommand.NotifyCanExecuteChanged();
     }
 
     private void RefreshDisplayedDiskSpaceGroups()

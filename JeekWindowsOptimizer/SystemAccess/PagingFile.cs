@@ -108,6 +108,38 @@ public static class PagingFile
     }
 
     /// <summary>
+    ///     Windows' default: automatic management, which puts a system-managed file on
+    ///     the system drive. Explicit per-drive settings are removed so they cannot
+    ///     resurface when automatic management is turned off again later.
+    /// </summary>
+    public static void RestoreAutomatic()
+    {
+        using (
+            var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PageFileSetting")
+        )
+        {
+            foreach (ManagementObject setting in searcher.Get())
+            {
+                using (setting)
+                    setting.Delete();
+            }
+        }
+
+        using var systemSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
+        foreach (ManagementObject system in systemSearcher.Get())
+        {
+            using (system)
+            {
+                if (system["AutomaticManagedPagefile"] is not true)
+                {
+                    system["AutomaticManagedPagefile"] = true;
+                    system.Put();
+                }
+            }
+        }
+    }
+
+    /// <summary>
     ///     Replaces every paging file with a single system-managed one on
     ///     <paramref name="driveRoot" /> (e.g. <c>D:\</c>). Automatic management is
     ///     turned off first because it forces the file back onto the system drive.

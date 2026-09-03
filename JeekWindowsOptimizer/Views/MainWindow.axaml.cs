@@ -274,10 +274,18 @@ public partial class MainWindow : Window
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
             return;
 
-        if (sender is not Control { DataContext: DiskSpaceCleanupItem { IsBusy: false } item })
-            return;
+        switch (sender)
+        {
+            case Control { DataContext: DiskSpaceCleanupItem { IsBusy: false } cleanup }:
+                cleanup.ToggleChecked();
+                break;
+            case Control { DataContext: DiskSpaceRelocationItem relocation }:
+                relocation.ToggleChecked();
+                break;
+            default:
+                return;
+        }
 
-        item.ToggleChecked();
         e.Handled = true;
     }
 

@@ -105,7 +105,26 @@ public static class DebugMcpContract
                 ["drive"] = Prop("string", "Target drive letter or root (default: the item's selected drive)."),
                 ["target_path"] = Prop("string", "User folders only: explicit target folder; overrides 'drive'."),
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
-            }, ["item"]));
+            }, ["item"]),
+        Tool("disk_space_restore_default",
+            "Move a relocation item back to its Windows default location (user profile folder, or automatic paging-file management) without the GUI confirmation. Destructive; debug surface only.",
+            new()
+            {
+                ["item"] = Prop("string", "Relocation item NameKey."),
+                ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
+            }, ["item"]),
+        Tool("disk_space_move_checked",
+            "Run the batch move (each checked relocation item to its own selected drive) without the GUI confirmation. Destructive; debug surface only.",
+            new()
+            {
+                ["items"] = new JsonObject
+                {
+                    ["type"] = "array",
+                    ["items"] = Prop("string", "Relocation item NameKey."),
+                    ["description"] = "If given, sets the checked state to exactly these items first; otherwise uses the current checkboxes.",
+                },
+                ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
+            }));
 
     private static JsonObject Tool(string name, string description, JsonObject properties, string[]? required = null)
     {

@@ -90,6 +90,8 @@ internal static class DebugMcpServer
         host.AddTool("disk_space_clean", DiskSpaceCleanAsync);
         host.AddTool("disk_space_relocation_check", DiskSpaceRelocationCheckAsync);
         host.AddTool("disk_space_relocate", DiskSpaceRelocateAsync);
+        host.AddTool("disk_space_restore_default", DiskSpaceRestoreDefaultAsync);
+        host.AddTool("disk_space_move_checked", DiskSpaceMoveCheckedAsync);
         return host;
     }
 
@@ -436,9 +438,12 @@ internal static class DebugMcpServer
                             sb.Append($" freed={cleanup.FreedBytes}");
                         break;
                     case DiskSpaceRelocationItem relocation:
+                        sb.Append($" checked={relocation.IsChecked} canCheck={relocation.CanCheck}");
                         sb.Append($" onSystemDrive={relocation.IsOnSystemDrive}");
+                        sb.Append($" atDefault={relocation.IsAtDefaultLocation} canRestore={relocation.CanRestoreDefault}");
                         sb.Append($" location=\"{relocation.CurrentLocation}\"");
-                        sb.Append($" drives=[{string.Join(", ", relocation.TargetDrives.Select(d => d.Letter))}]");
+                        sb.Append($" default=\"{relocation.DefaultLocationText}\"");
+                        sb.Append($" drives=[{string.Join(", ", relocation.TargetDrives.Select(d => d.Label))}]");
                         if (relocation.SelectedTargetDrive is { } drive)
                             sb.Append($" target=\"{relocation.GetTargetPath(drive)}\"");
                         sb.Append($" canMove={relocation.CanMove}");
@@ -607,6 +612,55 @@ internal static class DebugMcpServer
             + $"state={item.State}\n"
             + $"status={item.StatusText}");
         return ToolText(state, !succeeded);
+    }
+
+    private static async Task<JsonObject> DiskSpaceRestoreDefaultAsync(JsonObject args)
+    {
+        var key = McpHost.RequiredString(args, "item");
+        var timeout = TimeSpan.FromSeconds(Math.Clamp(args["timeout_seconds"]?.GetValue<int>() ?? 1800, 1, 7200));
+
+        var (item, _) = await ResolveRelocationTargetAsync(key, null);
+        var work = OnUiAsync(() => RequireMainVm().RestoreDiskSpaceItemDefaultAsync(item, confirm: false)).Unwrap();
+        var timedOut = await Task.WhenAny(work, Task.Delay(timeout)) != work;
+        var succeeded = !timedOut && await work;
+
+        var state = await OnUiAsync(() =>
+            $"item={item.NameKey}\n"
+            + $"default={item.DefaultLocationText}\n"
+            + $"succeeded={succeeded}\n"
+            + $"error={(timedOut ? "TIMED OUT; the operation keeps running." : item.ErrorMessage ?? "")}\n"
+            + $"currentLocation={item.CurrentLocation}\n"
+            + $"atDefault={item.IsAtDefaultLocation}\n"
+            + $"state={item.State}\n"
+            + $"status={item.StatusText}");
+        return ToolText(state, !succeeded);
+    }
+
+    private static async Task<JsonObject> DiskSpaceMoveCheckedAsync(JsonObject args)
+    {
+        var keys = args["items"] is JsonArray array
+            ? array.Select(node => node?.GetValue<string>()).OfType<string>().ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : null;
+        var timeout = TimeSpan.FromSeconds(Math.Clamp(args["timeout_seconds"]?.GetValue<int>() ?? 1800, 1, 7200));
+
+        var work = OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            vm.EnsureDiskSpaceItems();
+            if (keys is not null)
+                foreach (var item in vm.DiskSpaceRelocationItems)
+                    item.IsChecked = keys.Contains(item.NameKey) && item.CanCheck;
+            return vm.MoveCheckedDiskSpaceItemsAsync(confirm: false);
+        }).Unwrap();
+
+        var timedOut = await Task.WhenAny(work, Task.Delay(timeout)) != work;
+        var (succeeded, failed) = timedOut ? (0, 0) : await work;
+
+        var text = await OnUiAsync(() => DescribeDiskSpaceItems(RequireMainVm()));
+        var header = timedOut
+            ? "TIMED OUT waiting for the batch move; it keeps running.\n"
+            : $"succeeded={succeeded} failed={failed}\nstatus={await OnUiAsync(() => RequireMainVm().StatusMessage)}\n";
+        return ToolText(header + text, timedOut);
     }
 
     #endregion

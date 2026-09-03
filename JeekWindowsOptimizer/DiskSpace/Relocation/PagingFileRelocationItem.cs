@@ -11,6 +11,11 @@ public class PagingFileRelocationItem : DiskSpaceRelocationItem
 
     public PagingFile.State? LastState { get; private set; }
 
+    public override string DefaultLocationText => Localizer.Get("PagingFileDefaultLocation");
+
+    /// <summary>Windows' default is "automatically manage paging file size for all drives".</summary>
+    public override bool IsAtDefaultLocation => LastState?.AutomaticallyManaged ?? true;
+
     protected override async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         var state = await Task.Run(PagingFile.GetState, cancellationToken);
@@ -49,6 +54,23 @@ public class PagingFileRelocationItem : DiskSpaceRelocationItem
             CurrentLocation = string.Join(", ", sources);
             IsOnSystemDrive = configuredOnSystemDrive || onSystemDrive.Count > 0;
         }
+
+        OnPropertyChanged(nameof(IsAtDefaultLocation));
+        OnPropertyChanged(nameof(CanRestoreDefault));
+    }
+
+    /// <summary>
+    ///     Only a drive that already holds the one and only system-managed paging file
+    ///     is a no-op target; automatic management is never "current" because moving
+    ///     turns it off.
+    /// </summary>
+    protected override bool IsCurrentDrive(DriveOption drive)
+    {
+        if (LastState is not { AutomaticallyManaged: false, Settings.Count: 1 } state)
+            return false;
+
+        var only = state.Settings[0];
+        return only.IsSystemManaged && drive.IsSameDrive(only.Path);
     }
 
     public override string GetTargetPath(DriveOption drive)
@@ -64,6 +86,21 @@ public class PagingFileRelocationItem : DiskSpaceRelocationItem
         try
         {
             await Task.Run(() => PagingFile.MoveTo(drive.Root), cancellationToken);
+            return (true, null);
+        }
+        catch (Exception ex)
+        {
+            return (false, ex.Message);
+        }
+    }
+
+    protected override async Task<(bool Succeeded, string? Error)> RestoreDefaultCoreAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        try
+        {
+            await Task.Run(PagingFile.RestoreAutomatic, cancellationToken);
             return (true, null);
         }
         catch (Exception ex)

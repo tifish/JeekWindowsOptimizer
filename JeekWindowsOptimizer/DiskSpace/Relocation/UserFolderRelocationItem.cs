@@ -8,7 +8,7 @@ namespace JeekWindowsOptimizer;
 ///     libraries, pins, and desktop.ini stay consistent. The root is chosen over a
 ///     per-user subtree because it is where users look for it, survives a Windows
 ///     reinstall, and does not depend on the account name; multi-user machines are
-///     not a design target.
+///     not a design target. Restoring puts it back under the user profile.
 /// </summary>
 public class UserFolderRelocationItem(
     Guid folderId,
@@ -24,6 +24,19 @@ public class UserFolderRelocationItem(
 
     /// <summary>Owner window for any UI the shell raises during the move.</summary>
     public static IntPtr OwnerWindowHandle { get; set; }
+
+    /// <summary>Windows' own default: <c>%USERPROFILE%\&lt;Folder&gt;</c>.</summary>
+    public string DefaultLocation =>
+        Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), defaultFolderName);
+
+    public override string DefaultLocationText => DefaultLocation;
+
+    public override bool IsAtDefaultLocation =>
+        string.Equals(
+            Path.TrimEndingDirectorySeparator(CurrentLocation),
+            Path.TrimEndingDirectorySeparator(DefaultLocation),
+            StringComparison.OrdinalIgnoreCase
+        );
 
     protected override async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
@@ -79,9 +92,18 @@ public class UserFolderRelocationItem(
         return RedirectToAsync(GetTargetPath(drive));
     }
 
+    protected override async Task<(bool Succeeded, string? Error)> RestoreDefaultCoreAsync(
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await RedirectToAsync(DefaultLocation);
+        if (result.Succeeded)
+            KnownFolders.ClearLocalTwinOverride(FolderId);
+        return result;
+    }
+
     /// <summary>
-    ///     Redirects to an explicit path. Used by the normal move and by the debug
-    ///     surface (which also needs to move a folder back to the system drive).
+    ///     Redirects to an explicit path. Used by move, restore, and the debug surface.
     /// </summary>
     public async Task<(bool Succeeded, string? Error)> RedirectToAsync(string target)
     {

@@ -18,6 +18,44 @@ public static class KnownFolders
     public static readonly Guid Music = new("4BD8D571-6D19-48D3-BE97-422220080E43");
     public static readonly Guid Videos = new("18989B1D-99B5-455B-841C-AB7C74E4DDFC");
 
+    // Windows 11 keeps a "Local" twin for each library folder (FOLDERID_LocalDocuments
+    // etc.) that resolves to the same directory. Redirect updates both; restoring the
+    // default leaves the twin with an explicit override that a pristine profile lacks.
+    private static readonly Dictionary<Guid, Guid> LocalTwins = new()
+    {
+        [Documents] = new("F42EE2D3-909F-4907-8871-4C22FC0BF756"),
+        [Downloads] = new("7D83EE9B-2244-4E70-B1F5-5393042AF1E4"),
+        [Pictures] = new("0DDD015D-B06C-45D5-8C4C-F59713854639"),
+        [Music] = new("A0C69A99-21C8-4671-8703-7934162FCF1D"),
+        [Videos] = new("35286A68-3C57-41A1-BBB1-0EAE73D76C95"),
+    };
+
+    private const string UserShellFoldersKey =
+        @"Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders";
+    private const string ShellFoldersKey =
+        @"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders";
+
+    /// <summary>Removes the explicit override of the folder's Local twin so it falls back to its default.</summary>
+    public static void ClearLocalTwinOverride(Guid folderId)
+    {
+        if (!LocalTwins.TryGetValue(folderId, out var twin))
+            return;
+
+        var valueName = twin.ToString("B").ToUpperInvariant();
+        foreach (var keyPath in new[] { UserShellFoldersKey, ShellFoldersKey })
+        {
+            try
+            {
+                using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(keyPath, writable: true);
+                key?.DeleteValue(valueName, throwOnMissingValue: false);
+            }
+            catch
+            {
+                // Cosmetic cleanup only; the redirect itself already succeeded.
+            }
+        }
+    }
+
     private const uint KF_FLAG_DONT_VERIFY = 0x00004000;
 
     // KF_REDIRECT_FLAGS (shobjidl_core.h). Note USER_EXCLUSIVE is 0x1 and CHECK_ONLY is

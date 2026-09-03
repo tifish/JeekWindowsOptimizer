@@ -735,6 +735,14 @@
                         FontSize="13"
                         FontWeight="SemiBold" />
                     <Button
+                        Padding="12,6"
+                        Classes="accent"
+                        Command="{Binding MoveCheckedDiskSpaceItemsCommand}"
+                        Content="{l:Localize MoveCheckedDiskSpaceItems}"
+                        CornerRadius="6"
+                        FontSize="13"
+                        FontWeight="SemiBold" />
+                    <Button
                         Classes="group-toolbar"
                         Command="{Binding ExpandAllGroupsCommand}"
                         Content="{l:Localize ExpandAllGroups}" />
@@ -856,33 +864,50 @@
                                                     BorderThickness="1"
                                                     CornerRadius="6">
                                                     <Grid ColumnDefinitions="* Auto">
-                                                        <StackPanel
+                                                        <Grid
                                                             Grid.Column="0"
-                                                            Orientation="Vertical"
-                                                            Spacing="6">
+                                                            ColumnDefinitions="Auto *"
+                                                            RowDefinitions="Auto Auto Auto Auto">
+                                                            <CheckBox
+                                                                Grid.Column="0"
+                                                                Grid.Row="0"
+                                                                VerticalAlignment="Center"
+                                                                IsChecked="{Binding IsChecked}"
+                                                                IsEnabled="{Binding CanCheck}" />
                                                             <TextBlock
+                                                                Grid.Column="1"
+                                                                Grid.Row="0"
+                                                                VerticalAlignment="Center"
+                                                                Background="Transparent"
                                                                 FontSize="17"
                                                                 FontWeight="SemiBold"
+                                                                PointerPressed="DiskSpaceItemTitle_OnPointerPressed"
                                                                 Text="{Binding Name}" />
                                                             <TextBlock
-                                                                Margin="0,0,20,0"
+                                                                Grid.Column="1"
+                                                                Grid.Row="1"
+                                                                Margin="0,6,20,0"
                                                                 FontSize="14"
                                                                 Foreground="{DynamicResource Win11SecondaryTextBrush}"
                                                                 Text="{Binding Description}"
                                                                 TextWrapping="Wrap" />
                                                             <TextBlock
-                                                                Margin="0,0,20,0"
+                                                                Grid.Column="1"
+                                                                Grid.Row="2"
+                                                                Margin="0,6,20,0"
                                                                 FontSize="13"
                                                                 IsVisible="{Binding HasCurrentLocation}"
                                                                 Text="{Binding CurrentLocationText}"
                                                                 TextWrapping="Wrap" />
                                                             <TextBlock
-                                                                Margin="0,0,20,0"
+                                                                Grid.Column="1"
+                                                                Grid.Row="3"
+                                                                Margin="0,6,20,0"
                                                                 FontSize="13"
                                                                 IsVisible="{Binding HasStatusText}"
                                                                 Text="{Binding StatusText}"
                                                                 TextWrapping="Wrap" />
-                                                        </StackPanel>
+                                                        </Grid>
                                                         <StackPanel
                                                             Grid.Column="1"
                                                             MinWidth="90"
@@ -929,12 +954,19 @@
                                                                 Foreground="{DynamicResource Win11SecondaryTextBrush}"
                                                                 IsVisible="{Binding ShowMoveControls}"
                                                                 Text="{Binding TargetPreview}" />
-                                                            <TextBlock
+                                                            <!-- Undo: plain text button so it cannot be mistaken for Move -->
+                                                            <Button
+                                                                Padding="6,2"
                                                                 HorizontalAlignment="Right"
+                                                                Background="Transparent"
+                                                                BorderThickness="0"
+                                                                Command="{Binding $parent[Window].((local:MainViewModel)DataContext).RestoreDiskSpaceItemDefaultCommand}"
+                                                                CommandParameter="{Binding}"
                                                                 FontSize="13"
                                                                 Foreground="{DynamicResource Win11SecondaryTextBrush}"
-                                                                IsVisible="{Binding ShowNotOnSystemDrive}"
-                                                                Text="{l:Localize DiskSpaceNotOnSystemDrive}" />
+                                                                IsVisible="{Binding CanRestoreDefault}">
+                                                                <TextBlock Text="{l:Localize DiskSpaceRestoreDefault}" TextDecorations="Underline" />
+                                                            </Button>
                                                             <TextBlock
                                                                 HorizontalAlignment="Right"
                                                                 FontSize="13"

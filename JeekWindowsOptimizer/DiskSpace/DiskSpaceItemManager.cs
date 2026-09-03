@@ -1,3 +1,5 @@
+using JeekTools;
+
 namespace JeekWindowsOptimizer;
 
 /// <summary>
@@ -79,7 +81,10 @@ public static class DiskSpaceItemManager
         return string.Equals(root, SystemDriveRoot, StringComparison.OrdinalIgnoreCase);
     }
 
-    /// <summary>Ready fixed drives other than the system drive, largest free space first.</summary>
+    /// <summary>
+    ///     Ready fixed NTFS drives, system drive included, largest free space first.
+    ///     Each relocation item drops the drive it currently sits on.
+    /// </summary>
     public static List<DriveOption> GetTargetDrives()
     {
         var drives = new List<DriveOption>();
@@ -89,12 +94,11 @@ public static class DiskSpaceItemManager
             {
                 if (drive.DriveType != DriveType.Fixed || !drive.IsReady)
                     continue;
-                if (string.Equals(drive.Name, SystemDriveRoot, StringComparison.OrdinalIgnoreCase))
-                    continue;
                 if (!string.Equals(drive.DriveFormat, "NTFS", StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                drives.Add(new DriveOption(drive.Name, drive.AvailableFreeSpace));
+                bool? isSsd = drive.TryIsSSD(out var ssd) ? ssd : null;
+                drives.Add(new DriveOption(drive.Name, drive.AvailableFreeSpace, isSsd));
             }
             catch
             {
