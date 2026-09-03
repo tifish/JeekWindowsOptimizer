@@ -41,6 +41,7 @@ ThirdParty	DASEDR	Antivirus	Driver	C:\windows\SYSTEM32\drivers\nfw_*.sys
 	DASEDR		Driver	C:\Program Files (x86)\DBAppSecurity
 	DASEDR		Service	DASAgent
 	DASEDR		Service	dasnfw
+	DASEDR		Service	AgentService
 ThirdParty	YunTianEDR	Antivirus	Driver	C:\Windows\sedisk.sys
 	YunTianEDR		Driver	C:\Windows\SYSTEM32\ProcMon.sys
 	YunTianEDR		Driver	C:\windows\SYSTEM32\vgwdrv.sys
