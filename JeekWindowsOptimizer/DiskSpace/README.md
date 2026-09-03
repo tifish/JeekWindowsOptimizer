@@ -9,7 +9,7 @@
 ## 核心模型
 
 - `DiskSpaceItem`：页签中一行的抽象。提供本地化文本、`State`（未扫描 / 扫描中 / 已扫描 / 执行中 / 完成 / 失败）、`SizeBytes` 和状态文本。`RefreshAsync()` 重新测量，重入安全。
-- `DiskSpaceCleanupItem`：可释放空间项。`ScanCore()` 返回可释放字节数，`CleanCore()` 执行清理，`CleanAsync()` 清理后自动重扫并记录 `FreedBytes`。有 `IsChecked` 参与批量清理；不可逆的项（Windows.old、ResetBase）通过 `DefaultChecked => false` 默认不勾选，耗时项标记 `IsSlow`。
+- `DiskSpaceCleanupItem`：可释放空间项。`ScanCore()` 返回可释放字节数，`CleanCore()` 执行清理，`CleanAsync()` 清理后自动重扫并记录 `FreedBytes`。有 `IsChecked` 参与批量清理，耗时项标记 `IsSlow`。默认勾选的标准是“清理后 Windows 能自己重建”：缓存和日志默认勾选，会失去某种恢复能力的默认不勾选（`DefaultChecked => false`）。`AutoCheckAfterScan` 让项在首次扫描拿到信息后修正一次勾选状态，只生效一次，之后不覆盖用户的选择。
 - `DiskSpaceRelocationItem`：迁移项。记录 `CurrentLocation`、可选目标盘 `TargetDrives`（除系统盘和当前所在盘之外的 NTFS 固定盘，所以能换到另一块数据盘；回系统盘走“恢复默认位置”，落在用户配置目录而不是盘根），`GetTargetPath()` 给出目标路径，`CheckAsync()` 做本地校验，`MoveAsync()` 执行迁移，`RestoreDefaultAsync()` 恢复 Windows 默认位置（用户目录回到 `%USERPROFILE%`，页面文件回到自动管理）。`IsChecked` 参与“移动选中项”批量操作，默认不勾选。需要重启生效的项（页面文件）通过 `RequiresReboot` 不重扫。目标盘下拉框标注 SSD / HDD（`Disk.IsSSD`），帮助用户在速度和空间之间取舍。
 - `DiskSpaceGroup` / `GroupNavItem.FromDiskSpaceGroup`：与优化页、工具页一致的分组和左侧导航。
 - `DiskSpaceItemManager`：创建全部项、枚举 NTFS 固定盘（含系统盘，附带 SSD 判断）、读取系统盘用量。
@@ -18,7 +18,7 @@
 
 ## 现有项
 
-清理（`Cleanup/`）：回收站、临时文件、Windows Update 下载缓存、传递优化缓存、崩溃转储、系统日志与错误报告、上一个 Windows 版本（走 cleanmgr 处理器）、组件存储（DISM /AnalyzeComponentStore 估算，/StartComponentCleanup /ResetBase 清理）。
+清理（`Cleanup/`）：回收站、临时文件、Windows Update 下载缓存、传递优化缓存、崩溃转储、系统日志与错误报告、上一个 Windows 版本（走 cleanmgr 处理器；默认不勾选，但用 Windows.old 创建时间和回滚期天数判断，回滚期已过或只剩升级残留时首次扫描后自动勾选，回滚期读 `HKLM\SYSTEM\Setup\Uninstall` 的 `UninstallWindow`，缺省 10 天）、组件存储（DISM /AnalyzeComponentStore 估算，`/StartComponentCleanup` 清理，**不加** `/ResetBase`——那会连“卸载近期更新”所需的组件一起删掉，属于不可重建的能力，放在工具页作为单独的深度清理项）。
 
 迁移（`Relocation/`）：页面文件（WMI `Win32_PageFileSetting`，重启生效）、桌面 / 文档 / 下载 / 图片 / 音乐 / 视频（`IKnownFolderManager::Redirect`，与资源管理器“位置”页签相同的调用）。用户目录的目标固定为目标盘根目录下的英文规范名（如 `D:\Documents`）：用户容易找到、重装系统后仍在、与用户名无关；不考虑多用户机器。目标已存在且非空时确认框会提示合并。批量移动按各行自己选的目标盘执行，用户目录在前、页面文件最后（重启提示只弹一次），开始前按目标盘汇总校验剩余空间。“恢复默认位置”只做单项，不进批量；恢复用户目录后会顺手删掉 Windows 11 给 `Local*` 双胞胎留下的显式覆盖项（`KnownFolders.ClearLocalTwinOverride`）。
 

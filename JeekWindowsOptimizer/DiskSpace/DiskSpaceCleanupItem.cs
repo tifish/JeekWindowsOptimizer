@@ -16,8 +16,18 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
         IsChecked = DefaultChecked;
     }
 
-    /// <summary>Items whose effect is hard to undo (Windows.old, ResetBase) start unchecked.</summary>
+    /// <summary>Items that give up something Windows cannot rebuild start unchecked.</summary>
     protected virtual bool DefaultChecked => true;
+
+    private bool _autoCheckApplied;
+
+    /// <summary>
+    ///     Lets an item revise its checked state once the first scan knows enough — the
+    ///     previous installation only keeps a rollback for a few days, and after that
+    ///     window there is nothing left to lose. Applied once so a later rescan never
+    ///     overrides what the user picked.
+    /// </summary>
+    protected virtual bool? AutoCheckAfterScan => null;
 
     /// <summary>True for operations that run for minutes (DISM, cleanmgr).</summary>
     public virtual bool IsSlow => false;
@@ -40,6 +50,12 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
     protected override async Task RefreshCoreAsync(CancellationToken cancellationToken)
     {
         SizeBytes = await Task.Run(() => ScanCore(cancellationToken), cancellationToken);
+
+        if (!_autoCheckApplied && AutoCheckAfterScan is { } shouldCheck)
+        {
+            _autoCheckApplied = true;
+            IsChecked = shouldCheck;
+        }
     }
 
     /// <summary>Frees the space and returns the bytes actually reclaimed (measured by re-scan).</summary>

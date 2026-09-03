@@ -35,3 +35,4 @@ Repair	DismRestoreHealth	SystemCommand	DISM.exe	/Online /Cleanup-Image /RestoreH
 Network	EditHostsFile	SystemCommand	notepad.exe	%SystemRoot%\System32\drivers\etc\hosts		true	false	false	false
 System	SyncSystemTime	SystemCommand	w32tm.exe	/resync		false	true	false	false
 Software	ResetMicrosoftStoreCache	SystemCommand	wsreset.exe			false	true	false	false
+Storage	DismResetBase	SystemCommand	DISM.exe	/Online /Cleanup-Image /StartComponentCleanup /ResetBase		true	false	true	true
