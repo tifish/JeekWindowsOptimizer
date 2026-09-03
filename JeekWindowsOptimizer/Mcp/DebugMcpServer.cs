@@ -85,6 +85,9 @@ internal static class DebugMcpServer
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
         host.AddTool("time_sync_status", TimeSyncStatusAsync);
+        host.AddTool("service_probe", ServiceProbeAsync);
+        host.AddTool("service_delete", ServiceDeleteAsync);
+        host.AddTool("driver_remove_probe", DriverRemoveProbeAsync);
         host.AddTool("disk_space_items", _ => DiskSpaceItemsAsync());
         host.AddTool("disk_space_scan", DiskSpaceScanAsync);
         host.AddTool("disk_space_clean", DiskSpaceCleanAsync);
@@ -358,6 +361,90 @@ internal static class DebugMcpServer
         });
 
         return ToolText(text);
+    }
+
+    private static async Task<JsonObject> ServiceProbeAsync(JsonObject args)
+    {
+        var name = args["name"]?.GetValue<string>();
+        if (string.IsNullOrWhiteSpace(name))
+            return ToolText("name is required.", isError: true);
+
+        return await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                using var service = new WindowsService(name);
+                var exists = service.Exists();
+                var startMode = "n/a";
+                if (exists)
+                {
+                    try
+                    {
+                        startMode = service.GetStartMode().ToString();
+                    }
+                    catch
+                    {
+                        startMode = "unknown";
+                    }
+                }
+                return ToolText($"name={name}\nexists={exists}\nstartMode={startMode}");
+            }
+        );
+    }
+
+    private static async Task<JsonObject> ServiceDeleteAsync(JsonObject args)
+    {
+        var name = args["name"]?.GetValue<string>();
+        if (string.IsNullOrWhiteSpace(name))
+            return ToolText("name is required.", isError: true);
+
+        return await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                using var service = new WindowsService(name);
+                var existedBefore = service.Exists();
+                var deleted = service.Delete();
+                return ToolText(
+                    $"name={name}\nexistedBefore={existedBefore}\ndeleted={deleted}\nexistsAfter={service.Exists()}"
+                );
+            }
+        );
+    }
+
+    private static async Task<JsonObject> DriverRemoveProbeAsync(JsonObject args)
+    {
+        var services = (args["services"] as JsonArray)?
+            .Select(n => n?.GetValue<string>())
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Select(n => n!)
+            .ToList() ?? [];
+        var paths = (args["paths"] as JsonArray)?
+            .Select(p => p?.GetValue<string>())
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .Select(p => p!)
+            .ToList() ?? [];
+
+        if (services.Count == 0 && paths.Count == 0)
+            return ToolText("Provide at least one service name or path.", isError: true);
+
+        var item = new DriverItem("DebugGroup", "DebugDriverName", "DebugDriverDescription");
+        item.ServiceNames.AddRange(services);
+        item.DriverPathPatterns.AddRange(paths);
+
+        var failures = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            item.RemoveProduct
+        );
+
+        var succeeded =
+            failures.RemainingServices.Count == 0 && failures.RemainingPaths.Count == 0;
+
+        return ToolText(
+            $"succeeded={succeeded}\n"
+            + $"remainingServices=[{string.Join(", ", failures.RemainingServices)}]\n"
+            + $"remainingPaths=[{string.Join(", ", failures.RemainingPaths)}]"
+        );
     }
 
     private static async Task<JsonObject> TimeSyncStatusAsync(JsonObject args)

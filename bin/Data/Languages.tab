@@ -45,6 +45,7 @@ OptimizingItem	Optimizing: {0}…	正在优化：{0}…
 PostOptimizationProcessing	Post-optimization processing…	优化后处理…
 OptimizationCompleted	Optimization completed!	优化已完成！
 PleaseUninstallDriver	Please {0} and restart to continue.	请 {0} 并重启后重试。
+DriverRemovalFailedDetails	The following could not be removed automatically:	以下项目无法自动删除：
 Optimizing	Optimizing	优化
 OptimizingDescription	Recommended performance and usability tweaks for most PCs. Enable items you need to make Windows snappier and cleaner.	面向大多数电脑的性能与使用体验优化项。按需开启，让 Windows 更流畅、更干净。
 Antivirus	Antivirus	防病毒

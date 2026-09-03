@@ -69,6 +69,30 @@ public static class DebugMcpContract
         Tool("time_sync_status",
             "Read Windows Time (W32Time) sync state: service start mode, trigger count, NTP Type, NtpClient, and the matching optimization item.",
             new()),
+        Tool("service_probe",
+            "Report whether a Windows service exists and its start mode.",
+            new() { ["name"] = Prop("string", "Service name.") }, ["name"]),
+        Tool("service_delete",
+            "Stop and remove a Windows service via WindowsService.Delete(). Destructive; debug surface only.",
+            new() { ["name"] = Prop("string", "Service name.") }, ["name"]),
+        Tool("driver_remove_probe",
+            "Run DriverItem.RemoveProduct() over the given service names and driver paths and "
+                + "report what could not be removed. Destructive (it attempts real deletion); debug surface only.",
+            new()
+            {
+                ["services"] = new JsonObject
+                {
+                    ["type"] = "array",
+                    ["items"] = Prop("string", "Service name."),
+                    ["description"] = "Service names to stop and delete.",
+                },
+                ["paths"] = new JsonObject
+                {
+                    ["type"] = "array",
+                    ["items"] = Prop("string", "Driver file or folder path (may contain * or ?)."),
+                    ["description"] = "Driver paths to delete.",
+                },
+            }),
         Tool("disk_space_items",
             "List the Disk Space tab's items (cleanup and relocation) with state, size, checked flag, current location, target drives, and object paths. Creates the items if the tab has not been shown yet.",
             new()),

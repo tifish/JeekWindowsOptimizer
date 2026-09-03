@@ -168,6 +168,50 @@ public class WindowsService(string serviceName) : IDisposable
         Start();
     }
 
+    /// <summary>
+    /// Stops the service and removes its registration. Returns <c>true</c> once the
+    /// service no longer exists.
+    /// </summary>
+    public bool Delete()
+    {
+        // Stop first so the delete completes immediately instead of pending until reboot.
+        Stop();
+
+        if (WmiExists())
+        {
+            try
+            {
+                _serviceObject.InvokeMethod("Delete", null);
+            }
+            catch
+            {
+                // Fall through to registry removal.
+            }
+
+            // The cached WMI object is stale after a delete; force a re-probe.
+            _wmiExists = null;
+        }
+
+        // Registry removal covers user-service templates/instances WMI cannot delete
+        // and cleans up when the WMI delete left the key behind.
+        if (RegistryKeyExists(_serviceName))
+        {
+            try
+            {
+                Registry.LocalMachine.DeleteSubKeyTree(
+                    ServiceRegistryPath(_serviceName),
+                    throwOnMissingSubKey: false
+                );
+            }
+            catch
+            {
+                // Ignore; reflected in the Exists() check below.
+            }
+        }
+
+        return !Exists();
+    }
+
     public enum StartMode
     {
         Boot = 0,
