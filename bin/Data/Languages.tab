@@ -754,3 +754,36 @@ LcuServicingBusy	Windows update servicing is active. Wait until it finishes and 
 DiskSpaceSelectAll	Select all	全选
 DiskSpaceSelectNone	Select none	全不选
 DiskSpaceSelectionScope	Applies to visible items in this group. Busy items are skipped; selecting moves requires an available target drive.	仅作用于本组当前显示的项目。跳过忙碌项目；移动全选仅选择有可用目标磁盘的项目。
+DiskSpaceDeveloperCleanup	Developer caches (opt-in)	开发工具缓存（按需清理）
+DeveloperCacheUnsafePath	The cache path is a protected directory, a project root, or contains links. Automatic cleanup is unavailable.	缓存位置是受保护目录、项目根目录或包含目录链接，无法自动清理。
+DeveloperCachePathChanged	The cache location changed. Scan again before cleaning.	缓存位置已改变，请重新扫描后再清理。
+DeveloperCacheBusy	A related development tool or installer is running. Close it and its background processes, then retry.	相关开发工具或安装程序正在运行，请关闭它及后台进程后重试。
+DeveloperPipCleanupName	pip download and wheel cache	pip 下载与 wheel 缓存
+DeveloperPipCleanupDescription	Clear the standard LocalAppData\pip\Cache or PIP_CACHE_DIR on the system drive. Close Python first. Later installs need downloads/rebuilding wheels; installed environments are preserved. Other pip.ini locations are not scanned.	清理系统盘标准 LocalAppData\pip\Cache 或 PIP_CACHE_DIR。请先关闭 Python；后续安装需重新下载或构建 wheel，保留已安装环境。不扫描 pip.ini 指定的其他位置。
+DeveloperNpmCleanupName	npm download cache and logs	npm 下载缓存与日志
+DeveloperNpmCleanupDescription	Clear only _cacache and _logs within npm's standard cache, npm_config_cache or user .npmrc cache path. Close Node.js first. Packages must be downloaded again; node_modules, credentials and npx cache are preserved.	仅清理 npm 标准缓存、npm_config_cache 或用户 .npmrc 缓存位置中的 _cacache 和 _logs。请先关闭 Node.js；后续需重新下载包。保留 node_modules、凭据和 npx 缓存。
+DeveloperNpxCleanupName	npx temporary tool packages	npx 临时工具包
+DeveloperNpxCleanupDescription	Clear only _npx in the same npm cache locations. Close Node.js first. Tools started by npx must be downloaded again; globally installed tools and project dependencies are preserved.	仅清理 npm 缓存位置中的 _npx。请先关闭 Node.js；npx 启动的工具需重新下载，保留全局工具和项目依赖。
+DeveloperYarnCleanupName	Yarn Classic package cache	Yarn Classic 包缓存
+DeveloperYarnCleanupDescription	Clear LocalAppData\Yarn\Cache or YARN_CACHE_FOLDER on the system drive. Close Node.js first. Future installs require downloads. Project-local Yarn caches and modern Yarn globalFolder overrides are not scanned.	清理系统盘 LocalAppData\Yarn\Cache 或 YARN_CACHE_FOLDER。请先关闭 Node.js，后续安装需重新下载。不扫描项目内 Yarn 缓存及新版 Yarn globalFolder 配置位置。
+DeveloperGradleCleanupName	Gradle dependency and build caches	Gradle 依赖与构建缓存
+DeveloperGradleCleanupDescription	Clear only caches under GRADLE_USER_HOME or .gradle. Close Java/Gradle daemons first. Builds need downloads and regeneration; offline builds may fail. Keep settings, credentials, JDKs and wrapper distributions.	仅清理 GRADLE_USER_HOME 或 .gradle 下的 caches。请先关闭 Java/Gradle 守护进程；构建需重新下载和生成缓存，离线构建可能失败。保留配置、凭据、JDK 和 Gradle 发行包。
+DeveloperGradleDistributionsCleanupName	Gradle Wrapper distributions	Gradle Wrapper 发行包
+DeveloperGradleDistributionsCleanupDescription	Clear only wrapper\dists under GRADLE_USER_HOME or .gradle. Close Java/Gradle daemons first. Each Gradle version must be downloaded again; project wrapper scripts are preserved.	仅清理 GRADLE_USER_HOME 或 .gradle 下的 wrapper\dists。请先关闭 Java/Gradle 守护进程；所需 Gradle 版本需重新下载，保留项目 wrapper 脚本。
+DeveloperMavenCleanupName	Maven local repository	Maven 本地仓库
+DeveloperMavenCleanupDescription	Clear .m2\repository or localRepository from user .m2\settings.xml on the system drive. Close Java first. Locally installed/private artifacts may exist only here and cannot necessarily be downloaded again; back them up first. Global/project overrides are not scanned; settings.xml is preserved.	清理系统盘 .m2\repository 或用户 .m2\settings.xml 的 localRepository。请先关闭 Java。本地安装或私有构件可能仅存在于此，未必能重新下载，请先备份。不扫描全局/项目级覆盖位置，保留 settings.xml。
+DeveloperCargoCleanupName	Cargo downloaded crate archives	Cargo 已下载 crate 包
+DeveloperCargoCleanupDescription	Clear only registry\cache under CARGO_HOME or .cargo. Close Cargo/rustc first. Archives must be downloaded again when needed. Keep binaries, credentials, extracted sources, Git repositories and toolchains.	仅清理 CARGO_HOME 或 .cargo 下的 registry\cache。请先关闭 Cargo/rustc；需要时重新下载包。保留二进制工具、凭据、已解压源码、Git 仓库和工具链。
+DeveloperGoBuildCleanupName	Go build cache	Go 构建缓存
+DeveloperGoBuildCleanupDescription	Clear LocalAppData\go-build or the GOCACHE environment path on the system drive. Close Go builds first. Next builds are slower. Module downloads and source code are preserved; go env configuration-file overrides are not scanned.	清理系统盘 LocalAppData\go-build 或 GOCACHE 环境变量位置。请先停止 Go 构建；下次构建会较慢。保留模块下载和源码，不扫描 go env 配置文件覆盖的位置。
+DeveloperVsComponentModelCleanupName	Visual Studio ComponentModelCache	Visual Studio 组件模型缓存
+DeveloperVsComponentModelCleanupDescription	Clear only ComponentModelCache in installed-version folders under LocalAppData\Microsoft\VisualStudio. Close Visual Studio first. Extension composition is rebuilt on next launch; settings and extensions are preserved.	仅清理 LocalAppData\Microsoft\VisualStudio 各版本目录下的 ComponentModelCache。请先关闭 Visual Studio；下次启动重新生成扩展组件缓存，保留设置和扩展。
+DeveloperVsCodeCleanupName	VS Code runtime caches	VS Code 运行缓存
+DeveloperVsCodeCleanupDescription	Clear Cache, Code Cache, CachedData and GPUCache in standard Code/Code - Insiders user-data folders. Close VS Code first. Startup may be slower; settings, extensions, workspaces, local history and unsaved backups are preserved. Portable/custom user-data folders are not scanned.	清理标准 Code/Code - Insiders 用户目录中的 Cache、Code Cache、CachedData、GPUCache。请先关闭 VS Code；下次启动可能较慢。保留设置、扩展、工作区、本地历史和未保存备份。不扫描便携/自定义用户目录。
+DeveloperPackageCacheCleanupName	VS / shared installer Package Cache	VS / 共享安装程序 Package Cache
+DeveloperPackageCacheCleanupDescription	Clear ProgramData\Package Cache shared by Visual Studio prerequisites and other installers. Close installers first. Repair, modification or uninstall may require original installers/media; some cached installers may no longer be downloadable. Does not touch Windows\Installer or modern VS Packages metadata. Back up needed installers first.	清理 VS 前置组件及其他安装程序共享的 ProgramData\Package Cache。请先关闭安装程序；修复、修改或卸载可能需要原始安装包/介质，部分包可能已无法下载。不触碰 Windows\Installer 或新版 VS Packages 元数据。请先备份需要的安装包。
+PnpmStoreCleanupName	pnpm unreferenced store packages	pnpm store 未引用包
+PnpmStoreCleanupDescription	Use pnpm store path and store prune to remove unreferenced packages on the system drive. Shows total store size as an upper bound, not guaranteed savings. Close package operations first. Future installs may download packages again; project node_modules and global tools are preserved. Uses user/global configuration, not individual project overrides.	使用 pnpm store path 和 store prune 清理系统盘 store 的未引用包。显示 store 总量作为上限，不代表全部可释放。请先停止包管理操作，后续安装可能需重新下载；保留项目 node_modules 和全局工具。使用用户/全局配置，不扫描各项目覆盖位置。
+PnpmStoreQueryFailed	Cannot resolve pnpm's store path or layout. Check the installed pnpm and its configuration.	无法识别 pnpm store 路径或布局，请检查已安装的 pnpm 和配置。
+PnpmStoreCommandFailed	pnpm could not complete the operation. Stop active installs or the store server and retry.	pnpm 操作未完成，请停止正在运行的安装或 store server 后重试。
+PnpmNotInstalled	No usable pnpm installation found; install pnpm and restart this app to scan.	未找到可用的 pnpm，请安装后重启本程序再扫描。

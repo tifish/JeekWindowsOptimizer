@@ -12,9 +12,10 @@ public sealed class NuGetCacheCleanupItem : DiskSpaceCleanupItem
     {
         _packages = packages;
         _cache = cache;
-        IsChecked = !packages;
+        IsChecked = false;
     }
 
+    public override string GroupNameKey => DeveloperCacheCleanupItem.DeveloperGroup;
     protected override bool DefaultChecked => false;
     public override string NameKey => _packages ? "NuGetPackagesCleanupName" : "NuGetHttpCacheCleanupName";
     public override string DescriptionKey => _packages ? "NuGetPackagesCleanupDescription" : "NuGetHttpCacheCleanupDescription";

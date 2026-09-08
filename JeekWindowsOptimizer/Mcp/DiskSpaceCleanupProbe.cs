@@ -5,6 +5,8 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "pnpm") return await PnpmStoreProbe.RunAsync();
+        if (scenario == "developer") return await DeveloperCacheProbe.RunAsync();
         if (scenario == "lcu") return await LcuAsync();
         if (scenario == "installer_baseline") return await InstallerBaselineAsync();
         if (scenario == "graphics") return await FixedDirectoryAsync();
@@ -166,7 +168,7 @@ internal static class DiskSpaceCleanupProbe
             }, root);
             var httpItem = new NuGetCacheCleanupItem(false, cache);
             var packagesItem = new NuGetCacheCleanupItem(true, cache);
-            Require(httpItem.IsChecked && !packagesItem.IsChecked, "package opt-in");
+            Require(!httpItem.IsChecked && !packagesItem.IsChecked, "developer caches opt-in");
             await httpItem.RefreshAsync();
             await packagesItem.RefreshAsync();
             Require(httpItem.SizeBytes == 100 && packagesItem.SizeBytes == 200, "CLI resolves overridden paths with spaces");

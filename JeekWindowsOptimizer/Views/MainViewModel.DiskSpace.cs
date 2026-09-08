@@ -237,7 +237,7 @@ public partial class MainViewModel
                 Localizer.Get("DiskSpaceCleanConfirmTitle"),
                 string.Format(Localizer.Get("DiskSpaceCleanConfirmMessage"), targets.Count,
                     ByteSize.Format(targets.Sum(item => item.ReclaimableBytes)))
-                    + "\n\n" + string.Join("\n", targets.Select(item => item.Name)),
+                    + "\n\n" + string.Join("\n", targets.Select(item => item.GroupNameKey == DeveloperCacheCleanupItem.DeveloperGroup ? item.Name + "\n" + item.Description : item.Name)),
                 ButtonEnum.YesNo,
                 MsBox.Avalonia.Enums.Icon.Question
             );

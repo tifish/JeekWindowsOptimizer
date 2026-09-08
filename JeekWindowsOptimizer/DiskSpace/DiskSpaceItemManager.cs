@@ -29,8 +29,6 @@ public static class DiskSpaceItemManager
             new TempFilesCleanupItem(),
             new BrowserCacheCleanupItem("Edge"),
             new BrowserCacheCleanupItem("Chrome"),
-            new NuGetCacheCleanupItem(packages: false),
-            new NuGetCacheCleanupItem(packages: true),
             new WindowsLogsCleanupItem(),
             new UserCrashDumpsCleanupItem(),
             new CrashDumpsCleanupItem(),
@@ -51,6 +49,13 @@ public static class DiskSpaceItemManager
             new PreviousInstallationCleanupItem(),
             new ShadowCopiesCleanupItem(),
             new HibernationDiskSpaceItem(),
+
+            // Developer caches are opt-in and separate from routine system cleanup.
+            new NuGetCacheCleanupItem(packages: false),
+            new NuGetCacheCleanupItem(packages: true),
+            .. DeveloperCachePaths.Kinds.Take(3).Select(kind => new DeveloperCacheCleanupItem(kind)),
+            new PnpmStoreCleanupItem(),
+            .. DeveloperCachePaths.Kinds.Skip(3).Select(kind => new DeveloperCacheCleanupItem(kind)),
 
             new PagingFileRelocationItem(),
             new UserFolderRelocationItem(
