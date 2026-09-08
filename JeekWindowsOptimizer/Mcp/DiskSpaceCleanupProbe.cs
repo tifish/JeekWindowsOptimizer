@@ -9,6 +9,8 @@ internal static class DiskSpaceCleanupProbe
             return await BrowserAsync();
         if (scenario == "nuget")
             return await NuGetAsync();
+        if (scenario == "user_dumps")
+            return await UserDumpsAsync();
         if (scenario != "accuracy")
             throw new ArgumentException("Unknown scenario: " + scenario);
 
@@ -138,6 +140,50 @@ internal static class DiskSpaceCleanupProbe
             catch (IOException) { rejectedRoot = true; }
             Require(rejectedRoot, "drive root rejected");
             return "PASS nuget: real CLI, overridden paths, separate caches, package opt-in, locked file error, retry, links and root guard";
+        }
+        finally { FileSystemCleaner.DeleteDirectory(root); }
+    }
+
+    private static async Task<string> UserDumpsAsync()
+    {
+        var root = Path.Join(Path.GetTempPath(), "JeekCleanupProbe-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var dumps = Path.Join(root, "CrashDumps");
+            Directory.CreateDirectory(dumps);
+            var dump = Path.Join(dumps, "app.DMP");
+            var locked = Path.Join(dumps, "locked.dmp");
+            var keep = Path.Join(dumps, "notes.txt");
+            var nested = Path.Join(dumps, "nested");
+            Directory.CreateDirectory(nested);
+            File.WriteAllBytes(dump, new byte[100]);
+            File.SetAttributes(dump, FileAttributes.ReadOnly);
+            File.WriteAllBytes(locked, new byte[200]);
+            File.WriteAllBytes(keep, new byte[500]);
+            File.WriteAllBytes(Path.Join(nested, "keep.dmp"), new byte[500]);
+            var item = new UserCrashDumpsCleanupItem(dumps);
+            Require(!item.IsChecked, "diagnostic data opt-in");
+            await item.RefreshAsync();
+            Require(item.SizeBytes == 300, "only top-level dump files");
+            using (File.Open(locked, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                await item.CleanAsync();
+                Require(item.State == DiskSpaceItemState.Failed && item.SizeBytes == 200
+                    && !File.Exists(dump), "read-only removed and locked dump retained");
+            }
+            await item.CleanAsync();
+            Require(item.State == DiskSpaceItemState.Done && item.SizeBytes == 0
+                && File.Exists(keep) && File.Exists(Path.Join(nested, "keep.dmp")), "retry and preserve other files");
+            var linked = Path.Join(root, "LinkedDumps");
+            Directory.CreateSymbolicLink(linked, nested);
+            var linkedItem = new UserCrashDumpsCleanupItem(linked);
+            await linkedItem.CleanAsync();
+            Require(linkedItem.SizeBytes == 0 && File.Exists(Path.Join(nested, "keep.dmp")), "linked dump directory skipped");
+            var absentItem = new UserCrashDumpsCleanupItem(Path.Join(root, "missing"));
+            await absentItem.CleanAsync();
+            Require(absentItem.State == DiskSpaceItemState.Done && absentItem.SizeBytes == 0, "missing directory");
+            return "PASS user_dumps: exact extension, top-level only, diagnostic opt-in, read-only and locked files, retry, links, missing directory";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
     }

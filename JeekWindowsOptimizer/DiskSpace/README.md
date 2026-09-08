@@ -47,3 +47,5 @@
 浏览器缓存：Edge / Chrome 分别注册，扫描标准 User Data 下 Default、Profile N 和 Guest Profile 的 Cache / Code Cache。运行中拒绝清理，不结束浏览器进程。跳过带重解析点的配置与缓存路径，保留 Cookie、密码、历史和网站存储；占用文件残留时显示未完成。Debug MCP `disk_space_cleanup_probe` 的 `browser` 场景用独立样本验证多配置、运行检查、锁定文件、数据保留和链接跳过。
 
 NuGet：下载缓存与已解压全局包分开显示；全局包默认不勾选。通过安装在 Program Files 下的 dotnet 调用 `nuget locals <kind> --list/--clear --force-english-output`，尊重用户配置及环境变量，只处理系统盘位置；清理前再次验证并固定路径。含链接或指向受保护目录时拒绝清理。CLI 非零退出明确报错，子进程有超时并可取消。Debug MCP `nuget` 场景仅向子进程传入临时缓存位置，运行真实官方命令验证扫描、两类缓存隔离、文件占用及重试。
+
+应用崩溃转储：新增独立行，仅清理系统盘上当前用户 `%LOCALAPPDATA%\CrashDumps` 的顶层 `*.dmp`，不递归、不扩展到应用自定义目录。默认不勾选，保留用户对既往崩溃诊断资料的选择。跳过链接，文件占用时报告未完成。Debug MCP `user_dumps` 场景验证后缀范围、只读/占用文件、保留其他文件、重试、链接与目录不存在。

@@ -710,3 +710,5 @@ NuGetPackagesCleanupDescription	Clear NuGet global packages on the system drive 
 NuGetCacheQueryFailed	Could not query the NuGet cache. Check that a .NET SDK is installed and its configuration is valid.	无法查询 NuGet 缓存。请检查是否安装了 .NET SDK，以及配置是否有效。
 NuGetCacheClearFailed	NuGet could not clear all cache files. Close development tools and retry.	NuGet 未能清理全部缓存文件。请关闭开发工具后重试。
 NuGetCacheUnsafePath	The NuGet cache path is a protected directory or contains links; automatic cleanup is unavailable.	NuGet 缓存位置是受保护目录或包含链接，无法自动清理。
+UserCrashDumpsCleanupName	Application crash dumps	应用崩溃转储
+UserCrashDumpsCleanupDescription	Application .dmp files in the current user's standard LocalAppData CrashDumps folder on the system drive. Deleting them removes evidence used to investigate past crashes. Not selected by default; custom dump locations are not scanned.	系统盘上当前用户 LocalAppData 下标准 CrashDumps 目录中的应用 .dmp 文件。删除后将失去排查既往崩溃的诊断资料。默认不勾选，不扫描自定义转储位置。

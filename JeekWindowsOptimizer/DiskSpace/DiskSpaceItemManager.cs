@@ -33,6 +33,7 @@ public static class DiskSpaceItemManager
             new WindowsUpdateCacheCleanupItem(),
             new DeliveryOptimizationCacheCleanupItem(),
             new CrashDumpsCleanupItem(),
+            new UserCrashDumpsCleanupItem(),
             new WindowsLogsCleanupItem(),
             new PreviousInstallationCleanupItem(),
             new ComponentStoreCleanupItem(),
