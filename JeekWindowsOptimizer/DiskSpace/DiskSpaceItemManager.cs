@@ -45,6 +45,7 @@ public static class DiskSpaceItemManager
             new GraphicsInstallerCleanupItem("NvidiaRoot"),
             new GraphicsInstallerCleanupItem("AmdRoot"),
             new InstallerBaselineCleanupItem(),
+            new LcuCleanupItem(),
             new PagingFileRelocationItem(),
             new UserFolderRelocationItem(
                 KnownFolders.Desktop,

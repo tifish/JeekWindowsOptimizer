@@ -5,6 +5,7 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "lcu") return await LcuAsync();
         if (scenario == "installer_baseline") return await InstallerBaselineAsync();
         if (scenario == "graphics") return await FixedDirectoryAsync();
         if (scenario == "drivers")
@@ -236,6 +237,49 @@ internal static class DiskSpaceCleanupProbe
             await absentItem.CleanAsync();
             Require(absentItem.State == DiskSpaceItemState.Done && absentItem.SizeBytes == 0, "missing directory");
             return "PASS user_dumps: exact extension, top-level only, diagnostic opt-in, read-only and locked files, retry, links, missing directory";
+        }
+        finally { FileSystemCleaner.DeleteDirectory(root); }
+    }
+
+    private static async Task<string> LcuAsync()
+    {
+        var root = Path.Join(Path.GetTempPath(), "JeekLcuProbe-" + Guid.NewGuid().ToString("N"));
+        var cache = Path.Join(root, "servicing", "LCU");
+        Directory.CreateDirectory(cache);
+        try
+        {
+            var file = Path.Join(cache, "package");
+            var keep = Path.Join(root, "servicing", "keep");
+            File.WriteAllBytes(file, new byte[321]);
+            File.WriteAllBytes(keep, new byte[100]);
+            var pending = true;
+            var busy = false;
+            var boot = DateTime.UtcNow.AddHours(1);
+            var lcu = new LcuCleanupItem(root, () => pending, () => busy, () => boot);
+            await lcu.RefreshAsync();
+            Require(lcu.SizeBytes == 321 && lcu.NeedsReboot && lcu.ReclaimableBytes == 0 && !lcu.IsChecked, "pending restart visible, not reclaimable");
+            await lcu.CleanAsync();
+            Require(lcu.State == DiskSpaceItemState.Failed && File.Exists(file), "pending guard at execution");
+            pending = false;
+            busy = true;
+            await lcu.RefreshAsync();
+            Require(!lcu.CanClean && lcu.ServicingBusy, "servicing blocked");
+            await lcu.CleanAsync();
+            Require(File.Exists(file) && lcu.State == DiskSpaceItemState.Failed, "servicing execution guard");
+            busy = false;
+            boot = DateTime.UtcNow.AddHours(-1);
+            await lcu.RefreshAsync();
+            Require(lcu.NeedsReboot, "new staging requires restart");
+            boot = DateTime.UtcNow.AddHours(1);
+            await lcu.RefreshAsync();
+            Require(lcu.CanClean && lcu.ReclaimableBytes == 321, "post-restart eligible");
+            pending = true; // State changed after scan.
+            await lcu.CleanAsync();
+            Require(File.Exists(file) && lcu.State == DiskSpaceItemState.Failed, "stale scan revalidated");
+            pending = false;
+            await lcu.CleanAsync();
+            Require(lcu.State == DiskSpaceItemState.Done && lcu.FreedBytes == 321 && File.Exists(keep), "post-restart cleanup limited to LCU");
+            return "PASS lcu: pending reboot, servicing activity, current-boot staging, stale scan guard, successful retry, sibling preserved";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
     }

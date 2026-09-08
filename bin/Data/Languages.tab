@@ -747,3 +747,7 @@ GraphicsAmdRootCleanupDescription	Clear the AMD folder at the system drive root.
 InstallerBaselineCleanupName	Windows Installer baseline cache	Windows Installer 基线缓存
 InstallerBaselineCleanupDescription	Clear only Windows\Installer\$PatchCache$; preserve all other Installer files. Future repair, patching or patch removal may request original installation media. Close Windows Installer before cleaning.	仅清理 Windows\Installer\$PatchCache$，保留 Installer 下所有其他文件。今后修复、打补丁或卸载补丁可能需要原始安装介质。请先关闭 Windows Installer。
 InstallerBaselineBusy	Windows Installer is running. Finish the installation and try again.	Windows Installer 正在运行，请完成安装后重试。
+LcuCleanupName	Cumulative update staging (LCU)	累积更新 LCU 暂存
+LcuCleanupDescription	Clear Windows\servicing\LCU only after restarting and completing Windows Update. Pending restarts, active servicing and files created or changed since boot block cleanup. Confirm the latest update works before removing its staging files.	重启并完成 Windows 更新后，清理 Windows\servicing\LCU。待重启、更新维护运行中或本次启动后新增/修改文件时禁止清理。请确认最新更新正常工作后再删除暂存文件。
+LcuNeedsReboot	Restart Windows and scan again before cleaning.	需重启 Windows 后重新扫描才可清理。
+LcuServicingBusy	Windows update servicing is active. Wait until it finishes and scan again.	Windows 更新维护正在运行，请完成后重新扫描。
