@@ -26,6 +26,8 @@ public static class DiskSpaceItemManager
         [
             new RecycleBinCleanupItem(),
             new TempFilesCleanupItem(),
+            new BrowserCacheCleanupItem("Edge"),
+            new BrowserCacheCleanupItem("Chrome"),
             new WindowsUpdateCacheCleanupItem(),
             new DeliveryOptimizationCacheCleanupItem(),
             new CrashDumpsCleanupItem(),

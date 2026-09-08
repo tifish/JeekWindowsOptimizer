@@ -43,3 +43,5 @@
 扫描状态与清理 / 迁移的忙碌状态独立：逐项更新汇总，已完成扫描的项目可以立即操作，无需等待 WinSxS。扫描期间禁止重复全量扫描，清理只包含已完成扫描且不忙碌的项目；汇总会提示仍在扫描。Debug MCP 的 `disk_space_items` 同时返回扫描状态与命令可用性。
 
 清理结果：执行前重新测量，避免沿用过期扫描。`IsFreedBytesKnown` 表示本次是否完成前后测量；取消、执行异常或重扫失败时不沿用上次释放量，也不把未知剩余空间当作零。批量汇总提示失败项目。Debug MCP 的 `disk_space_cleanup_probe`（`scenario=accuracy`）可在进程内验证这些分支，不接触真实文件。
+
+浏览器缓存：Edge / Chrome 分别注册，扫描标准 User Data 下 Default、Profile N 和 Guest Profile 的 Cache / Code Cache。运行中拒绝清理，不结束浏览器进程。跳过带重解析点的配置与缓存路径，保留 Cookie、密码、历史和网站存储；占用文件残留时显示未完成。Debug MCP `disk_space_cleanup_probe` 的 `browser` 场景用独立样本验证多配置、运行检查、锁定文件、数据保留和链接跳过。

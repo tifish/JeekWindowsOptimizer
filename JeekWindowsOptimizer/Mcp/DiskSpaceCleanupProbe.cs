@@ -5,6 +5,8 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "browser")
+            return await BrowserAsync();
         if (scenario != "accuracy")
             throw new ArgumentException("Unknown scenario: " + scenario);
 
@@ -33,6 +35,56 @@ internal static class DiskSpaceCleanupProbe
     {
         if (!condition)
             throw new InvalidOperationException("FAIL: " + name);
+    }
+
+    private static async Task<string> BrowserAsync()
+    {
+        var root = Path.Join(Path.GetTempPath(), "JeekCleanupProbe-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var data = Path.Join(root, "User Data");
+            string Write(string relative)
+            {
+                var path = Path.Join(data, relative);
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                File.WriteAllBytes(path, new byte[100]);
+                return path;
+            }
+            Write(@"Default\Cache\Cache_Data\entry");
+            Write(@"Profile 1\Code Cache\js\entry");
+            var locked = Write(@"Default\Cache\locked");
+            var keep = new[] { Write(@"Default\Network\Cookies"), Write(@"Default\Login Data"),
+                Write(@"Default\History"), Write(@"Default\Local Storage\data"),
+                Write(@"Unrecognized\Cache\data") };
+            var running = true;
+            var item = new BrowserCacheCleanupItem("Edge", data, () => running);
+            await item.RefreshAsync();
+            Require(item.SizeBytes == 300, "multiple profiles and exact cache allowlist");
+            await item.CleanAsync();
+            Require(item.State == DiskSpaceItemState.Failed && File.Exists(locked), "running browser blocked");
+            running = false;
+            using (File.Open(locked, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                await item.CleanAsync();
+                Require(item.State == DiskSpaceItemState.Failed && item.SizeBytes == 100,
+                    "locked cache reports incomplete");
+            }
+            await item.CleanAsync();
+            Require(item.State == DiskSpaceItemState.Done && item.SizeBytes == 0
+                && keep.All(File.Exists), "retry and preserve profile data");
+            var outside = Path.Join(root, "outside");
+            Directory.CreateDirectory(outside);
+            File.WriteAllBytes(Path.Join(outside, "keep"), new byte[50]);
+            Directory.CreateSymbolicLink(Path.Join(data, "Profile 2"), outside);
+            Directory.CreateDirectory(Path.Join(data, "Profile 3"));
+            Directory.CreateSymbolicLink(Path.Join(data, "Profile 3", "Cache"), outside);
+            await item.RefreshAsync();
+            await item.CleanAsync();
+            Require(item.SizeBytes == 0 && File.Exists(Path.Join(outside, "keep")), "linked profiles and caches skipped");
+            return "PASS browser: multiple profiles, cache allowlist, running guard, locked file, retry, preserved data, reparse points";
+        }
+        finally { FileSystemCleaner.DeleteDirectory(root); }
     }
 
     private sealed class MeasurementItem : DiskSpaceCleanupItem

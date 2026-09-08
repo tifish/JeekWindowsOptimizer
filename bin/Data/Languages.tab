@@ -699,3 +699,7 @@ DiskSpaceScanInProgressHint	Still scanning; only finished items are included in 
 DiskSpaceCleanCancelled	Cleanup cancelled; freed space is unknown. Scan again before retrying.	清理已取消，释放空间未知。请重新扫描后重试。
 DiskSpaceCleanMeasurementFailed	Could not measure remaining files; freed space is unknown.	无法统计剩余文件，释放空间未知。
 DiskSpaceCleanCompletedWithErrors	Cleanup finished with errors. Measured reduction: {0}. Check the failed items.	清理结束，部分项目失败。已统计减少：{0}。请查看失败项目。
+EdgeCacheCleanupName	Microsoft Edge cache	Microsoft Edge 缓存
+ChromeCacheCleanupName	Google Chrome cache	Google Chrome 缓存
+BrowserCacheCleanupDescription	Web and code caches in standard browser profiles. Close the browser, including background processes, before cleaning. Cookies, passwords, history and site storage are preserved; websites will download caches again.	标准浏览器配置目录中的网页与代码缓存。清理前请关闭浏览器及其后台进程。保留 Cookie、密码、历史记录和网站存储；再次访问网站会重新下载缓存。
+BrowserCacheCloseFirst	Close {0}, including its background processes, before cleaning its cache.	请先关闭 {0} 及其后台进程，再清理缓存。
