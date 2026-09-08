@@ -721,3 +721,16 @@ DiskSpaceQueuedSourceChanged	The source location changed while waiting. Scan and
 DiskSpaceQueuedTargetUnavailable	The queued destination is no longer available.	排队时选择的目标位置已不可用。
 ShadowCopiesCleanupName	System restore points / shadow copies	系统还原点 / 卷影副本
 ShadowCopiesCleanupDescription	Keep the newest system-drive restore snapshot and remove older client-accessible snapshots without disabling System Restore. The size is total used shadow storage, an upper bound; the newest snapshot remains.	保留系统盘最新还原快照，删除其余客户端可访问快照，不关闭系统还原。显示已用卷影存储总量（可回收上限），最新快照仍占用空间。
+HibernationDiskSpaceName	Hibernation file (hiberfil.sys)	休眠文件（hiberfil.sys）
+HibernationDiskSpaceDescription	Shows current file size. Reduced mode supports Fast Startup but gives up hibernation; Windows chooses the size. Off removes the file and disables both features. Restore enables full hibernation.	显示当前文件大小。缩减模式保留快速启动支持，但不支持休眠；大小由 Windows 决定。关闭将删除文件并停用两项功能；恢复将启用完整休眠。
+HibernationReduce	Reduce	缩减
+HibernationOff	Off	关闭
+HibernationRestore	Restore	恢复
+HibernationModeUnknown	Mode: unknown (scan to refresh)	当前模式：未知（请扫描刷新）
+HibernationModeOff	Mode: off	当前模式：已关闭
+HibernationModeReduced	Mode: reduced (Fast Startup only)	当前模式：已缩减（仅支持快速启动）
+HibernationModeFull	Mode: full hibernation	当前模式：完整休眠
+HibernationModeMismatch	Windows did not apply the requested hibernation mode.	Windows 未应用所请求的休眠模式。
+HibernationConfirmReduced	Reduce hiberfil.sys? Full hibernation will be unavailable; Fast Startup remains supported. Windows will reset any custom hibernation file size.	缩减 hiberfil.sys？将无法使用完整休眠，但保留快速启动支持。Windows 会重置自定义休眠文件大小。
+HibernationConfirmOff	Turn off hibernation and remove hiberfil.sys? Fast Startup will also become unavailable.	关闭休眠并删除 hiberfil.sys？快速启动也将无法使用。
+HibernationConfirmFull	Restore full hibernation? This will increase disk usage.	恢复完整休眠？这将增加磁盘占用。

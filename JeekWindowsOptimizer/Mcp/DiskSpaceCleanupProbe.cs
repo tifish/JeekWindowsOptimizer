@@ -5,6 +5,28 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "hibernation")
+        {
+            var mode = "Full";
+            var calls = new List<string>();
+            var fail = false;
+            var hibernation = new HibernationDiskSpaceItem(() => (mode == "Off" ? 0 : mode == "Full" ? 1000 : 400, mode), (command, _) =>
+            {
+                calls.Add(command);
+                if (fail && command == "/h /type reduced") throw new IOException("Injected powercfg failure");
+                if (command == "/h off") mode = "Off";
+                if (command == "/h on" || command == "/h /type full") mode = "Full";
+                if (command == "/h /type reduced") mode = "Reduced";
+                return Task.FromResult("");
+            });
+            Require((await hibernation.SetModeAsync("Reduced")).FreedBytes == 600 && hibernation.Mode == "Reduced", "reduce measurement");
+            Require(calls.SequenceEqual(HibernationDiskSpaceItem.Commands("Reduced")), "reset custom size before reducing");
+            Require((await hibernation.SetModeAsync("Off")).Succeeded && hibernation.SizeBytes == 0, "off");
+            Require((await hibernation.SetModeAsync("Full")).Succeeded && hibernation.SizeBytes == 1000, "restore from off");
+            fail = true;
+            Require(!(await hibernation.SetModeAsync("Reduced")).Succeeded && hibernation.Mode == "Full" && hibernation.State == DiskSpaceItemState.Failed, "partial failure reconciled");
+            return "PASS hibernation: reduce/off/restore, measured sizes, custom size reset, partial failure";
+        }
         if (scenario == "shadows")
         {
             Require(ShadowCopyStorage.ParseUsedBytes("Used space: 2 GB (3%)") == 2147483648L, "native size parser");

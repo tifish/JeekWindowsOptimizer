@@ -98,7 +98,7 @@ public static class DebugMcpContract
             new()),
         Tool("disk_space_cleanup_probe",
             "Run isolated cleanup regression checks in the app. Does not clean user data.",
-            new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps | queue | shadows.") }),
+            new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps | queue | shadows | hibernation.") }),
         Tool("disk_space_scan",
             "Run the Disk Space scan (all items in parallel, DISM analysis included) and wait for it, then return the item list.",
             new()

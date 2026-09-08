@@ -863,6 +863,27 @@
                                                 </Border>
                                             </DataTemplate>
 
+                                            <DataTemplate DataType="local:HibernationDiskSpaceItem" x:DataType="local:HibernationDiskSpaceItem">
+                                                <Border Padding="14,12" Background="{DynamicResource Win11SettingsCardBackgroundBrush}" BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}" BorderThickness="1" CornerRadius="6">
+                                                    <Grid ColumnDefinitions="* Auto">
+                                                        <StackPanel Spacing="6" Margin="0,0,20,0">
+                                                            <TextBlock Text="{Binding Name}" FontSize="17" FontWeight="SemiBold" />
+                                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="14" />
+                                                            <TextBlock Text="{Binding ModeText}" FontSize="13" />
+                                                            <TextBlock Text="{Binding StatusText}" IsVisible="{Binding HasStatusText}" TextWrapping="Wrap" />
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding SizeText}" HorizontalAlignment="Right" FontSize="17" FontWeight="SemiBold" />
+                                                            <StackPanel Orientation="Horizontal" Spacing="6" IsEnabled="{Binding !IsBusy}">
+                                                                <Button Content="{l:Localize HibernationReduce}" Command="{Binding $parent[Window].((local:MainViewModel)DataContext).SetHibernationModeCommand}" CommandParameter="Reduced" />
+                                                                <Button Content="{l:Localize HibernationOff}" Command="{Binding $parent[Window].((local:MainViewModel)DataContext).SetHibernationModeCommand}" CommandParameter="Off" />
+                                                                <Button Content="{l:Localize HibernationRestore}" Command="{Binding $parent[Window].((local:MainViewModel)DataContext).SetHibernationModeCommand}" CommandParameter="Full" />
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+
                                             <!-- Move-to-other-drive row: current location + drive picker -->
                                             <DataTemplate DataType="local:DiskSpaceRelocationItem" x:DataType="local:DiskSpaceRelocationItem">
                                                 <Border

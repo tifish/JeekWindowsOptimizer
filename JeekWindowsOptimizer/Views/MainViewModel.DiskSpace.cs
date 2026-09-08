@@ -508,6 +508,20 @@ public partial class MainViewModel
         return completion is not null && (await completion).Succeeded;
     }
 
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private async Task SetHibernationMode(string mode)
+    {
+        EnsureDiskSpaceItems();
+        var item = DiskSpaceItems.OfType<HibernationDiskSpaceItem>().Single();
+        if (!OperationQueue.CanEnqueue(item) || (IsDiskSpaceBusy && !OperationQueue.IsRunning)) return;
+        HibernationDiskSpaceItem.Commands(mode);
+        var result = await ShowUpdateDialogAsync(Localizer.Get("HibernationDiskSpaceName"),
+            Localizer.Get("HibernationConfirm" + mode), ButtonEnum.YesNo, MsBox.Avalonia.Enums.Icon.Question);
+        if (result != ButtonResult.Yes || (IsDiskSpaceBusy && !OperationQueue.IsRunning)) return;
+        if (OperationQueue.Enqueue(item, () => item.SetModeAsync(mode)) is { } completion)
+            await completion;
+    }
+
     private void RefreshSystemDriveUsage()
     {
         if (DiskSpaceItemManager.GetSystemDriveUsage() is not { } usage)

@@ -38,6 +38,7 @@ public static class DiskSpaceItemManager
             new PreviousInstallationCleanupItem(),
             new ComponentStoreCleanupItem(),
             new ShadowCopiesCleanupItem(),
+            new HibernationDiskSpaceItem(),
             new PagingFileRelocationItem(),
             new UserFolderRelocationItem(
                 KnownFolders.Desktop,
