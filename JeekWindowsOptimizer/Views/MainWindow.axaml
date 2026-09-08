@@ -850,6 +850,14 @@
                                                                 Foreground="{DynamicResource Win11SecondaryTextBrush}"
                                                                 IsVisible="{Binding IsSlow}"
                                                                 Text="{l:Localize DiskSpaceSlowHint}" />
+                                                            <Button
+                                                                Padding="14,6"
+                                                                HorizontalAlignment="Right"
+                                                                Classes="accent"
+                                                                Command="{Binding $parent[Window].((local:MainViewModel)DataContext).CleanDiskSpaceItemCommand}"
+                                                                CommandParameter="{Binding}"
+                                                                Content="{Binding CleanButtonText}"
+                                                                CornerRadius="6" />
                                                         </StackPanel>
                                                     </Grid>
                                                 </Border>
@@ -944,7 +952,7 @@
                                                                     Classes="accent"
                                                                     Command="{Binding $parent[Window].((local:MainViewModel)DataContext).MoveDiskSpaceItemCommand}"
                                                                     CommandParameter="{Binding}"
-                                                                    Content="{l:Localize DiskSpaceMove}"
+                                                                    Content="{Binding MoveButtonText}"
                                                                     CornerRadius="6"
                                                                     IsEnabled="{Binding CanMove}" />
                                                             </StackPanel>

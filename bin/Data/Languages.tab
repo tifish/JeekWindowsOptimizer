@@ -712,3 +712,10 @@ NuGetCacheClearFailed	NuGet could not clear all cache files. Close development t
 NuGetCacheUnsafePath	The NuGet cache path is a protected directory or contains links; automatic cleanup is unavailable.	NuGet 缓存位置是受保护目录或包含链接，无法自动清理。
 UserCrashDumpsCleanupName	Application crash dumps	应用崩溃转储
 UserCrashDumpsCleanupDescription	Application .dmp files in the current user's standard LocalAppData CrashDumps folder on the system drive. Deleting them removes evidence used to investigate past crashes. Not selected by default; custom dump locations are not scanned.	系统盘上当前用户 LocalAppData 下标准 CrashDumps 目录中的应用 .dmp 文件。删除后将失去排查既往崩溃的诊断资料。默认不勾选，不扫描自定义转储位置。
+CleanDiskSpaceItem	Clean	清理
+DiskSpaceQueuedButton	Queued	排队中
+DiskSpaceQueuePosition	Queued: position {0}.	已排队，等待顺序：第 {0} 项。
+DiskSpaceOperationQueueRunning	Running: {0}. Waiting: {1}.	正在执行：{0}。等待中：{1} 项。
+DiskSpaceOperationQueueCompleted	Queue finished: {0} succeeded, {1} failed. Measured cleanup reduction: {2}.	队列执行完毕：成功 {0} 项，失败 {1} 项。清理已统计减少：{2}。
+DiskSpaceQueuedSourceChanged	The source location changed while waiting. Scan and confirm the move again.	等待期间源位置已发生变化，请重新扫描并确认移动。
+DiskSpaceQueuedTargetUnavailable	The queued destination is no longer available.	排队时选择的目标位置已不可用。

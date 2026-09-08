@@ -22,6 +22,7 @@ public partial class MainViewModel
     private string? _selectedDiskSpaceNavKey;
     private bool _diskSpaceItemsCreated;
     private bool _diskSpaceScannedOnce;
+    public DiskSpaceOperationQueue OperationQueue { get; } = new();
 
     [ObservableProperty]
     public partial GroupNavItem? SelectedDiskSpaceGroupNavItem { get; set; }
@@ -36,6 +37,8 @@ public partial class MainViewModel
     [NotifyPropertyChangedFor(nameof(IsDiskSpaceActive))]
     [NotifyPropertyChangedFor(nameof(CanScanDiskSpace))]
     [NotifyPropertyChangedFor(nameof(CanCleanDiskSpace))]
+    [NotifyPropertyChangedFor(nameof(CanQueueDiskSpace))]
+    [NotifyCanExecuteChangedFor(nameof(CleanDiskSpaceItemCommand))]
     [NotifyCanExecuteChangedFor(nameof(ScanDiskSpaceCommand))]
     [NotifyCanExecuteChangedFor(nameof(CleanCheckedDiskSpaceItemsCommand))]
     [NotifyCanExecuteChangedFor(nameof(MoveCheckedDiskSpaceItemsCommand))]
@@ -62,7 +65,22 @@ public partial class MainViewModel
 
     public bool CanScanDiskSpace => !IsDiskSpaceActive;
 
-    public bool CanCleanDiskSpace => !IsDiskSpaceBusy && DiskSpaceItems.Any(item => !item.IsBusy && item.SizeBytes is not null);
+    public bool CanCleanDiskSpace => CanQueueDiskSpace;
+
+    public bool CanQueueDiskSpace => (!IsDiskSpaceBusy || OperationQueue.IsRunning)
+        && DiskSpaceCleanupItems.Any(CanCleanDiskSpaceItem);
+
+    private bool CanCleanDiskSpaceItem(DiskSpaceCleanupItem? item) => item is not null
+        && (!IsDiskSpaceBusy || OperationQueue.IsRunning) && item.ReclaimableBytes > 0 && OperationQueue.CanEnqueue(item);
+
+    public bool CanQueueMoves => (!IsDiskSpaceBusy || OperationQueue.IsRunning)
+        && DiskSpaceRelocationItems.Any(CanMoveDiskSpaceItem);
+
+    private bool CanMoveDiskSpaceItem(DiskSpaceRelocationItem? item) => item is not null
+        && (!IsDiskSpaceBusy || OperationQueue.IsRunning) && item.CanMove && OperationQueue.CanEnqueue(item);
+
+    private bool CanRestoreDiskSpaceItem(DiskSpaceRelocationItem? item) => item is not null
+        && (!IsDiskSpaceBusy || OperationQueue.IsRunning) && item.CanRestoreDefault && OperationQueue.CanEnqueue(item);
 
     public IEnumerable<DiskSpaceItem> DiskSpaceItems =>
         AllDiskSpaceGroups.SelectMany(group => group.Items);
@@ -93,6 +111,7 @@ public partial class MainViewModel
         if (_diskSpaceItemsCreated)
             return;
         _diskSpaceItemsCreated = true;
+        OperationQueue.Changed += OnOperationQueueChanged;
 
         foreach (var item in DiskSpaceItemManager.CreateItems())
         {
@@ -105,7 +124,8 @@ public partial class MainViewModel
             item.PropertyChanged += (_, args) =>
             {
                 if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked)
-                    or nameof(DiskSpaceItem.State) or nameof(DiskSpaceItem.SizeBytes))
+                    or nameof(DiskSpaceItem.State) or nameof(DiskSpaceItem.SizeBytes)
+                    or nameof(DiskSpaceItem.QueuePosition) or nameof(DiskSpaceRelocationItem.SelectedTargetDrive))
                     UpdateDiskSpaceSummary();
             };
         }
@@ -185,45 +205,39 @@ public partial class MainViewModel
 
     private long CheckedRelocationBytes => CheckedRelocationItems.Sum(item => item.SizeBytes ?? 0);
 
-    [RelayCommand(CanExecute = nameof(CanCleanDiskSpace))]
-    private Task CleanCheckedDiskSpaceItems()
-    {
-        return CleanDiskSpaceItemsAsync(
-            DiskSpaceCleanupItems.Where(item => item.IsChecked).ToList(),
-            confirm: true
-        );
-    }
+    [RelayCommand(CanExecute = nameof(CanQueueDiskSpace), AllowConcurrentExecutions = true)]
+    private Task CleanCheckedDiskSpaceItems() => CleanDiskSpaceItemsAsync(
+        DiskSpaceCleanupItems.Where(item => item.IsChecked).ToList(), confirm: true);
 
-    /// <summary>
-    ///     Cleans the given items one after another. Items already known to hold nothing
-    ///     are skipped. Returns bytes freed as measured by each item's re-scan.
-    /// </summary>
+    [RelayCommand(CanExecute = nameof(CanCleanDiskSpaceItem), AllowConcurrentExecutions = true)]
+    private Task CleanDiskSpaceItem(DiskSpaceCleanupItem? item) => item is null
+        ? Task.CompletedTask : CleanDiskSpaceItemsAsync([item], confirm: true);
+
+    /// <summary>Confirm once, enqueue in request order, and await only this request's items.</summary>
     public async Task<long> CleanDiskSpaceItemsAsync(
         IReadOnlyList<DiskSpaceCleanupItem> items,
         bool confirm
     )
     {
         EnsureDiskSpaceItems();
-        if (IsDiskSpaceBusy)
+        if (IsDiskSpaceBusy && !OperationQueue.IsRunning)
             return 0;
 
-        var targets = items.Where(item => !item.IsBusy && item.SizeBytes is not null && item.ReclaimableBytes > 0).ToList();
+        var targets = items.Distinct().Where(CanCleanDiskSpaceItem).ToList();
         if (targets.Count == 0)
         {
-            StatusMessage = Localizer.Get("DiskSpaceNothingToClean");
+            if (!OperationQueue.IsRunning)
+                StatusMessage = Localizer.Get("DiskSpaceNothingToClean");
             return 0;
         }
 
         if (confirm)
         {
-            var estimate = targets.Sum(item => item.ReclaimableBytes);
             var result = await ShowUpdateDialogAsync(
                 Localizer.Get("DiskSpaceCleanConfirmTitle"),
-                string.Format(
-                    Localizer.Get("DiskSpaceCleanConfirmMessage"),
-                    targets.Count,
-                    ByteSize.Format(estimate)
-                ),
+                string.Format(Localizer.Get("DiskSpaceCleanConfirmMessage"), targets.Count,
+                    ByteSize.Format(targets.Sum(item => item.ReclaimableBytes)))
+                    + "\n\n" + string.Join("\n", targets.Select(item => item.Name)),
                 ButtonEnum.YesNo,
                 MsBox.Avalonia.Enums.Icon.Question
             );
@@ -231,43 +245,43 @@ public partial class MainViewModel
                 return 0;
         }
 
-        // The confirmation dialog yields to other commands; recheck before starting.
-        if (IsDiskSpaceBusy)
+        // Another confirmation or a relocation may have completed while the dialog was open.
+        if (IsDiskSpaceBusy && !OperationQueue.IsRunning)
             return 0;
-        targets.RemoveAll(item => item.IsBusy);
-        IsDiskSpaceBusy = true;
-        long freed = 0;
-        try
-        {
-            foreach (var item in targets)
-            {
-                StatusMessage = string.Format(Localizer.Get("DiskSpaceCleaningItem"), item.Name);
-                try
+        var completions = new List<Task<DiskSpaceOperationResult>>();
+        foreach (var item in targets)
+            if (CanCleanDiskSpaceItem(item) && OperationQueue.Enqueue(item, async () =>
                 {
-                    freed += await item.CleanAsync();
-                }
-                catch (Exception ex)
-                {
-                    Log.ZLogError(ex, $"Failed to clean {item.NameKey}");
-                }
-            }
-        }
-        finally
-        {
-            IsDiskSpaceBusy = false;
-            RefreshSystemDriveUsage();
-            UpdateDiskSpaceSummary();
-            StatusMessage = string.Format(
-                Localizer.Get(targets.Any(item => item.State == DiskSpaceItemState.Failed)
-                    ? "DiskSpaceCleanCompletedWithErrors" : "DiskSpaceCleanCompleted"),
-                ByteSize.Format(freed)
-            );
-        }
-
-        return freed;
+                    var freed = await item.CleanAsync();
+                    return new(item.State == DiskSpaceItemState.Done, freed);
+                }) is { } completion)
+                completions.Add(completion);
+        var results = await Task.WhenAll(completions);
+        return results.Sum(result => result.FreedBytes);
     }
 
-    [RelayCommand]
+    private async void OnOperationQueueChanged()
+    {
+        IsDiskSpaceBusy = OperationQueue.IsRunning;
+        if (OperationQueue.IsRunning)
+            StatusMessage = string.Format(Localizer.Get("DiskSpaceOperationQueueRunning"),
+                OperationQueue.CurrentItem?.Name ?? Localizer.Get("DiskSpaceQueuedButton"), OperationQueue.PendingCount);
+        else
+        {
+            RefreshSystemDriveUsage();
+            StatusMessage = string.Format(Localizer.Get("DiskSpaceOperationQueueCompleted"),
+                OperationQueue.CompletedCount - OperationQueue.FailedCount, OperationQueue.FailedCount,
+                ByteSize.Format(OperationQueue.FreedBytes));
+        }
+        UpdateDiskSpaceSummary();
+        if (!OperationQueue.IsRunning && OperationQueue.RequiresReboot)
+        {
+            try { await OptimizationItem.PromptReboot(); }
+            catch (Exception ex) { Log.ZLogError(ex, $"Failed to show reboot prompt"); }
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanMoveDiskSpaceItem), AllowConcurrentExecutions = true)]
     private Task MoveDiskSpaceItem(DiskSpaceRelocationItem? item)
     {
         return item is null
@@ -281,7 +295,7 @@ public partial class MainViewModel
         bool confirm
     )
     {
-        if (drive is null || IsDiskSpaceBusy || !item.CanMove)
+        if (drive is null || !CanMoveDiskSpaceItem(item))
             return false;
 
         var target = item.GetTargetPath(drive);
@@ -311,7 +325,7 @@ public partial class MainViewModel
         return succeeded == 1;
     }
 
-    [RelayCommand(CanExecute = nameof(CanCleanDiskSpace))]
+    [RelayCommand(CanExecute = nameof(CanQueueMoves), AllowConcurrentExecutions = true)]
     private Task MoveCheckedDiskSpaceItems()
     {
         return MoveCheckedDiskSpaceItemsAsync(confirm: true);
@@ -325,7 +339,7 @@ public partial class MainViewModel
     public async Task<(int Succeeded, int Failed)> MoveCheckedDiskSpaceItemsAsync(bool confirm)
     {
         EnsureDiskSpaceItems();
-        if (IsDiskSpaceBusy)
+        if (IsDiskSpaceBusy && !OperationQueue.IsRunning)
             return (0, 0);
 
         var moves = CheckedRelocationItems
@@ -411,114 +425,87 @@ public partial class MainViewModel
         return await RunRelocationBatchAsync(moves);
     }
 
-    private async Task<(int Succeeded, int Failed)> RunRelocationBatchAsync(
+    internal async Task<(int Succeeded, int Failed)> RunRelocationBatchAsync(
         IReadOnlyList<(DiskSpaceRelocationItem Item, DriveOption Drive)> moves
     )
     {
-        IsDiskSpaceBusy = true;
-        var succeeded = 0;
-        var failed = 0;
-        var rebootNeeded = false;
-        string? lastError = null;
-        try
+        EnsureDiskSpaceItems();
+        if (IsDiskSpaceBusy && !OperationQueue.IsRunning)
+            return (0, 0);
+        var completions = new List<Task<DiskSpaceOperationResult>>();
+        foreach (var (item, drive) in moves)
         {
-            foreach (var (item, drive) in moves)
-            {
-                StatusMessage = string.Format(Localizer.Get("DiskSpaceMovingItem"), item.Name);
-                var ok = false;
-                try
-                {
-                    ok = await item.MoveAsync(drive);
-                }
-                catch (Exception ex)
-                {
-                    Log.ZLogError(ex, $"Failed to move {item.NameKey}");
-                }
+            if (!CanMoveDiskSpaceItem(item))
+                continue;
+            var source = item.CurrentLocation;
+            if (OperationQueue.Enqueue(item, () => ExecuteQueuedMoveAsync(item, drive, source)) is { } completion)
+                completions.Add(completion);
+        }
+        var results = await Task.WhenAll(completions);
+        return (results.Count(result => result.Succeeded), results.Count(result => !result.Succeeded));
+    }
 
-                if (ok)
-                {
-                    succeeded++;
-                    rebootNeeded |= item.RequiresReboot;
-                }
-                else
-                {
-                    failed++;
-                    lastError = item.ErrorMessage;
-                }
+    private static async Task<DiskSpaceOperationResult> ExecuteQueuedMoveAsync(
+        DiskSpaceRelocationItem item, DriveOption? drive, string expectedSource)
+    {
+        await item.RefreshAsync();
+        if (item.State != DiskSpaceItemState.Scanned)
+            return new(false);
+        if (!string.Equals(item.CurrentLocation, expectedSource, StringComparison.OrdinalIgnoreCase))
+        {
+            item.ReportOperationFailure(Localizer.Get("DiskSpaceQueuedSourceChanged"));
+            return new(false);
+        }
+        if (drive is not null)
+        {
+            var check = await item.CheckAsync(drive);
+            if (!check.Succeeded)
+            {
+                item.ReportOperationFailure(check.Error ?? Localizer.Get("DiskSpaceQueuedTargetUnavailable"));
+                return new(false);
             }
         }
-        finally
+        var targetRoot = drive?.Root ?? (item is UserFolderRelocationItem folder
+            ? Path.GetPathRoot(folder.DefaultLocation) : null);
+        if (targetRoot is not null)
         {
-            IsDiskSpaceBusy = false;
-            RefreshSystemDriveUsage();
-            UpdateDiskSpaceSummary();
-            StatusMessage = moves.Count == 1
-                ? succeeded == 1
-                    ? string.Format(Localizer.Get("DiskSpaceMoveCompleted"), moves[0].Item.Name)
-                    : string.Format(Localizer.Get("DiskSpaceMoveFailed"), lastError ?? "")
-                : string.Format(Localizer.Get("DiskSpaceBatchMoveCompleted"), succeeded, failed);
+            // Read at execution time; preceding moves may have consumed the free space.
+            var available = new DriveInfo(targetRoot).AvailableFreeSpace;
+            if (item.SizeBytes is { } needed && needed > available)
+            {
+                item.ReportOperationFailure(string.Format(Localizer.Get("DiskSpaceBatchMoveInsufficientSpace"),
+                    targetRoot.TrimEnd('\\'), ByteSize.Format(needed), ByteSize.Format(available)));
+                return new(false);
+            }
         }
-
-        if (rebootNeeded)
-            await OptimizationItem.PromptReboot();
-
-        return (succeeded, failed);
+        var ok = drive is null ? await item.RestoreDefaultAsync() : await item.MoveAsync(drive);
+        return new(ok, RequiresReboot: ok && item.RequiresReboot);
     }
 
-    [RelayCommand]
-    private Task RestoreDiskSpaceItemDefault(DiskSpaceRelocationItem? item)
-    {
-        return item is null ? Task.CompletedTask : RestoreDiskSpaceItemDefaultAsync(item, confirm: true);
-    }
+    [RelayCommand(CanExecute = nameof(CanRestoreDiskSpaceItem), AllowConcurrentExecutions = true)]
+    private Task RestoreDiskSpaceItemDefault(DiskSpaceRelocationItem? item) => item is null
+        ? Task.CompletedTask : RestoreDiskSpaceItemDefaultAsync(item, confirm: true);
 
     public async Task<bool> RestoreDiskSpaceItemDefaultAsync(DiskSpaceRelocationItem item, bool confirm)
     {
-        if (IsDiskSpaceBusy || !item.CanRestoreDefault)
+        EnsureDiskSpaceItems();
+        if (!CanRestoreDiskSpaceItem(item))
             return false;
-
         if (confirm)
         {
             var result = await ShowUpdateDialogAsync(
                 Localizer.Get("DiskSpaceRestoreDefaultConfirmTitle"),
-                string.Format(
-                    Localizer.Get("DiskSpaceRestoreDefaultConfirmMessage"),
-                    item.Name,
-                    item.CurrentLocation,
-                    item.DefaultLocationText,
-                    item.SizeText
-                ),
-                ButtonEnum.YesNo,
-                MsBox.Avalonia.Enums.Icon.Question
-            );
+                string.Format(Localizer.Get("DiskSpaceRestoreDefaultConfirmMessage"),
+                    item.Name, item.CurrentLocation, item.DefaultLocationText, item.SizeText),
+                ButtonEnum.YesNo, MsBox.Avalonia.Enums.Icon.Question);
             if (result != ButtonResult.Yes)
                 return false;
         }
-
-        IsDiskSpaceBusy = true;
-        StatusMessage = string.Format(Localizer.Get("DiskSpaceRestoringItem"), item.Name);
-        var succeeded = false;
-        try
-        {
-            succeeded = await item.RestoreDefaultAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.ZLogError(ex, $"Failed to restore {item.NameKey}");
-        }
-        finally
-        {
-            IsDiskSpaceBusy = false;
-            RefreshSystemDriveUsage();
-            UpdateDiskSpaceSummary();
-            StatusMessage = succeeded
-                ? string.Format(Localizer.Get("DiskSpaceRestoreCompleted"), item.Name)
-                : string.Format(Localizer.Get("DiskSpaceRestoreFailed"), item.ErrorMessage ?? "");
-        }
-
-        if (succeeded && item.RequiresReboot)
-            await OptimizationItem.PromptReboot();
-
-        return succeeded;
+        if (!CanRestoreDiskSpaceItem(item))
+            return false;
+        var source = item.CurrentLocation;
+        var completion = OperationQueue.Enqueue(item, () => ExecuteQueuedMoveAsync(item, null, source));
+        return completion is not null && (await completion).Succeeded;
     }
 
     private void RefreshSystemDriveUsage()
@@ -565,6 +552,11 @@ public partial class MainViewModel
         }
 
         OnPropertyChanged(nameof(CanCleanDiskSpace));
+        OnPropertyChanged(nameof(CanQueueDiskSpace));
+        OnPropertyChanged(nameof(CanQueueMoves));
+        MoveDiskSpaceItemCommand.NotifyCanExecuteChanged();
+        RestoreDiskSpaceItemDefaultCommand.NotifyCanExecuteChanged();
+        CleanDiskSpaceItemCommand.NotifyCanExecuteChanged();
         CleanCheckedDiskSpaceItemsCommand.NotifyCanExecuteChanged();
         MoveCheckedDiskSpaceItemsCommand.NotifyCanExecuteChanged();
     }

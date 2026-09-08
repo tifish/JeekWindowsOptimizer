@@ -91,11 +91,14 @@ internal static class DebugMcpServer
         host.AddTool("disk_space_items", _ => DiskSpaceItemsAsync());
         host.AddTool("disk_space_cleanup_probe", async args =>
         {
-            var task = await OnUiAsync(() => DiskSpaceCleanupProbe.RunAsync(args["scenario"]?.GetValue<string>() ?? "accuracy"));
+            var task = await OnUiAsync(() => args["scenario"]?.GetValue<string>() == "queue"
+                ? DiskSpaceOperationQueueProbe.RunAsync(RequireMainVm())
+                : DiskSpaceCleanupProbe.RunAsync(args["scenario"]?.GetValue<string>() ?? "accuracy"));
             return ToolText(await task);
         });
         host.AddTool("disk_space_scan", DiskSpaceScanAsync);
         host.AddTool("disk_space_clean", DiskSpaceCleanAsync);
+        host.AddTool("disk_space_enqueue", DiskSpaceEnqueueAsync);
         host.AddTool("disk_space_relocation_check", DiskSpaceRelocationCheckAsync);
         host.AddTool("disk_space_relocate", DiskSpaceRelocateAsync);
         host.AddTool("disk_space_restore_default", DiskSpaceRestoreDefaultAsync);
@@ -511,6 +514,7 @@ internal static class DebugMcpServer
         sb.AppendLine($"systemDriveUsage={vm.SystemDriveUsageText}");
         sb.AppendLine($"summary={vm.DiskSpaceSummaryText}");
         sb.AppendLine($"busy={vm.IsDiskSpaceBusy}");
+        sb.AppendLine($"queueRunning={vm.OperationQueue.IsRunning} queueCurrent={vm.OperationQueue.CurrentItem?.NameKey} queuePending={vm.OperationQueue.PendingCount} canQueue={vm.CanQueueDiskSpace}");
         sb.AppendLine($"scanning={vm.IsDiskSpaceScanning} canScan={vm.CanScanDiskSpace} canClean={vm.CanCleanDiskSpace}");
         sb.AppendLine($"scanCommandEnabled={vm.ScanDiskSpaceCommand.CanExecute(null)} cleanCommandEnabled={vm.CleanCheckedDiskSpaceItemsCommand.CanExecute(null)} moveCommandEnabled={vm.MoveCheckedDiskSpaceItemsCommand.CanExecute(null)}");
 
@@ -529,11 +533,12 @@ internal static class DebugMcpServer
                     case DiskSpaceCleanupItem cleanup:
                         sb.Append($" checked={cleanup.IsChecked} slow={cleanup.IsSlow}");
                         sb.Append($" freedBytesKnown={cleanup.IsFreedBytesKnown}");
+                        sb.Append($" queuePosition={cleanup.QueuePosition} canClean={vm.CleanDiskSpaceItemCommand.CanExecute(cleanup)}");
                         if (cleanup.FreedBytes > 0)
                             sb.Append($" freed={cleanup.FreedBytes}");
                         break;
                     case DiskSpaceRelocationItem relocation:
-                        sb.Append($" checked={relocation.IsChecked} canCheck={relocation.CanCheck}");
+                        sb.Append($" checked={relocation.IsChecked} canCheck={relocation.CanCheck} queuePosition={relocation.QueuePosition}");
                         sb.Append($" onSystemDrive={relocation.IsOnSystemDrive}");
                         sb.Append($" atDefault={relocation.IsAtDefaultLocation} canRestore={relocation.CanRestoreDefault}");
                         sb.Append($" location=\"{relocation.CurrentLocation}\"");
@@ -607,6 +612,42 @@ internal static class DebugMcpServer
             header.AppendLine($"unknownItems={string.Join(", ", missing)}");
         header.AppendLine(timedOut ? "TIMED OUT waiting for the cleanup; it keeps running." : $"freedBytes={freed}");
         return ToolText(header + text, timedOut);
+    }
+
+    private static Task<JsonObject> DiskSpaceEnqueueAsync(JsonObject args) => OnUiAsync(() =>
+    {
+        var vm = RequireMainVm();
+        vm.EnsureDiskSpaceItems();
+        var item = vm.DiskSpaceItems.FirstOrDefault(item => string.Equals(item.NameKey,
+            args["item"]?.GetValue<string>(), StringComparison.OrdinalIgnoreCase));
+        var action = args["action"]?.GetValue<string>();
+        Task request;
+        if (item is DiskSpaceCleanupItem cleanup && action == "clean"
+            && vm.CleanDiskSpaceItemCommand.CanExecute(cleanup))
+            request = vm.CleanDiskSpaceItemsAsync([cleanup], confirm: false);
+        else if (item is DiskSpaceRelocationItem relocation && action == "move"
+            && vm.MoveDiskSpaceItemCommand.CanExecute(relocation))
+        {
+            var root = args["drive"]?.GetValue<string>()?.TrimEnd('\\', ':');
+            var drive = root is null ? relocation.SelectedTargetDrive : relocation.TargetDrives.FirstOrDefault(
+                drive => string.Equals(drive.Root.TrimEnd('\\', ':'), root, StringComparison.OrdinalIgnoreCase));
+            if (drive is null)
+                return ToolText("Unknown or unavailable destination drive.", isError: true);
+            request = vm.MoveDiskSpaceItemAsync(relocation, drive, confirm: false);
+        }
+        else if (item is DiskSpaceRelocationItem restore && action == "restore"
+            && vm.RestoreDiskSpaceItemDefaultCommand.CanExecute(restore))
+            request = vm.RestoreDiskSpaceItemDefaultAsync(restore, confirm: false);
+        else
+            return ToolText("Not queued: item/action is unknown, not ready, empty, running or already queued.", isError: true);
+        _ = ObserveQueueRequestAsync(request);
+        return ToolText("accepted=true\n" + DescribeDiskSpaceItems(vm));
+    });
+
+    private static async Task ObserveQueueRequestAsync(Task request)
+    {
+        try { await request; }
+        catch (Exception ex) { Log.ZLogError(ex, $"Queued debug disk operation failed"); }
     }
 
     private static async Task<(DiskSpaceRelocationItem Item, DriveOption? Drive)> ResolveRelocationTargetAsync(

@@ -98,7 +98,7 @@ public static class DebugMcpContract
             new()),
         Tool("disk_space_cleanup_probe",
             "Run isolated cleanup regression checks in the app. Does not clean user data.",
-            new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps.") }),
+            new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps | queue.") }),
         Tool("disk_space_scan",
             "Run the Disk Space scan (all items in parallel, DISM analysis included) and wait for it, then return the item list.",
             new()
@@ -106,7 +106,7 @@ public static class DebugMcpContract
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 600)."),
             }),
         Tool("disk_space_clean",
-            "Clean the given Disk Space cleanup items without the GUI confirmation. Destructive; debug surface only.",
+            "Queue the given cleanup items and wait for this request to finish. Destructive; debug surface only.",
             new()
             {
                 ["items"] = new JsonObject
@@ -117,6 +117,14 @@ public static class DebugMcpContract
                 },
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
             }, ["items"]),
+        Tool("disk_space_enqueue",
+            "Enqueue one clean, move or restore operation and return immediately. Inspect disk_space_items for progress. No GUI confirmation; destructive, debug surface only.",
+            new()
+            {
+                ["item"] = Prop("string", "Item NameKey."),
+                ["action"] = Prop("string", "clean | move | restore"),
+                ["drive"] = Prop("string", "For move: destination drive letter/root; defaults to the selected drive."),
+            }, ["item", "action"]),
         Tool("disk_space_relocation_check",
             "Dry-run a relocation item against a drive: reports the current location, the computed target path, and the local validation verdict. Changes nothing.",
             new()

@@ -14,6 +14,11 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
     protected DiskSpaceCleanupItem()
     {
         IsChecked = DefaultChecked;
+        PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName is nameof(State) or nameof(QueuePosition))
+                OnPropertyChanged(nameof(CleanButtonText));
+        };
     }
 
     /// <summary>Items that give up something Windows cannot rebuild start unchecked.</summary>
@@ -42,6 +47,9 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
 
     [ObservableProperty]
     public partial bool IsFreedBytesKnown { get; private set; }
+
+    public string CleanButtonText => Localizer.Get(QueuePosition > 0 ? "DiskSpaceQueuedButton"
+        : State == DiskSpaceItemState.Working ? "DiskSpaceCleaning" : "CleanDiskSpaceItem");
 
     public long ReclaimableBytes => SizeBytes ?? 0;
 
@@ -127,6 +135,8 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
 
     protected override string BuildStatusText()
     {
+        if (QueuePosition > 0)
+            return string.Format(Localizer.Get("DiskSpaceQueuePosition"), QueuePosition);
         return State switch
         {
             DiskSpaceItemState.Working => Localizer.Get("DiskSpaceCleaning"),
@@ -136,6 +146,12 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
             ),
             _ => base.BuildStatusText(),
         };
+    }
+
+    public override void NotifyLanguageChanged()
+    {
+        base.NotifyLanguageChanged();
+        OnPropertyChanged(nameof(CleanButtonText));
     }
 
     /// <summary>Runs on a thread-pool thread. Returns reclaimable bytes.</summary>

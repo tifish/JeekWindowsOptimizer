@@ -92,6 +92,9 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
     private bool IsSettled =>
         State is DiskSpaceItemState.Scanned or DiskSpaceItemState.Failed or DiskSpaceItemState.Done;
 
+    public string MoveButtonText => Localizer.Get(QueuePosition > 0 ? "DiskSpaceQueuedButton"
+        : State == DiskSpaceItemState.Working ? "DiskSpaceMoving" : "DiskSpaceMove");
+
     public bool CanMove => SelectedTargetDrive is not null && !IsBusy && IsSettled;
 
     /// <summary>Whether the row's checkbox is usable: there must be somewhere to move to.</summary>
@@ -268,8 +271,9 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
         if (e.PropertyName == nameof(CurrentLocation))
             RefreshTargetDrives();
 
-        if (e.PropertyName == nameof(State))
+        if (e.PropertyName is nameof(State) or nameof(QueuePosition))
         {
+            OnPropertyChanged(nameof(MoveButtonText));
             OnPropertyChanged(nameof(CanMove));
             OnPropertyChanged(nameof(CanCheck));
             OnPropertyChanged(nameof(CanRestoreDefault));
@@ -280,6 +284,8 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
 
     protected override string BuildStatusText()
     {
+        if (QueuePosition > 0)
+            return base.BuildStatusText();
         return State switch
         {
             DiskSpaceItemState.Working => ProgressText.Length > 0
@@ -304,6 +310,7 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
     public override void NotifyLanguageChanged()
     {
         base.NotifyLanguageChanged();
+        OnPropertyChanged(nameof(MoveButtonText));
         OnPropertyChanged(nameof(CurrentLocationText));
 
         // DriveOption.Label reads the localizer on access; rebuilding the list makes

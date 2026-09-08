@@ -46,7 +46,19 @@ public abstract partial class DiskSpaceItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(HasStatusText))]
     public partial string? ErrorMessage { get; protected set; }
 
-    public bool IsBusy => State is DiskSpaceItemState.Scanning or DiskSpaceItemState.Working;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsBusy))]
+    [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(HasStatusText))]
+    public partial int QueuePosition { get; internal set; }
+
+    public bool IsBusy => QueuePosition > 0 || State is DiskSpaceItemState.Scanning or DiskSpaceItemState.Working;
+
+    internal void ReportOperationFailure(string message)
+    {
+        ErrorMessage = message;
+        State = DiskSpaceItemState.Failed;
+    }
 
     public string SizeText =>
         State == DiskSpaceItemState.Scanning ? "…"
@@ -59,6 +71,8 @@ public abstract partial class DiskSpaceItem : ObservableObject
 
     protected virtual string BuildStatusText()
     {
+        if (QueuePosition > 0)
+            return string.Format(Localizer.Get("DiskSpaceQueuePosition"), QueuePosition);
         return State switch
         {
             DiskSpaceItemState.Scanning => Localizer.Get("DiskSpaceScanning"),
