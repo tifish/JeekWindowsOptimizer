@@ -24,28 +24,34 @@ public static class DiskSpaceItemManager
     {
         return
         [
+            // Everyday caches and diagnostic leftovers.
             new RecycleBinCleanupItem(),
             new TempFilesCleanupItem(),
             new BrowserCacheCleanupItem("Edge"),
             new BrowserCacheCleanupItem("Chrome"),
             new NuGetCacheCleanupItem(packages: false),
             new NuGetCacheCleanupItem(packages: true),
-            new WindowsUpdateCacheCleanupItem(),
-            new DeliveryOptimizationCacheCleanupItem(),
-            new CrashDumpsCleanupItem(),
-            new UserCrashDumpsCleanupItem(),
             new WindowsLogsCleanupItem(),
-            new PreviousInstallationCleanupItem(),
+            new UserCrashDumpsCleanupItem(),
+            new CrashDumpsCleanupItem(),
+
+            // Downloaded/extracted installers, followed by Windows update caches.
+            new GraphicsInstallerCleanupItem("NvidiaDownloader"),
+            new GraphicsInstallerCleanupItem("NvidiaRoot"),
+            new GraphicsInstallerCleanupItem("NvidiaInstaller"),
+            new GraphicsInstallerCleanupItem("AmdRoot"),
+            new DeliveryOptimizationCacheCleanupItem(),
+            new WindowsUpdateCacheCleanupItem(),
+            new LcuCleanupItem(),
             new ComponentStoreCleanupItem(),
+
+            // Repair/rollback data and system features require more consideration.
+            new InstallerBaselineCleanupItem(),
+            new OldDriversCleanupItem(),
+            new PreviousInstallationCleanupItem(),
             new ShadowCopiesCleanupItem(),
             new HibernationDiskSpaceItem(),
-            new OldDriversCleanupItem(),
-            new GraphicsInstallerCleanupItem("NvidiaDownloader"),
-            new GraphicsInstallerCleanupItem("NvidiaInstaller"),
-            new GraphicsInstallerCleanupItem("NvidiaRoot"),
-            new GraphicsInstallerCleanupItem("AmdRoot"),
-            new InstallerBaselineCleanupItem(),
-            new LcuCleanupItem(),
+
             new PagingFileRelocationItem(),
             new UserFolderRelocationItem(
                 KnownFolders.Desktop,
