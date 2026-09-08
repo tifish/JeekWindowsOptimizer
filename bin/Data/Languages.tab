@@ -719,3 +719,5 @@ DiskSpaceOperationQueueRunning	Running: {0}. Waiting: {1}.	正在执行：{0}。
 DiskSpaceOperationQueueCompleted	Queue finished: {0} succeeded, {1} failed. Measured cleanup reduction: {2}.	队列执行完毕：成功 {0} 项，失败 {1} 项。清理已统计减少：{2}。
 DiskSpaceQueuedSourceChanged	The source location changed while waiting. Scan and confirm the move again.	等待期间源位置已发生变化，请重新扫描并确认移动。
 DiskSpaceQueuedTargetUnavailable	The queued destination is no longer available.	排队时选择的目标位置已不可用。
+ShadowCopiesCleanupName	System restore points / shadow copies	系统还原点 / 卷影副本
+ShadowCopiesCleanupDescription	Keep the newest system-drive restore snapshot and remove older client-accessible snapshots without disabling System Restore. The size is total used shadow storage, an upper bound; the newest snapshot remains.	保留系统盘最新还原快照，删除其余客户端可访问快照，不关闭系统还原。显示已用卷影存储总量（可回收上限），最新快照仍占用空间。

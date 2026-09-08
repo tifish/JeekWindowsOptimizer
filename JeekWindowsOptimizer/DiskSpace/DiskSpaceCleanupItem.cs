@@ -51,7 +51,9 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
     public string CleanButtonText => Localizer.Get(QueuePosition > 0 ? "DiskSpaceQueuedButton"
         : State == DiskSpaceItemState.Working ? "DiskSpaceCleaning" : "CleanDiskSpaceItem");
 
-    public long ReclaimableBytes => SizeBytes ?? 0;
+    public virtual bool CanClean => true;
+
+    public virtual long ReclaimableBytes => CanClean ? SizeBytes ?? 0 : 0;
 
     public void ToggleChecked()
     {

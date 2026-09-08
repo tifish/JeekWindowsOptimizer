@@ -5,6 +5,18 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "shadows")
+        {
+            Require(ShadowCopyStorage.ParseUsedBytes("Used space: 2 GB (3%)") == 2147483648L, "native size parser");
+            var now = DateTime.Now;
+            var newest = new ShadowCopyStorage.Snapshot("new", now);
+            var old = new ShadowCopyStorage.Snapshot("old", now.AddDays(-1));
+            Require(ShadowCopyStorage.KeepNewest([old, newest]).SequenceEqual([old]), "keep latest");
+            Require(ShadowCopyStorage.KeepNewest([newest]).Count == 0 && ShadowCopyStorage.KeepNewest([]).Count == 0, "zero/one snapshot");
+            Require(ShadowCopyStorage.KeepNewest([newest, old with { Created = now }]).Count == 1, "tied dates retain one");
+            Require(!new ShadowCopiesCleanupItem().IsChecked, "restore history opt-in");
+            return "PASS shadows: newest retained, zero/one snapshot, tied dates, opt-in";
+        }
         if (scenario == "browser")
             return await BrowserAsync();
         if (scenario == "nuget")
