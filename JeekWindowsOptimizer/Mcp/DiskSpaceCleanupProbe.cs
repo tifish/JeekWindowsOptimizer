@@ -5,6 +5,7 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "graphics") return await FixedDirectoryAsync();
         if (scenario == "drivers")
         {
             var packages = DriverStoreCleanup.Parse("Published Name: oem1.inf\nOriginal Name: gpu.inf\nProvider Name: Vendor\nClass Name: Display\nClass GUID: {4d36e968-e325-11ce-bfc1-08002be10318}\nClass Version: 2.0\nDriver Version: 01/01/2025 1.2.0.0\n\n发布名称: oem2.inf\n原始名称: gpu.inf\n提供商名称: Vendor\n类名: Display\n类 GUID: {4d36e968-e325-11ce-bfc1-08002be10318}\n驱动程序版本: 01/01/2026 1.10.0.0");
@@ -234,6 +235,42 @@ internal static class DiskSpaceCleanupProbe
             await absentItem.CleanAsync();
             Require(absentItem.State == DiskSpaceItemState.Done && absentItem.SizeBytes == 0, "missing directory");
             return "PASS user_dumps: exact extension, top-level only, diagnostic opt-in, read-only and locked files, retry, links, missing directory";
+        }
+        finally { FileSystemCleaner.DeleteDirectory(root); }
+    }
+
+    private static async Task<string> FixedDirectoryAsync()
+    {
+        var root = Path.Join(Path.GetTempPath(), "JeekGraphicsProbe-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            foreach (var kind in new[] { "NvidiaDownloader", "NvidiaInstaller", "NvidiaRoot", "AmdRoot" })
+            {
+                var path = Path.Join(root, kind);
+                Directory.CreateDirectory(path);
+                var locked = Path.Join(path, "locked");
+                var keep = Path.Join(root, "keep");
+                File.WriteAllBytes(locked, new byte[100]);
+                File.WriteAllBytes(keep, new byte[200]);
+                var cache = new GraphicsInstallerCleanupItem(kind, path);
+                await cache.RefreshAsync();
+                Require(cache.SizeBytes == 100 && !cache.IsChecked, "size and opt-in");
+                using (File.Open(locked, FileMode.Open, FileAccess.Read, FileShare.None))
+                {
+                    await cache.CleanAsync();
+                    Require(cache.State == DiskSpaceItemState.Failed && File.Exists(locked), "locked file incomplete");
+                }
+                await cache.CleanAsync();
+                Require(cache.State == DiskSpaceItemState.Done && cache.FreedBytes == 100 && File.Exists(keep), "allowlist cleanup and retry");
+                var outside = Path.Join(root, "outside");
+                Directory.CreateDirectory(outside);
+                File.WriteAllBytes(Path.Join(outside, "keep"), new byte[50]);
+                Directory.CreateSymbolicLink(Path.Join(path, "link"), outside);
+                await cache.CleanAsync();
+                Require(File.Exists(Path.Join(outside, "keep")), "nested link preserved");
+            }
+            return "PASS graphics: all four paths, opt-in, measured size, locked files, retry, siblings and link targets preserved";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
     }

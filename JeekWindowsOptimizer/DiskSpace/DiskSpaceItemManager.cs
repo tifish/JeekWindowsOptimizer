@@ -40,6 +40,10 @@ public static class DiskSpaceItemManager
             new ShadowCopiesCleanupItem(),
             new HibernationDiskSpaceItem(),
             new OldDriversCleanupItem(),
+            new GraphicsInstallerCleanupItem("NvidiaDownloader"),
+            new GraphicsInstallerCleanupItem("NvidiaInstaller"),
+            new GraphicsInstallerCleanupItem("NvidiaRoot"),
+            new GraphicsInstallerCleanupItem("AmdRoot"),
             new PagingFileRelocationItem(),
             new UserFolderRelocationItem(
                 KnownFolders.Desktop,

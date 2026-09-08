@@ -736,3 +736,11 @@ HibernationConfirmOff	Turn off hibernation and remove hiberfil.sys? Fast Startup
 HibernationConfirmFull	Restore full hibernation? This will increase disk usage.	恢复完整休眠？这将增加磁盘占用。
 OldDriversCleanupName	Old driver store packages	驱动库中的旧版本驱动
 OldDriversCleanupDescription	Remove unused older versions grouped by original INF name, provider, class and architecture. Keeps the newest version and packages used by devices. Older driver rollback packages will be lost; shared files may reduce actual savings.	按 INF 原始名、厂商、类别和架构分组，删除未使用的旧版本包。保留最新版本及设备正在使用的包。将失去旧驱动回滚包；共享文件可能使实际释放量低于估算。
+GraphicsNvidiaDownloaderCleanupName	NVIDIA downloaded installers	NVIDIA 下载的安装包
+GraphicsNvidiaDownloaderCleanupDescription	Clear ProgramData\NVIDIA Corporation\Downloader. Close NVIDIA installers first; packages will need to be downloaded again.	清理 ProgramData\NVIDIA Corporation\Downloader。请先关闭 NVIDIA 安装程序；以后需要重新下载安装包。
+GraphicsNvidiaInstallerCleanupName	NVIDIA Installer2 cache	NVIDIA Installer2 安装缓存
+GraphicsNvidiaInstallerCleanupDescription	Clear Program Files\NVIDIA Corporation\Installer2. Close NVIDIA installers first. Repair or reinstall may require downloading the installer again.	清理 Program Files\NVIDIA Corporation\Installer2。请先关闭 NVIDIA 安装程序；修复或重装可能需要重新下载安装包。
+GraphicsNvidiaRootCleanupName	NVIDIA extracted installers	NVIDIA 解压安装残留
+GraphicsNvidiaRootCleanupDescription	Clear the NVIDIA folder at the system drive root. Close installers first and make sure the folder contains no files you want to keep.	清理系统盘根目录 NVIDIA 文件夹。请先关闭安装程序，并确认其中没有要保留的文件。
+GraphicsAmdRootCleanupName	AMD extracted installers	AMD 解压安装残留
+GraphicsAmdRootCleanupDescription	Clear the AMD folder at the system drive root. Close installers first and make sure the folder contains no files you want to keep.	清理系统盘根目录 AMD 文件夹。请先关闭安装程序，并确认其中没有要保留的文件。
