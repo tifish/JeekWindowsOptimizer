@@ -603,7 +603,7 @@ UpdateIntervalWeekly	Weekly	每周
 UpdateIntervalNever	Never	无
 DiskSpace	{0}: Drive Space	{0} 盘空间
 DiskSpaceDescription	What to do when the system drive runs out of room: scan how much can be reclaimed and clean it, then move large folders and the paging file to another drive.	系统盘空间不足时的处理方案：先扫描可释放空间并清理，再把大文件夹和页面文件迁移到其他磁盘。
-DiskSpaceCleanup	Free up space on {0}:	释放 {0} 盘空间
+DiskSpaceCleanup	System and application cleanup	系统与应用清理
 DiskSpaceRelocation	Move to another drive	迁移到其他磁盘
 ScanDiskSpace	Rescan	重新扫描
 CleanCheckedDiskSpaceItems	Clean checked items	清理选中项
