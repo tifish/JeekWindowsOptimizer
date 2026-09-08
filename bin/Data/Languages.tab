@@ -703,3 +703,10 @@ EdgeCacheCleanupName	Microsoft Edge cache	Microsoft Edge 缓存
 ChromeCacheCleanupName	Google Chrome cache	Google Chrome 缓存
 BrowserCacheCleanupDescription	Web and code caches in standard browser profiles. Close the browser, including background processes, before cleaning. Cookies, passwords, history and site storage are preserved; websites will download caches again.	标准浏览器配置目录中的网页与代码缓存。清理前请关闭浏览器及其后台进程。保留 Cookie、密码、历史记录和网站存储；再次访问网站会重新下载缓存。
 BrowserCacheCloseFirst	Close {0}, including its background processes, before cleaning its cache.	请先关闭 {0} 及其后台进程，再清理缓存。
+NuGetHttpCacheCleanupName	NuGet download cache	NuGet 下载缓存
+NuGetHttpCacheCleanupDescription	Clear NuGet HTTP downloads on the system drive using the .NET SDK. Keep extracted packages; future downloads may use the network again. Respects NuGet's configured cache location.	通过 .NET SDK 清理系统盘上的 NuGet HTTP 下载缓存，保留已解压包。后续下载可能重新联网。使用 NuGet 配置的缓存位置。
+NuGetPackagesCleanupName	NuGet extracted packages	NuGet 已解压包
+NuGetPackagesCleanupDescription	Clear NuGet global packages on the system drive using the .NET SDK. Close development tools first. Builds will need package restore and may require network/private feed access; offline builds may fail. Not selected by default.	通过 .NET SDK 清理系统盘上的 NuGet 全局已解压包。请先关闭开发工具。后续构建需要还原依赖，可能需要网络或私有源权限，离线构建可能失败。默认不勾选。
+NuGetCacheQueryFailed	Could not query the NuGet cache. Check that a .NET SDK is installed and its configuration is valid.	无法查询 NuGet 缓存。请检查是否安装了 .NET SDK，以及配置是否有效。
+NuGetCacheClearFailed	NuGet could not clear all cache files. Close development tools and retry.	NuGet 未能清理全部缓存文件。请关闭开发工具后重试。
+NuGetCacheUnsafePath	The NuGet cache path is a protected directory or contains links; automatic cleanup is unavailable.	NuGet 缓存位置是受保护目录或包含链接，无法自动清理。

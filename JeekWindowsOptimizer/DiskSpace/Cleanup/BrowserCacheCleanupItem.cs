@@ -29,17 +29,9 @@ public sealed class BrowserCacheCleanupItem : DiskSpaceCleanupItem
         DiskSpaceItemManager.SystemDriveRoot, StringComparison.OrdinalIgnoreCase)
         ? FindCachePaths(_root) : [];
 
-    internal static bool IsPlainPath(string path)
-    {
-        for (var directory = new DirectoryInfo(path); directory is not null; directory = directory.Parent)
-            if (FileSystemCleaner.IsReparsePoint(directory.FullName))
-                return false;
-        return true;
-    }
-
     private static IReadOnlyList<string> FindCachePaths(string root)
     {
-        if (!Directory.Exists(root) || !IsPlainPath(root))
+        if (!Directory.Exists(root) || !FileSystemCleaner.IsPlainDirectoryPath(root))
             return [];
         var result = new List<string>();
         foreach (var profile in Directory.EnumerateDirectories(root))
@@ -52,7 +44,7 @@ public sealed class BrowserCacheCleanupItem : DiskSpaceCleanupItem
             foreach (var cache in new[] { "Cache", "Code Cache" })
             {
                 var path = Path.Join(profile, cache);
-                if (Directory.Exists(path) && IsPlainPath(path))
+                if (Directory.Exists(path) && FileSystemCleaner.IsPlainDirectoryPath(path))
                     result.Add(path);
             }
         }
@@ -79,7 +71,7 @@ public sealed class BrowserCacheCleanupItem : DiskSpaceCleanupItem
             cancellationToken.ThrowIfCancellationRequested();
             if (_isRunning())
                 throw new InvalidOperationException(string.Format(Localizer.Get("BrowserCacheCloseFirst"), _browser));
-            if (IsPlainPath(path))
+            if (FileSystemCleaner.IsPlainDirectoryPath(path))
                 FileSystemCleaner.DeleteDirectoryContents(path, cancellationToken);
         }
         return Task.FromResult(paths.All(path => FileSystemCleaner.GetDirectorySize(path, cancellationToken) == 0));

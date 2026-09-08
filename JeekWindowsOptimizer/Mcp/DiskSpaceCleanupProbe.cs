@@ -7,6 +7,8 @@ internal static class DiskSpaceCleanupProbe
     {
         if (scenario == "browser")
             return await BrowserAsync();
+        if (scenario == "nuget")
+            return await NuGetAsync();
         if (scenario != "accuracy")
             throw new ArgumentException("Unknown scenario: " + scenario);
 
@@ -83,6 +85,59 @@ internal static class DiskSpaceCleanupProbe
             await item.CleanAsync();
             Require(item.SizeBytes == 0 && File.Exists(Path.Join(outside, "keep")), "linked profiles and caches skipped");
             return "PASS browser: multiple profiles, cache allowlist, running guard, locked file, retry, preserved data, reparse points";
+        }
+        finally { FileSystemCleaner.DeleteDirectory(root); }
+    }
+
+    private static async Task<string> NuGetAsync()
+    {
+        var root = Path.Join(Path.GetTempPath(), "JeekCleanupProbe-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var http = Path.Join(root, "http cache");
+            var packages = Path.Join(root, "packages");
+            Directory.CreateDirectory(http);
+            Directory.CreateDirectory(packages);
+            var httpFile = Path.Join(http, "sample.dat");
+            var packageFile = Path.Join(packages, "sample.nupkg");
+            File.WriteAllBytes(httpFile, new byte[100]);
+            File.WriteAllBytes(packageFile, new byte[200]);
+            var cache = new NuGetCache(new Dictionary<string, string>
+            {
+                ["NUGET_HTTP_CACHE_PATH"] = http,
+                ["NUGET_PACKAGES"] = packages,
+                ["NUGET_SCRATCH"] = Path.Join(root, "scratch"),
+            }, root);
+            var httpItem = new NuGetCacheCleanupItem(false, cache);
+            var packagesItem = new NuGetCacheCleanupItem(true, cache);
+            Require(httpItem.IsChecked && !packagesItem.IsChecked, "package opt-in");
+            await httpItem.RefreshAsync();
+            await packagesItem.RefreshAsync();
+            Require(httpItem.SizeBytes == 100 && packagesItem.SizeBytes == 200, "CLI resolves overridden paths with spaces");
+            await httpItem.CleanAsync();
+            Require(httpItem.State == DiskSpaceItemState.Done && httpItem.FreedBytes == 100
+                && !File.Exists(httpFile) && File.Exists(packageFile), "HTTP cleanup leaves packages");
+            using (File.Open(packageFile, FileMode.Open, FileAccess.Read, FileShare.None))
+            {
+                await packagesItem.CleanAsync();
+                Require(packagesItem.State == DiskSpaceItemState.Failed && !packagesItem.IsFreedBytesKnown
+                    && File.Exists(packageFile), "CLI nonzero exit with locked package");
+            }
+            await packagesItem.CleanAsync();
+            Require(packagesItem.State == DiskSpaceItemState.Done && !File.Exists(packageFile), "package retry");
+            Directory.CreateDirectory(http);
+            Directory.CreateDirectory(packages);
+            Directory.CreateSymbolicLink(Path.Join(http, "link"), packages);
+            var rejectedLink = false;
+            try { NuGetCache.ValidatePath(http); }
+            catch (IOException) { rejectedLink = true; }
+            Require(rejectedLink, "linked cache rejected before external deletion");
+            var rejectedRoot = false;
+            try { NuGetCache.ValidatePath(Path.GetPathRoot(root)!); }
+            catch (IOException) { rejectedRoot = true; }
+            Require(rejectedRoot, "drive root rejected");
+            return "PASS nuget: real CLI, overridden paths, separate caches, package opt-in, locked file error, retry, links and root guard";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
     }

@@ -28,6 +28,8 @@ public static class DiskSpaceItemManager
             new TempFilesCleanupItem(),
             new BrowserCacheCleanupItem("Edge"),
             new BrowserCacheCleanupItem("Chrome"),
+            new NuGetCacheCleanupItem(packages: false),
+            new NuGetCacheCleanupItem(packages: true),
             new WindowsUpdateCacheCleanupItem(),
             new DeliveryOptimizationCacheCleanupItem(),
             new CrashDumpsCleanupItem(),

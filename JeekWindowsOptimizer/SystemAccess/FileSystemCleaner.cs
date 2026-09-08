@@ -37,6 +37,15 @@ public static class FileSystemCleaner
         }
     }
 
+    /// <summary>Checks the selected directory and every ancestor before accessing it.</summary>
+    public static bool IsPlainDirectoryPath(string path)
+    {
+        for (var directory = new DirectoryInfo(path); directory is not null; directory = directory.Parent)
+            if (IsReparsePoint(directory.FullName))
+                return false;
+        return true;
+    }
+
     public static long GetDirectorySize(
         string directoryPath,
         CancellationToken cancellationToken = default

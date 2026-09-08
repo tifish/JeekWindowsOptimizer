@@ -45,3 +45,5 @@
 清理结果：执行前重新测量，避免沿用过期扫描。`IsFreedBytesKnown` 表示本次是否完成前后测量；取消、执行异常或重扫失败时不沿用上次释放量，也不把未知剩余空间当作零。批量汇总提示失败项目。Debug MCP 的 `disk_space_cleanup_probe`（`scenario=accuracy`）可在进程内验证这些分支，不接触真实文件。
 
 浏览器缓存：Edge / Chrome 分别注册，扫描标准 User Data 下 Default、Profile N 和 Guest Profile 的 Cache / Code Cache。运行中拒绝清理，不结束浏览器进程。跳过带重解析点的配置与缓存路径，保留 Cookie、密码、历史和网站存储；占用文件残留时显示未完成。Debug MCP `disk_space_cleanup_probe` 的 `browser` 场景用独立样本验证多配置、运行检查、锁定文件、数据保留和链接跳过。
+
+NuGet：下载缓存与已解压全局包分开显示；全局包默认不勾选。通过安装在 Program Files 下的 dotnet 调用 `nuget locals <kind> --list/--clear --force-english-output`，尊重用户配置及环境变量，只处理系统盘位置；清理前再次验证并固定路径。含链接或指向受保护目录时拒绝清理。CLI 非零退出明确报错，子进程有超时并可取消。Debug MCP `nuget` 场景仅向子进程传入临时缓存位置，运行真实官方命令验证扫描、两类缓存隔离、文件占用及重试。
