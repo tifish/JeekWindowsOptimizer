@@ -617,6 +617,26 @@ public partial class MainViewModel
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
     }
 
+    [RelayCommand]
+    private void SelectAllDiskSpaceGroup(DiskSpaceGroup? group) => SetDiskSpaceGroupChecked(group, true);
+
+    [RelayCommand]
+    private void SelectNoneDiskSpaceGroup(DiskSpaceGroup? group) => SetDiskSpaceGroupChecked(group, false);
+
+    private static void SetDiskSpaceGroupChecked(DiskSpaceGroup? group, bool selected)
+    {
+        if (group is null) return;
+        // The displayed group contains only search matches. Mirror each row's checkbox rules.
+        foreach (var item in group.Items)
+        {
+            if (item.IsBusy) continue;
+            if (item is DiskSpaceCleanupItem cleanup)
+                cleanup.IsChecked = selected;
+            else if (item is DiskSpaceRelocationItem relocation && (!selected || relocation.CanCheck))
+                relocation.IsChecked = selected;
+        }
+    }
+
     private void SetDiskSpaceGroupsExpanded(bool expanded)
     {
         foreach (var group in DiskSpaceGroups)

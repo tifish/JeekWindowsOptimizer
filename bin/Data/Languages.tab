@@ -751,3 +751,6 @@ LcuCleanupName	Cumulative update staging (LCU)	累积更新 LCU 暂存
 LcuCleanupDescription	Clear Windows\servicing\LCU only after restarting and completing Windows Update. Pending restarts, active servicing and files created or changed since boot block cleanup. Confirm the latest update works before removing its staging files.	重启并完成 Windows 更新后，清理 Windows\servicing\LCU。待重启、更新维护运行中或本次启动后新增/修改文件时禁止清理。请确认最新更新正常工作后再删除暂存文件。
 LcuNeedsReboot	Restart Windows and scan again before cleaning.	需重启 Windows 后重新扫描才可清理。
 LcuServicingBusy	Windows update servicing is active. Wait until it finishes and scan again.	Windows 更新维护正在运行，请完成后重新扫描。
+DiskSpaceSelectAll	Select all	全选
+DiskSpaceSelectNone	Select none	全不选
+DiskSpaceSelectionScope	Applies to visible items in this group. Busy items are skipped; selecting moves requires an available target drive.	仅作用于本组当前显示的项目。跳过忙碌项目；移动全选仅选择有可用目标磁盘的项目。

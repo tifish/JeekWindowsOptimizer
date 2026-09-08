@@ -781,6 +781,19 @@
                                             Text="{Binding Name}" />
                                     </Expander.Header>
 
+                                    <StackPanel Spacing="8">
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Button Classes="group-toolbar"
+                                                Content="{l:Localize DiskSpaceSelectAll}"
+                                                ToolTip.Tip="{l:Localize DiskSpaceSelectionScope}"
+                                                Command="{Binding $parent[Window].((local:MainViewModel)DataContext).SelectAllDiskSpaceGroupCommand}"
+                                                CommandParameter="{Binding}" />
+                                            <Button Classes="group-toolbar"
+                                                Content="{l:Localize DiskSpaceSelectNone}"
+                                                ToolTip.Tip="{l:Localize DiskSpaceSelectionScope}"
+                                                Command="{Binding $parent[Window].((local:MainViewModel)DataContext).SelectNoneDiskSpaceGroupCommand}"
+                                                CommandParameter="{Binding}" />
+                                        </StackPanel>
                                     <ItemsControl ItemsSource="{Binding Items}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -1008,6 +1021,7 @@
                                             </DataTemplate>
                                         </ItemsControl.DataTemplates>
                                     </ItemsControl>
+                                    </StackPanel>
                                 </Expander>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
