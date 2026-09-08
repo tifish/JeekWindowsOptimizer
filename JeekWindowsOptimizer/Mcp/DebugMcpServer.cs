@@ -95,6 +95,16 @@ internal static class DebugMcpServer
             return ToolText(await task);
         });
         host.AddTool("disk_space_items", _ => DiskSpaceItemsAsync());
+        host.AddTool("virtual_disk_migration_probe", async _ =>
+        {
+            var task = await OnUiAsync(VirtualDiskMigrationProbe.RunAsync);
+            return ToolText(await task);
+        });
+        host.AddTool("wsl_native_migration_probe", async _ =>
+        {
+            var task = await OnUiAsync(VirtualDiskMigrationProbe.RunNativeWslAsync);
+            return ToolText(await task);
+        });
         host.AddTool("disk_space_cleanup_probe", async args =>
         {
             var task = await OnUiAsync(() => args["scenario"]?.GetValue<string>() == "queue"

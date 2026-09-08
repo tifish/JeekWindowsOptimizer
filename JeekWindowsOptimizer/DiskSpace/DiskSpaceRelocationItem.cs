@@ -82,10 +82,13 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
     public partial string ProgressText { get; protected set; } = "";
 
     public virtual bool RequiresReboot => false;
+    public virtual bool SupportsRestoreDefault => true;
+    public virtual string MoveNotice => "";
+    protected virtual bool AllowSystemDriveTarget => false;
 
     public bool HasTargetDrives => TargetDrives.Count > 0;
 
-    public bool ShowMoveControls => HasTargetDrives && State != DiskSpaceItemState.NotScanned;
+    public bool ShowMoveControls => HasTargetDrives && HasCurrentLocation && State != DiskSpaceItemState.NotScanned;
 
     public bool ShowNoTargetDrive => !HasTargetDrives && State == DiskSpaceItemState.Scanned;
 
@@ -95,17 +98,17 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
     public string MoveButtonText => Localizer.Get(QueuePosition > 0 ? "DiskSpaceQueuedButton"
         : State == DiskSpaceItemState.Working ? "DiskSpaceMoving" : "DiskSpaceMove");
 
-    public bool CanMove => SelectedTargetDrive is not null && !IsBusy && IsSettled;
+    public bool CanMove => SelectedTargetDrive is not null && !IsBusy && IsSettled && HasCurrentLocation;
 
     /// <summary>Whether the row's checkbox is usable: there must be somewhere to move to.</summary>
-    public bool CanCheck => HasTargetDrives && !IsBusy;
+    public bool CanCheck => HasTargetDrives && HasCurrentLocation && !IsBusy;
 
     /// <summary>Human-readable default location shown in the restore confirmation.</summary>
     public abstract string DefaultLocationText { get; }
 
     public abstract bool IsAtDefaultLocation { get; }
 
-    public bool CanRestoreDefault => !IsAtDefaultLocation && !IsBusy && IsSettled && HasCurrentLocation;
+    public bool CanRestoreDefault => SupportsRestoreDefault && !IsAtDefaultLocation && !IsBusy && IsSettled && HasCurrentLocation;
 
     public string CurrentLocationText =>
         CurrentLocation.Length == 0
@@ -123,8 +126,8 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
 
     /// <summary>
     ///     Remembers every NTFS drive and offers the data drives the item is not on now.
-    ///     The system drive is never a move target: going back there is "restore
-    ///     default", which lands in the user profile instead of a root-level folder.
+    ///     User folders return to the system drive via "restore default". Virtual
+    ///     disks also allow a normal move to the system drive.
     /// </summary>
     public void SetTargetDrives(IReadOnlyList<DriveOption> drives)
     {
@@ -136,7 +139,7 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
     {
         var previous = SelectedTargetDrive?.Root;
         var offered = _allDrives
-            .Where(d => !d.IsSameDrive(DiskSpaceItemManager.SystemDriveRoot) && !IsCurrentDrive(d))
+            .Where(d => (AllowSystemDriveTarget || !d.IsSameDrive(DiskSpaceItemManager.SystemDriveRoot)) && !IsCurrentDrive(d))
             .ToList();
 
         TargetDrives.Clear();

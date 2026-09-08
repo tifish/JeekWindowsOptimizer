@@ -997,6 +997,8 @@
                                                                 FontSize="12"
                                                                 Foreground="{DynamicResource Win11SecondaryTextBrush}"
                                                                 IsVisible="{Binding ShowMoveControls}"
+                                                                MaxWidth="360"
+                                                                TextWrapping="Wrap"
                                                                 Text="{Binding TargetPreview}" />
                                                             <!-- Undo: plain text button so it cannot be mistaken for Move -->
                                                             <Button

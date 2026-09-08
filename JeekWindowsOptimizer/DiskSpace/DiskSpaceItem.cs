@@ -26,7 +26,7 @@ public abstract partial class DiskSpaceItem : ObservableObject
     public abstract string DescriptionKey { get; }
 
     public string GroupName => Localizer.Get(GroupNameKey);
-    public string Name => Localizer.Get(NameKey);
+    public virtual string Name => Localizer.Get(NameKey);
     public string Description => Localizer.Get(DescriptionKey);
 
     [ObservableProperty]

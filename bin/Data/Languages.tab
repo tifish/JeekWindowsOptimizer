@@ -787,3 +787,22 @@ PnpmStoreCleanupDescription	Use pnpm store path and store prune to remove unrefe
 PnpmStoreQueryFailed	Cannot resolve pnpm's store path or layout. Check the installed pnpm and its configuration.	无法识别 pnpm store 路径或布局，请检查已安装的 pnpm 和配置。
 PnpmStoreCommandFailed	pnpm could not complete the operation. Stop active installs or the store server and retry.	pnpm 操作未完成，请停止正在运行的安装或 store server 后重试。
 PnpmNotInstalled	No usable pnpm installation found; install pnpm and restart this app to scan.	未找到可用的 pnpm，请安装后重启本程序再扫描。
+WslMigrationDescription	Move this WSL 2 distribution using WSL's native move command. Save your work first: this stops the selected distribution and its services. Back up important data. Windows bind mounts are not moved. Select any other NTFS drive to move it again.	通过 WSL 原生命令迁移此 WSL 2 发行版。请先保存工作：操作会停止所选发行版及其服务。请备份重要数据；Windows 绑定挂载目录不会迁移。可选择其他 NTFS 盘再次迁移。
+DockerLegacyMigrationDescription	Move the legacy Docker data distribution with WSL. Quit Docker Desktop and stop containers first. Back up important volumes. Windows bind mounts are not moved.	通过 WSL 迁移旧版 Docker 数据发行版。请先停止容器并退出 Docker Desktop，备份重要数据卷；Windows 绑定挂载目录不会迁移。
+WslMigrationUpdateRequired	This WSL does not support --manage --move. Update WSL with wsl --update, then retry.	当前 WSL 不支持 --manage --move，请执行 wsl --update 更新后重试。
+WslMigrationVersionRequired	Native migration requires a WSL 2 distribution.	原生迁移需要 WSL 2 发行版。
+WslMigrationMissing	The WSL distribution is no longer registered. Scan again.	此 WSL 发行版已不再注册，请重新扫描。
+WslMigrationMoving	Stopping the selected distribution and moving its virtual disk…	正在停止所选发行版并迁移虚拟磁盘…
+DockerMigrationName	Docker Desktop disk data	Docker Desktop 磁盘数据
+DockerMigrationDescription	Move Docker's managed WSL 2 disk, verify its contents, and retain its configured path with an NTFS directory junction. Quit Docker Desktop and stop containers first; keep Docker closed during migration. Back up important volumes. Windows bind mounts are not moved. Restore returns data to the original path.	迁移 Docker 托管的 WSL 2 磁盘，校验内容后通过 NTFS 目录联接保留配置路径。请先停止容器并退出 Docker Desktop，迁移期间保持关闭；请备份重要数据卷。Windows 绑定挂载目录不会迁移。恢复默认位置会将数据搬回原路径。
+DockerMigrationStopRequired	Quit Docker Desktop and stop its background processes before moving data. If the disk is still in use, save WSL work and run wsl --shutdown yourself.	请先退出 Docker Desktop 并停止其后台进程。若磁盘仍被占用，请保存 WSL 工作后自行执行 wsl --shutdown。
+DockerMigrationLayoutUnsupported	This Docker disk layout cannot be migrated automatically. Use Docker Desktop Settings > Resources > Advanced to change its disk image location.	此 Docker 磁盘布局暂不支持自动迁移，请在 Docker Desktop 设置 > Resources > Advanced 中更改磁盘映像位置。
+DockerMigrationMissing	No managed Docker WSL disk found. Legacy Docker data appears as a separate WSL distribution when installed.	未发现 Docker 托管的 WSL 磁盘；已安装的旧版 Docker 数据将显示为单独的 WSL 发行版。
+DockerMigrationCopying	Copying Docker virtual disk…	正在复制 Docker 虚拟磁盘…
+DockerMigrationVerifying	Verifying Docker virtual disk contents…	正在校验 Docker 虚拟磁盘内容…
+DockerMigrationRecoveryRequired	A previous migration backup exists or the path is redirected. Inspect this path before retrying: {0}	检测到上次迁移备份或路径重定向，请检查后重试：{0}
+DockerMigrationCleanupRequired	Data was switched to the new location, but old-data cleanup failed. Keep the new location. Inspect the old path {0} and backup {1} before removing leftovers.	数据已切换至新位置，但旧数据清理失败。请保留新位置，检查旧路径 {0} 和备份 {1} 后清理残留。
+VirtualDiskMigrationInvalidPath	Choose a separate local NTFS directory without symbolic links or junctions.	请选择独立的本地 NTFS 目录，路径不能包含符号链接或目录联接。
+VirtualDiskMigrationTargetExists	The destination already exists. It will not be overwritten or merged; choose another drive or move the existing destination aside first.	目标路径已存在，不会覆盖或合并。请选择其他盘，或先移走已有目标目录。
+VirtualDiskMigrationNoSpace	The destination drive does not have enough free space for the virtual disk.	目标盘可用空间不足以存放虚拟磁盘。
+VirtualDiskMigrationVerificationFailed	Migration verification failed. Keep both locations and inspect them before retrying.	迁移结果校验失败，请保留两处数据并检查后再重试。

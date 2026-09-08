@@ -58,6 +58,10 @@ public static class DiskSpaceItemManager
             .. DeveloperCachePaths.Kinds.Skip(3).Select(kind => new DeveloperCacheCleanupItem(kind)),
 
             new PagingFileRelocationItem(),
+            .. WslStorage.Discover()
+                .Where(d => !d.Name.Equals("docker-desktop", StringComparison.OrdinalIgnoreCase))
+                .Select(d => new WslRelocationItem(d)),
+            new DockerRelocationItem(),
             new UserFolderRelocationItem(
                 KnownFolders.Desktop,
                 "Desktop",

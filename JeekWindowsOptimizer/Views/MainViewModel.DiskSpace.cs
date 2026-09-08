@@ -125,30 +125,33 @@ public partial class MainViewModel
         OperationQueue.Changed += OnOperationQueueChanged;
 
         foreach (var item in DiskSpaceItemManager.CreateItems())
-        {
-            if (item is DiskSpaceCleanupItem cleanupItem
-                && AppSettingsStore.Roaming.DiskSpaceCleanupSelections?.TryGetValue(item.NameKey, out var saved) == true)
-                cleanupItem.RestoreCheckedState(saved);
-            var group = AllDiskSpaceGroups.FirstOrDefault(g => g.NameKey == item.GroupNameKey);
-            if (group is null)
-                AllDiskSpaceGroups.Add(new DiskSpaceGroup(item.GroupNameKey, [item]));
-            else
-                group.Items.Add(item);
-
-            item.PropertyChanged += (_, args) =>
-            {
-                if (item is DiskSpaceCleanupItem cleanup && args.PropertyName == nameof(DiskSpaceCleanupItem.IsChecked))
-                    _pendingCleanupSelections[item.NameKey] = cleanup.IsChecked;
-                if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked)
-                    or nameof(DiskSpaceItem.State) or nameof(DiskSpaceItem.SizeBytes)
-                    or nameof(DiskSpaceItem.QueuePosition) or nameof(DiskSpaceRelocationItem.SelectedTargetDrive))
-                    UpdateDiskSpaceSummary();
-            };
-        }
+            AddDiskSpaceItem(item);
 
         RefreshSystemDriveUsage();
         UpdateDiskSpaceSummary();
         RefreshDisplayedDiskSpaceGroups();
+    }
+
+    private void AddDiskSpaceItem(DiskSpaceItem item)
+    {
+        if (item is DiskSpaceCleanupItem cleanupItem
+            && AppSettingsStore.Roaming.DiskSpaceCleanupSelections?.TryGetValue(item.NameKey, out var saved) == true)
+            cleanupItem.RestoreCheckedState(saved);
+        var group = AllDiskSpaceGroups.FirstOrDefault(g => g.NameKey == item.GroupNameKey);
+        if (group is null)
+            AllDiskSpaceGroups.Add(new DiskSpaceGroup(item.GroupNameKey, [item]));
+        else
+            group.Items.Add(item);
+
+        item.PropertyChanged += (_, args) =>
+        {
+            if (item is DiskSpaceCleanupItem cleanup && args.PropertyName == nameof(DiskSpaceCleanupItem.IsChecked))
+                _pendingCleanupSelections[item.NameKey] = cleanup.IsChecked;
+            if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked)
+                or nameof(DiskSpaceItem.State) or nameof(DiskSpaceItem.SizeBytes)
+                or nameof(DiskSpaceItem.QueuePosition) or nameof(DiskSpaceRelocationItem.SelectedTargetDrive))
+                UpdateDiskSpaceSummary();
+        };
     }
 
     private void OnDiskSpaceTabSelected()
@@ -187,6 +190,19 @@ public partial class MainViewModel
         try
         {
             RefreshSystemDriveUsage();
+
+            var distributions = await Task.Run(WslStorage.Discover);
+            var discovered = distributions
+                .Where(d => !d.Name.Equals("docker-desktop", StringComparison.OrdinalIgnoreCase))
+                .Select(d => new WslRelocationItem(d)).ToList();
+            var keys = discovered.Select(item => item.NameKey).ToHashSet(StringComparer.Ordinal);
+            foreach (var group in AllDiskSpaceGroups)
+                foreach (var stale in group.Items.OfType<WslRelocationItem>().Where(item => !keys.Contains(item.NameKey)).ToList())
+                    group.Items.Remove(stale);
+            foreach (var item in discovered)
+                if (!DiskSpaceItems.Any(existing => existing.NameKey == item.NameKey))
+                    AddDiskSpaceItem(item);
+            RefreshDisplayedDiskSpaceGroups();
 
             var drives = await Task.Run(DiskSpaceItemManager.GetTargetDrives);
             foreach (var item in DiskSpaceRelocationItems)
@@ -324,6 +340,8 @@ public partial class MainViewModel
                 target,
                 item.SizeText
             );
+            if (item.MoveNotice.Length > 0)
+                message += "\n\n" + item.MoveNotice;
             if (item.TargetHasContent(drive))
                 message += "\n" + Localizer.Get("DiskSpaceMoveTargetExistsNote");
 
@@ -427,6 +445,7 @@ public partial class MainViewModel
             );
             if (moves.Any(m => m.Item.TargetHasContent(m.Drive)))
                 message += "\n" + Localizer.Get("DiskSpaceMoveTargetExistsNote");
+            message += "\n\n" + string.Join("\n", moves.Select(m => m.Item.MoveNotice).Where(n => n.Length > 0).Distinct());
 
             var result = await ShowUpdateDialogAsync(
                 Localizer.Get("DiskSpaceBatchMoveConfirmTitle"),
@@ -512,7 +531,7 @@ public partial class MainViewModel
             var result = await ShowUpdateDialogAsync(
                 Localizer.Get("DiskSpaceRestoreDefaultConfirmTitle"),
                 string.Format(Localizer.Get("DiskSpaceRestoreDefaultConfirmMessage"),
-                    item.Name, item.CurrentLocation, item.DefaultLocationText, item.SizeText),
+                    item.Name, item.CurrentLocation, item.DefaultLocationText, item.SizeText) + "\n\n" + item.MoveNotice,
                 ButtonEnum.YesNo, MsBox.Avalonia.Enums.Icon.Question);
             if (result != ButtonResult.Yes)
                 return false;

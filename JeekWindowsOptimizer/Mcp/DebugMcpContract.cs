@@ -97,6 +97,8 @@ public static class DebugMcpContract
         Tool("disk_space_items",
             "List the Disk Space tab's items (cleanup and relocation) with global scanning/busy state, scan/clean/move command availability, size, per-item state, checked flag, current location, target drives, and object paths. Creates the items if the tab has not been shown yet.",
             new()),
+        Tool("virtual_disk_migration_probe", "Test WSL orchestration and real Docker disk copy/junction/restore against isolated temporary fixtures. Does not move installed distributions or Docker data.", new()),
+        Tool("wsl_native_migration_probe", "Create a random temporary WSL 2 distribution, migrate it across two NTFS drives and back, verify its exported filesystem, then unregister only that fixture. Does not move user distributions.", new()),
         Tool("disk_space_cleanup_probe",
             "Run isolated cleanup regression checks in the app. Does not clean user data.",
             new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps | queue | shadows | hibernation | drivers | graphics | installer_baseline | lcu | developer | pnpm | selection.") }),
