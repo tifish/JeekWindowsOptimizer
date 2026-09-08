@@ -272,6 +272,26 @@ public partial class MainViewModel : ObservableObject, IDisposable
         RequestScrollToNavTarget(value, isTools: true);
     }
 
+    /// <summary>Explicit activation also navigates when the selected entry has not changed.</summary>
+    public void ActivateGroupNavigation(GroupNavItem item)
+    {
+        if (item.DiskSpaceGroup is not null)
+        {
+            if (SelectedDiskSpaceGroupNavItem == item) OnSelectedDiskSpaceGroupNavItemChanged(item);
+            else SelectedDiskSpaceGroupNavItem = item;
+        }
+        else if (item.ToolGroup is not null)
+        {
+            if (SelectedToolGroupNavItem == item) OnSelectedToolGroupNavItemChanged(item);
+            else SelectedToolGroupNavItem = item;
+        }
+        else if (item.OptimizationGroup is not null)
+        {
+            if (SelectedGroupNavItem == item) OnSelectedGroupNavItemChanged(item);
+            else SelectedGroupNavItem = item;
+        }
+    }
+
     private void RequestScrollToNavTarget(GroupNavItem? value, bool isTools)
     {
         if (value is null)

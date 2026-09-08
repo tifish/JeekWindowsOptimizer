@@ -491,6 +491,7 @@
                         Text="{l:Localize GroupsNavTitle}" />
                     <ListBox
                         Classes="group-nav"
+                        x:Name="OptimizationGroupNavigation"
                         ItemsSource="{Binding GroupNavItems}"
                         SelectedItem="{Binding SelectedGroupNavItem}">
                         <ListBox.ItemTemplate>
@@ -656,6 +657,7 @@
                         Text="{l:Localize GroupsNavTitle}" />
                     <ListBox
                         Classes="group-nav"
+                        x:Name="DiskSpaceGroupNavigation"
                         ItemsSource="{Binding DiskSpaceGroupNavItems}"
                         SelectedItem="{Binding SelectedDiskSpaceGroupNavItem}">
                         <ListBox.ItemTemplate>
@@ -1051,6 +1053,7 @@
                         Text="{l:Localize GroupsNavTitle}" />
                     <ListBox
                         Classes="group-nav"
+                        x:Name="ToolGroupNavigation"
                         ItemsSource="{Binding ToolGroupNavItems}"
                         SelectedItem="{Binding SelectedToolGroupNavItem}">
                         <ListBox.ItemTemplate>

@@ -88,6 +88,12 @@ internal static class DebugMcpServer
         host.AddTool("service_probe", ServiceProbeAsync);
         host.AddTool("service_delete", ServiceDeleteAsync);
         host.AddTool("driver_remove_probe", DriverRemoveProbeAsync);
+        host.AddTool("group_navigation_probe", async _ =>
+        {
+            var task = await OnUiAsync(() => GroupNavigationProbe.RunAsync(
+                (Views.MainWindow)Desktop!.MainWindow!, RequireMainVm()));
+            return ToolText(await task);
+        });
         host.AddTool("disk_space_items", _ => DiskSpaceItemsAsync());
         host.AddTool("disk_space_cleanup_probe", async args =>
         {

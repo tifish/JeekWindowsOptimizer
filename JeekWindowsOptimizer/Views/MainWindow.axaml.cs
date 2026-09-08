@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
 using Jeek.Avalonia.Localization;
 using JeekTools;
 using Microsoft.Extensions.Logging;
@@ -22,6 +23,12 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        foreach (var navigation in new[] { OptimizationGroupNavigation, DiskSpaceGroupNavigation, ToolGroupNavigation })
+        {
+            // ListBox handles pointer presses itself; observe the tunnel, including already-selected rows.
+            navigation.AddHandler(PointerPressedEvent, GroupNavigation_OnPointerPressed, RoutingStrategies.Tunnel, handledEventsToo: true);
+            navigation.AddHandler(KeyDownEvent, GroupNavigation_OnKeyDown, RoutingStrategies.Tunnel);
+        }
 
         Localizer.LanguageChanged += OnLanguageChanged;
         UpdateFontFamily();
@@ -77,43 +84,62 @@ public partial class MainWindow : Window
             disposable.Dispose();
     }
 
-    private void OnScrollToGroupRequested(object? sender, object? group)
+    private void GroupNavigation_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (group is null)
-            return;
-
-        // Wait for expander expand / layout so BringIntoView lands on final position.
-        Dispatcher.UIThread.Post(
-            () => ScrollContentToGroup(group),
-            DispatcherPriority.Loaded
-        );
+        if (sender is not ListBox navigation || DataContext is not MainViewModel vm
+            || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || e.Source is not Visual source) return;
+        var row = source as ListBoxItem ?? source.GetVisualAncestors().OfType<ListBoxItem>().FirstOrDefault();
+        if (row?.DataContext is GroupNavItem item && navigation.Items.Contains(item))
+            vm.ActivateGroupNavigation(item);
     }
 
-    private void ScrollContentToGroup(object group)
+    private void GroupNavigation_OnKeyDown(object? sender, KeyEventArgs e)
     {
-        ItemsControl? itemsControl = group switch
+        if (e.Key is not (Key.Enter or Key.Space) || sender is not ListBox { SelectedItem: GroupNavItem item }
+            || DataContext is not MainViewModel vm) return;
+        vm.ActivateGroupNavigation(item);
+        e.Handled = true;
+    }
+
+    private int _scrollRequestVersion;
+
+    private void OnScrollToGroupRequested(object? sender, object? group)
+    {
+        if (group is null) return;
+        var version = ++_scrollRequestVersion;
+        Dispatcher.UIThread.Post(() => ScrollContentToGroup(group, version), DispatcherPriority.Loaded);
+    }
+
+    private void ScrollContentToGroup(object group, int version, bool retry = true)
+    {
+        if (version != _scrollRequestVersion) return;
+        var (items, scroll) = group switch
         {
-            OptimizationGroup => OptimizationGroupsItemsControl,
-            ToolGroup => ToolGroupsItemsControl,
-            DiskSpaceGroup => DiskSpaceGroupsItemsControl,
-            _ => null,
+            OptimizationGroup => (OptimizationGroupsItemsControl, OptimizationContentScrollViewer),
+            ToolGroup => (ToolGroupsItemsControl, ToolsContentScrollViewer),
+            DiskSpaceGroup => (DiskSpaceGroupsItemsControl, DiskSpaceContentScrollViewer),
+            _ => ((ItemsControl?)null, (ScrollViewer?)null),
         };
-
-        if (itemsControl is null)
-            return;
-
-        var container = itemsControl.ContainerFromItem(group);
+        if (items is null || scroll is null || !items.IsEffectivelyVisible) return;
+        UpdateLayout();
+        var container = items.ContainerFromItem(group);
         if (container is null)
         {
-            // Container may not exist yet right after collection replace; retry once.
-            Dispatcher.UIThread.Post(
-                () => itemsControl.ContainerFromItem(group)?.BringIntoView(),
-                DispatcherPriority.Render
-            );
+            if (retry) Dispatcher.UIThread.Post(() => ScrollContentToGroup(group, version, false), DispatcherPriority.Loaded);
             return;
         }
 
-        container.BringIntoView();
+        // A short final group needs trailing space to put its heading at the viewport top.
+        // Keep the space minimal; the usual long groups need no extra margin.
+        if (items.Items.LastOrDefault() is { } lastItem && items.ContainerFromItem(lastItem) is { } last)
+        {
+            var margin = items.Margin;
+            items.Margin = new Thickness(margin.Left, margin.Top, margin.Right, Math.Max(0, scroll.Viewport.Height - last.Bounds.Height));
+            UpdateLayout();
+        }
+        if (container.TranslatePoint(default, items) is { } position)
+            scroll.Offset = new Vector(scroll.Offset.X, Math.Clamp(position.Y + items.Margin.Top,
+                0, Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height)));
     }
 
     private void SaveUncheckedOptimizationItemsIfChanged()
