@@ -630,6 +630,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public void SaveUncheckedOptimizationItemsIfChanged()
     {
+        SaveDiskSpaceCleanupSelectionsIfChanged();
         if (!_uncheckedOptimizationItemsDirty)
             return;
 

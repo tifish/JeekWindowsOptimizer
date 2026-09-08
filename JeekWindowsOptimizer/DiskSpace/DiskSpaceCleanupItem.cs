@@ -14,6 +14,7 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
     protected DiskSpaceCleanupItem()
     {
         IsChecked = DefaultChecked;
+        _autoCheckApplied = false;
         PropertyChanged += (_, args) =>
         {
             if (args.PropertyName is nameof(State) or nameof(QueuePosition))
@@ -39,6 +40,14 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
 
     [ObservableProperty]
     public partial bool IsChecked { get; set; }
+
+    partial void OnIsCheckedChanged(bool value) => _autoCheckApplied = true;
+
+    internal void RestoreCheckedState(bool value)
+    {
+        _autoCheckApplied = true;
+        IsChecked = value;
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StatusText))]

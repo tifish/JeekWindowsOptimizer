@@ -22,6 +22,17 @@ public partial class MainViewModel
     private string? _selectedDiskSpaceNavKey;
     private bool _diskSpaceItemsCreated;
     private bool _diskSpaceScannedOnce;
+    private readonly Dictionary<string, bool> _pendingCleanupSelections = new(StringComparer.Ordinal);
+
+    public void SaveDiskSpaceCleanupSelectionsIfChanged()
+    {
+        if (_pendingCleanupSelections.Count == 0) return;
+        AppSettingsStore.Roaming.DiskSpaceCleanupSelections ??= new(StringComparer.Ordinal);
+        foreach (var (key, value) in _pendingCleanupSelections)
+            AppSettingsStore.Roaming.DiskSpaceCleanupSelections[key] = value;
+        AppSettingsStore.SaveRoaming();
+        _pendingCleanupSelections.Clear();
+    }
     public DiskSpaceOperationQueue OperationQueue { get; } = new();
 
     [ObservableProperty]
@@ -115,6 +126,9 @@ public partial class MainViewModel
 
         foreach (var item in DiskSpaceItemManager.CreateItems())
         {
+            if (item is DiskSpaceCleanupItem cleanupItem
+                && AppSettingsStore.Roaming.DiskSpaceCleanupSelections?.TryGetValue(item.NameKey, out var saved) == true)
+                cleanupItem.RestoreCheckedState(saved);
             var group = AllDiskSpaceGroups.FirstOrDefault(g => g.NameKey == item.GroupNameKey);
             if (group is null)
                 AllDiskSpaceGroups.Add(new DiskSpaceGroup(item.GroupNameKey, [item]));
@@ -123,6 +137,8 @@ public partial class MainViewModel
 
             item.PropertyChanged += (_, args) =>
             {
+                if (item is DiskSpaceCleanupItem cleanup && args.PropertyName == nameof(DiskSpaceCleanupItem.IsChecked))
+                    _pendingCleanupSelections[item.NameKey] = cleanup.IsChecked;
                 if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked)
                     or nameof(DiskSpaceItem.State) or nameof(DiskSpaceItem.SizeBytes)
                     or nameof(DiskSpaceItem.QueuePosition) or nameof(DiskSpaceRelocationItem.SelectedTargetDrive))
@@ -623,7 +639,7 @@ public partial class MainViewModel
     [RelayCommand]
     private void SelectNoneDiskSpaceGroup(DiskSpaceGroup? group) => SetDiskSpaceGroupChecked(group, false);
 
-    private static void SetDiskSpaceGroupChecked(DiskSpaceGroup? group, bool selected)
+    private void SetDiskSpaceGroupChecked(DiskSpaceGroup? group, bool selected)
     {
         if (group is null) return;
         // The displayed group contains only search matches. Mirror each row's checkbox rules.
@@ -631,7 +647,10 @@ public partial class MainViewModel
         {
             if (item.IsBusy) continue;
             if (item is DiskSpaceCleanupItem cleanup)
-                cleanup.IsChecked = selected;
+            {
+                cleanup.RestoreCheckedState(selected);
+                _pendingCleanupSelections[item.NameKey] = selected;
+            }
             else if (item is DiskSpaceRelocationItem relocation && (!selected || relocation.CanCheck))
                 relocation.IsChecked = selected;
         }

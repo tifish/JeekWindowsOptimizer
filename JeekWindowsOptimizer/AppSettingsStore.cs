@@ -39,6 +39,7 @@ internal sealed class RoamingSettings
     public bool DisableMirrorDownload { get; set; }
 
     public List<string>? UncheckedOptimizationItemNameKeys { get; set; }
+    public Dictionary<string, bool>? DiskSpaceCleanupSelections { get; set; }
 
     public bool ShowOnlyNotOptimized { get; set; }
 }

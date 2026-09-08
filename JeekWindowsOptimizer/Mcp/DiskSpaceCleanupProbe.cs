@@ -5,6 +5,7 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "selection") return await SelectionAsync();
         if (scenario == "pnpm") return await PnpmStoreProbe.RunAsync();
         if (scenario == "developer") return await DeveloperCacheProbe.RunAsync();
         if (scenario == "lcu") return await LcuAsync();
@@ -353,6 +354,49 @@ internal static class DiskSpaceCleanupProbe
             return "PASS graphics: all four paths, opt-in, measured size, locked files, retry, siblings and link targets preserved";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
+    }
+
+    private static async Task<string> SelectionAsync()
+    {
+        var defaults = new SelectionItem();
+        Require(!defaults.IsChecked, "default opt-in");
+        await defaults.RefreshAsync();
+        Require(defaults.IsChecked, "first scan default still works");
+        var settings = new RoamingSettings
+        {
+            DiskSpaceCleanupSelections = new() { ["savedOff"] = false, ["savedOn"] = true }
+        };
+        var restored = System.Text.Json.JsonSerializer.Deserialize<RoamingSettings>(
+            System.Text.Json.JsonSerializer.Serialize(settings))!;
+        foreach (var choice in restored.DiskSpaceCleanupSelections!.Values)
+        {
+            var item = new SelectionItem();
+            item.RestoreCheckedState(choice);
+            await item.RefreshAsync();
+            await item.RefreshAsync();
+            Require(item.IsChecked == choice, "saved choice survives first scan and rescan");
+        }
+        var manual = new SelectionItem();
+        manual.ToggleChecked();
+        manual.ToggleChecked();
+        await manual.RefreshAsync();
+        Require(!manual.IsChecked, "manual choice before scan preserved");
+        Require(System.Text.Json.JsonSerializer.Deserialize<RoamingSettings>("{}")!
+            .DiskSpaceCleanupSelections is null, "old settings retain defaults");
+        Require(DiskSpaceItemManager.CreateItems().OfType<DiskSpaceCleanupItem>()
+            .Where(item => item.GroupNameKey == "DiskSpaceDeveloperCleanup").All(item => !item.IsChecked),
+            "new developer items remain opt-in");
+        return "PASS selection: settings roundtrip, defaults, restored checked/unchecked, first scan, rescan, manual choice";
+    }
+
+    private sealed class SelectionItem : DiskSpaceCleanupItem
+    {
+        public override string NameKey => "SelectionProbe";
+        public override string DescriptionKey => "SelectionProbe";
+        protected override bool DefaultChecked => false;
+        protected override bool? AutoCheckAfterScan => true;
+        protected override Task<long> ScanCore(CancellationToken cancellationToken) => Task.FromResult(0L);
+        protected override Task<bool> CleanCore(CancellationToken cancellationToken) => throw new NotSupportedException();
     }
 
     private sealed class MeasurementItem : DiskSpaceCleanupItem
