@@ -5,6 +5,7 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "installer_baseline") return await InstallerBaselineAsync();
         if (scenario == "graphics") return await FixedDirectoryAsync();
         if (scenario == "drivers")
         {
@@ -235,6 +236,39 @@ internal static class DiskSpaceCleanupProbe
             await absentItem.CleanAsync();
             Require(absentItem.State == DiskSpaceItemState.Done && absentItem.SizeBytes == 0, "missing directory");
             return "PASS user_dumps: exact extension, top-level only, diagnostic opt-in, read-only and locked files, retry, links, missing directory";
+        }
+        finally { FileSystemCleaner.DeleteDirectory(root); }
+    }
+
+    private static async Task<string> InstallerBaselineAsync()
+    {
+        var root = Path.Join(Path.GetTempPath(), "JeekInstallerProbe-" + Guid.NewGuid().ToString("N"));
+        var installer = Path.Join(root, "Installer");
+        var cache = Path.Join(installer, "$PatchCache$");
+        Directory.CreateDirectory(cache);
+        try
+        {
+            var baseline = Path.Join(cache, "baseline");
+            var msi = Path.Join(installer, "keep.msi");
+            var msp = Path.Join(installer, "keep.msp");
+            File.WriteAllBytes(baseline, new byte[123]);
+            File.WriteAllBytes(msi, new byte[50]);
+            File.WriteAllBytes(msp, new byte[60]);
+            var busy = true;
+            var cacheItem = new InstallerBaselineCleanupItem(root, () => busy);
+            await cacheItem.RefreshAsync();
+            Require(cacheItem.SizeBytes == 123 && !cacheItem.IsChecked, "exact baseline size and opt-in");
+            await cacheItem.CleanAsync();
+            Require(cacheItem.State == DiskSpaceItemState.Failed && File.Exists(baseline), "installer activity guard");
+            busy = false;
+            await cacheItem.CleanAsync();
+            Require(cacheItem.State == DiskSpaceItemState.Done && cacheItem.FreedBytes == 123
+                && File.Exists(msi) && File.Exists(msp), "only baseline removed; MSI/MSP preserved");
+            Directory.Delete(cache);
+            Directory.CreateSymbolicLink(cache, installer);
+            await cacheItem.CleanAsync();
+            Require(cacheItem.State == DiskSpaceItemState.Failed && File.Exists(msi), "redirected cache blocked");
+            return "PASS installer_baseline: exact directory, opt-in, active installer guard, MSI/MSP preserved, link blocked";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
     }
