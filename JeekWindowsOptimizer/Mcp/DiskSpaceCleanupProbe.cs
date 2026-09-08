@@ -5,6 +5,22 @@ internal static class DiskSpaceCleanupProbe
 {
     public static async Task<string> RunAsync(string scenario)
     {
+        if (scenario == "drivers")
+        {
+            var packages = DriverStoreCleanup.Parse("Published Name: oem1.inf\nOriginal Name: gpu.inf\nProvider Name: Vendor\nClass Name: Display\nClass GUID: {4d36e968-e325-11ce-bfc1-08002be10318}\nClass Version: 2.0\nDriver Version: 01/01/2025 1.2.0.0\n\n发布名称: oem2.inf\n原始名称: gpu.inf\n提供商名称: Vendor\n类名: Display\n类 GUID: {4d36e968-e325-11ce-bfc1-08002be10318}\n驱动程序版本: 01/01/2026 1.10.0.0");
+            Require(packages.Count == 2, "English and Chinese parsing");
+            var used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            Require(DriverStoreCleanup.SelectOld(packages, used).Single().Published == "oem1.inf", "numeric version order");
+            used.Add("OEM1.INF");
+            Require(DriverStoreCleanup.SelectOld(packages, used).Count == 0, "in-use protected");
+            used.Clear();
+            Require(DriverStoreCleanup.SelectOld([packages[0], packages[1] with { Provider = "Other" }], used).Count == 0, "provider isolation");
+            Require(DriverStoreCleanup.SelectOld([packages[0], packages[1] with { Architecture = "arm64" }], used).Count == 0, "architecture isolation");
+            Require(DriverStoreCleanup.SelectOld([packages[0], packages[1] with { Version = packages[0].Version }], used).Count == 0, "equal versions retained");
+            Require(DriverStoreCleanup.DeleteArguments("oem1.inf") == "/delete-driver oem1.inf", "no force or uninstall");
+            Require(!new OldDriversCleanupItem().IsChecked, "driver rollback opt-in");
+            return "PASS drivers: localized records, numeric versions, in-use/provider/architecture guards, equal versions, no force, opt-in";
+        }
         if (scenario == "hibernation")
         {
             var mode = "Full";

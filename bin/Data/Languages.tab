@@ -734,3 +734,5 @@ HibernationModeMismatch	Windows did not apply the requested hibernation mode.	Wi
 HibernationConfirmReduced	Reduce hiberfil.sys? Full hibernation will be unavailable; Fast Startup remains supported. Windows will reset any custom hibernation file size.	缩减 hiberfil.sys？将无法使用完整休眠，但保留快速启动支持。Windows 会重置自定义休眠文件大小。
 HibernationConfirmOff	Turn off hibernation and remove hiberfil.sys? Fast Startup will also become unavailable.	关闭休眠并删除 hiberfil.sys？快速启动也将无法使用。
 HibernationConfirmFull	Restore full hibernation? This will increase disk usage.	恢复完整休眠？这将增加磁盘占用。
+OldDriversCleanupName	Old driver store packages	驱动库中的旧版本驱动
+OldDriversCleanupDescription	Remove unused older versions grouped by original INF name, provider, class and architecture. Keeps the newest version and packages used by devices. Older driver rollback packages will be lost; shared files may reduce actual savings.	按 INF 原始名、厂商、类别和架构分组，删除未使用的旧版本包。保留最新版本及设备正在使用的包。将失去旧驱动回滚包；共享文件可能使实际释放量低于估算。
