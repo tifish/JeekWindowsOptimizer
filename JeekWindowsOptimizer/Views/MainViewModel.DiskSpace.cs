@@ -33,12 +33,21 @@ public partial class MainViewModel
         DiskSpaceItemManager.FormatWithSystemDrive(Localizer.Get("DiskSpace"));
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDiskSpaceActive))]
     [NotifyPropertyChangedFor(nameof(CanScanDiskSpace))]
     [NotifyPropertyChangedFor(nameof(CanCleanDiskSpace))]
     [NotifyCanExecuteChangedFor(nameof(ScanDiskSpaceCommand))]
     [NotifyCanExecuteChangedFor(nameof(CleanCheckedDiskSpaceItemsCommand))]
     [NotifyCanExecuteChangedFor(nameof(MoveCheckedDiskSpaceItemsCommand))]
     public partial bool IsDiskSpaceBusy { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsDiskSpaceActive))]
+    [NotifyPropertyChangedFor(nameof(CanScanDiskSpace))]
+    [NotifyCanExecuteChangedFor(nameof(ScanDiskSpaceCommand))]
+    public partial bool IsDiskSpaceScanning { get; private set; }
+
+    public bool IsDiskSpaceActive => IsDiskSpaceBusy || IsDiskSpaceScanning;
 
     [ObservableProperty]
     public partial string DiskSpaceSummaryText { get; set; } = "";
@@ -51,9 +60,9 @@ public partial class MainViewModel
 
     public bool IsDiskSpaceTabSelected => SelectedTabIndex == DiskSpaceTabIndex;
 
-    public bool CanScanDiskSpace => !IsDiskSpaceBusy;
+    public bool CanScanDiskSpace => !IsDiskSpaceActive;
 
-    public bool CanCleanDiskSpace => !IsDiskSpaceBusy && _diskSpaceScannedOnce;
+    public bool CanCleanDiskSpace => !IsDiskSpaceBusy && DiskSpaceItems.Any(item => !item.IsBusy && item.SizeBytes is not null);
 
     public IEnumerable<DiskSpaceItem> DiskSpaceItems =>
         AllDiskSpaceGroups.SelectMany(group => group.Items);
@@ -95,7 +104,8 @@ public partial class MainViewModel
 
             item.PropertyChanged += (_, args) =>
             {
-                if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked))
+                if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked)
+                    or nameof(DiskSpaceItem.State) or nameof(DiskSpaceItem.SizeBytes))
                     UpdateDiskSpaceSummary();
             };
         }
@@ -135,7 +145,8 @@ public partial class MainViewModel
 
     private async Task ScanDiskSpaceCoreAsync()
     {
-        IsDiskSpaceBusy = true;
+        IsDiskSpaceScanning = true;
+        _diskSpaceScannedOnce = true;
         StatusMessage = Localizer.Get("DiskSpaceScanningAll");
         try
         {
@@ -154,13 +165,13 @@ public partial class MainViewModel
         }
         finally
         {
-            _diskSpaceScannedOnce = true;
-            IsDiskSpaceBusy = false;
+            IsDiskSpaceScanning = false;
             UpdateDiskSpaceSummary();
-            StatusMessage = string.Format(
-                Localizer.Get("DiskSpaceScanFinished"),
-                ByteSize.Format(TotalReclaimableBytes)
-            );
+            if (!IsDiskSpaceBusy)
+                StatusMessage = string.Format(
+                    Localizer.Get("DiskSpaceScanFinished"),
+                    ByteSize.Format(TotalReclaimableBytes)
+                );
         }
     }
 
@@ -196,7 +207,7 @@ public partial class MainViewModel
         if (IsDiskSpaceBusy)
             return 0;
 
-        var targets = items.Where(item => item.SizeBytes is null || item.ReclaimableBytes > 0).ToList();
+        var targets = items.Where(item => !item.IsBusy && item.SizeBytes is not null && item.ReclaimableBytes > 0).ToList();
         if (targets.Count == 0)
         {
             StatusMessage = Localizer.Get("DiskSpaceNothingToClean");
@@ -220,6 +231,10 @@ public partial class MainViewModel
                 return 0;
         }
 
+        // The confirmation dialog yields to other commands; recheck before starting.
+        if (IsDiskSpaceBusy)
+            return 0;
+        targets.RemoveAll(item => item.IsBusy);
         IsDiskSpaceBusy = true;
         long freed = 0;
         try
@@ -542,6 +557,8 @@ public partial class MainViewModel
             var moveBytes = CheckedRelocationBytes;
             if (moveBytes > 0)
                 summary += "  " + string.Format(Localizer.Get("DiskSpaceMoveSummary"), ByteSize.Format(moveBytes));
+            if (IsDiskSpaceScanning)
+                summary += "  " + Localizer.Get("DiskSpaceScanInProgressHint");
             DiskSpaceSummaryText = summary;
             DiskSpaceTabHeader = $"{DiskSpaceTabTitle} ({total})";
         }

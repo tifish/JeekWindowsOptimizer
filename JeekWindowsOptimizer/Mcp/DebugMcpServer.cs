@@ -506,6 +506,8 @@ internal static class DebugMcpServer
         sb.AppendLine($"systemDriveUsage={vm.SystemDriveUsageText}");
         sb.AppendLine($"summary={vm.DiskSpaceSummaryText}");
         sb.AppendLine($"busy={vm.IsDiskSpaceBusy}");
+        sb.AppendLine($"scanning={vm.IsDiskSpaceScanning} canScan={vm.CanScanDiskSpace} canClean={vm.CanCleanDiskSpace}");
+        sb.AppendLine($"scanCommandEnabled={vm.ScanDiskSpaceCommand.CanExecute(null)} cleanCommandEnabled={vm.CleanCheckedDiskSpaceItemsCommand.CanExecute(null)} moveCommandEnabled={vm.MoveCheckedDiskSpaceItemsCommand.CanExecute(null)}");
 
         for (var groupIndex = 0; groupIndex < vm.AllDiskSpaceGroups.Count; groupIndex++)
         {

@@ -94,7 +94,7 @@ public static class DebugMcpContract
                 },
             }),
         Tool("disk_space_items",
-            "List the Disk Space tab's items (cleanup and relocation) with state, size, checked flag, current location, target drives, and object paths. Creates the items if the tab has not been shown yet.",
+            "List the Disk Space tab's items (cleanup and relocation) with global scanning/busy state, scan/clean/move command availability, size, per-item state, checked flag, current location, target drives, and object paths. Creates the items if the tab has not been shown yet.",
             new()),
         Tool("disk_space_scan",
             "Run the Disk Space scan (all items in parallel, DISM analysis included) and wait for it, then return the item list.",

@@ -754,7 +754,7 @@
                         Width="140"
                         VerticalAlignment="Center"
                         IsIndeterminate="True"
-                        IsVisible="{Binding IsDiskSpaceBusy}" />
+                        IsVisible="{Binding IsDiskSpaceActive}" />
                 </StackPanel>
 
                 <ScrollViewer

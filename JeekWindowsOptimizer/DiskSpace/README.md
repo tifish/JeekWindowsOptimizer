@@ -39,3 +39,5 @@
 - 新增清理项：继承 `DiskSpaceCleanupItem`，实现 `ScanCore` / `CleanCore`，在 `DiskSpaceItemManager.CreateItems()` 注册，并在 `Languages.tab` 增加 `*Name` / `*Description`。
 - 新增迁移项：继承 `DiskSpaceRelocationItem`，实现 `RefreshCoreAsync` / `GetTargetPath` / `MoveCoreAsync`。
 - 调试：Debug MCP 提供 `disk_space_items`、`disk_space_scan`、`disk_space_clean`、`disk_space_relocation_check`、`disk_space_relocate`、`disk_space_restore_default`、`disk_space_move_checked`。除前两个外都会真实改动系统，只在 Debug 面向开发者暴露。
+
+扫描状态与清理 / 迁移的忙碌状态独立：逐项更新汇总，已完成扫描的项目可以立即操作，无需等待 WinSxS。扫描期间禁止重复全量扫描，清理只包含已完成扫描且不忙碌的项目；汇总会提示仍在扫描。Debug MCP 的 `disk_space_items` 同时返回扫描状态与命令可用性。
