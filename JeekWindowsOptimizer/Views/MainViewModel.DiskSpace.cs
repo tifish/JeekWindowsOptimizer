@@ -258,7 +258,8 @@ public partial class MainViewModel
             RefreshSystemDriveUsage();
             UpdateDiskSpaceSummary();
             StatusMessage = string.Format(
-                Localizer.Get("DiskSpaceCleanCompleted"),
+                Localizer.Get(targets.Any(item => item.State == DiskSpaceItemState.Failed)
+                    ? "DiskSpaceCleanCompletedWithErrors" : "DiskSpaceCleanCompleted"),
                 ByteSize.Format(freed)
             );
         }

@@ -696,3 +696,6 @@ PreviousInstallationRollbackExpired	The rollback window has passed; these files 
 DismResetBaseName	Deep-clean the component store (WinSxS)	深度清理组件存储（WinSxS）
 DismResetBaseDescription	Runs DISM /StartComponentCleanup /ResetBase to remove every superseded component, including those kept so recent updates can be uninstalled. Frees the last gigabytes; afterwards installed updates can no longer be uninstalled.	执行 DISM /StartComponentCleanup /ResetBase，删除全部被替代的组件，包括为卸载近期更新而保留的部分。可再释放一些空间，但之后已安装的更新将无法卸载。
 DiskSpaceScanInProgressHint	Still scanning; only finished items are included in cleanup.	仍在扫描；清理仅包含已扫描完成的项目。
+DiskSpaceCleanCancelled	Cleanup cancelled; freed space is unknown. Scan again before retrying.	清理已取消，释放空间未知。请重新扫描后重试。
+DiskSpaceCleanMeasurementFailed	Could not measure remaining files; freed space is unknown.	无法统计剩余文件，释放空间未知。
+DiskSpaceCleanCompletedWithErrors	Cleanup finished with errors. Measured reduction: {0}. Check the failed items.	清理结束，部分项目失败。已统计减少：{0}。请查看失败项目。

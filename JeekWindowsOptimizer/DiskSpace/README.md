@@ -41,3 +41,5 @@
 - 调试：Debug MCP 提供 `disk_space_items`、`disk_space_scan`、`disk_space_clean`、`disk_space_relocation_check`、`disk_space_relocate`、`disk_space_restore_default`、`disk_space_move_checked`。除前两个外都会真实改动系统，只在 Debug 面向开发者暴露。
 
 扫描状态与清理 / 迁移的忙碌状态独立：逐项更新汇总，已完成扫描的项目可以立即操作，无需等待 WinSxS。扫描期间禁止重复全量扫描，清理只包含已完成扫描且不忙碌的项目；汇总会提示仍在扫描。Debug MCP 的 `disk_space_items` 同时返回扫描状态与命令可用性。
+
+清理结果：执行前重新测量，避免沿用过期扫描。`IsFreedBytesKnown` 表示本次是否完成前后测量；取消、执行异常或重扫失败时不沿用上次释放量，也不把未知剩余空间当作零。批量汇总提示失败项目。Debug MCP 的 `disk_space_cleanup_probe`（`scenario=accuracy`）可在进程内验证这些分支，不接触真实文件。

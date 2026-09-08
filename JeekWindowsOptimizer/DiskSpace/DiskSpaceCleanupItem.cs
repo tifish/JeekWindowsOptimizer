@@ -40,6 +40,9 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
     [NotifyPropertyChangedFor(nameof(HasStatusText))]
     public partial long FreedBytes { get; private set; }
 
+    [ObservableProperty]
+    public partial bool IsFreedBytesKnown { get; private set; }
+
     public long ReclaimableBytes => SizeBytes ?? 0;
 
     public void ToggleChecked()
@@ -66,20 +69,26 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
 
         State = DiskSpaceItemState.Working;
         ErrorMessage = null;
-        var before = SizeBytes ?? 0;
+        FreedBytes = 0;
+        IsFreedBytesKnown = false;
 
         bool succeeded;
         try
         {
+            // Measure immediately before deleting; the last UI scan may be stale.
+            SizeBytes = await Task.Run(() => ScanCore(cancellationToken), cancellationToken);
             succeeded = await Task.Run(() => CleanCore(cancellationToken), cancellationToken);
         }
         catch (OperationCanceledException)
         {
-            State = DiskSpaceItemState.Scanned;
+            SizeBytes = null;
+            ErrorMessage = Localizer.Get("DiskSpaceCleanCancelled");
+            State = DiskSpaceItemState.Failed;
             return 0;
         }
         catch (Exception ex)
         {
+            SizeBytes = null;
             ErrorMessage = ex.Message;
             State = DiskSpaceItemState.Failed;
             return 0;
@@ -90,13 +99,18 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
         {
             after = await Task.Run(() => ScanCore(CancellationToken.None), CancellationToken.None);
         }
-        catch
+        catch (Exception ex)
         {
-            after = 0;
+            SizeBytes = null;
+            ErrorMessage = Localizer.Get("DiskSpaceCleanMeasurementFailed") + " " + ex.Message;
+            State = DiskSpaceItemState.Failed;
+            return 0;
         }
 
+        var before = SizeBytes.Value;
         SizeBytes = after;
         FreedBytes = Math.Max(0, before - after);
+        IsFreedBytesKnown = true;
 
         if (succeeded)
         {

@@ -89,6 +89,11 @@ internal static class DebugMcpServer
         host.AddTool("service_delete", ServiceDeleteAsync);
         host.AddTool("driver_remove_probe", DriverRemoveProbeAsync);
         host.AddTool("disk_space_items", _ => DiskSpaceItemsAsync());
+        host.AddTool("disk_space_cleanup_probe", async args =>
+        {
+            var task = await OnUiAsync(() => DiskSpaceCleanupProbe.RunAsync(args["scenario"]?.GetValue<string>() ?? "accuracy"));
+            return ToolText(await task);
+        });
         host.AddTool("disk_space_scan", DiskSpaceScanAsync);
         host.AddTool("disk_space_clean", DiskSpaceCleanAsync);
         host.AddTool("disk_space_relocation_check", DiskSpaceRelocationCheckAsync);
@@ -523,6 +528,7 @@ internal static class DebugMcpServer
                 {
                     case DiskSpaceCleanupItem cleanup:
                         sb.Append($" checked={cleanup.IsChecked} slow={cleanup.IsSlow}");
+                        sb.Append($" freedBytesKnown={cleanup.IsFreedBytesKnown}");
                         if (cleanup.FreedBytes > 0)
                             sb.Append($" freed={cleanup.FreedBytes}");
                         break;
