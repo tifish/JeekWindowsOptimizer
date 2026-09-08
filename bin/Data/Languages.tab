@@ -754,7 +754,7 @@ LcuServicingBusy	Windows update servicing is active. Wait until it finishes and 
 DiskSpaceSelectAll	Select all	全选
 DiskSpaceSelectNone	Select none	全不选
 DiskSpaceSelectionScope	Applies to visible items in this group. Busy items are skipped; selecting moves requires an available target drive.	仅作用于本组当前显示的项目。跳过忙碌项目；移动全选仅选择有可用目标磁盘的项目。
-DiskSpaceDeveloperCleanup	Developer caches (opt-in)	开发工具缓存（按需清理）
+DiskSpaceDeveloperCleanup	Developer caches	开发工具缓存
 DeveloperCacheUnsafePath	The cache path is a protected directory, a project root, or contains links. Automatic cleanup is unavailable.	缓存位置是受保护目录、项目根目录或包含目录链接，无法自动清理。
 DeveloperCachePathChanged	The cache location changed. Scan again before cleaning.	缓存位置已改变，请重新扫描后再清理。
 DeveloperCacheBusy	A related development tool or installer is running. Close it and its background processes, then retry.	相关开发工具或安装程序正在运行，请关闭它及后台进程后重试。
