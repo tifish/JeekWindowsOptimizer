@@ -52,7 +52,12 @@ internal static class DiskSpaceCleanupProbe
             Require((await hibernation.SetModeAsync("Full")).Succeeded && hibernation.SizeBytes == 1000, "restore from off");
             fail = true;
             Require(!(await hibernation.SetModeAsync("Reduced")).Succeeded && hibernation.Mode == "Full" && hibernation.State == DiskSpaceItemState.Failed, "partial failure reconciled");
-            return "PASS hibernation: reduce/off/restore, measured sizes, custom size reset, partial failure";
+            Require(HibernationDiskSpaceItem.ModeFor(false, null) == "Off"
+                && HibernationDiskSpaceItem.ModeFor(false, 2) == "Off"
+                && HibernationDiskSpaceItem.ModeFor(true, 1) == "Reduced"
+                && HibernationDiskSpaceItem.ModeFor(true, 2) == "Full"
+                && HibernationDiskSpaceItem.ModeFor(true, null) == "Full", "applied mode is never unresolved");
+            return "PASS hibernation: reduce/off/restore, measured sizes, custom size reset, partial failure, mode detection";
         }
         if (scenario == "shadows")
         {

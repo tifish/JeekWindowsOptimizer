@@ -21,9 +21,17 @@ public sealed class HibernationDiskSpaceItem : DiskSpaceItem
     {
         var file = new FileInfo(Path.Join(DiskSpaceItemManager.SystemDriveRoot, "hiberfil.sys"));
         using var key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Power");
-        return (!file.Exists ? 0 : file.Length, !file.Exists && key?.GetValue("HibernateEnabled") is 0 ? "Off"
-            : key?.GetValue("HiberFileType") switch { 1 => "Reduced", 2 => "Full", _ => "Unknown" });
+        return (!file.Exists ? 0 : file.Length, ModeFor(file.Exists, key?.GetValue("HiberFileType")));
     }
+
+    /// <summary>
+    ///     The file is the authority: powercfg deletes it when hibernation is off and recreates it
+    ///     when it is on. HiberFileType only tells reduced (1) from full, which is also what
+    ///     Windows uses when the value was never written — so a change never stays unresolved and
+    ///     a successful powercfg run is never reported as a mismatch.
+    /// </summary>
+    internal static string ModeFor(bool fileExists, object? hiberFileType) =>
+        !fileExists ? "Off" : hiberFileType is 1 ? "Reduced" : "Full";
 
     internal static string[] Commands(string mode) => mode switch
     {
