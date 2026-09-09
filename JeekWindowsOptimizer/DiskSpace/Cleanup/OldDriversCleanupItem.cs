@@ -17,14 +17,23 @@ public sealed class OldDriversCleanupItem : DiskSpaceCleanupItem
 
     protected override async Task<bool> CleanCore(CancellationToken cancellationToken)
     {
+        // Enumerate once at deletion time: re-enumerating per package spawns pnputil again for
+        // every candidate, and PnPUtil supplies the final in-use guard for each deletion anyway.
         var candidates = await DriverStoreCleanup.Candidates(cancellationToken);
+        var complete = true;
         foreach (var package in candidates)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            // Re-enumerate before deletion, since installations may run while a request is queued.
-            if (!(await DriverStoreCleanup.Candidates(cancellationToken)).Any(p => p == package)) continue;
-            await CleanupCommand.Run("pnputil.exe", DriverStoreCleanup.DeleteArguments(package.Published), cancellationToken);
+            try
+            {
+                await CleanupCommand.Run("pnputil.exe", DriverStoreCleanup.DeleteArguments(package.Published), cancellationToken);
+            }
+            catch (IOException)
+            {
+                // A package that became busy or in use must not discard the packages already removed.
+                complete = false;
+            }
         }
-        return (await DriverStoreCleanup.Candidates(cancellationToken)).Count == 0;
+        return complete && (await DriverStoreCleanup.Candidates(cancellationToken)).Count == 0;
     }
 }

@@ -18,14 +18,23 @@ public sealed class ShadowCopiesCleanupItem : DiskSpaceCleanupItem
     protected override async Task<bool> CleanCore(CancellationToken cancellationToken)
     {
         var candidates = ShadowCopyStorage.KeepNewest(ShadowCopyStorage.List());
+        var complete = true;
         foreach (var snapshot in candidates)
         {
             cancellationToken.ThrowIfCancellationRequested();
             // Revalidate each ID: another process may have removed the latest snapshot meanwhile.
             if (!ShadowCopyStorage.KeepNewest(ShadowCopyStorage.List()).Any(s => s.Id == snapshot.Id))
                 continue;
-            await CleanupCommand.Run("vssadmin.exe", "delete shadows /shadow=" + snapshot.Id + " /quiet", cancellationToken);
+            try
+            {
+                await CleanupCommand.Run("vssadmin.exe", "delete shadows /shadow=" + snapshot.Id + " /quiet", cancellationToken);
+            }
+            catch (IOException)
+            {
+                // A snapshot in use by a backup must not discard the snapshots already deleted.
+                complete = false;
+            }
         }
-        return ShadowCopyStorage.List().Count <= 1;
+        return complete && ShadowCopyStorage.List().Count <= 1;
     }
 }
