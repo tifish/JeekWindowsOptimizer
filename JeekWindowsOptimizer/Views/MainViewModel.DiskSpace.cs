@@ -223,27 +223,37 @@ public partial class MainViewModel
             IsDiskSpaceScanning = false;
             UpdateDiskSpaceSummary();
             if (!IsDiskSpaceBusy)
+            {
+                var scanned = DiskSpaceCleanupItems.ToList();
                 StatusMessage = string.Format(
-                    Localizer.Get("DiskSpaceScanFinished"),
-                    FormatReclaimable(DiskSpaceCleanupItems.ToList())
+                    ReclaimableTemplate("DiskSpaceScanFinished", scanned),
+                    ReclaimableSize(scanned)
                 );
+            }
         }
     }
 
     private long TotalReclaimableBytes => DiskSpaceCleanupItems.Sum(item => item.ReclaimableBytes);
 
     /// <summary>
-    ///     Formats a reclaimable total. Items whose size is only an upper bound (shadow storage
-    ///     keeps the newest snapshot, a pnpm prune keeps referenced packages) must not turn the
-    ///     sum into a promise, so the whole total is marked as a maximum once one takes part.
+    ///     Items whose size is only an upper bound (shadow storage keeps the newest snapshot, a
+    ///     pnpm prune keeps referenced packages) must not turn a sum into a promise.
     /// </summary>
-    private static string FormatReclaimable(IReadOnlyCollection<DiskSpaceCleanupItem> items)
-    {
-        var text = ByteSize.Format(items.Sum(item => item.ReclaimableBytes));
-        return items.Any(item => item.IsReclaimableUpperBound && item.ReclaimableBytes > 0)
-            ? string.Format(Localizer.Get("DiskSpaceUpToSize"), text)
-            : text;
-    }
+    private static bool HasUpperBoundReclaimable(IReadOnlyCollection<DiskSpaceCleanupItem> items) =>
+        items.Any(item => item.IsReclaimableUpperBound && item.ReclaimableBytes > 0);
+
+    private static string ReclaimableSize(IReadOnlyCollection<DiskSpaceCleanupItem> items) =>
+        ByteSize.Format(items.Sum(item => item.ReclaimableBytes));
+
+    /// <summary>Sizes a total on its own, as a maximum when an upper-bound item takes part.</summary>
+    private static string FormatReclaimable(IReadOnlyCollection<DiskSpaceCleanupItem> items) =>
+        HasUpperBoundReclaimable(items)
+            ? string.Format(Localizer.Get("DiskSpaceUpToSize"), ReclaimableSize(items))
+            : ReclaimableSize(items);
+
+    /// <summary>Picks the plain or the "up to" wording of a sentence that states a total.</summary>
+    private static string ReclaimableTemplate(string key, IReadOnlyCollection<DiskSpaceCleanupItem> items) =>
+        Localizer.Get(HasUpperBoundReclaimable(items) ? key + "UpTo" : key);
 
     private List<DiskSpaceRelocationItem> CheckedRelocationItems =>
         DiskSpaceRelocationItems.Where(item => item.IsChecked && item.CanMove).ToList();
@@ -280,8 +290,8 @@ public partial class MainViewModel
         {
             var result = await ShowUpdateDialogAsync(
                 Localizer.Get("DiskSpaceCleanConfirmTitle"),
-                string.Format(Localizer.Get("DiskSpaceCleanConfirmMessage"), targets.Count,
-                    FormatReclaimable(targets))
+                string.Format(ReclaimableTemplate("DiskSpaceCleanConfirmMessage", targets), targets.Count,
+                    ReclaimableSize(targets))
                     + "\n\n" + string.Join("\n", targets.Select(item => item.GroupNameKey == DeveloperCacheCleanupItem.DeveloperGroup ? item.Name + "\n" + item.Description : item.Name)),
                 ButtonEnum.YesNo,
                 MsBox.Avalonia.Enums.Icon.Question
@@ -601,8 +611,8 @@ public partial class MainViewModel
             var items = DiskSpaceCleanupItems.ToList();
             var total = FormatReclaimable(items);
             var summary = string.Format(
-                Localizer.Get("DiskSpaceReclaimableSummary"),
-                total,
+                ReclaimableTemplate("DiskSpaceReclaimableSummary", items),
+                ReclaimableSize(items),
                 FormatReclaimable(items.Where(item => item.IsChecked).ToList())
             );
             var moveBytes = CheckedRelocationBytes;

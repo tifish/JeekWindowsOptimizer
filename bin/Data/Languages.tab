@@ -612,7 +612,9 @@ DiskSpaceNotScanned	Not scanned yet	尚未扫描
 DiskSpaceScanning	Scanning…	正在扫描…
 DiskSpaceScanningAll	Scanning disk space…	正在扫描磁盘空间…
 DiskSpaceScanFinished	Scan finished. About {0} can be reclaimed.	扫描完成，约可释放 {0}。
+DiskSpaceScanFinishedUpTo	Scan finished. Up to {0} can be reclaimed.	扫描完成，最多可释放 {0}。
 DiskSpaceReclaimableSummary	Reclaimable: about {0} (checked: {1})	可释放约 {0}（已选中 {1}）
+DiskSpaceReclaimableSummaryUpTo	Reclaimable: up to {0} (checked: {1})	可释放最多 {0}（已选中 {1}）
 DiskSpaceUpToSize	up to {0}	最多 {0}
 DiskSpaceCleaning	Cleaning…	正在清理…
 DiskSpaceCleaningItem	Cleaning: {0}…	正在清理：{0}…
@@ -622,6 +624,7 @@ DiskSpaceFailed	Failed: {0}	失败：{0}
 DiskSpaceNothingToClean	Nothing to clean among the checked items.	选中的项目没有可清理内容。
 DiskSpaceCleanConfirmTitle	Clean disk space	清理磁盘空间
 DiskSpaceCleanConfirmMessage	{0} item(s) will be cleaned, freeing about {1}. Deleted files cannot be recovered. Continue?	将清理 {0} 项，预计释放约 {1}。删除的文件无法恢复，是否继续？
+DiskSpaceCleanConfirmMessageUpTo	{0} item(s) will be cleaned, freeing up to {1}. Deleted files cannot be recovered. Continue?	将清理 {0} 项，最多释放 {1}。删除的文件无法恢复，是否继续？
 DiskSpaceCleanCompleted	Cleanup finished. Freed {0}.	清理完成，共释放 {0}。
 SystemDriveUsage	System drive {0}: {1} used of {2}, {3} free	系统盘 {0}：已用 {1} / 共 {2}，可用 {3}
 DiskSpaceCurrentLocation	Current location: {0}	当前位置：{0}
