@@ -206,10 +206,11 @@ public abstract partial class DiskSpaceRelocationItem : DiskSpaceItem
         bool isRestore
     )
     {
-        _lastOperationWasRestore = isRestore;
         if (IsBusy)
             return false;
 
+        // Only an operation that actually starts may rewrite the finished row's status text.
+        _lastOperationWasRestore = isRestore;
         State = DiskSpaceItemState.Working;
         ErrorMessage = null;
         ProgressText = "";

@@ -51,6 +51,12 @@ internal static class DiskSpaceOperationQueueProbe
                 && vm.OperationQueue.FreedBytes == 200 && !vm.IsDiskSpaceBusy
                 && vm.OperationQueue.PendingCount == 0 && later.QueuePosition == 0
                 && moved.QueuePosition == 0, "drain totals and state reset");
+            // A request rejected because the row is busy must not relabel the finished operation.
+            var finished = moved.StatusText;
+            moved.QueuePosition = 1;
+            Check(!await moved.RestoreDefaultAsync(), "busy row rejects a new operation");
+            moved.QueuePosition = 0;
+            Check(finished.Length > 0 && moved.StatusText == finished, "rejected request keeps the finished status");
             var retry = new Cleanup("F", trace, Task.CompletedTask);
             Check(await vm.CleanDiskSpaceItemsAsync([retry], false) == 100
                 && vm.OperationQueue.FailedCount == 0 && vm.OperationQueue.CompletedCount == 1,
@@ -62,7 +68,7 @@ internal static class DiskSpaceOperationQueueProbe
                 && full.State == DiskSpaceItemState.Failed && changed.State == DiskSpaceItemState.Failed
                 && vm.OperationQueue.CompletedCount == 2 && vm.OperationQueue.FailedCount == 2,
                 "fresh space and source validation prevents moves");
-            return "PASS queue: mixed FIFO, batch order, per-row availability, duplicates, pinned target, move validation failure, continuation, restore, results, idle reset, late space/source checks";
+            return "PASS queue: mixed FIFO, batch order, per-row availability, duplicates, pinned target, move validation failure, continuation, restore, results, rejected request status, idle reset, late space/source checks";
         }
         finally
         {
