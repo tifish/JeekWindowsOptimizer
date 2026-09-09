@@ -444,10 +444,14 @@ internal static class DiskSpaceCleanupProbe
         Require(!manual.IsChecked, "manual choice before scan preserved");
         Require(System.Text.Json.JsonSerializer.Deserialize<RoamingSettings>("{}")!
             .DiskSpaceCleanupSelections is null, "old settings retain defaults");
-        Require(DiskSpaceItemManager.CreateItems().OfType<DiskSpaceCleanupItem>()
-            .Where(item => item.GroupNameKey == "DiskSpaceDeveloperCleanup").All(item => !item.IsChecked),
+        var created = DiskSpaceItemManager.CreateItems();
+        Require(created.OfType<DiskSpaceCleanupItem>()
+            .Where(item => item.GroupNameKey == DeveloperCacheCleanupItem.DeveloperGroup).All(item => !item.IsChecked),
             "new developer items remain opt-in");
-        return "PASS selection: settings roundtrip, defaults, restored checked/unchecked, first scan, rescan, manual choice";
+        Require(DeveloperCachePaths.Kinds.All(kind =>
+            created.OfType<DeveloperCacheCleanupItem>().Count(item => item.Kind == kind) == 1),
+            "every developer cache kind has exactly one row");
+        return "PASS selection: settings roundtrip, defaults, restored checked/unchecked, first scan, rescan, manual choice, developer rows";
     }
 
     private sealed class SelectionItem : DiskSpaceCleanupItem

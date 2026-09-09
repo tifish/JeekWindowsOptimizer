@@ -53,9 +53,21 @@ public static class DiskSpaceItemManager
             // Developer caches are opt-in and separate from routine system cleanup.
             new NuGetCacheCleanupItem(packages: false),
             new NuGetCacheCleanupItem(packages: true),
-            .. DeveloperCachePaths.Kinds.Take(3).Select(kind => new DeveloperCacheCleanupItem(kind)),
+            // Listed one by one: the order is a display decision, not the order of the
+            // kind list, and slicing that list moves rows whenever a kind is added.
+            new DeveloperCacheCleanupItem("Pip"),
+            new DeveloperCacheCleanupItem("Npm"),
+            new DeveloperCacheCleanupItem("Npx"),
             new PnpmStoreCleanupItem(),
-            .. DeveloperCachePaths.Kinds.Skip(3).Select(kind => new DeveloperCacheCleanupItem(kind)),
+            new DeveloperCacheCleanupItem("Yarn"),
+            new DeveloperCacheCleanupItem("Gradle"),
+            new DeveloperCacheCleanupItem("GradleDistributions"),
+            new DeveloperCacheCleanupItem("Maven"),
+            new DeveloperCacheCleanupItem("Cargo"),
+            new DeveloperCacheCleanupItem("GoBuild"),
+            new DeveloperCacheCleanupItem("VsComponentModel"),
+            new DeveloperCacheCleanupItem("VsCode"),
+            new DeveloperCacheCleanupItem("PackageCache"),
 
             new PagingFileRelocationItem(),
             .. WslStorage.Discover()
