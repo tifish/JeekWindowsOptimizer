@@ -8,6 +8,9 @@ public sealed class PnpmStoreCleanupItem : DiskSpaceCleanupItem
     public override string NameKey => "PnpmStoreCleanupName";
     public override string DescriptionKey => "PnpmStoreCleanupDescription";
     protected override bool DefaultChecked => false;
+
+    // Whole store size; prune keeps everything a project still references.
+    public override bool IsReclaimableUpperBound => true;
     public string? StorePath { get; private set; }
     private readonly IPnpmStore _store;
     public PnpmStoreCleanupItem() : this(new PnpmStore()) { }

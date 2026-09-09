@@ -547,7 +547,7 @@ internal static class DebugMcpServer
                 switch (item)
                 {
                     case DiskSpaceCleanupItem cleanup:
-                        sb.Append($" checked={cleanup.IsChecked} slow={cleanup.IsSlow}");
+                        sb.Append($" checked={cleanup.IsChecked} slow={cleanup.IsSlow} upperBound={cleanup.IsReclaimableUpperBound}");
                         sb.Append($" freedBytesKnown={cleanup.IsFreedBytesKnown}");
                         sb.Append($" queuePosition={cleanup.QueuePosition} canClean={vm.CleanDiskSpaceItemCommand.CanExecute(cleanup)}");
                         if (cleanup.FreedBytes > 0)

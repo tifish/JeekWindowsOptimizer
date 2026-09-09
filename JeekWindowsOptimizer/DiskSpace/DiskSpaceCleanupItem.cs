@@ -64,6 +64,12 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
 
     public virtual long ReclaimableBytes => CanClean ? SizeBytes ?? 0 : 0;
 
+    /// <summary>
+    ///     True when cleaning keeps part of what the row measures, so <see cref="ReclaimableBytes" />
+    ///     is an upper bound rather than the space the run will free.
+    /// </summary>
+    public virtual bool IsReclaimableUpperBound => false;
+
     public void ToggleChecked()
     {
         IsChecked = !IsChecked;

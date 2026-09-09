@@ -222,15 +222,25 @@ public partial class MainViewModel
             if (!IsDiskSpaceBusy)
                 StatusMessage = string.Format(
                     Localizer.Get("DiskSpaceScanFinished"),
-                    ByteSize.Format(TotalReclaimableBytes)
+                    FormatReclaimable(DiskSpaceCleanupItems.ToList())
                 );
         }
     }
 
     private long TotalReclaimableBytes => DiskSpaceCleanupItems.Sum(item => item.ReclaimableBytes);
 
-    private long CheckedReclaimableBytes =>
-        DiskSpaceCleanupItems.Where(item => item.IsChecked).Sum(item => item.ReclaimableBytes);
+    /// <summary>
+    ///     Formats a reclaimable total. Items whose size is only an upper bound (shadow storage
+    ///     keeps the newest snapshot, a pnpm prune keeps referenced packages) must not turn the
+    ///     sum into a promise, so the whole total is marked as a maximum once one takes part.
+    /// </summary>
+    private static string FormatReclaimable(IReadOnlyCollection<DiskSpaceCleanupItem> items)
+    {
+        var text = ByteSize.Format(items.Sum(item => item.ReclaimableBytes));
+        return items.Any(item => item.IsReclaimableUpperBound && item.ReclaimableBytes > 0)
+            ? string.Format(Localizer.Get("DiskSpaceUpToSize"), text)
+            : text;
+    }
 
     private List<DiskSpaceRelocationItem> CheckedRelocationItems =>
         DiskSpaceRelocationItems.Where(item => item.IsChecked && item.CanMove).ToList();
@@ -268,7 +278,7 @@ public partial class MainViewModel
             var result = await ShowUpdateDialogAsync(
                 Localizer.Get("DiskSpaceCleanConfirmTitle"),
                 string.Format(Localizer.Get("DiskSpaceCleanConfirmMessage"), targets.Count,
-                    ByteSize.Format(targets.Sum(item => item.ReclaimableBytes)))
+                    FormatReclaimable(targets))
                     + "\n\n" + string.Join("\n", targets.Select(item => item.GroupNameKey == DeveloperCacheCleanupItem.DeveloperGroup ? item.Name + "\n" + item.Description : item.Name)),
                 ButtonEnum.YesNo,
                 MsBox.Avalonia.Enums.Icon.Question
@@ -585,11 +595,12 @@ public partial class MainViewModel
         }
         else
         {
-            var total = ByteSize.Format(TotalReclaimableBytes);
+            var items = DiskSpaceCleanupItems.ToList();
+            var total = FormatReclaimable(items);
             var summary = string.Format(
                 Localizer.Get("DiskSpaceReclaimableSummary"),
                 total,
-                ByteSize.Format(CheckedReclaimableBytes)
+                FormatReclaimable(items.Where(item => item.IsChecked).ToList())
             );
             var moveBytes = CheckedRelocationBytes;
             if (moveBytes > 0)

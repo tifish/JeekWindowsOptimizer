@@ -6,6 +6,9 @@ public sealed class ShadowCopiesCleanupItem : DiskSpaceCleanupItem
     public override string DescriptionKey => "ShadowCopiesCleanupDescription";
     protected override bool DefaultChecked => false;
     public override bool CanClean => SnapshotCount > 1;
+
+    // Total shadow storage in use; the newest snapshot is kept.
+    public override bool IsReclaimableUpperBound => true;
     public int SnapshotCount { get; private set; }
 
     protected override async Task<long> ScanCore(CancellationToken cancellationToken)

@@ -69,7 +69,10 @@ internal static class DiskSpaceCleanupProbe
             Require(ShadowCopyStorage.KeepNewest([newest]).Count == 0 && ShadowCopyStorage.KeepNewest([]).Count == 0, "zero/one snapshot");
             Require(ShadowCopyStorage.KeepNewest([newest, old with { Created = now }]).Count == 1, "tied dates retain one");
             Require(!new ShadowCopiesCleanupItem().IsChecked, "restore history opt-in");
-            return "PASS shadows: newest retained, zero/one snapshot, tied dates, opt-in";
+            Require(new ShadowCopiesCleanupItem().IsReclaimableUpperBound
+                && new PnpmStoreCleanupItem().IsReclaimableUpperBound
+                && !new UserCrashDumpsCleanupItem().IsReclaimableUpperBound, "kept content marked as an upper bound");
+            return "PASS shadows: newest retained, zero/one snapshot, tied dates, opt-in, upper bound";
         }
         if (scenario == "browser")
             return await BrowserAsync();
