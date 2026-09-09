@@ -129,17 +129,27 @@ public partial class MainWindow : Window
             return;
         }
 
-        // A short final group needs trailing space to put its heading at the viewport top.
-        // Keep the space minimal; the usual long groups need no extra margin.
-        if (items.Items.LastOrDefault() is { } lastItem && items.ContainerFromItem(lastItem) is { } last)
+        // A short final group needs trailing space to put its heading at the viewport top, but
+        // only as much as this target really needs: space left over from an earlier navigation
+        // is dead scroll area, and it goes stale on resize or when a group is collapsed.
+        var margin = items.Margin;
+        if (margin.Bottom != 0)
         {
-            var margin = items.Margin;
-            items.Margin = new Thickness(margin.Left, margin.Top, margin.Right, Math.Max(0, scroll.Viewport.Height - last.Bounds.Height));
+            items.Margin = margin = new Thickness(margin.Left, margin.Top, margin.Right, 0);
             UpdateLayout();
         }
-        if (container.TranslatePoint(default, items) is { } position)
-            scroll.Offset = new Vector(scroll.Offset.X, Math.Clamp(position.Y + items.Margin.Top,
-                0, Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height)));
+        if (container.TranslatePoint(default, items) is not { } position)
+            return;
+
+        var offset = position.Y + margin.Top;
+        var missing = offset + scroll.Viewport.Height - scroll.Extent.Height;
+        if (missing > 0)
+        {
+            items.Margin = new Thickness(margin.Left, margin.Top, margin.Right, missing);
+            UpdateLayout();
+        }
+        scroll.Offset = new Vector(scroll.Offset.X, Math.Clamp(offset,
+            0, Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height)));
     }
 
     private void SaveUncheckedOptimizationItemsIfChanged()

@@ -85,6 +85,13 @@ internal static class GroupNavigationProbe
             Click(navigation, shortNav);
             await Layout();
             AtTop(items, scroll, shortGroup, "short final group");
+            var firstAgain = vm.DiskSpaceGroupNavItems[0];
+            Click(navigation, firstAgain);
+            await Layout();
+            AtTop(items, scroll, firstAgain.DiskSpaceGroup!, "return from short final group");
+            // The trailing space a short last group needs must not stay behind as dead scroll area.
+            DiskSpaceCleanupProbe.Require(items.Margin.Bottom == 0, $"trailing space released (bottom={items.Margin.Bottom})");
+            results.Add("trailing space released");
             vm.SearchText = "Maven";
             await Layout();
             Click(navigation, vm.DiskSpaceGroupNavItems.Single());
