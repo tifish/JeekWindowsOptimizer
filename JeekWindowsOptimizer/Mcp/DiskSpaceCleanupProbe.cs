@@ -387,7 +387,29 @@ internal static class DiskSpaceCleanupProbe
                 await cache.CleanAsync();
                 Require(File.Exists(Path.Join(outside, "keep")), "nested link preserved");
             }
-            return "PASS graphics: all four paths, opt-in, measured size, locked files, retry, siblings and link targets preserved";
+
+            var busyPath = Path.Join(root, "busy");
+            Directory.CreateDirectory(busyPath);
+            File.WriteAllBytes(Path.Join(busyPath, "package"), new byte[70]);
+            var busy = new GraphicsInstallerCleanupItem("NvidiaRoot", busyPath, () => true);
+            await busy.RefreshAsync();
+            await busy.CleanAsync();
+            Require(busy.State == DiskSpaceItemState.Failed && busy.SizeBytes == 70
+                && File.Exists(Path.Join(busyPath, "package")), "running installer blocks cleanup");
+
+            foreach (var protectedRoot in new[] { Environment.GetFolderPath(Environment.SpecialFolder.Windows),
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.Windows))! })
+            {
+                try
+                {
+                    _ = new GraphicsInstallerCleanupItem("NvidiaRoot", protectedRoot);
+                    Require(false, "system root refused: " + protectedRoot);
+                }
+                catch (ArgumentException) { }
+            }
+            return "PASS graphics: all four paths, opt-in, measured size, locked files, retry, siblings and link targets preserved, installer guard, system roots refused";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
     }

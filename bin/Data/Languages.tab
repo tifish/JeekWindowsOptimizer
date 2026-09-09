@@ -744,6 +744,7 @@ GraphicsNvidiaRootCleanupName	NVIDIA extracted installers	NVIDIA 解压安装残
 GraphicsNvidiaRootCleanupDescription	Clear the NVIDIA folder at the system drive root. Close installers first and make sure the folder contains no files you want to keep.	清理系统盘根目录 NVIDIA 文件夹。请先关闭安装程序，并确认其中没有要保留的文件。
 GraphicsAmdRootCleanupName	AMD extracted installers	AMD 解压安装残留
 GraphicsAmdRootCleanupDescription	Clear the AMD folder at the system drive root. Close installers first and make sure the folder contains no files you want to keep.	清理系统盘根目录 AMD 文件夹。请先关闭安装程序，并确认其中没有要保留的文件。
+GraphicsInstallerBusy	A driver installer is running. Finish or close it and try again.	驱动安装程序正在运行，请完成或关闭后重试。
 InstallerBaselineCleanupName	Windows Installer baseline cache	Windows Installer 基线缓存
 InstallerBaselineCleanupDescription	Clear only Windows\Installer\$PatchCache$; preserve all other Installer files. Future repair, patching or patch removal may request original installation media. Close Windows Installer before cleaning.	仅清理 Windows\Installer\$PatchCache$，保留 Installer 下所有其他文件。今后修复、打补丁或卸载补丁可能需要原始安装介质。请先关闭 Windows Installer。
 InstallerBaselineBusy	Windows Installer is running. Finish the installation and try again.	Windows Installer 正在运行，请完成安装后重试。
