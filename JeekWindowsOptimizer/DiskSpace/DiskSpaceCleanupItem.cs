@@ -91,53 +91,60 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
         FreedBytes = 0;
         IsFreedBytesKnown = false;
 
-        bool succeeded;
+        long? before = null;
+        var succeeded = false;
+        string? failure = null;
         try
         {
             // Measure immediately before deleting; the last UI scan may be stale.
-            SizeBytes = await Task.Run(() => ScanCore(cancellationToken), cancellationToken);
+            before = await Task.Run(() => ScanCore(cancellationToken), cancellationToken);
+            SizeBytes = before;
             succeeded = await Task.Run(() => CleanCore(cancellationToken), cancellationToken);
         }
         catch (OperationCanceledException)
         {
-            SizeBytes = null;
-            ErrorMessage = Localizer.Get("DiskSpaceCleanCancelled");
-            State = DiskSpaceItemState.Failed;
-            return 0;
+            failure = Localizer.Get("DiskSpaceCleanCancelled");
         }
         catch (Exception ex)
         {
-            SizeBytes = null;
-            ErrorMessage = ex.Message;
-            State = DiskSpaceItemState.Failed;
-            return 0;
+            failure = ex.Message;
         }
 
-        long after;
-        try
+        // Re-measure even after a failure: a run that stopped part way through still freed
+        // whatever it had already deleted, and the row must show what is actually left.
+        long? after = null;
+        string? measurementFailure = null;
+        if (before is not null)
         {
-            after = await Task.Run(() => ScanCore(CancellationToken.None), CancellationToken.None);
+            try
+            {
+                after = await Task.Run(() => ScanCore(CancellationToken.None), CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                measurementFailure = Localizer.Get("DiskSpaceCleanMeasurementFailed") + " " + ex.Message;
+            }
         }
-        catch (Exception ex)
+
+        if (before is { } start && after is { } remaining)
         {
+            SizeBytes = remaining;
+            FreedBytes = Math.Max(0, start - remaining);
+            IsFreedBytesKnown = true;
+        }
+        else
+        {
+            // Without both measurements the freed amount is unknown; never report it as zero.
             SizeBytes = null;
-            ErrorMessage = Localizer.Get("DiskSpaceCleanMeasurementFailed") + " " + ex.Message;
-            State = DiskSpaceItemState.Failed;
-            return 0;
         }
 
-        var before = SizeBytes.Value;
-        SizeBytes = after;
-        FreedBytes = Math.Max(0, before - after);
-        IsFreedBytesKnown = true;
-
-        if (succeeded)
+        if (succeeded && measurementFailure is null)
         {
             State = DiskSpaceItemState.Done;
         }
         else
         {
-            ErrorMessage ??= Localizer.Get("DiskSpaceCleanIncomplete");
+            ErrorMessage = failure ?? measurementFailure ?? ErrorMessage ?? Localizer.Get("DiskSpaceCleanIncomplete");
             State = DiskSpaceItemState.Failed;
         }
 

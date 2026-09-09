@@ -84,16 +84,20 @@ internal static class DiskSpaceCleanupProbe
             && item.FreedBytes == 0, "rescan failure and stale result reset");
         item.FailRescan = false;
         item.CancelClean = true;
-        Require(await item.CleanAsync() == 0 && !item.IsFreedBytesKnown
-            && item.SizeBytes is null && item.State == DiskSpaceItemState.Failed, "cancellation");
+        Require(await item.CleanAsync() == 0 && item.IsFreedBytesKnown
+            && item.SizeBytes == 100 && item.State == DiskSpaceItemState.Failed, "cancellation");
         item.CancelClean = false;
         item.FailClean = true;
-        Require(await item.CleanAsync() == 0 && !item.IsFreedBytesKnown
-            && item.State == DiskSpaceItemState.Failed, "cleanup exception");
+        Require(await item.CleanAsync() == 0 && item.IsFreedBytesKnown
+            && item.SizeBytes == 100 && item.State == DiskSpaceItemState.Failed, "cleanup exception");
         item.FailClean = false;
+        item.PartialClean = true;
+        Require(await item.CleanAsync() == 60 && item.IsFreedBytesKnown && item.SizeBytes == 40
+            && item.State == DiskSpaceItemState.Failed, "partial cleanup still reports freed space");
+        item.PartialClean = false;
         Require(await item.CleanAsync() == 60 && item.State == DiskSpaceItemState.Done,
             "successful retry");
-        return "PASS accuracy: fresh measurement, rescan failure, stale result reset, cancellation, cleanup exception, retry";
+        return "PASS accuracy: fresh measurement, rescan failure, stale result reset, cancellation, cleanup exception, partial cleanup, retry";
     }
 
     internal static void Require(bool condition, string name)
@@ -433,6 +437,7 @@ internal static class DiskSpaceCleanupProbe
         public bool FailRescan { get; set; }
         public bool CancelClean { get; set; }
         public bool FailClean { get; set; }
+        public bool PartialClean { get; set; }
         private bool _afterClean;
 
         protected override Task<long> ScanCore(CancellationToken cancellationToken)
@@ -456,6 +461,8 @@ internal static class DiskSpaceCleanupProbe
             if (FailClean)
                 throw new IOException("Injected cleanup failure");
             _afterClean = true;
+            if (PartialClean)
+                throw new IOException("Injected failure after freeing part of the item");
             return Task.FromResult(true);
         }
     }
