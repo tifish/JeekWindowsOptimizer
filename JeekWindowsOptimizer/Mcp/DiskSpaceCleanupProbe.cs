@@ -25,7 +25,12 @@ internal static class DiskSpaceCleanupProbe
             Require(DriverStoreCleanup.SelectOld([packages[0], packages[1] with { Version = packages[0].Version }], used).Count == 0, "equal versions retained");
             Require(DriverStoreCleanup.DeleteArguments("oem1.inf") == "/delete-driver oem1.inf", "no force or uninstall");
             Require(!new OldDriversCleanupItem().IsChecked, "driver rollback opt-in");
-            return "PASS drivers: localized records, numeric versions, in-use/provider/architecture guards, equal versions, no force, opt-in";
+            // Console output is not UTF-8 on a localized system: decoding a non-ASCII label as
+            // UTF-8 can consume the separator that follows it and shift every parsed field.
+            var localized = new byte[] { 0xB7, 0xA2, (byte)':', (byte)' ', (byte)'o', (byte)'k' };
+            Require(CleanupCommand.Decode(localized).EndsWith(": ok", StringComparison.Ordinal), "code page separators survive");
+            Require(CleanupCommand.Decode("Published Name: oem1.inf"u8.ToArray()) == "Published Name: oem1.inf", "ascii decoding");
+            return "PASS drivers: localized records, numeric versions, in-use/provider/architecture guards, equal versions, no force, opt-in, console decoding";
         }
         if (scenario == "hibernation")
         {
