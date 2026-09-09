@@ -196,7 +196,8 @@ internal static class DiskSpaceCleanupProbe
             using (File.Open(packageFile, FileMode.Open, FileAccess.Read, FileShare.None))
             {
                 await packagesItem.CleanAsync();
-                Require(packagesItem.State == DiskSpaceItemState.Failed && !packagesItem.IsFreedBytesKnown
+                Require(packagesItem.State == DiskSpaceItemState.Failed && packagesItem.IsFreedBytesKnown
+                    && packagesItem.SizeBytes == 200 && packagesItem.FreedBytes == 0
                     && File.Exists(packageFile), "CLI nonzero exit with locked package");
             }
             await packagesItem.CleanAsync();
