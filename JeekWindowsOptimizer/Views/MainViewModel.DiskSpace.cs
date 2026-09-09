@@ -136,7 +136,7 @@ public partial class MainViewModel
     {
         if (item is DiskSpaceCleanupItem cleanupItem
             && AppSettingsStore.Roaming.DiskSpaceCleanupSelections?.TryGetValue(item.NameKey, out var saved) == true)
-            cleanupItem.RestoreCheckedState(saved);
+            cleanupItem.SetCheckedExplicitly(saved);
         var group = AllDiskSpaceGroups.FirstOrDefault(g => g.NameKey == item.GroupNameKey);
         if (group is null)
             AllDiskSpaceGroups.Add(new DiskSpaceGroup(item.GroupNameKey, [item]));
@@ -145,7 +145,10 @@ public partial class MainViewModel
 
         item.PropertyChanged += (_, args) =>
         {
-            if (item is DiskSpaceCleanupItem cleanup && args.PropertyName == nameof(DiskSpaceCleanupItem.IsChecked))
+            // A choice the scan derives on its own is recomputed next run; only remember
+            // what the user decided.
+            if (item is DiskSpaceCleanupItem cleanup && args.PropertyName == nameof(DiskSpaceCleanupItem.IsChecked)
+                && cleanup.HasExplicitCheckedChoice)
                 _pendingCleanupSelections[item.NameKey] = cleanup.IsChecked;
             if (args.PropertyName is nameof(DiskSpaceCleanupItem.IsChecked)
                 or nameof(DiskSpaceItem.State) or nameof(DiskSpaceItem.SizeBytes)
@@ -678,7 +681,9 @@ public partial class MainViewModel
             if (item.IsBusy) continue;
             if (item is DiskSpaceCleanupItem cleanup)
             {
-                cleanup.RestoreCheckedState(selected);
+                // Remember the choice even for rows already in that state: the click is the
+                // user's decision, and it changes no property to react to.
+                cleanup.SetCheckedExplicitly(selected);
                 _pendingCleanupSelections[item.NameKey] = selected;
             }
             else if (item is DiskSpaceRelocationItem relocation && (!selected || relocation.CanCheck))

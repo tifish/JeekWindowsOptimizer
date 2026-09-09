@@ -423,6 +423,7 @@ internal static class DiskSpaceCleanupProbe
         Require(!defaults.IsChecked, "default opt-in");
         await defaults.RefreshAsync();
         Require(defaults.IsChecked, "first scan default still works");
+        Require(!defaults.HasExplicitCheckedChoice, "scan-derived choice is not remembered as the user's");
         var settings = new RoamingSettings
         {
             DiskSpaceCleanupSelections = new() { ["savedOff"] = false, ["savedOn"] = true }
@@ -432,7 +433,7 @@ internal static class DiskSpaceCleanupProbe
         foreach (var choice in restored.DiskSpaceCleanupSelections!.Values)
         {
             var item = new SelectionItem();
-            item.RestoreCheckedState(choice);
+            item.SetCheckedExplicitly(choice);
             await item.RefreshAsync();
             await item.RefreshAsync();
             Require(item.IsChecked == choice, "saved choice survives first scan and rescan");
@@ -441,7 +442,12 @@ internal static class DiskSpaceCleanupProbe
         manual.ToggleChecked();
         manual.ToggleChecked();
         await manual.RefreshAsync();
-        Require(!manual.IsChecked, "manual choice before scan preserved");
+        Require(!manual.IsChecked && manual.HasExplicitCheckedChoice, "manual choice before scan preserved");
+        var unchanged = new SelectionItem();
+        unchanged.SetCheckedExplicitly(false);
+        await unchanged.RefreshAsync();
+        Require(!unchanged.IsChecked && unchanged.HasExplicitCheckedChoice,
+            "a group action that changes nothing still counts as a choice");
         Require(System.Text.Json.JsonSerializer.Deserialize<RoamingSettings>("{}")!
             .DiskSpaceCleanupSelections is null, "old settings retain defaults");
         var created = DiskSpaceItemManager.CreateItems();

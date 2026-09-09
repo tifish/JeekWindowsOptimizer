@@ -41,11 +41,28 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
     [ObservableProperty]
     public partial bool IsChecked { get; set; }
 
-    partial void OnIsCheckedChanged(bool value) => _autoCheckApplied = true;
+    private bool _applyingAutoCheck;
 
-    internal void RestoreCheckedState(bool value)
+    partial void OnIsCheckedChanged(bool value)
     {
         _autoCheckApplied = true;
+        HasExplicitCheckedChoice |= !_applyingAutoCheck;
+    }
+
+    /// <summary>
+    ///     False while the row still shows a default or a choice derived from the scan, so the
+    ///     caller can tell a decision worth remembering from one that is recomputed every run.
+    /// </summary>
+    internal bool HasExplicitCheckedChoice { get; private set; }
+
+    /// <summary>
+    ///     Records a deliberate choice — restored settings or a group action. Marks the row even
+    ///     when the value does not change, so a first scan never revises what the user picked.
+    /// </summary>
+    internal void SetCheckedExplicitly(bool value)
+    {
+        _autoCheckApplied = true;
+        HasExplicitCheckedChoice = true;
         IsChecked = value;
     }
 
@@ -82,7 +99,9 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
         if (!_autoCheckApplied && AutoCheckAfterScan is { } shouldCheck)
         {
             _autoCheckApplied = true;
-            IsChecked = shouldCheck;
+            _applyingAutoCheck = true;
+            try { IsChecked = shouldCheck; }
+            finally { _applyingAutoCheck = false; }
         }
     }
 
