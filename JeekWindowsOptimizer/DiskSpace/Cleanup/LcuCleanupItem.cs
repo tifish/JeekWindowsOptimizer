@@ -50,7 +50,9 @@ public sealed class LcuCleanupItem : FixedDirectoryCleanupItem
         foreach (var entry in new DirectoryInfo(DirectoryPath).EnumerateFileSystemInfos())
         {
             cancellationToken.ThrowIfCancellationRequested();
-            ValidateCleanup();
+            // Only servicing can start mid-cleanup. Re-testing timestamps here would both walk
+            // the whole tree per entry and flag the directories this loop is emptying as changed.
+            if (_busy()) throw new IOException(Localizer.Get("LcuServicingBusy"));
             if ((entry.Attributes & FileAttributes.ReparsePoint) != 0) continue;
             if (entry is DirectoryInfo) FileSystemCleaner.DeleteDirectory(entry.FullName, cancellationToken);
             else FileSystemCleaner.DeleteFile(entry.FullName);

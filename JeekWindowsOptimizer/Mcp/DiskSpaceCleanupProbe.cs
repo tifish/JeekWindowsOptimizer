@@ -287,7 +287,29 @@ internal static class DiskSpaceCleanupProbe
             pending = false;
             await lcu.CleanAsync();
             Require(lcu.State == DiskSpaceItemState.Done && lcu.FreedBytes == 321 && File.Exists(keep), "post-restart cleanup limited to LCU");
-            return "PASS lcu: pending reboot, servicing activity, current-boot staging, stale scan guard, successful retry, sibling preserved";
+
+            // Deleting staging files updates the directories left behind. With a real boot time
+            // in the past that must not be re-read as new staging while the cleanup is running.
+            boot = DateTime.UtcNow.AddMinutes(-30);
+            var held = Path.Join(cache, "busy", "held");
+            var gone = Path.Join(cache, "busy", "gone");
+            var later = Path.Join(cache, "later");
+            Directory.CreateDirectory(Path.GetDirectoryName(held)!);
+            foreach (var (path, size) in new[] { (held, 10), (gone, 20), (later, 50) })
+                File.WriteAllBytes(path, new byte[size]);
+            foreach (var entry in new DirectoryInfo(cache).EnumerateFileSystemInfos("*",
+                new EnumerationOptions { RecurseSubdirectories = true }))
+            {
+                entry.CreationTimeUtc = boot.AddHours(-1);
+                entry.LastWriteTimeUtc = boot.AddHours(-1);
+            }
+            await lcu.RefreshAsync();
+            Require(!lcu.NeedsReboot && lcu.SizeBytes == 80, "staging written before boot stays eligible");
+            using (new FileStream(held, FileMode.Open, FileAccess.Read, FileShare.None))
+                await lcu.CleanAsync();
+            Require(lcu.State == DiskSpaceItemState.Failed && File.Exists(held) && !File.Exists(gone) && !File.Exists(later),
+                "locked entry reported incomplete without stopping the remaining entries");
+            return "PASS lcu: pending reboot, servicing activity, current-boot staging, stale scan guard, successful retry, sibling preserved, locked entry";
         }
         finally { FileSystemCleaner.DeleteDirectory(root); }
     }
