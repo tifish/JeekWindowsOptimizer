@@ -22,7 +22,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private const string ApplicationTitle = "Jeek Windows Optimizer";
     private const string ProjectHomepageUrl = "https://github.com/tifish/JeekWindowsOptimizer";
     private const int DiskSpaceTabIndex = 3;
-    private const int ToolsTabIndex = 4;
+    private const int StartupTabIndex = 4;
+    private const int ToolsTabIndex = 5;
     private bool _uncheckedOptimizationItemsDirty;
     private static readonly char[] SearchTermSeparators = [' ', '\t', '\r', '\n'];
     private static readonly TimeSpan UpdateInitialDelay = TimeSpan.FromSeconds(5);
@@ -34,6 +35,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _updateInProgress;
     private bool _suppressOptimizationRefresh;
     private bool _suppressGroupNavSelection;
+
+    /// <summary>
+    /// Set while the left-nav selection is being driven by the content pane's scroll position.
+    /// The selection still has to be remembered, but it must not scroll the content back.
+    /// </summary>
+    private bool _syncingNavFromScroll;
     private string? _selectedOptimizationNavKey;
     private string? _selectedToolNavKey;
     private readonly Dictionary<string, bool> _optimizationGroupExpanded = new(
@@ -58,6 +65,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         IsAutoUpdateEnabled = AppSettingsStore.Roaming.AutoUpdate;
         _isLoadingAutoUpdateSetting = false;
         ShowOnlyNotOptimized = AppSettingsStore.Roaming.ShowOnlyNotOptimized;
+        LoadStartupSettings();
     }
 
     private void OnRoamingSettingsReloaded()
@@ -72,6 +80,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             IsAutoUpdateEnabled = AppSettingsStore.Roaming.AutoUpdate;
             _isLoadingAutoUpdateSetting = false;
             ShowOnlyNotOptimized = AppSettingsStore.Roaming.ShowOnlyNotOptimized;
+            LoadStartupSettings();
         });
     }
 
@@ -208,6 +217,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     {
         OnPropertyChanged(nameof(IsOptimizationTabSelected));
         OnPropertyChanged(nameof(IsDiskSpaceTabSelected));
+        OnPropertyChanged(nameof(IsStartupTabSelected));
         OnPropertyChanged(nameof(IsToolsTabSelected));
         OnPropertyChanged(nameof(CanShowOptimizeButton));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
@@ -221,6 +231,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
         if (value == DiskSpaceTabIndex)
             OnDiskSpaceTabSelected();
+        else if (value == StartupTabIndex)
+            OnStartupTabSelected();
     }
 
     public string SelectedTabDescription =>
@@ -230,6 +242,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             1 => Localizer.Get("AntivirusDescription"),
             2 => Localizer.Get("PersonalDescription"),
             DiskSpaceTabIndex => Localizer.Get("DiskSpaceDescription"),
+            StartupTabIndex => Localizer.Get("StartupDescription"),
             ToolsTabIndex => Localizer.Get("ToolsDescription"),
             _ => "",
         };
@@ -260,6 +273,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             return;
 
         _selectedOptimizationNavKey = value?.NameKey;
+        if (_syncingNavFromScroll)
+            return;
+
         RequestScrollToNavTarget(value, isTools: false);
     }
 
@@ -269,13 +285,69 @@ public partial class MainViewModel : ObservableObject, IDisposable
             return;
 
         _selectedToolNavKey = value?.NameKey;
+        if (_syncingNavFromScroll)
+            return;
+
         RequestScrollToNavTarget(value, isTools: true);
+    }
+
+    /// <summary>
+    ///     Selects the left-nav row for the group the content pane has scrolled to. Deliberately
+    ///     one-way: it records the selection but raises no scroll request, otherwise the content
+    ///     would jump back under the user's wheel.
+    /// </summary>
+    public void SyncGroupNavigationToScroll(object group)
+    {
+        _syncingNavFromScroll = true;
+        try
+        {
+            switch (group)
+            {
+                case OptimizationGroup optimizationGroup:
+                    Select(GroupNavItems, nav => nav.OptimizationGroup == optimizationGroup,
+                        item => SelectedGroupNavItem = item);
+                    break;
+                case ToolGroup toolGroup:
+                    Select(ToolGroupNavItems, nav => nav.ToolGroup == toolGroup,
+                        item => SelectedToolGroupNavItem = item);
+                    break;
+                case DiskSpaceGroup diskSpaceGroup:
+                    Select(DiskSpaceGroupNavItems, nav => nav.DiskSpaceGroup == diskSpaceGroup,
+                        item => SelectedDiskSpaceGroupNavItem = item);
+                    break;
+                case Startup.StartupGroup startupGroup:
+                    Select(StartupGroupNavItems, nav => nav.StartupGroup == startupGroup,
+                        item => SelectedStartupGroupNavItem = item);
+                    break;
+            }
+        }
+        finally
+        {
+            _syncingNavFromScroll = false;
+        }
+
+        // A group with no nav row (mid-refresh, or filtered out) must leave the current
+        // selection alone rather than clearing it.
+        static void Select(
+            IEnumerable<GroupNavItem> navItems,
+            Func<GroupNavItem, bool> match,
+            Action<GroupNavItem> assign
+        )
+        {
+            if (navItems.FirstOrDefault(match) is { } found)
+                assign(found);
+        }
     }
 
     /// <summary>Explicit activation also navigates when the selected entry has not changed.</summary>
     public void ActivateGroupNavigation(GroupNavItem item)
     {
-        if (item.DiskSpaceGroup is not null)
+        if (item.StartupGroup is not null)
+        {
+            if (SelectedStartupGroupNavItem == item) OnSelectedStartupGroupNavItemChanged(item);
+            else SelectedStartupGroupNavItem = item;
+        }
+        else if (item.DiskSpaceGroup is not null)
         {
             if (SelectedDiskSpaceGroupNavItem == item) OnSelectedDiskSpaceGroupNavItemChanged(item);
             else SelectedDiskSpaceGroupNavItem = item;
@@ -322,6 +394,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             SetDiskSpaceGroupsExpanded(true);
         }
+        else if (IsStartupTabSelected)
+        {
+            foreach (var group in StartupGroups)
+            {
+                group.IsExpanded = true;
+                _startupGroupExpanded[group.NameKey] = true;
+            }
+        }
         else if (IsToolsTabSelected)
         {
             foreach (var group in ToolGroups)
@@ -346,6 +426,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
         if (IsDiskSpaceTabSelected)
         {
             SetDiskSpaceGroupsExpanded(false);
+        }
+        else if (IsStartupTabSelected)
+        {
+            foreach (var group in StartupGroups)
+            {
+                group.IsExpanded = false;
+                _startupGroupExpanded[group.NameKey] = false;
+            }
         }
         else if (IsToolsTabSelected)
         {
@@ -388,6 +476,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 && (IsSearchActive || ShowOnlyNotOptimized)
             || IsToolsTabSelected && ToolGroups.Count == 0 && IsSearchActive
             || IsDiskSpaceTabSelected && DiskSpaceGroups.Count == 0 && IsSearchActive
+            || IsStartupTabSelected && StartupGroups.Count == 0 && IsSearchActive
         );
 
     public string NoResultsMessage =>
@@ -467,6 +556,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             }
 
             NotifyDiskSpaceLanguageChanged();
+            NotifyStartupLanguageChanged();
 
             RefreshDisplayedGroups();
             UpdateOptimizationTabHeaders();
@@ -631,6 +721,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public void SaveUncheckedOptimizationItemsIfChanged()
     {
         SaveDiskSpaceCleanupSelectionsIfChanged();
+        Startup.StartupDecisionStore.Flush();
         if (!_uncheckedOptimizationItemsDirty)
             return;
 
@@ -719,6 +810,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             RefreshDisplayedToolGroups();
         else if (SelectedTabIndex == DiskSpaceTabIndex)
             RefreshDisplayedDiskSpaceGroups();
+        else if (SelectedTabIndex == StartupTabIndex)
+            RefreshDisplayedStartupGroups();
         else
             RefreshDisplayedOptimizationGroups();
     }

@@ -811,3 +811,58 @@ VirtualDiskMigrationInvalidPath	Choose a separate local NTFS directory without s
 VirtualDiskMigrationTargetExists	The destination already exists. It will not be overwritten or merged; choose another drive or move the existing destination aside first.	目标路径已存在，不会覆盖或合并。请选择其他盘，或先移走已有目标目录。
 VirtualDiskMigrationNoSpace	The destination drive does not have enough free space for the virtual disk.	目标盘可用空间不足以存放虚拟磁盘。
 VirtualDiskMigrationVerificationFailed	Migration verification failed. Keep both locations and inspect them before retrying.	迁移结果校验失败，请保留两处数据并检查后再重试。
+Startup	Startup	启动项
+StartupDescription	Only what you allow is permitted to start; anything new waits for your decision. Your choices are remembered for good, including for entries that are not on this machine, and travel with your settings folder to your other computers.	只有你允许的项目才能启动，新出现的项目等你决定。你的选择会被永久记住，包括本机当前不存在的项目，并随配置目录同步到你的其他电脑。
+StartupKindLogonRegistry	Logon entries	登录启动项
+StartupKindStartupFolder	Startup folder	启动文件夹
+StartupKindScheduledTask	Scheduled tasks	计划任务
+StartupKindService	Services	服务
+StartupKindDriver	Drivers	驱动程序
+StartupKindExplorerExtension	Explorer extensions	资源管理器扩展
+StartupUnsigned	Unsigned	未签名
+StartupSignatureInvalid	Signature not valid	签名无效
+StartupStatusPending	Waiting for your decision	等待你的决定
+StartupStatusAllowed	Allowed	已允许
+StartupStatusAllowedButOff	Allowed, currently off	已允许，当前未启用
+StartupStatusDenied	Not allowed	已禁止
+StartupStatusDeniedNotApplied	Not allowed, still running	已禁止，但仍在运行
+StartupStatusReadOnly	Read-only	只读
+StartupStatusPolicyManaged	Managed by Group Policy	由组策略管理
+StartupStatusRunOnce	Runs once, then removes itself	运行一次后自动删除
+StartupStatusBootCritical	Boot-critical driver, not changed	引导关键驱动，不作修改
+StartupStatusTaskProtected	Protected by permissions	受权限保护
+StartupApplyFailed	Could not apply: {0}	应用失败：{0}
+StartupDecidedOnOtherMachine	Decided on {0}	在 {0} 上做的决定
+StartupDecidedByLooseMatch	Matched to a decision for the same program in another location	匹配到同一程序在其他位置的决定
+StartupSummary	{0} entries, {1} waiting for a decision, {2} denied but still running	共 {0} 项，{1} 项等待决定，{2} 项已禁止但仍在运行
+StartupBaselinePrompt	This computer has not been set up yet. {0} entries are already here. Accept them as the starting point, and only entries appearing after that will ask for a decision.	这台电脑尚未建立基线，当前已有 {0} 个项目。可以把它们作为起点接受下来，之后新出现的项目才会询问你。
+StartupAcceptBaseline	Accept as baseline	接受为基线
+StartupBaselineConfirm	Record the current state of {0} entries as your decisions? What runs today becomes allowed, what is already off becomes denied. Nothing on the system changes.	把当前 {0} 个项目的状态记录为你的选择吗？现在会启动的记为允许，已关闭的记为禁止。系统本身不会有任何改动。
+StartupRescan	Rescan	重新扫描
+StartupEnforce	Apply decisions	应用决定
+StartupEnforceConfirm	Turn off {0} entries that you have denied but that still run?	关闭 {0} 个你已禁止但仍在运行的项目？
+StartupEnforceResult	{0} entries turned off, {1} failed.	已关闭 {0} 项，{1} 项失败。
+StartupRestartExplorerPrompt	Explorer has to restart before the shell extension changes take effect. Restart it now?	资源管理器扩展的改动需要重启资源管理器才会生效。现在重启吗？
+StartupShowOnlyPending	Only waiting for a decision	只看等待决定
+StartupShowWindowsEntries	Show Windows entries	显示 Windows 项目
+StartupShowWindowsEntriesHint	Entries signed as Windows system components are hidden by default. They are still scanned, so a file that stops being Windows-signed reappears here.	带 Windows 系统组件签名的项目默认隐藏。它们仍会被扫描，一旦某个文件不再是 Windows 签名就会重新显示出来。
+StartupHideMicrosoftEntries	Hide other Microsoft entries	隐藏其他微软项目
+StartupAllow	Allow	允许
+StartupDeny	Deny	禁止
+StartupReveal	Show the file in Explorer	在资源管理器中定位文件
+StartupScanning	Scanning startup entries…	正在扫描启动项...
+StartupScanFinished	Startup scan finished: {0} entries, {1} waiting for a decision.	启动项扫描完成：共 {0} 项，{1} 项等待决定。
+StartupScanFailed	The startup scan failed: {0}	启动项扫描失败：{0}
+StartupLedgerUnreadable	Your saved decisions could not be read ({0}), so nothing is being saved right now. This is usually a sync tool replacing the file; it will retry on its own.	无法读取已保存的决定（{0}），当前不会写入任何改动。这通常是同步工具正在替换文件，程序会自动重试。
+StartupLedgerBlocked	Decisions cannot be saved while the saved file is unreadable.	存档文件不可读期间无法保存决定。
+StartupForgetAllConfirm	Forget all {0} remembered decisions, on this computer and on every computer you sync with? Nothing on the system changes, but every entry will ask again.	忘记全部 {0} 条已记住的决定吗？本机和所有同步的电脑都会清空。系统本身不会改动，但每个项目都会重新询问。
+StartupKindRunOnce	Run once	一次性启动项
+StartupKindInternetExplorerExtension	Browser add-ons	浏览器加载项
+StartupStatusNoSwitch	No supported switch; shown for visibility	Windows 未提供开关，仅供查看
+StartupStatusWithWarning	{0} ({1})	{0}（{1}）
+StartupWarningServiceHasDependents	still running because {0} depend on it	仍在运行，因为 {0} 依赖它
+StartupWarningServiceCannotStop	still running; it does not accept a stop request, takes effect after restart	仍在运行，该服务不接受停止，重启后生效
+StartupWarningServiceStopTimedOut	still stopping after 20 seconds	20 秒内未能停止
+StartupWarningServiceStopFailed	could not stop: {0}	停止失败：{0}
+StartupWarningServiceStartFailed	start type restored, but it did not start: {0}	已恢复启动类型，但启动失败：{0}
+StartupWarningDriverReboot	takes effect after restart	重启后生效

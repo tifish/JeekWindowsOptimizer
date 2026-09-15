@@ -38,6 +38,10 @@ public class App : Application
             new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab"))
         );
         AppSettingsStore.Load();
+        // Must come after AppSettingsStore.Load(): both resolve their paths from the active
+        // storage location, and the decision store registers a watcher on that Config folder.
+        Startup.StartupLocalState.Load();
+        Startup.StartupDecisionStore.Load();
         ApplyStoredSettings();
         AppSettingsStore.RoamingSettingsReloaded += () =>
             Dispatcher.UIThread.Post(ApplyStoredSettings);

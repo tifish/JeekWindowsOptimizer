@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:l="using:Jeek.Avalonia.Localization"
     xmlns:local="using:JeekWindowsOptimizer"
+    xmlns:startup="using:JeekWindowsOptimizer.Startup"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding WindowTitle}"
     Width="1100"
@@ -467,6 +468,7 @@
             <TabItem Header="{Binding AntivirusTabHeader}" />
             <TabItem Header="{Binding PersonalTabHeader}" />
             <TabItem Header="{Binding DiskSpaceTabHeader}" />
+            <TabItem Header="{Binding StartupTabHeader}" />
             <TabItem Header="{Binding ToolsTabHeader}" />
         </TabStrip>
 
@@ -1026,6 +1028,294 @@
                                         </ItemsControl.DataTemplates>
                                     </ItemsControl>
                                     </StackPanel>
+                                </Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- Startup tab: left group nav + right content -->
+        <Grid
+            Grid.Row="3"
+            ColumnDefinitions="220 *"
+            IsVisible="{Binding IsStartupTabSelected}">
+            <Border
+                Grid.Column="0"
+                Margin="0,0,12,0"
+                Padding="0,0,8,0"
+                BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                BorderThickness="0,0,1,0">
+                <DockPanel>
+                    <TextBlock
+                        DockPanel.Dock="Top"
+                        Margin="4,0,0,10"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                        Text="{l:Localize GroupsNavTitle}" />
+                    <ListBox
+                        Classes="group-nav"
+                        x:Name="StartupGroupNavigation"
+                        ItemsSource="{Binding StartupGroupNavItems}"
+                        SelectedItem="{Binding SelectedStartupGroupNavItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="local:GroupNavItem">
+                                <TextBlock
+                                    FontSize="14"
+                                    Text="{Binding DisplayText}"
+                                    TextWrapping="NoWrap"
+                                    TextTrimming="CharacterEllipsis" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <Grid Grid.Column="1" RowDefinitions="Auto Auto Auto Auto Auto *">
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,8"
+                    FontSize="14"
+                    Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                    Text="{Binding SelectedTabDescription}"
+                    TextWrapping="Wrap" />
+
+                <Border
+                    Grid.Row="1"
+                    Margin="0,0,0,10"
+                    Padding="14,12"
+                    Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                    BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <TextBlock
+                        FontSize="14"
+                        Text="{Binding StartupSummaryText}"
+                        TextWrapping="Wrap" />
+                </Border>
+
+                <!-- Shown when the ledger could not be read, because decisions stop being saved. -->
+                <Border
+                    Grid.Row="2"
+                    Margin="0,0,0,10"
+                    Padding="14,10"
+                    Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                    BorderBrush="#FFC98A00"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    IsVisible="{Binding HasStartupWarning}">
+                    <TextBlock
+                        FontSize="14"
+                        Text="{Binding StartupWarningText}"
+                        TextWrapping="Wrap" />
+                </Border>
+
+                <!-- First run on this machine: turn what is here now into the baseline. -->
+                <Border
+                    Grid.Row="3"
+                    Margin="0,0,0,10"
+                    Padding="14,10"
+                    Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                    BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    IsVisible="{Binding IsStartupBaselinePending}">
+                    <Grid ColumnDefinitions="* Auto">
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Text="{Binding StartupBaselinePromptText}"
+                            TextWrapping="Wrap" />
+                        <Button
+                            Grid.Column="1"
+                            Margin="12,0,0,0"
+                            Padding="12,6"
+                            Classes="accent"
+                            Command="{Binding AcceptStartupBaselineCommand}"
+                            Content="{l:Localize StartupAcceptBaseline}"
+                            CornerRadius="6"
+                            FontSize="13"
+                            FontWeight="SemiBold" />
+                    </Grid>
+                </Border>
+
+                <StackPanel
+                    Grid.Row="4"
+                    Margin="0,0,0,10"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Button
+                        Classes="group-toolbar"
+                        Command="{Binding ScanStartupCommand}"
+                        Content="{l:Localize StartupRescan}" />
+                    <Button
+                        Padding="12,6"
+                        Classes="accent"
+                        Command="{Binding EnforceStartupDecisionsCommand}"
+                        Content="{l:Localize StartupEnforce}"
+                        CornerRadius="6"
+                        FontSize="13"
+                        FontWeight="SemiBold" />
+                    <CheckBox
+                        VerticalAlignment="Center"
+                        Content="{l:Localize StartupShowOnlyPending}"
+                        IsChecked="{Binding ShowOnlyPendingStartupItems}" />
+                    <CheckBox
+                        VerticalAlignment="Center"
+                        Content="{l:Localize StartupShowWindowsEntries}"
+                        IsChecked="{Binding ShowWindowsStartupEntries}"
+                        ToolTip.Tip="{l:Localize StartupShowWindowsEntriesHint}" />
+                    <CheckBox
+                        VerticalAlignment="Center"
+                        Content="{l:Localize StartupHideMicrosoftEntries}"
+                        IsChecked="{Binding HideMicrosoftStartupEntries}" />
+                    <Button
+                        Classes="group-toolbar"
+                        Command="{Binding ExpandAllGroupsCommand}"
+                        Content="{l:Localize ExpandAllGroups}" />
+                    <Button
+                        Classes="group-toolbar"
+                        Command="{Binding CollapseAllGroupsCommand}"
+                        Content="{l:Localize CollapseAllGroups}" />
+                    <ProgressBar
+                        Width="140"
+                        VerticalAlignment="Center"
+                        IsIndeterminate="True"
+                        IsVisible="{Binding IsStartupActive}" />
+                </StackPanel>
+
+                <ScrollViewer
+                    x:Name="StartupContentScrollViewer"
+                    Grid.Row="5"
+                    VerticalAlignment="Stretch"
+                    VerticalScrollBarVisibility="Visible">
+                    <ItemsControl x:Name="StartupGroupsItemsControl" ItemsSource="{Binding StartupGroups}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" Spacing="12" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="startup:StartupGroup">
+                                <Expander
+                                    HorizontalAlignment="Stretch"
+                                    IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
+                                    <Expander.Header>
+                                        <TextBlock
+                                            Margin="0,4,0,0"
+                                            FontSize="22"
+                                            FontWeight="SemiBold"
+                                            Text="{Binding Name}" />
+                                    </Expander.Header>
+
+                                    <ItemsControl ItemsSource="{Binding Items}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical" Spacing="8" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="startup:StartupItem">
+                                                <Border
+                                                    Padding="14,10"
+                                                    Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
+                                                    BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6">
+                                                    <Grid ColumnDefinitions="* Auto">
+                                                        <StackPanel Grid.Column="0" Margin="0,0,16,0" Spacing="3">
+                                                            <TextBlock
+                                                                FontSize="16"
+                                                                FontWeight="SemiBold"
+                                                                Text="{Binding DisplayName}"
+                                                                TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock
+                                                                FontSize="13"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                Text="{Binding PublisherText}"
+                                                                TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                IsVisible="{Binding HasDistinctCommand}"
+                                                                Text="{Binding CommandText}"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTip.Tip="{Binding CommandText}" />
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                Text="{Binding LocationText}"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTip.Tip="{Binding LocationText}" />
+                                                            <!-- One Explorer row covers every hook its DLL registers. -->
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                Foreground="{DynamicResource Win11SecondaryTextBrush}"
+                                                                IsVisible="{Binding HasHookPoints}"
+                                                                Text="{Binding HookPointsText}"
+                                                                TextWrapping="Wrap" />
+                                                            <TextBlock
+                                                                FontSize="12"
+                                                                IsVisible="{Binding DecidedOnText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                                                Text="{Binding DecidedOnText}"
+                                                                TextWrapping="Wrap" />
+                                                        </StackPanel>
+
+                                                        <StackPanel
+                                                            Grid.Column="1"
+                                                            MinWidth="180"
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center"
+                                                            Spacing="6">
+                                                            <TextBlock
+                                                                HorizontalAlignment="Right"
+                                                                FontSize="13"
+                                                                FontWeight="SemiBold"
+                                                                Text="{Binding StatusText}"
+                                                                TextWrapping="Wrap" />
+                                                            <StackPanel
+                                                                HorizontalAlignment="Right"
+                                                                Orientation="Horizontal"
+                                                                Spacing="6">
+                                                                <Button
+                                                                    Padding="14,5"
+                                                                    Classes.accent="{Binding IsAllowed}"
+                                                                    IsEnabled="{Binding CanToggle}"
+                                                                    Command="{Binding $parent[Window].((local:MainViewModel)DataContext).AllowStartupItemCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Content="{l:Localize StartupAllow}"
+                                                                    CornerRadius="6"
+                                                                    FontSize="13" />
+                                                                <Button
+                                                                    Padding="14,5"
+                                                                    Classes.accent="{Binding IsDenied}"
+                                                                    IsEnabled="{Binding CanToggle}"
+                                                                    Command="{Binding $parent[Window].((local:MainViewModel)DataContext).DenyStartupItemCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Content="{l:Localize StartupDeny}"
+                                                                    CornerRadius="6"
+                                                                    FontSize="13" />
+                                                                <Button
+                                                                    Padding="10,5"
+                                                                    IsEnabled="{Binding CanReveal}"
+                                                                    Command="{Binding $parent[Window].((local:MainViewModel)DataContext).OpenStartupItemLocationCommand}"
+                                                                    CommandParameter="{Binding}"
+                                                                    CornerRadius="6"
+                                                                    FontSize="13"
+                                                                    ToolTip.Tip="{l:Localize StartupReveal}">
+                                                                    <!-- Segoe Fluent Icons: FolderOpen -->
+                                                                    <TextBlock FontFamily="Segoe Fluent Icons,Segoe MDL2 Assets" Text="&#xE838;" />
+                                                                </Button>
+                                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </Expander>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

@@ -151,6 +151,63 @@ public static class DebugMcpContract
                 ["item"] = Prop("string", "Relocation item NameKey."),
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
             }, ["item"]),
+        Tool("startup_items",
+            "List the Startup tab's items: kind, name, publisher and signature class, command, location, "
+                + "whether it runs at startup now, the remembered decision and where that decision was made. "
+                + "Runs the scan first if the tab has not been visited yet.",
+            new()
+            {
+                ["kind"] = Prop("string", "Optional filter: LogonRegistry | RunOnce | StartupFolder | ScheduledTask | ExplorerExtension | InternetExplorerExtension | Service | Driver."),
+                ["only_pending"] = Prop("boolean", "Only entries with no recorded decision (default false)."),
+                ["include_hidden"] = Prop("boolean", "Include entries the tab's filters hide, such as Windows components (default false)."),
+                ["limit"] = Prop("integer", "Maximum rows to return, 1-2000 (default 200)."),
+            }),
+        Tool("startup_scan",
+            "Re-run the startup scan and wait for it, then return the item list. Reads only; changes nothing.",
+            new()
+            {
+                ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 300)."),
+            }),
+        Tool("startup_decide",
+            "Record allow or deny for one entry and put it into effect immediately, exactly as the GUI "
+                + "buttons do. Changes the system; debug surface only.",
+            new()
+            {
+                ["key"] = Prop("string", "Ledger key from startup_items."),
+                ["decision"] = Prop("string", "allow | deny"),
+            }, ["key", "decision"]),
+        Tool("startup_enforce",
+            "Turn off every entry that is denied but still runs, without the GUI confirmation. "
+                + "Changes the system; debug surface only.",
+            new()
+            {
+                ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 600)."),
+            }),
+        Tool("startup_baseline",
+            "Record the current state of this machine as the decision baseline: what runs becomes allowed, "
+                + "what is already off becomes denied. Writes decisions but changes nothing on the system.",
+            new()),
+        Tool("startup_ledger",
+            "Inspect the decision ledger itself: file path, epoch, entry count, whether writes are blocked "
+                + "because the file is unreadable, and optionally the raw entries.",
+            new()
+            {
+                ["entries"] = Prop("boolean", "Include the stored entries (default false)."),
+                ["limit"] = Prop("integer", "Maximum entries to return, 1-2000 (default 100)."),
+            }),
+        Tool("startup_service_probe",
+            "Deny then allow one real service through the startup toggle and verify the start type, "
+                + "stop on deny, start on allow, and exact restoration of the original start type, "
+                + "delayed-start flag and running state. Also checks that a service with running "
+                + "dependents is reported rather than stopped. Writes nothing to the decision ledger. "
+                + "Briefly stops a real service; debug surface only.",
+            new() { ["name"] = Prop("string", "Service name (default W32Time). Pick one that is safe to stop briefly.") }),
+        Tool("startup_ledger_probe",
+            "Run isolated regression checks against synthetic data, a temporary folder and a scratch "
+                + "class id: cross-machine merge, reset epoch, sync conflict copies, unreadable files, "
+                + "identity keys and the browser add-on switch. Reads no real startup entry and never "
+                + "touches the real decision file.",
+            new() { ["scenario"] = Prop("string", "Scenario: merge | epoch | conflict | poison | identity | addon | all (default all).") }),
         Tool("disk_space_move_checked",
             "Run the batch move (each checked relocation item to its own selected drive) without the GUI confirmation. Destructive; debug surface only.",
             new()

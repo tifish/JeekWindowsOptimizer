@@ -108,6 +108,9 @@ public partial class MainViewModel
             return;
 
         _selectedDiskSpaceNavKey = value?.NameKey;
+        if (_syncingNavFromScroll)
+            return;
+
         if (value?.DiskSpaceGroup is not { } group)
             return;
 

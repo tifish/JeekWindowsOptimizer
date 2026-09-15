@@ -42,6 +42,22 @@ internal sealed class RoamingSettings
     public Dictionary<string, bool>? DiskSpaceCleanupSelections { get; set; }
 
     public bool ShowOnlyNotOptimized { get; set; }
+
+    /// <summary>Show entries signed as Windows system components on the Startup tab.</summary>
+    public bool ShowWindowsStartupEntries { get; set; }
+
+    /// <summary>Also hide Microsoft entries that are not Windows components (Office, OneDrive).</summary>
+    public bool HideMicrosoftStartupEntries { get; set; }
+
+    /// <summary>Restrict the Startup tab to entries that have never been decided.</summary>
+    public bool ShowOnlyPendingStartupItems { get; set; }
+
+    /// <summary>
+    ///     Put a remembered Deny back into force automatically when a scan finds it running again.
+    ///     Off by default: a decision that arrived from another machine should be confirmed here
+    ///     before it silently switches off something the user just installed.
+    /// </summary>
+    public bool AutoEnforceStartupDecisions { get; set; }
 }
 
 /// <summary>
@@ -72,6 +88,9 @@ internal static class AppSettingsStore
     /// <summary>Raised (on a worker thread) after the roaming settings were reloaded from disk.</summary>
     public static event Action? RoamingSettingsReloaded;
 
+    /// <summary>Raised after the roaming Config folder moved, so other stores can reopen their files.</summary>
+    public static event Action? RoamingConfigLocationChanged;
+
     private static MachineSettings _baseMachine = new();
     private static RoamingSettings _baseRoaming = new();
     private static string _lastSavedRoamingJson = "";
@@ -80,6 +99,9 @@ internal static class AppSettingsStore
 
     public static string CurrentRoamingConfigDir =>
         Storage.ResolveConfigRoot(EffectiveStorageLocation, Machine.CustomStoragePath);
+
+    /// <summary>Machine-local Config folder. Never roams, whatever the storage location is.</summary>
+    public static string LocalConfigDir => Storage.LocalConfigDir;
 
     private static string RoamingSettingsPath =>
         Storage.ResolveSettingsPath(EffectiveStorageLocation, Machine.CustomStoragePath);
@@ -269,6 +291,8 @@ internal static class AppSettingsStore
         {
             StartWatcher();
         }
+
+        RoamingConfigLocationChanged?.Invoke();
     }
 
     // ---------- Roaming config watcher ----------
@@ -280,6 +304,39 @@ internal static class AppSettingsStore
     private static readonly TimeSpan ReloadDebounce = TimeSpan.FromSeconds(10);
     private static FileSystemWatcher? _watcher;
     private static Timer? _reloadTimer;
+
+    /// <summary>
+    ///     Registers an extra file in the roaming Config folder to watch. <paramref name="matches" />
+    ///     receives each changed file name (not a path) so a store can also react to a sync tool's
+    ///     conflict copies, which never carry the exact file name.
+    /// </summary>
+    public static void RegisterConfigWatcher(Func<string, bool> matches, Action onChanged)
+    {
+        lock (WatchLock)
+            ExtraWatchers.Add((matches, onChanged));
+    }
+
+    private static readonly List<(Func<string, bool> Matches, Action OnChanged)> ExtraWatchers = [];
+
+    private static void NotifyExtraWatchers(string[] changedNames)
+    {
+        (Func<string, bool> Matches, Action OnChanged)[] watchers;
+        lock (WatchLock)
+            watchers = [.. ExtraWatchers];
+
+        foreach (var (matches, onChanged) in watchers)
+        {
+            try
+            {
+                if (changedNames.Any(matches))
+                    onChanged();
+            }
+            catch
+            {
+                // One store's reload failure must not stop the others.
+            }
+        }
+    }
 
     private static void StartWatcher()
     {
@@ -348,6 +405,8 @@ internal static class AppSettingsStore
             changed = [.. PendingChangedFiles];
             PendingChangedFiles.Clear();
         }
+
+        NotifyExtraWatchers(changed);
 
         // Only reload the files that actually changed.
         if (
@@ -480,6 +539,32 @@ internal static class AppSettingsStore
     public static void SetShowOnlyNotOptimized(bool value)
     {
         Roaming.ShowOnlyNotOptimized = value;
+        SaveRoaming();
+    }
+
+    // ---------- Startup tab ----------
+
+    public static void SetShowWindowsStartupEntries(bool value)
+    {
+        Roaming.ShowWindowsStartupEntries = value;
+        SaveRoaming();
+    }
+
+    public static void SetHideMicrosoftStartupEntries(bool value)
+    {
+        Roaming.HideMicrosoftStartupEntries = value;
+        SaveRoaming();
+    }
+
+    public static void SetShowOnlyPendingStartupItems(bool value)
+    {
+        Roaming.ShowOnlyPendingStartupItems = value;
+        SaveRoaming();
+    }
+
+    public static void SetAutoEnforceStartupDecisions(bool value)
+    {
+        Roaming.AutoEnforceStartupDecisions = value;
         SaveRoaming();
     }
 }

@@ -302,7 +302,7 @@ public static class WindowsScheduledTask
         taskName = path[(lastSlash + 1)..];
     }
 
-    private static object? InvokeCom(object target, string method, params object[] args)
+    internal static object? InvokeCom(object target, string method, params object[] args)
     {
         return target
             .GetType()
@@ -315,7 +315,25 @@ public static class WindowsScheduledTask
             );
     }
 
-    private static T GetComProperty<T>(object target, string propertyName)
+    /// <summary>
+    /// Reads a parameterized COM property such as a collection's <c>Item</c>. These are properties,
+    /// not methods, so a plain InvokeMethod binding fails on them.
+    /// </summary>
+    internal static object? GetComIndexed(object target, string propertyName, params object[] args)
+    {
+        return target
+            .GetType()
+            .InvokeMember(
+                propertyName,
+                System.Reflection.BindingFlags.GetProperty
+                    | System.Reflection.BindingFlags.InvokeMethod,
+                binder: null,
+                target: target,
+                args: args
+            );
+    }
+
+    internal static T GetComProperty<T>(object target, string propertyName)
     {
         var value = target
             .GetType()
@@ -350,7 +368,7 @@ public static class WindowsScheduledTask
         return true;
     }
 
-    private static void ReleaseCom(object? comObject)
+    internal static void ReleaseCom(object? comObject)
     {
         if (comObject is not null && Marshal.IsComObject(comObject))
             Marshal.FinalReleaseComObject(comObject);

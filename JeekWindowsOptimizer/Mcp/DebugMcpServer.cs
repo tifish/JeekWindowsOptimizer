@@ -8,6 +8,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using JeekTools;
+using JeekWindowsOptimizer.Startup;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 
@@ -112,6 +113,21 @@ internal static class DebugMcpServer
                 : DiskSpaceCleanupProbe.RunAsync(args["scenario"]?.GetValue<string>() ?? "accuracy"));
             return ToolText(await task);
         });
+        host.AddTool("startup_items", StartupItemsAsync);
+        host.AddTool("startup_scan", StartupScanAsync);
+        host.AddTool("startup_decide", StartupDecideAsync);
+        host.AddTool("startup_enforce", StartupEnforceAsync);
+        host.AddTool("startup_baseline", StartupBaselineAsync);
+        host.AddTool("startup_ledger", StartupLedgerAsync);
+        host.AddTool("startup_service_probe", async args =>
+        {
+            var task = await OnUiAsync(() => StartupServiceProbe.RunAsync(
+                RequireMainVm(), args["name"]?.GetValue<string>() ?? "W32Time"));
+            return ToolText(await task);
+        });
+        host.AddTool("startup_ledger_probe", async args =>
+            ToolText(await StartupLedgerProbe.RunAsync(
+                args["scenario"]?.GetValue<string>() ?? "all")));
         host.AddTool("disk_space_scan", DiskSpaceScanAsync);
         host.AddTool("disk_space_clean", DiskSpaceCleanAsync);
         host.AddTool("disk_space_enqueue", DiskSpaceEnqueueAsync);
@@ -813,6 +829,238 @@ internal static class DebugMcpServer
             ? "TIMED OUT waiting for the batch move; it keeps running.\n"
             : $"succeeded={succeeded} failed={failed}\nstatus={await OnUiAsync(() => RequireMainVm().StatusMessage)}\n";
         return ToolText(header + text, timedOut);
+    }
+
+    #endregion
+
+    #region Startup
+
+    private static async Task<JsonObject> StartupItemsAsync(JsonObject args)
+    {
+        var kind = args["kind"]?.GetValue<string>();
+        var onlyPending = args["only_pending"]?.GetValue<bool>() ?? false;
+        var includeHidden = args["include_hidden"]?.GetValue<bool>() ?? false;
+        var limit = Math.Clamp(args["limit"]?.GetValue<int>() ?? 200, 1, 2000);
+
+        // Start the scan on the UI thread but wait off it: the UI invoker has a short timeout.
+        var scan = await OnUiAsync(() => RequireMainVm().EnsureStartupItemsAsync());
+        var timedOut = await Task.WhenAny(scan, Task.Delay(TimeSpan.FromSeconds(300))) != scan;
+
+        var text = await OnUiAsync(() =>
+            DescribeStartupItems(RequireMainVm(), kind, onlyPending, includeHidden, limit));
+        return ToolText(
+            (timedOut ? "TIMED OUT waiting for the first scan; it keeps running.\n" : "") + text,
+            timedOut);
+    }
+
+    private static async Task<JsonObject> StartupScanAsync(JsonObject args)
+    {
+        var timeout = TimeSpan.FromSeconds(
+            Math.Clamp(args["timeout_seconds"]?.GetValue<int>() ?? 300, 1, 3600));
+
+        var scan = await OnUiAsync(() => RequireMainVm().ScanStartupCommand.ExecuteAsync(null));
+        var timedOut = await Task.WhenAny(scan, Task.Delay(timeout)) != scan;
+
+        var text = await OnUiAsync(() =>
+            DescribeStartupItems(RequireMainVm(), null, false, false, 200));
+        return ToolText(
+            (timedOut ? "TIMED OUT waiting for the scan; it keeps running.\n" : "") + text,
+            timedOut);
+    }
+
+    private static async Task<JsonObject> StartupDecideAsync(JsonObject args)
+    {
+        var key = args["key"]?.GetValue<string>();
+        if (string.IsNullOrWhiteSpace(key))
+            return ToolText("'key' is required.", isError: true);
+
+        var decisionText = args["decision"]?.GetValue<string>() ?? "";
+        StartupDecision decision;
+        switch (decisionText.ToLowerInvariant())
+        {
+            case "allow":
+                decision = StartupDecision.Allow;
+                break;
+            case "deny":
+                decision = StartupDecision.Deny;
+                break;
+            default:
+                return ToolText("'decision' must be allow or deny.", isError: true);
+        }
+
+        await (await OnUiAsync(() => RequireMainVm().EnsureStartupItemsAsync()));
+
+        var work = await OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            var item = vm.StartupItems.FirstOrDefault(i =>
+                string.Equals(i.Key, key, StringComparison.Ordinal));
+            if (item is null)
+                return (Task.CompletedTask, (StartupItem?)null);
+
+            var command = decision == StartupDecision.Allow
+                ? vm.AllowStartupItemCommand
+                : vm.DenyStartupItemCommand;
+            return (command.ExecuteAsync(item), item);
+        });
+
+        if (work.Item2 is null)
+            return ToolText($"No startup item with key '{key}'.", isError: true);
+
+        await work.Item1;
+
+        var text = await OnUiAsync(() => DescribeStartupItem(work.Item2!));
+        return ToolText(text);
+    }
+
+    private static async Task<JsonObject> StartupEnforceAsync(JsonObject args)
+    {
+        var timeout = TimeSpan.FromSeconds(
+            Math.Clamp(args["timeout_seconds"]?.GetValue<int>() ?? 600, 1, 3600));
+
+        await (await OnUiAsync(() => RequireMainVm().EnsureStartupItemsAsync()));
+
+        var before = await OnUiAsync(() =>
+            RequireMainVm().StartupItems.Count(item => item.NeedsEnforcement));
+
+        var work = await OnUiAsync(() => RequireMainVm().EnforceStartupDecisionsForDebugAsync());
+        var timedOut = await Task.WhenAny(work, Task.Delay(timeout)) != work;
+
+        var after = await OnUiAsync(() =>
+            RequireMainVm().StartupItems.Count(item => item.NeedsEnforcement));
+        var text = await OnUiAsync(() =>
+            DescribeStartupItems(RequireMainVm(), null, false, false, 200));
+
+        return ToolText(
+            (timedOut ? "TIMED OUT; the work keeps running.\n" : "")
+                + $"neededEnforcementBefore={before}\nneededEnforcementAfter={after}\n\n"
+                + text,
+            timedOut);
+    }
+
+    private static async Task<JsonObject> StartupBaselineAsync(JsonObject _)
+    {
+        await (await OnUiAsync(() => RequireMainVm().EnsureStartupItemsAsync()));
+
+        var recorded = await OnUiAsync(() =>
+            StartupItemManager.AcceptBaseline(RequireMainVm().StartupItems.ToList()));
+
+        await OnUiAsync(() =>
+        {
+            RequireMainVm().RefreshStartupAfterLedgerChangeForDebug();
+            return true;
+        });
+
+        return ToolText(
+            $"recorded={recorded}\nledgerEntries={StartupDecisionStore.Count}\n"
+            + $"epoch={StartupDecisionStore.Epoch}");
+    }
+
+    private static Task<JsonObject> StartupLedgerAsync(JsonObject args)
+    {
+        var includeEntries = args["entries"]?.GetValue<bool>() ?? false;
+        var limit = Math.Clamp(args["limit"]?.GetValue<int>() ?? 100, 1, 2000);
+
+        var sb = new StringBuilder();
+        sb.AppendLine($"file={StartupDecisionStore.FilePath}");
+        sb.AppendLine($"exists={File.Exists(StartupDecisionStore.FilePath)}");
+        sb.AppendLine($"epoch={StartupDecisionStore.Epoch}");
+        sb.AppendLine($"entries={StartupDecisionStore.Count}");
+        sb.AppendLine($"writesBlocked={StartupDecisionStore.IsPoisoned}");
+        if (StartupDecisionStore.PoisonReason is { } reason)
+            sb.AppendLine($"blockedReason={reason}");
+        sb.AppendLine($"baselineTaken={StartupLocalState.HasBaseline}");
+
+        if (includeEntries)
+        {
+            sb.AppendLine();
+            foreach (var (key, entry) in StartupDecisionStore.Snapshot()
+                         .OrderBy(pair => pair.Key, StringComparer.Ordinal)
+                         .Take(limit))
+            {
+                sb.AppendLine(
+                    $"{entry.Decision,-5} clock={entry.Clock,-4} on={entry.Machine} "
+                    + $"at={entry.DecidedAtUtc:u} key={key}");
+            }
+        }
+
+        return Task.FromResult(ToolText(sb.ToString()));
+    }
+
+    private static string DescribeStartupItems(
+        MainViewModel vm,
+        string? kind,
+        bool onlyPending,
+        bool includeHidden,
+        int limit)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"scanning={vm.IsStartupScanning} busy={vm.IsStartupBusy}");
+        sb.AppendLine($"baselinePending={vm.IsStartupBaselinePending}");
+        sb.AppendLine($"ledgerEntries={StartupDecisionStore.Count} epoch={StartupDecisionStore.Epoch} "
+            + $"writesBlocked={StartupDecisionStore.IsPoisoned}");
+        sb.AppendLine($"summary={vm.StartupSummaryText}");
+        if (vm.HasStartupWarning)
+            sb.AppendLine($"warning={vm.StartupWarningText}");
+        sb.AppendLine($"filters: showWindows={vm.ShowWindowsStartupEntries} "
+            + $"hideMicrosoft={vm.HideMicrosoftStartupEntries} "
+            + $"onlyPending={vm.ShowOnlyPendingStartupItems} "
+            + $"autoEnforce={vm.AutoEnforceStartupDecisions}");
+        sb.AppendLine();
+
+        var items = (includeHidden ? vm.StartupItems : vm.VisibleStartupItems).ToList();
+
+        if (!string.IsNullOrWhiteSpace(kind))
+            items = items
+                .Where(item => string.Equals(item.Kind.ToString(), kind, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        if (onlyPending)
+            items = items.Where(item => item.IsPending).ToList();
+
+        sb.AppendLine($"total={items.Count}");
+        foreach (var group in items.GroupBy(item => item.Kind).OrderBy(g => g.Key))
+            sb.AppendLine($"  {group.Key}: {group.Count()} "
+                + $"(pending {group.Count(i => i.IsPending)}, "
+                + $"needsEnforcement {group.Count(i => i.NeedsEnforcement)})");
+        sb.AppendLine();
+
+        foreach (var item in items.Take(limit))
+            sb.AppendLine(DescribeStartupItem(item));
+
+        if (items.Count > limit)
+            sb.AppendLine($"... {items.Count - limit} more (raise 'limit' to see them)");
+
+        return sb.ToString();
+    }
+
+    private static string DescribeStartupItem(StartupItem item)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"[{item.Kind}] {item.DisplayName}");
+        sb.AppendLine($"  name={item.Name}");
+        sb.AppendLine($"  key={item.Key}");
+        if (item.LooseKey.Length > 0)
+            sb.AppendLine($"  looseKey={item.LooseKey}");
+        sb.AppendLine($"  location={item.Location}");
+        if (item.Command.Length > 0)
+            sb.AppendLine($"  command={item.Command}");
+        sb.AppendLine($"  signer={item.SignerKind} publisher={item.Publisher ?? "(none)"}");
+        sb.AppendLine($"  enabled={item.IsEnabled} canToggle={item.CanToggle} orphaned={item.IsOrphaned}");
+        sb.AppendLine($"  decision={(item.Decision?.ToString() ?? "pending")} "
+            + $"source={item.DecisionSource} compliant={item.IsCompliant} "
+            + $"needsEnforcement={item.NeedsEnforcement}");
+        if (item.DecidedOnMachine is { } machine)
+            sb.AppendLine($"  decidedOn={machine} at={item.DecidedAtUtc:u}");
+        if (item.HookPoints.Count > 0)
+            sb.AppendLine($"  hooks({item.HookPoints.Count})={item.HookPointsText}");
+        if (item.Handles.Count > 0)
+            sb.AppendLine($"  handles={string.Join(", ", item.Handles)}");
+        if (item.ErrorMessage is { } error)
+            sb.AppendLine($"  error={error}");
+        if (item.WarningMessage is { } warning)
+            sb.AppendLine($"  warning={warning}");
+        sb.AppendLine($"  status={item.StatusText}");
+        return sb.ToString();
     }
 
     #endregion

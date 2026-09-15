@@ -23,12 +23,24 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        foreach (var navigation in new[] { OptimizationGroupNavigation, DiskSpaceGroupNavigation, ToolGroupNavigation })
+        foreach (var navigation in new[]
+                 {
+                     OptimizationGroupNavigation, DiskSpaceGroupNavigation,
+                     StartupGroupNavigation, ToolGroupNavigation,
+                 })
         {
             // ListBox handles pointer presses itself; observe the tunnel, including already-selected rows.
             navigation.AddHandler(PointerPressedEvent, GroupNavigation_OnPointerPressed, RoutingStrategies.Tunnel, handledEventsToo: true);
             navigation.AddHandler(KeyDownEvent, GroupNavigation_OnKeyDown, RoutingStrategies.Tunnel);
         }
+
+        // The other direction: scrolling the content pane moves the left-nav selection with it.
+        foreach (var scroll in new[]
+                 {
+                     OptimizationContentScrollViewer, DiskSpaceContentScrollViewer,
+                     StartupContentScrollViewer, ToolsContentScrollViewer,
+                 })
+            scroll.ScrollChanged += ContentScrollViewer_OnScrollChanged;
 
         Localizer.LanguageChanged += OnLanguageChanged;
         UpdateFontFamily();
@@ -118,6 +130,7 @@ public partial class MainWindow : Window
             OptimizationGroup => (OptimizationGroupsItemsControl, OptimizationContentScrollViewer),
             ToolGroup => (ToolGroupsItemsControl, ToolsContentScrollViewer),
             DiskSpaceGroup => (DiskSpaceGroupsItemsControl, DiskSpaceContentScrollViewer),
+            Startup.StartupGroup => (StartupGroupsItemsControl, StartupContentScrollViewer),
             _ => ((ItemsControl?)null, (ScrollViewer?)null),
         };
         if (items is null || scroll is null || !items.IsEffectivelyVisible) return;
@@ -128,6 +141,12 @@ public partial class MainWindow : Window
             if (retry) Dispatcher.UIThread.Post(() => ScrollContentToGroup(group, version, false), DispatcherPriority.Loaded);
             return;
         }
+
+        // Everything below changes the layout and the offset, which raises ScrollChanged. Those
+        // are this method's own doing, not the user scrolling, so the nav sync ignores them.
+        _applyingProgrammaticScroll = true;
+        try
+        {
 
         // A short final group needs trailing space to put its heading at the viewport top, but
         // only as much as this target really needs: space left over from an earlier navigation
@@ -150,6 +169,68 @@ public partial class MainWindow : Window
         }
         scroll.Offset = new Vector(scroll.Offset.X, Math.Clamp(offset,
             0, Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height)));
+        }
+        finally
+        {
+            // Avalonia can raise ScrollChanged on a later layout pass, so release the guard
+            // after that pass rather than at the end of this method.
+            Dispatcher.UIThread.Post(() => _applyingProgrammaticScroll = false, DispatcherPriority.Loaded);
+        }
+    }
+
+    private bool _applyingProgrammaticScroll;
+
+    /// <summary>
+    /// Moves the left-nav selection to whatever group the user has scrolled to. Clicking the nav
+    /// scrolls the content; this is the same link read backwards, so it must never scroll, or the
+    /// content would fight the wheel.
+    /// </summary>
+    private void ContentScrollViewer_OnScrollChanged(object? sender, ScrollChangedEventArgs e)
+    {
+        if (_applyingProgrammaticScroll || sender is not ScrollViewer scroll) return;
+        if (DataContext is not MainViewModel vm) return;
+
+        var items = GroupsItemsControlFor(scroll);
+        if (items is null || !items.IsEffectivelyVisible) return;
+
+        if (FindGroupAtViewportTop(items, scroll) is { } group)
+            vm.SyncGroupNavigationToScroll(group);
+    }
+
+    private ItemsControl? GroupsItemsControlFor(ScrollViewer scroll) =>
+        ReferenceEquals(scroll, OptimizationContentScrollViewer) ? OptimizationGroupsItemsControl
+        : ReferenceEquals(scroll, ToolsContentScrollViewer) ? ToolGroupsItemsControl
+        : ReferenceEquals(scroll, DiskSpaceContentScrollViewer) ? DiskSpaceGroupsItemsControl
+        : ReferenceEquals(scroll, StartupContentScrollViewer) ? StartupGroupsItemsControl
+        : null;
+
+    /// <summary>The last group whose heading has reached the top of the viewport.</summary>
+    private static object? FindGroupAtViewportTop(ItemsControl items, ScrollViewer scroll)
+    {
+        var groups = items.Items;
+        if (groups.Count == 0) return null;
+
+        // At the very bottom the last group wins outright. A short final group's heading can
+        // never reach the top on its own, so without this it could never become current.
+        if (scroll.Offset.Y >= scroll.Extent.Height - scroll.Viewport.Height - 1)
+            return groups[^1];
+
+        // One pixel of tolerance: after navigating to a group its heading sits at exactly the
+        // offset, and rounding must not push it back to the previous group.
+        var top = scroll.Offset.Y + 1;
+        var current = groups[0];
+
+        foreach (var group in groups)
+        {
+            if (group is null) continue;
+            if (items.ContainerFromItem(group) is not { } container) continue;
+            if (container.TranslatePoint(default, items) is not { } position) continue;
+
+            if (position.Y + items.Margin.Top > top) break;
+            current = group;
+        }
+
+        return current;
     }
 
     private void SaveUncheckedOptimizationItemsIfChanged()

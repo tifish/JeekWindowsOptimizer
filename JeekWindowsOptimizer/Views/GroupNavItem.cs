@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Jeek.Avalonia.Localization;
+using JeekWindowsOptimizer.Startup;
 
 namespace JeekWindowsOptimizer;
 
@@ -18,10 +19,17 @@ public partial class GroupNavItem : ObservableObject
 
     public DiskSpaceGroup? DiskSpaceGroup { get; private init; }
 
+    public StartupGroup? StartupGroup { get; private init; }
+
     public string DisplayText
     {
         get
         {
+            // The Startup group renders its own text: it also carries the count of items still
+            // waiting for a decision, which is the number the user is actually navigating by.
+            if (StartupGroup is { } startupGroup)
+                return startupGroup.NavDisplayName;
+
             var name =
                 OptimizationGroup?.Name ?? ToolGroup?.Name ?? DiskSpaceGroup?.Name ?? NameKey;
             var count =
@@ -52,6 +60,13 @@ public partial class GroupNavItem : ObservableObject
         {
             NameKey = group.NameKey,
             DiskSpaceGroup = group,
+        };
+
+    public static GroupNavItem FromStartupGroup(StartupGroup group) =>
+        new()
+        {
+            NameKey = group.NameKey,
+            StartupGroup = group,
         };
 
     public void NotifyDisplayChanged()

@@ -47,6 +47,18 @@ internal static class GroupNavigationProbe
             DiskSpaceCleanupProbe.Require(Math.Abs(y) < 1.5, $"{scenario}: heading relative Y={y}, offset={viewer.Offset.Y}");
             results.Add(scenario);
         }
+        double HeadingOffset(ItemsControl content, object group)
+        {
+            var container = content.ContainerFromItem(group) ?? throw new InvalidOperationException("Missing group container");
+            return container.TranslatePoint(default, content)!.Value.Y + content.Margin.Top;
+        }
+        void NavIs(DiskSpaceGroup expected, string scenario)
+        {
+            var actual = vm.SelectedDiskSpaceGroupNavItem?.DiskSpaceGroup;
+            DiskSpaceCleanupProbe.Require(ReferenceEquals(actual, expected),
+                $"{scenario}: nav shows '{actual?.NameKey ?? "(none)"}', expected '{expected.NameKey}'");
+            results.Add(scenario);
+        }
         try
         {
             scannedField.SetValue(vm, true);
@@ -70,10 +82,15 @@ internal static class GroupNavigationProbe
             await Layout();
             DiskSpaceCleanupProbe.Require(developer.DiskSpaceGroup.IsExpanded, "collapsed group reopened");
             AtTop(items, scroll, developer.DiskSpaceGroup, "expand before positioning");
+            // Scrolling now moves the nav highlight with the content, so Enter acts on whatever
+            // row the scroll left highlighted. That is the contract worth asserting: the keyboard
+            // path positions the selected group, whichever one that is.
             scroll.Offset += new Vector(0, 200);
+            await Layout();
+            var highlighted = (GroupNavItem)navigation.SelectedItem!;
             navigation.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
             await Layout();
-            AtTop(items, scroll, developer.DiskSpaceGroup, "keyboard reactivation");
+            AtTop(items, scroll, highlighted.DiskSpaceGroup!, "keyboard reactivation");
             Click(navigation, developer);
             Click(navigation, first);
             await Layout();
@@ -97,6 +114,51 @@ internal static class GroupNavigationProbe
             Click(navigation, vm.DiskSpaceGroupNavItems.Single());
             await Layout();
             AtTop(items, scroll, vm.DiskSpaceGroups.Single(), "filtered replacement group");
+            // The reverse link: scrolling the content moves the nav selection, and must never
+            // scroll back, or the view would fight the user's wheel.
+            vm.SearchText = "";
+            await Layout();
+            if (vm.DiskSpaceGroups.Count >= 2)
+            {
+                var firstGroup = vm.DiskSpaceGroups[0];
+                var secondGroup = vm.DiskSpaceGroups[1];
+
+                scroll.Offset = new Vector(0, 0);
+                await Layout();
+                NavIs(firstGroup, "top of the content selects the first group");
+
+                scroll.Offset = new Vector(0, HeadingOffset(items, secondGroup));
+                await Layout();
+                NavIs(secondGroup, "scrolling to a heading selects that group");
+
+                // Part way inside a group: still that group, and crucially the offset must stay
+                // exactly where it was put. A sync that scrolled back would snap it to the heading.
+                var inside = HeadingOffset(items, secondGroup) + 120;
+                scroll.Offset = new Vector(0, inside);
+                await Layout();
+                NavIs(secondGroup, "scrolling inside a group keeps it selected");
+                DiskSpaceCleanupProbe.Require(Math.Abs(scroll.Offset.Y - inside) < 1.5,
+                    $"scroll sync does not scroll back: offset={scroll.Offset.Y}, expected {inside}");
+                results.Add("scroll sync does not scroll back");
+
+                // A few pixels above a heading still belongs to the group before it.
+                scroll.Offset = new Vector(0, Math.Max(0, HeadingOffset(items, secondGroup) - 5));
+                await Layout();
+                NavIs(firstGroup, "just above a heading keeps the previous group");
+
+                // The very bottom belongs to the last group even when that group is too short for
+                // its heading to ever reach the top of the viewport.
+                scroll.Offset = new Vector(0, Math.Max(0, scroll.Extent.Height - scroll.Viewport.Height));
+                await Layout();
+                NavIs(vm.DiskSpaceGroups[^1], "bottom of the content selects the last group");
+
+                // A deliberate nav click still wins: the sync must not undo its positioning.
+                Click(navigation, vm.DiskSpaceGroupNavItems[0]);
+                await Layout();
+                AtTop(items, scroll, firstGroup, "click still positions after a scroll sync");
+                NavIs(firstGroup, "click leaves its own group selected");
+            }
+
             foreach (var tab in new[] { (0, "OptimizationGroupNavigation", "OptimizationGroupsItemsControl", "OptimizationContentScrollViewer"),
                 (4, "ToolGroupNavigation", "ToolGroupsItemsControl", "ToolsContentScrollViewer") })
             {
