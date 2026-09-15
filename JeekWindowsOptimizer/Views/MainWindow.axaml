@@ -512,7 +512,7 @@
             <Grid Grid.Column="1" RowDefinitions="Auto Auto *">
                 <TextBlock
                     Grid.Row="0"
-                    Margin="0,0,0,8"
+                    Margin="0,0,28,8"
                     FontSize="14"
                     Foreground="{DynamicResource Win11SecondaryTextBrush}"
                     Text="{Binding SelectedTabDescription}"
@@ -520,7 +520,7 @@
 
                 <StackPanel
                     Grid.Row="1"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Orientation="Horizontal"
                     Spacing="8">
                     <Button
@@ -538,7 +538,7 @@
                     Grid.Row="2"
                     VerticalAlignment="Stretch"
                     VerticalScrollBarVisibility="Visible">
-                    <ItemsControl x:Name="OptimizationGroupsItemsControl" ItemsSource="{Binding Groups}">
+                    <ItemsControl x:Name="OptimizationGroupsItemsControl" Margin="0,0,28,0" ItemsSource="{Binding Groups}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" Spacing="12" />
@@ -678,7 +678,7 @@
             <Grid Grid.Column="1" RowDefinitions="Auto Auto Auto *">
                 <TextBlock
                     Grid.Row="0"
-                    Margin="0,0,0,8"
+                    Margin="0,0,28,8"
                     FontSize="14"
                     Foreground="{DynamicResource Win11SecondaryTextBrush}"
                     Text="{Binding SelectedTabDescription}"
@@ -687,7 +687,7 @@
                 <!-- System drive usage + reclaimable summary -->
                 <Border
                     Grid.Row="1"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Padding="14,12"
                     Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
                     BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
@@ -723,7 +723,7 @@
 
                 <StackPanel
                     Grid.Row="2"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Orientation="Horizontal"
                     Spacing="8">
                     <Button
@@ -766,7 +766,7 @@
                     Grid.Row="3"
                     VerticalAlignment="Stretch"
                     VerticalScrollBarVisibility="Visible">
-                    <ItemsControl x:Name="DiskSpaceGroupsItemsControl" ItemsSource="{Binding DiskSpaceGroups}">
+                    <ItemsControl x:Name="DiskSpaceGroupsItemsControl" Margin="0,0,28,0" ItemsSource="{Binding DiskSpaceGroups}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" Spacing="12" />
@@ -1076,7 +1076,7 @@
             <Grid Grid.Column="1" RowDefinitions="Auto Auto Auto Auto Auto *">
                 <TextBlock
                     Grid.Row="0"
-                    Margin="0,0,0,8"
+                    Margin="0,0,28,8"
                     FontSize="14"
                     Foreground="{DynamicResource Win11SecondaryTextBrush}"
                     Text="{Binding SelectedTabDescription}"
@@ -1084,7 +1084,7 @@
 
                 <Border
                     Grid.Row="1"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Padding="14,12"
                     Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
                     BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
@@ -1099,7 +1099,7 @@
                 <!-- Shown when the ledger could not be read, because decisions stop being saved. -->
                 <Border
                     Grid.Row="2"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Padding="14,10"
                     Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
                     BorderBrush="#FFC98A00"
@@ -1115,7 +1115,7 @@
                 <!-- First run on this machine: turn what is here now into the baseline. -->
                 <Border
                     Grid.Row="3"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Padding="14,10"
                     Background="{DynamicResource Win11SettingsCardBackgroundBrush}"
                     BorderBrush="{DynamicResource Win11SettingsCardBorderBrush}"
@@ -1144,7 +1144,7 @@
 
                 <StackPanel
                     Grid.Row="4"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Orientation="Horizontal"
                     Spacing="8">
                     <Button
@@ -1192,7 +1192,7 @@
                     Grid.Row="5"
                     VerticalAlignment="Stretch"
                     VerticalScrollBarVisibility="Visible">
-                    <ItemsControl x:Name="StartupGroupsItemsControl" ItemsSource="{Binding StartupGroups}">
+                    <ItemsControl x:Name="StartupGroupsItemsControl" Margin="0,0,28,0" ItemsSource="{Binding StartupGroups}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" Spacing="12" />
@@ -1364,7 +1364,7 @@
             <Grid Grid.Column="1" RowDefinitions="Auto Auto *">
                 <TextBlock
                     Grid.Row="0"
-                    Margin="0,0,0,8"
+                    Margin="0,0,28,8"
                     FontSize="14"
                     Foreground="{DynamicResource Win11SecondaryTextBrush}"
                     Text="{Binding SelectedTabDescription}"
@@ -1372,7 +1372,7 @@
 
                 <StackPanel
                     Grid.Row="1"
-                    Margin="0,0,0,10"
+                    Margin="0,0,28,10"
                     Orientation="Horizontal"
                     Spacing="8">
                     <Button
@@ -1390,7 +1390,7 @@
                     Grid.Row="2"
                     VerticalAlignment="Stretch"
                     VerticalScrollBarVisibility="Visible">
-                    <ItemsControl x:Name="ToolGroupsItemsControl" ItemsSource="{Binding ToolGroups}">
+                    <ItemsControl x:Name="ToolGroupsItemsControl" Margin="0,0,28,0" ItemsSource="{Binding ToolGroups}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" Spacing="12" />

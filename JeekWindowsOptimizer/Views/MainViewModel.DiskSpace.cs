@@ -604,15 +604,15 @@ public partial class MainViewModel
 
     private void UpdateDiskSpaceSummary()
     {
+        // The reclaimable total lives in the summary card; the header stays short so the tab row fits on one line.
+        DiskSpaceTabHeader = DiskSpaceTabTitle;
         if (!_diskSpaceScannedOnce)
         {
             DiskSpaceSummaryText = Localizer.Get("DiskSpaceNotScanned");
-            DiskSpaceTabHeader = DiskSpaceTabTitle;
         }
         else
         {
             var items = DiskSpaceCleanupItems.ToList();
-            var total = FormatReclaimable(items);
             var summary = string.Format(
                 ReclaimableTemplate("DiskSpaceReclaimableSummary", items),
                 ReclaimableSize(items),
@@ -624,7 +624,6 @@ public partial class MainViewModel
             if (IsDiskSpaceScanning)
                 summary += "  " + Localizer.Get("DiskSpaceScanInProgressHint");
             DiskSpaceSummaryText = summary;
-            DiskSpaceTabHeader = $"{DiskSpaceTabTitle} ({total})";
         }
 
         OnPropertyChanged(nameof(CanCleanDiskSpace));
