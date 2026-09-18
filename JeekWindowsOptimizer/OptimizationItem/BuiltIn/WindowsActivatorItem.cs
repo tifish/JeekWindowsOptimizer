@@ -10,6 +10,17 @@ public class WindowsActivatorItem : OptimizationItem
 
     public override string DescriptionKey => "WindowsActivatorDescription";
 
+    private static readonly string ActivatorDirectory = Path.Join(
+        AppContext.BaseDirectory,
+        @"Tools\Activator"
+    );
+
+    /// <summary>The activator is not shipped; the item is offered only when its files are present.</summary>
+    public static bool IsAvailable =>
+        File.Exists(Path.Join(ActivatorDirectory, "Activate.cmd"))
+        && File.Exists(Path.Join(ActivatorDirectory, "Activator.rar"))
+        && File.Exists(Path.Join(ActivatorDirectory, "UnRAR.exe"));
+
     public override async Task Initialize()
     {
         ShouldTurnOffOnAccessProtection = true;
@@ -48,9 +59,7 @@ public class WindowsActivatorItem : OptimizationItem
         if (!value)
             return false;
 
-        await Executor.RunAndWait(
-            Path.Join(AppContext.BaseDirectory, @"Tools\Activator\Activate.cmd")
-        );
+        await Executor.RunAndWait(Path.Join(ActivatorDirectory, "Activate.cmd"));
 
         return await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,

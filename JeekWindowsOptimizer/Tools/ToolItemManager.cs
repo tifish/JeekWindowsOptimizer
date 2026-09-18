@@ -20,12 +20,17 @@ public static class ToolItemManager
 
         foreach (var row in tabFile.Rows.Skip(1))
         {
-            if (row.Count != 10)
+            if (row.Count != 11)
                 continue;
 
             try
             {
-                Items.Add(ParseToolItem(row));
+                var item = ParseToolItem(row);
+                // Optional tools are not shipped; show them only when the user supplied the files.
+                var optional = ParseBool(row[10]);
+                if (optional && !item.IsAvailable)
+                    continue;
+                Items.Add(item);
             }
             catch (Exception ex)
             {

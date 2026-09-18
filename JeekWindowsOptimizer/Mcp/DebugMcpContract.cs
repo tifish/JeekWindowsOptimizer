@@ -72,6 +72,9 @@ public static class DebugMcpContract
             {
                 ["top"] = Prop("integer", "Number of slowest items to list, 1-1000 (default 30)."),
             }),
+        Tool("tool_items",
+            "List the Tools tab's groups and items (every loaded tool, including ones hidden by the search filter) with execution kind, availability and target. Optional tools whose files are missing are not loaded.",
+            new()),
         Tool("store_package_probe",
             "Read-only: for one Store package name, whether the startup snapshot and a live check count it as installed "
                 + "for the current user, plus every account's install state and any provisioned copy for context.",

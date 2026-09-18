@@ -151,7 +151,7 @@ Get-Process -Name $AppName -ErrorAction SilentlyContinue | ForEach-Object {
 #    version no longer ships while preserving user data folders. The exclusion
 #    list matches the auto-update script (bin/AutoUpdate.ps1).
 Write-Host "Installing to $InstallDir"
-robocopy $stageDir $InstallDir /MIR /XD Config Logs /NFL /NDL /NJH /NJS /NP | Out-Null
+robocopy $stageDir $InstallDir /MIR /XD Config Logs Activator /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) {
     Write-Host "Failed to copy files (robocopy exit code $LASTEXITCODE)." -ForegroundColor Red
     exit 1

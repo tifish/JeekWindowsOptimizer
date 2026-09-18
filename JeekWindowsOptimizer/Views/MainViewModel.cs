@@ -651,7 +651,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new ShowThumbnailsItem());
             AddOptimizationItem(new UseClassicalContextMenuItem());
             AddOptimizationItem(new UninstallOneDriveItem());
-            AddOptimizationItem(new WindowsActivatorItem());
+            if (WindowsActivatorItem.IsAvailable)
+                AddOptimizationItem(new WindowsActivatorItem());
             AddOptimizationItem(new WindowsUpdateItem());
             AddOptimizationItem(new EnableTimeSynchronizationItem());
             if (!hasBattery)

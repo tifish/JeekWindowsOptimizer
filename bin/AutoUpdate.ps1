@@ -36,12 +36,21 @@ try {
     }
 
     Write-Host "[2/3] Installing files..."
-    # Preserve portable user data, logs, and this script so it is not deleted mid-run.
+    # Preserve portable user data, logs, this script so it is not deleted mid-run,
+    # and the user-supplied Tools\Activator (not shipped in the package).
     # Matches install.ps1's robocopy /XD list.
     $preserveNames = @("Config", "Logs", "AutoUpdate.ps1")
     Get-ChildItem -LiteralPath $installDir -Force -ErrorAction SilentlyContinue |
         Where-Object { $preserveNames -notcontains $_.Name } |
-        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        ForEach-Object {
+            if ($_.PSIsContainer -and $_.Name -eq "Tools") {
+                Get-ChildItem -LiteralPath $_.FullName -Force -ErrorAction SilentlyContinue |
+                    Where-Object { $_.Name -ne "Activator" } |
+                    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+            } else {
+                Remove-Item -LiteralPath $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
 
     Copy-Item -Path (Join-Path $stageDir "*") -Destination $installDir -Recurse -Force
 

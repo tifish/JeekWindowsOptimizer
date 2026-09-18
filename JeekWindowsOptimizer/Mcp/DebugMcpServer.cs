@@ -86,6 +86,7 @@ internal static class DebugMcpServer
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
         host.AddTool("optimization_init_timings", OptimizationInitTimingsAsync);
+        host.AddTool("tool_items", ToolItemsAsync);
         host.AddTool("store_package_probe", async args =>
             ToolText(await MicrosoftStore.Describe(
                 args["name"]?.GetValue<string>()
@@ -380,6 +381,26 @@ internal static class DebugMcpServer
             sb.AppendLine($"item_count={items.Count} items_sum_ms={items.Sum(item => item.InitializeMilliseconds)}");
             foreach (var item in items.OrderByDescending(item => item.InitializeMilliseconds).Take(top))
                 sb.AppendLine($"  {item.InitializeMilliseconds,6} ms  {item.GetType().Name}  {item.NameKey}  optimized={item.IsOptimized}");
+            return sb.ToString();
+        });
+
+        return ToolText(text);
+    }
+
+    private static async Task<JsonObject> ToolItemsAsync(JsonObject args)
+    {
+        var text = await OnUiAsync(() =>
+        {
+            if (Desktop?.MainWindow?.DataContext is not MainViewModel vm)
+                return "MainViewModel is not available yet.";
+
+            var sb = new StringBuilder();
+            foreach (var group in vm.AllToolGroups)
+            {
+                sb.AppendLine($"[{group.NameKey}]");
+                foreach (var item in group.Items)
+                    sb.AppendLine($"  {item.NameKey} kind={item.ExecutionKind} available={item.IsAvailable} target={item.Target}");
+            }
             return sb.ToString();
         });
 
