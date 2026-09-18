@@ -72,6 +72,10 @@ public static class DebugMcpContract
             {
                 ["top"] = Prop("integer", "Number of slowest items to list, 1-1000 (default 30)."),
             }),
+        Tool("store_package_probe",
+            "Read-only: for one Store package name, whether the startup snapshot and a live check count it as installed "
+                + "for the current user, plus every account's install state and any provisioned copy for context.",
+            new() { ["name"] = Prop("string", "Package name, e.g. Microsoft.Copilot.") }, ["name"]),
         Tool("time_sync_status",
             "Read Windows Time (W32Time) sync state: service start mode, trigger count, NTP Type, NtpClient, and the matching optimization item.",
             new()),

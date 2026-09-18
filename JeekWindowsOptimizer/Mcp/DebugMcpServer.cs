@@ -86,6 +86,10 @@ internal static class DebugMcpServer
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
         host.AddTool("optimization_init_timings", OptimizationInitTimingsAsync);
+        host.AddTool("store_package_probe", async args =>
+            ToolText(await MicrosoftStore.Describe(
+                args["name"]?.GetValue<string>()
+                    ?? throw new ArgumentException("name is required"))));
         host.AddTool("time_sync_status", TimeSyncStatusAsync);
         host.AddTool("service_probe", ServiceProbeAsync);
         host.AddTool("service_delete", ServiceDeleteAsync);

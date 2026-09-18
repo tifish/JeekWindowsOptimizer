@@ -1,5 +1,4 @@
-﻿using System.Management.Automation.Runspaces;
-using JeekTools;
+﻿using JeekTools;
 using Microsoft.Extensions.Logging;
 using ZLogger;
 
@@ -68,8 +67,8 @@ public static class MicrosoftStore
                     // Project names inside the Windows PowerShell compatibility session:
                     // shipping full package objects back takes ~2 s instead of ~0.2 s.
                     PowerShellService.AddScript(
-                        "Invoke-Command -Session (Get-PSSession -Name WinPSCompatSession) "
-                            + "{ Get-AppxPackage -AllUsers | ForEach-Object Name }"
+                        $"Invoke-Command -Session ({CompatSession}) "
+                            + "{ Get-AppxPackage | ForEach-Object Name }"
                     );
                     var results = await PowerShellService.InvokeAsync();
                     // A partial list would report missing packages as uninstalled.
@@ -91,6 +90,11 @@ public static class MicrosoftStore
         );
     }
 
+    // Detection and removal both cover the current user only: other accounts are left to
+    // their owners, and -AllUsers would also list the Staged copy Windows keeps for new
+    // accounts, so an uninstalled package would still look installed.
+    private const string CompatSession = "Get-PSSession -Name WinPSCompatSession";
+
     private static HashSet<string>? _installedPackageNames;
 
     /// <summary>
@@ -106,15 +110,49 @@ public static class MicrosoftStore
             : await HasPackage(packageName);
     }
 
-    private static Command GetPackageCommand(string packageName) =>
-        new("Get-AppxPackage")
-        {
-            Parameters =
+    /// <summary>Runs a script block with one <c>$name</c> argument inside the compatibility session.</summary>
+    private static void AddSessionScript(string scriptBlock, string packageName)
+    {
+        PowerShellService.Commands.Clear();
+        PowerShellService.Streams.ClearStreams();
+        PowerShellService
+            .AddScript(
+                $"param($name) Invoke-Command -Session ({CompatSession}) -ArgumentList $name "
+                    + $"-ScriptBlock {{ param($name) {scriptBlock} }}"
+            )
+            .AddParameter("name", packageName);
+    }
+
+    /// <summary>
+    /// Snapshot membership and live check for the current user, plus every account's install
+    /// state and any provisioned copy for context; for diagnostics.
+    /// </summary>
+    public static async Task<string> Describe(string packageName)
+    {
+        await Initialize();
+        var snapshot = _installedPackageNames;
+        var live = await HasPackage(packageName);
+        var states = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            async () =>
             {
-                new CommandParameter("AllUsers"),
-                new CommandParameter("Name", packageName),
-            },
-        };
+                AddSessionScript(
+                    "Get-AppxPackage -AllUsers -Name $name | ForEach-Object { $p = $_; "
+                        + "$p.PackageUserInformation | ForEach-Object { "
+                        + "\"$($p.PackageFullName) $($_.UserSecurityId.Sid) $($_.InstallState)\" } }; "
+                        + "Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq $name | "
+                        + "ForEach-Object { \"provisioned $($_.PackageName)\" }",
+                    packageName
+                );
+                return string.Join(
+                    Environment.NewLine,
+                    (await PowerShellService.InvokeAsync()).Select(result => $"  {result}")
+                );
+            }
+        );
+        return $"snapshot={(snapshot is null ? "unavailable" : snapshot.Contains(packageName))} "
+            + $"installed_live={live}{Environment.NewLine}{states}";
+    }
 
     public static async Task<bool> HasPackage(string packageName)
     {
@@ -124,41 +162,14 @@ public static class MicrosoftStore
             {
                 try
                 {
-                    PowerShellService.Commands.Clear();
-                    PowerShellService.Commands.AddCommand(GetPackageCommand(packageName));
-                    return (await PowerShellService.InvokeAsync()).Count > 0;
+                    AddSessionScript("@(Get-AppxPackage -Name $name).Count -gt 0", packageName);
+                    return (await PowerShellService.InvokeAsync()).FirstOrDefault()?.BaseObject
+                        is true;
                 }
                 catch (Exception e)
                 {
                     Log.ZLogError(e, $"Failed to check if package {packageName} exists");
                     return false;
-                }
-            }
-        );
-    }
-
-    public static async Task<string?> GetPackageFullName(string packageName)
-    {
-        return await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
-            async () =>
-            {
-                try
-                {
-                    PowerShellService.Commands.Clear();
-                    PowerShellService.Streams.ClearStreams();
-                    PowerShellService
-                        .Commands.AddCommand(GetPackageCommand(packageName))
-                        .AddCommand("Select-Object")
-                        .AddParameter("First", 1)
-                        .AddParameter("ExpandProperty", "PackageFullName");
-                    return (await PowerShellService.InvokeAsync()).FirstOrDefault()?.BaseObject
-                        as string;
-                }
-                catch (Exception e)
-                {
-                    Log.ZLogError(e, $"Failed to get full name for package {packageName}");
-                    return null;
                 }
             }
         );
@@ -170,11 +181,10 @@ public static class MicrosoftStore
             OptimizationExecutionAffinity.ExclusiveBackground,
             async () =>
             {
-                PowerShellService.Commands.Clear();
-                PowerShellService
-                    .Commands.AddCommand(GetPackageCommand(packageName))
-                    .AddCommand("Remove-AppxPackage");
+                AddSessionScript("Get-AppxPackage -Name $name | Remove-AppxPackage", packageName);
                 await PowerShellService.InvokeAsync();
+                foreach (var error in PowerShellService.Streams.Error)
+                    Log.ZLogWarning($"Uninstalling {packageName}: {error}");
             }
         );
     }
