@@ -45,7 +45,7 @@ public class WindowsActivatorItem : OptimizationItem
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
     {
-        if (!value)
+        if (!value || !ActivatorFiles.IsAvailable("Activate.cmd"))
             return false;
 
         await Executor.RunAndWait(

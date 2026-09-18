@@ -66,6 +66,9 @@ public static class DebugMcpContract
                 ["category"] = Prop("string", "Optional tab filter: Optimizing | Antivirus | Personal."),
                 ["only_not_optimized"] = Prop("boolean", "Only list items that are not optimized (default false)."),
             }),
+        Tool("activator_status",
+            "Read local Activator file availability and whether its optimization and tool entries were loaded. Does not execute activation.",
+            new()),
         Tool("optimization_init_timings",
             "Startup detection timings: total, data load, battery check, detection phase, the Microsoft Store package snapshot (runs alongside), and each item's Initialize() duration, slowest first.",
             new()

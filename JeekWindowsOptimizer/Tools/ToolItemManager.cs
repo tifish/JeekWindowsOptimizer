@@ -25,7 +25,10 @@ public static class ToolItemManager
 
             try
             {
-                Items.Add(ParseToolItem(row));
+                var item = ParseToolItem(row);
+                if (item.NameKey == "SystemActivatorName" && !item.IsAvailable)
+                    continue;
+                Items.Add(item);
             }
             catch (Exception ex)
             {

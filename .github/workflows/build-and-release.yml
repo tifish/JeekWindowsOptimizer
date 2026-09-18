@@ -48,11 +48,7 @@ jobs:
             - name: Zip files
               shell: pwsh
               run: |
-                  if (-not (Test-Path -LiteralPath bin\JeekWindowsOptimizerMcp.exe)) {
-                      throw "Published package is missing JeekWindowsOptimizerMcp.exe"
-                  }
-                  Get-ChildItem -Path bin -Filter *.pdb -Recurse -ErrorAction SilentlyContinue | Remove-Item -Force
-                  Compress-Archive -Path bin\* -DestinationPath ${{ env.PROJECT_NAME }}.zip -Force
+                  ./tools/Package.ps1 -DestinationPath ${{ env.PROJECT_NAME }}.zip
 
             - name: Delete release and tag
               if: github.event_name == 'push' && github.ref == 'refs/heads/main'

@@ -85,6 +85,7 @@ internal static class DebugMcpServer
         host.AddTool("screenshot", _ => ScreenshotAsync());
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
+        host.AddTool("activator_status", _ => ActivatorStatusAsync());
         host.AddTool("optimization_init_timings", OptimizationInitTimingsAsync);
         host.AddTool("store_package_probe", async args =>
             ToolText(await MicrosoftStore.Describe(
@@ -341,6 +342,34 @@ internal static class DebugMcpServer
     #endregion
 
     #region App probe tools
+
+    private static async Task<JsonObject> ActivatorStatusAsync()
+    {
+        var text = await OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            var optimizationVisible = vm.OptimizingGroups.Concat(vm.AntivirusGroups)
+                .Concat(vm.PersonalGroups).SelectMany(group => group.Items)
+                .Any(item => item is WindowsActivatorItem);
+            var toolVisible = vm.AllToolGroups.SelectMany(group => group.Items)
+                .Any(item => item.NameKey == "SystemActivatorName");
+            var result = new JsonObject
+            {
+                ["initializing"] = vm.IsBusy,
+                ["directory"] = ActivatorFiles.DirectoryPath,
+                ["optimizationAvailable"] = ActivatorFiles.IsAvailable("Activate.cmd"),
+                ["toolAvailable"] = ActivatorFiles.IsAvailable("Run.cmd"),
+                ["optimizationVisible"] = optimizationVisible,
+                ["toolVisible"] = toolVisible,
+            };
+            var files = new JsonObject();
+            foreach (var name in new[] { "Activate.cmd", "Run.cmd", "Activator.rar", "UnRAR.exe" })
+                files[name] = File.Exists(Path.Join(ActivatorFiles.DirectoryPath, name));
+            result["files"] = files;
+            return result.ToJsonString();
+        });
+        return ToolText(text);
+    }
 
     private static async Task<JsonObject> DefenderStatusAsync(JsonObject args)
     {

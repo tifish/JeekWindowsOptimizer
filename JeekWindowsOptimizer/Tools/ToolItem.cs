@@ -96,7 +96,8 @@ public partial class ToolItem : ObservableObject
 
     public bool HasToolIcon => ToolIcon is not null;
     public bool IsAvailable =>
-        ExecutionKind != ToolExecutionKind.PackagedExecutable || File.Exists(FullExecutablePath);
+        (ExecutionKind != ToolExecutionKind.PackagedExecutable || File.Exists(FullExecutablePath))
+        && (NameKey != "SystemActivatorName" || ActivatorFiles.IsAvailable("Run.cmd"));
     public bool HasDisplayStatus => !string.IsNullOrEmpty(DisplayStatus);
 
     public string DisplayStatus =>
