@@ -573,7 +573,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     /// <summary>Startup detection timings, for the Debug MCP.</summary>
     public long ItemsInitializationMilliseconds { get; private set; }
-    public long StorePackageSnapshotMilliseconds { get; private set; }
+    public long StorePackageSnapshotMilliseconds => MicrosoftStore.InitializeMilliseconds;
+    public long StoreSnapshotWaitMilliseconds { get; private set; }
+    public long DataLoadMilliseconds { get; private set; }
+    public long BatteryCheckMilliseconds { get; private set; }
+    public long DetectionMilliseconds { get; private set; }
 
     private async Task InitializeItems()
     {
@@ -608,10 +612,29 @@ public partial class MainViewModel : ObservableObject, IDisposable
             _suppressOptimizationRefresh = true;
             var totalStopwatch = Stopwatch.StartNew();
 
-            // Desktop-only: power performance tweaks are not suitable for laptops.
-            var hasBattery = await Battery.HasBatteryAsync();
+            // The Store snapshot (Windows PowerShell session, several seconds) already started
+            // in App; it overlaps the battery query, data loads and detection.
+            var storeSnapshot = MeasureAsync(
+                MicrosoftStore.Initialize(),
+                ms => StoreSnapshotWaitMilliseconds = ms
+            );
+            var batteryCheck = MeasureAsync(
+                Battery.HasBatteryAsync(),
+                ms => BatteryCheckMilliseconds = ms
+            );
+            await Task.WhenAll(
+                RegistryItemManager.Load(),
+                DriverItemManager.Load(),
+                ServiceItemManager.Load(),
+                ScheduledTaskItemManager.Load(),
+                MicrosoftStoreItemManager.Load(),
+                ToolItemManager.Load()
+            );
+            DataLoadMilliseconds = totalStopwatch.ElapsedMilliseconds;
 
-            await RegistryItemManager.Load();
+            // Desktop-only: power performance tweaks are not suitable for laptops.
+            var hasBattery = await batteryCheck;
+
             foreach (var item in RegistryItemManager.Items)
             {
                 if (hasBattery && item.NameKey is "DisablePowerThrottlingName")
@@ -619,7 +642,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 AddOptimizationItem(item);
             }
 
-            await DriverItemManager.Load();
             foreach (var item in DriverItemManager.Items)
                 AddOptimizationItem(item);
 
@@ -640,48 +662,31 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new DisableNtfsLastAccessUpdateItem());
             AddOptimizationItem(new DisableSearchHistoryItem());
 
-            await ServiceItemManager.Load();
             foreach (var item in ServiceItemManager.Items)
                 AddOptimizationItem(item);
 
-            await ScheduledTaskItemManager.Load();
             foreach (var item in ScheduledTaskItemManager.Items)
                 AddOptimizationItem(item);
 
-            var storeStopwatch = Stopwatch.StartNew();
-            await MicrosoftStore.Initialize();
-            StorePackageSnapshotMilliseconds = storeStopwatch.ElapsedMilliseconds;
-            await MicrosoftStoreItemManager.Load();
             foreach (var item in MicrosoftStoreItemManager.Items)
                 AddOptimizationItem(item);
             AddOptimizationItem(new WindowsTerminalUseNewWindow());
 
             RestoreUncheckedOptimizationItems();
 
-            await ToolItemManager.Load();
             foreach (var item in ToolItemManager.Items)
                 AddToolItem(item);
 
-            foreach (var group in OptimizingGroups.Concat(AntivirusGroups).Concat(PersonalGroups))
-            {
-                foreach (var item in group.Items)
-                {
-                    var itemStopwatch = Stopwatch.StartNew();
-                    try
-                    {
-                        await item.Initialize();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.ZLogError(ex, $"Failed to initialize {item.Name}");
-                    }
-                    item.InitializeMilliseconds = itemStopwatch.ElapsedMilliseconds;
-                }
-            }
+            // Detection is read-only, so items run together; PowerShell-backed checks still
+            // serialize on the exclusive lock, and Store items wait for the snapshot.
+            var detectionStopwatch = Stopwatch.StartNew();
+            await Task.WhenAll(GetOptimizationItems().Select(InitializeItemAsync));
+            await storeSnapshot;
+            DetectionMilliseconds = detectionStopwatch.ElapsedMilliseconds;
 
             ItemsInitializationMilliseconds = totalStopwatch.ElapsedMilliseconds;
             Log.ZLogInformation(
-                $"Optimization items initialized in {ItemsInitializationMilliseconds} ms (store snapshot {StorePackageSnapshotMilliseconds} ms)"
+                $"Optimization items initialized in {ItemsInitializationMilliseconds} ms (data load {DataLoadMilliseconds} ms, battery {BatteryCheckMilliseconds} ms, detection {DetectionMilliseconds} ms, store snapshot {StorePackageSnapshotMilliseconds} ms, waited {StoreSnapshotWaitMilliseconds} ms)"
             );
 
             _suppressOptimizationRefresh = false;
@@ -698,6 +703,46 @@ public partial class MainViewModel : ObservableObject, IDisposable
             Log.ZLogError(ex, $"Failed to initialize items");
             IsBusy = false;
             StatusMessage = Localizer.Get("InitializationFailed");
+        }
+    }
+
+    private static async Task InitializeItemAsync(OptimizationItem item)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            await item.Initialize();
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogError(ex, $"Failed to initialize {item.Name}");
+        }
+        item.InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
+    }
+
+    private static async Task MeasureAsync(Task task, Action<long> report)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            await task;
+        }
+        finally
+        {
+            report(stopwatch.ElapsedMilliseconds);
+        }
+    }
+
+    private static async Task<T> MeasureAsync<T>(Task<T> task, Action<long> report)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            return await task;
+        }
+        finally
+        {
+            report(stopwatch.ElapsedMilliseconds);
         }
     }
 

@@ -9,7 +9,31 @@ public static class MicrosoftStore
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
 
-    public static async Task Initialize()
+    private static Task? _initialization;
+
+    /// <summary>
+    /// Starts the one-time session setup and package snapshot; later calls return the same task,
+    /// so it can run alongside other startup detection.
+    /// </summary>
+    public static Task Initialize() => _initialization ??= InitializeCore();
+
+    /// <summary>How long the session setup and package snapshot took; for diagnostics.</summary>
+    public static long InitializeMilliseconds { get; private set; }
+
+    private static async Task InitializeCore()
+    {
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        try
+        {
+            await InitializeSessionAndSnapshot();
+        }
+        finally
+        {
+            InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
+        }
+    }
+
+    private static async Task InitializeSessionAndSnapshot()
     {
         await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
@@ -75,6 +99,7 @@ public static class MicrosoftStore
     /// </summary>
     public static async Task<bool> IsPackageInstalled(string packageName)
     {
+        await Initialize();
         var snapshot = _installedPackageNames;
         return snapshot is not null
             ? snapshot.Contains(packageName)

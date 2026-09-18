@@ -7,7 +7,7 @@ public static class Battery
     public static Task<bool> HasBatteryAsync()
     {
         return OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             HasBattery
         );
     }

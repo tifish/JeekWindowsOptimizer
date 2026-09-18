@@ -48,6 +48,11 @@ public class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            // The Store package snapshot is the slowest startup check (it starts a Windows
+            // PowerShell session); begin it before the window is built so it overlaps layout.
+            if (!Design.IsDesignMode)
+                _ = MicrosoftStore.Initialize();
+
             try
             {
                 // Install/refresh the fixed per-user MCP adapter and register this

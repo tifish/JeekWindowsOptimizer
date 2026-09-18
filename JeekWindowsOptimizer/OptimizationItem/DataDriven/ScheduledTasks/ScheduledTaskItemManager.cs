@@ -58,13 +58,10 @@ public static class ScheduledTaskItemManager
             item.AddTask(taskPath, defaultEnabled);
         }
 
-        foreach (var item in itemsDict.Values)
-        {
-            // Skip items whose tasks are not present on this machine.
-            if (!await item.AnyTaskExists())
-                continue;
-
-            Items.Add(item);
-        }
+        // Skip items whose tasks are not present on this machine. Checked together,
+        // keeping the table order.
+        var candidates = itemsDict.Values.ToList();
+        var exists = await Task.WhenAll(candidates.Select(item => item.AnyTaskExists()));
+        Items.AddRange(candidates.Where((_, index) => exists[index]));
     }
 }

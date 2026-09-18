@@ -88,7 +88,7 @@ public class DriverItem(string groupNameKey, string nameKey, string descriptionK
     public override async Task Initialize()
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             () => !IsProductPresent()
         );
     }

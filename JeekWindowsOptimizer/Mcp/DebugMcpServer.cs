@@ -371,7 +371,8 @@ internal static class DebugMcpServer
 
             var sb = new StringBuilder();
             sb.AppendLine($"total_ms={vm.ItemsInitializationMilliseconds}");
-            sb.AppendLine($"store_snapshot_ms={vm.StorePackageSnapshotMilliseconds}");
+            sb.AppendLine($"store_snapshot_ms={vm.StorePackageSnapshotMilliseconds} store_wait_ms={vm.StoreSnapshotWaitMilliseconds}");
+            sb.AppendLine($"data_load_ms={vm.DataLoadMilliseconds} battery_ms={vm.BatteryCheckMilliseconds} detection_ms={vm.DetectionMilliseconds}");
             sb.AppendLine($"item_count={items.Count} items_sum_ms={items.Sum(item => item.InitializeMilliseconds)}");
             foreach (var item in items.OrderByDescending(item => item.InitializeMilliseconds).Take(top))
                 sb.AppendLine($"  {item.InitializeMilliseconds,6} ms  {item.GetType().Name}  {item.NameKey}  optimized={item.IsOptimized}");

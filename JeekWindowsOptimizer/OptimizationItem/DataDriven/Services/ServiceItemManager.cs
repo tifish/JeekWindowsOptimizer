@@ -12,6 +12,7 @@ public static class ServiceItemManager
         if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\ServiceItems.tab")))
             return;
 
+        var candidates = new List<ServiceItem>();
         foreach (var row in tabFile.Rows.Skip(1))
         {
             if (row.Count != 5)
@@ -39,12 +40,13 @@ public static class ServiceItemManager
                 defaultStartMode
             );
 
-            // Skip services that are not installed on this machine (e.g. Fax on some
-            // Windows 11 SKUs); otherwise they show up but can never be optimized.
-            if (!await item.ServiceExists())
-                continue;
-
-            Items.Add(item);
+            candidates.Add(item);
         }
+
+        // Skip services that are not installed on this machine (e.g. Fax on some
+        // Windows 11 SKUs); otherwise they show up but can never be optimized.
+        // Checked together, keeping the table order.
+        var exists = await Task.WhenAll(candidates.Select(item => item.ServiceExists()));
+        Items.AddRange(candidates.Where((_, index) => exists[index]));
     }
 }

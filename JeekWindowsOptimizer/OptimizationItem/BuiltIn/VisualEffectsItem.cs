@@ -131,7 +131,7 @@ public sealed class VisualEffectItem : OptimizationItem
     public override async Task Initialize()
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             () => TargetStateApplied
         );
     }

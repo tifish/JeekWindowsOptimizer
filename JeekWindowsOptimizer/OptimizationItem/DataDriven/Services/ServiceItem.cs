@@ -43,7 +43,7 @@ public class ServiceItem : OptimizationItem
     public Task<bool> ServiceExists()
     {
         return OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             () =>
             {
                 if (_isPrefix)
@@ -58,7 +58,7 @@ public class ServiceItem : OptimizationItem
     public override async Task Initialize()
     {
         await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             () =>
             {
                 var names = ResolveServiceNames();

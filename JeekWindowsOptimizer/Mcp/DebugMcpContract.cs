@@ -67,7 +67,7 @@ public static class DebugMcpContract
                 ["only_not_optimized"] = Prop("boolean", "Only list items that are not optimized (default false)."),
             }),
         Tool("optimization_init_timings",
-            "Startup detection timings: total time, the Microsoft Store package snapshot, and each item's Initialize() duration, slowest first.",
+            "Startup detection timings: total, data load, battery check, detection phase, the Microsoft Store package snapshot (runs alongside), and each item's Initialize() duration, slowest first.",
             new()
             {
                 ["top"] = Prop("integer", "Number of slowest items to list, 1-1000 (default 30)."),

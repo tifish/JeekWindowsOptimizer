@@ -14,7 +14,7 @@ public class WindowsActivatorItem : OptimizationItem
     {
         ShouldTurnOffOnAccessProtection = true;
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             IsWindowsActivated
         );
     }

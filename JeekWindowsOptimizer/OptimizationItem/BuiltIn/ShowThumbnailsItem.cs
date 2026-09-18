@@ -10,7 +10,7 @@ public class ShowThumbnailsItem : OptimizationItem
     public override async Task Initialize()
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             () => Enabled
         );
     }

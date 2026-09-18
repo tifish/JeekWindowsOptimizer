@@ -1,5 +1,6 @@
 ﻿using JeekTools;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using ZLogger;
 
 namespace JeekWindowsOptimizer;
@@ -21,6 +22,17 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
 
     public override async Task Initialize()
     {
+        var fromRegistry = await OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Background,
+            ReadPuaProtectionFromRegistry
+        );
+        if (fromRegistry is { } value)
+        {
+            IsOptimized = value == 0;
+            return;
+        }
+
+        // Get-MpPreference costs several seconds; only needed when no registry value is present.
         var currentValue = IsOptimized;
         var isOptimized = await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
@@ -44,6 +56,36 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
             }
         );
         IsOptimized = isOptimized;
+    }
+
+    /// <summary>
+    /// Group policy wins over the local preference; the legacy MpEngine policy covers older
+    /// Windows 10 builds. The local value is what Set-MpPreference writes.
+    /// </summary>
+    private static int? ReadPuaProtectionFromRegistry()
+    {
+        (string KeyPath, string ValueName)[] sources =
+        [
+            (@"SOFTWARE\Policies\Microsoft\Windows Defender", "PUAProtection"),
+            (@"SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine", "MpEnablePus"),
+            (@"SOFTWARE\Microsoft\Windows Defender", "PUAProtection"),
+        ];
+
+        foreach (var (keyPath, valueName) in sources)
+        {
+            try
+            {
+                using var key = Registry.LocalMachine.OpenSubKey(keyPath);
+                if (key?.GetValue(valueName) is int value)
+                    return value;
+            }
+            catch (Exception ex)
+            {
+                Log.ZLogWarning(ex, $"Failed to read {keyPath}\\{valueName}");
+            }
+        }
+
+        return null;
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)

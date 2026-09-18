@@ -11,7 +11,7 @@ public class BestPerformancePowerModeItem : OptimizationItem
     public override async Task Initialize()
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             () =>
                 PowerManager.ActivePowerPlan == PowerPlan.Balanced
                 && PowerManager.PowerMode == PowerMode.BestPerformance

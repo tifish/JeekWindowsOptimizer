@@ -27,7 +27,7 @@ public class WindowsUpdateItem : OptimizationItem
     public override async Task Initialize()
     {
         IsOptimized = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.ExclusiveBackground,
+            OptimizationExecutionAffinity.Background,
             () =>
             {
                 if (!_registryValues.All(value => !value.HasValue()))

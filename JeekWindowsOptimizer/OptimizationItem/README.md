@@ -63,7 +63,10 @@ UI 只绑定分组、名称、描述、勾选状态和优化状态，不直接�
 - 商店项的检测读取 `MicrosoftStore.Initialize()` 拍下的已安装包快照：在 Windows PowerShell 兼容会话里只取包名，避免每项单独调用 `Get-AppxPackage`（每次约 0.2 秒）；快照拿不到时退回逐项查询。卸载后的校验仍然实时查询。
 - 服务是否存在先查注册表，再查 WMI：查不到的服务走 WMI 每次要 100 毫秒以上，杀软检测会查几十个这样的服务。
 - `ShouldUpdateGroupPolicy`（`gpupdate /force`，常常要 10–30 秒）只给真正需要刷新策略的项（Defender、电源策略）。直接写入 `Policies` 键、由组件自己读取的项不需要。
-- Debug MCP `optimization_init_timings` 列出启动检测的总耗时、商店快照耗时和各项耗时。
+- 启动检测并行执行：6 个数据表并行加载，服务 / 计划任务的存在性检查并行，所有项的 `Initialize()` 通过 `Task.WhenAll` 一起跑。商店快照在 `App` 创建主窗口前就开始，和窗口布局、其他检测重叠；商店项检测时等待快照完成。
+- `Initialize()` 只读，默认用 `Background`。`ExclusiveBackground` 是一把全局锁，只留给修改系统的操作和使用共享 `PowerShellService`（非线程安全）的代码；只读检测占用它会让其他检测排队等商店快照。
+- PUA 防护按“组策略 → 旧版 MpEngine 策略 → 本地设置”的顺序读注册表，都没有时才调用 `Get-MpPreference`（要好几秒）。
+- Debug MCP `optimization_init_timings` 列出启动检测的总耗时、数据加载 / 电池检查 / 检测阶段耗时、商店快照耗时和等待时间，以及各项耗时。
 
 ## 内置项
 
