@@ -113,7 +113,8 @@ public class WindowsService(string serviceName) : IDisposable
 
     public bool Exists()
     {
-        return WmiExists() || RegistryKeyExists(_serviceName);
+        // Registry first: a WMI lookup for a missing service costs ~100 ms or more.
+        return RegistryKeyExists(_serviceName) || WmiExists();
     }
 
     public bool Start()

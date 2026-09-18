@@ -85,6 +85,7 @@ internal static class DebugMcpServer
         host.AddTool("screenshot", _ => ScreenshotAsync());
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
+        host.AddTool("optimization_init_timings", OptimizationInitTimingsAsync);
         host.AddTool("time_sync_status", TimeSyncStatusAsync);
         host.AddTool("service_probe", ServiceProbeAsync);
         host.AddTool("service_delete", ServiceDeleteAsync);
@@ -353,6 +354,31 @@ internal static class DebugMcpServer
             + $"detectionSource={status.DetectionSource}\n"
             + $"hasThirdPartyAntivirus={hasThirdPartyAntivirus}"
         );
+    }
+
+    private static async Task<JsonObject> OptimizationInitTimingsAsync(JsonObject args)
+    {
+        var top = Math.Clamp(args["top"]?.GetValue<int>() ?? 30, 1, 1000);
+
+        var text = await OnUiAsync(() =>
+        {
+            if (Desktop?.MainWindow?.DataContext is not MainViewModel vm)
+                return "MainViewModel is not available yet.";
+
+            var items = vm.OptimizingGroups.Concat(vm.AntivirusGroups).Concat(vm.PersonalGroups)
+                .SelectMany(group => group.Items)
+                .ToList();
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"total_ms={vm.ItemsInitializationMilliseconds}");
+            sb.AppendLine($"store_snapshot_ms={vm.StorePackageSnapshotMilliseconds}");
+            sb.AppendLine($"item_count={items.Count} items_sum_ms={items.Sum(item => item.InitializeMilliseconds)}");
+            foreach (var item in items.OrderByDescending(item => item.InitializeMilliseconds).Take(top))
+                sb.AppendLine($"  {item.InitializeMilliseconds,6} ms  {item.GetType().Name}  {item.NameKey}  optimized={item.IsOptimized}");
+            return sb.ToString();
+        });
+
+        return ToolText(text);
     }
 
     private static async Task<JsonObject> OptimizationItemsAsync(JsonObject args)

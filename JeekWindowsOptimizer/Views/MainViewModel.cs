@@ -571,6 +571,10 @@ public partial class MainViewModel : ObservableObject, IDisposable
         };
     }
 
+    /// <summary>Startup detection timings, for the Debug MCP.</summary>
+    public long ItemsInitializationMilliseconds { get; private set; }
+    public long StorePackageSnapshotMilliseconds { get; private set; }
+
     private async Task InitializeItems()
     {
         try
@@ -602,6 +606,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             }
 
             _suppressOptimizationRefresh = true;
+            var totalStopwatch = Stopwatch.StartNew();
 
             // Desktop-only: power performance tweaks are not suitable for laptops.
             var hasBattery = await Battery.HasBatteryAsync();
@@ -643,7 +648,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             foreach (var item in ScheduledTaskItemManager.Items)
                 AddOptimizationItem(item);
 
+            var storeStopwatch = Stopwatch.StartNew();
             await MicrosoftStore.Initialize();
+            StorePackageSnapshotMilliseconds = storeStopwatch.ElapsedMilliseconds;
             await MicrosoftStoreItemManager.Load();
             foreach (var item in MicrosoftStoreItemManager.Items)
                 AddOptimizationItem(item);
@@ -659,6 +666,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
             {
                 foreach (var item in group.Items)
                 {
+                    var itemStopwatch = Stopwatch.StartNew();
                     try
                     {
                         await item.Initialize();
@@ -667,8 +675,14 @@ public partial class MainViewModel : ObservableObject, IDisposable
                     {
                         Log.ZLogError(ex, $"Failed to initialize {item.Name}");
                     }
+                    item.InitializeMilliseconds = itemStopwatch.ElapsedMilliseconds;
                 }
             }
+
+            ItemsInitializationMilliseconds = totalStopwatch.ElapsedMilliseconds;
+            Log.ZLogInformation(
+                $"Optimization items initialized in {ItemsInitializationMilliseconds} ms (store snapshot {StorePackageSnapshotMilliseconds} ms)"
+            );
 
             _suppressOptimizationRefresh = false;
             RefreshDisplayedOptimizationGroups();

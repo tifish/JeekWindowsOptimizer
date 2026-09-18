@@ -7,8 +7,6 @@ Services	DisableConnectedUserExperiencesAndTelemetryService		DiagTrack	Automatic
 Services	DisableWindowsErrorReportingService		WerSvc	Manual
 Services	DisableWapPushMessageRoutingService		dmwappushservice	Manual
 Services	DisableDownloadedMapsManagerService		MapsBroker	Automatic
-Services	DisableRetailDemoService		RetailDemo	Manual
-Services	DisableFaxService		Fax	Manual
 Services	DisableWSAIFabricService		WSAIFabricSvc	Manual
 Services	DisableConnectedDevicesPlatformService		CDPSvc	Automatic
 Services	DisableConnectedDevicesPlatformUserService		CDPUserSvc*	Automatic
@@ -16,10 +14,4 @@ Services	DisableXboxAuthManagerService	Personal	XblAuthManager	Manual
 Services	DisableXboxGameSaveService	Personal	XblGameSave	Manual
 Services	DisableXboxNetApiService	Personal	XboxNetApiSvc	Manual
 Services	DisableXboxGipService	Personal	XboxGipSvc	Manual
-Services	DisableGeolocationService		lfsvc	Manual
-Services	DisablePhoneService		PhoneSvc	Manual
-Services	DisableWindowsMediaPlayerNetworkSharingService		WMPNetworkSvc	Manual
 Services	DisableOfflineFilesService		CscService	Manual
-Services	DisableRemoteRegistryService		RemoteRegistry	Disabled
-Services	DisableWindowsInsiderService		wisvc	Manual
-Services	DisableSecondaryLogonService	Personal	seclogon	Manual

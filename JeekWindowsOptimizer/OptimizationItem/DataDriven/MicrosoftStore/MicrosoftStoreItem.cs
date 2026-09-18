@@ -24,7 +24,7 @@ public class MicrosoftStoreItem : OptimizationItem
 
     public override async Task Initialize()
     {
-        IsOptimized = !await MicrosoftStore.HasPackage(PackageName);
+        IsOptimized = !await MicrosoftStore.IsPackageInstalled(PackageName);
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)

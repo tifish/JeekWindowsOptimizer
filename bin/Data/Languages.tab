@@ -428,66 +428,16 @@ DisableWSAIFabricServiceName	Disable the Windows AI Fabric Service	禁用 Window
 DisableWSAIFabricServiceDescription	WSAIFabricSvc supports Windows AI features. Disable it if you do not use system AI features, to reduce background services.\nEffective immediately.	WSAIFabricSvc 为 Windows AI 功能提供支持。不使用系统 AI 功能时可禁用，以减少后台服务。\n立即生效。
 UninstallCopilotName	Uninstall Microsoft Copilot	卸载 Microsoft Copilot
 UninstallCopilotDescription	Removes the Microsoft Copilot app package. Use with Disable Windows Copilot for a fuller cleanup.	卸载 Microsoft Copilot 应用包。可与“禁用 Windows Copilot”一起使用以更彻底清理。
-UninstallAIHubName	Uninstall Copilot+ AI Hub	卸载 Copilot+ AI 中心
-UninstallAIHubDescription	Removes the Copilot+ AI Hub app on supported Windows 11 builds.	卸载受支持 Windows 11 版本上的 Copilot+ AI 中心应用。
-UninstallClipchampName	Uninstall Clipchamp	卸载 Clipchamp
-UninstallClipchampDescription	Removes the preinstalled Clipchamp video editor.	卸载预装的 Clipchamp 视频编辑器。
 UninstallTeamsName	Uninstall Microsoft Teams	卸载 Microsoft Teams
 UninstallTeamsDescription	Removes the new Microsoft Teams app if installed.	卸载新版 Microsoft Teams 应用（若已安装）。
 UninstallTeamsLegacyName	Uninstall legacy Microsoft Teams	卸载旧版 Microsoft Teams
 UninstallTeamsLegacyDescription	Removes the older Microsoft Store Teams package if present.	卸载旧版 Microsoft Store Teams 包（若存在）。
 UninstallPhoneLinkName	Uninstall Phone Link	卸载手机连接
 UninstallPhoneLinkDescription	Removes Phone Link (Your Phone) for connecting Android/iOS devices.	卸载用于连接 Android/iOS 设备的手机连接（Your Phone）。
-UninstallBingNewsName	Uninstall Bing News	卸载 Bing 新闻
-UninstallBingNewsDescription	Removes the Bing News app.	卸载 Bing 新闻应用。
-UninstallMicrosoftNewsName	Uninstall Microsoft News	卸载 Microsoft 新闻
-UninstallMicrosoftNewsDescription	Removes the Microsoft News / Start news app.	卸载 Microsoft 新闻/Start 新闻应用。
-UninstallBingWeatherName	Uninstall Bing Weather	卸载 Bing 天气
-UninstallBingWeatherDescription	Removes the Bing Weather app.	卸载 Bing 天气应用。
-UninstallSolitaireName	Uninstall Microsoft Solitaire Collection	卸载微软纸牌
-UninstallSolitaireDescription	Removes the Microsoft Solitaire Collection games.	卸载微软纸牌合集游戏。
-Uninstall3DViewerName	Uninstall 3D Viewer	卸载 3D 查看器
-Uninstall3DViewerDescription	Removes the 3D Viewer app.	卸载 3D 查看器应用。
-UninstallPaint3DName	Uninstall Paint 3D	卸载画图 3D
-UninstallPaint3DDescription	Removes Paint 3D. The classic Paint app is not removed.	卸载画图 3D，不会卸载经典画图应用。
-UninstallPeopleName	Uninstall People	卸载人脉
-UninstallPeopleDescription	Removes the People contacts app.	卸载人脉通讯录应用。
-UninstallFeedbackHubName	Uninstall Feedback Hub	卸载反馈中心
-UninstallFeedbackHubDescription	Removes the Feedback Hub app used to send feedback to Microsoft.	卸载用于向微软发送反馈的反馈中心应用。
-UninstallGetStartedName	Uninstall Get Started	卸载开始使用
-UninstallGetStartedDescription	Removes the Get Started tips app. On some Windows 11 builds uninstall may not be allowed.	卸载“开始使用”提示应用。部分 Windows 11 版本可能不允许卸载。
-UninstallMapsName	Uninstall Windows Maps	卸载 Windows 地图
-UninstallMapsDescription	Removes the Windows Maps app.	卸载 Windows 地图应用。
-UninstallXboxConsoleCompanionName	Uninstall Xbox Console Companion	卸载 Xbox 主机伴侣
-UninstallXboxConsoleCompanionDescription	Removes the discontinued Xbox Console Companion app.	卸载已停用的 Xbox 主机伴侣应用。
 UninstallXboxGamingAppName	Uninstall Xbox Gaming App	卸载 Xbox 游戏应用
 UninstallXboxGamingAppDescription	Removes the modern Xbox app used for the Xbox PC library and some game installs. May break Game Pass / Xbox PC gaming workflow. Only for users who do not play Xbox PC games.	卸载用于 Xbox PC 库和部分游戏安装的新版 Xbox 应用。可能影响 Game Pass / Xbox PC 游戏流程。仅建议不玩 Xbox PC 游戏的用户使用。
-UninstallXboxGameOverlayName	Uninstall Xbox Game Overlay	卸载 Xbox 游戏叠加层
-UninstallXboxGameOverlayDescription	Removes the older Xbox game overlay package used with Game Bar. May affect games that expect this overlay package.	卸载与 Game Bar 配套的旧版 Xbox 游戏叠加层包。可能影响依赖该包的游戏。
-UninstallXboxSpeechToTextOverlayName	Uninstall Xbox Speech to Text Overlay	卸载 Xbox 语音转文字叠加层
-UninstallXboxSpeechToTextOverlayDescription	Removes the Xbox speech-to-text overlay used by some games for accessibility and chat. May break features in those games; reinstall can be difficult.	卸载部分游戏用于无障碍和聊天的 Xbox 语音转文字叠加层。可能导致相关游戏功能异常，且可能较难重装。
-UninstallXboxIdentityProviderName	Uninstall Xbox Identity Provider	卸载 Xbox 身份提供程序
-UninstallXboxIdentityProviderDescription	Removes Xbox sign-in framework required by many Store games and Xbox Live features. Strongly not recommended if you play games that use Xbox account login.	卸载许多商店游戏和 Xbox Live 功能所需的 Xbox 登录框架。如果会玩需要 Xbox 账号登录的游戏，强烈不建议卸载。
-UninstallXboxTcuiName	Uninstall Xbox TCUI	卸载 Xbox TCUI
-UninstallXboxTcuiDescription	Removes Xbox title-callable UI used by Store, Photos, and many games for dialogs and sign-in UI. Can prevent normal gameplay or store operations.	卸载商店、照片和许多游戏用于对话框与登录界面的 Xbox TCUI。可能导致无法正常游戏或使用商店相关功能。
-UninstallOfficeHubName	Uninstall Office Hub	卸载 Office 中心
-UninstallOfficeHubDescription	Removes the Microsoft Office Hub / 365 entry-point app.	卸载 Microsoft Office 中心 / 365 入口应用。
-UninstallPowerAutomateName	Uninstall Power Automate	卸载 Power Automate
-UninstallPowerAutomateDescription	Removes Power Automate Desktop if installed.	卸载 Power Automate Desktop（若已安装）。
-UninstallToDoName	Uninstall Microsoft To Do	卸载 Microsoft To Do
-UninstallToDoDescription	Removes the Microsoft To Do task app.	卸载 Microsoft To Do 任务应用。
-UninstallDevHomeName	Uninstall Dev Home	卸载 Dev Home
-UninstallDevHomeDescription	Removes the discontinued Dev Home developer dashboard.	卸载已停用的 Dev Home 开发者仪表板。
 UninstallPCManagerName	Uninstall Microsoft PC Manager	卸载微软电脑管家
 UninstallPCManagerDescription	Removes Microsoft PC Manager if preinstalled.	卸载预装的微软电脑管家（若存在）。
-UninstallQuickAssistName	Uninstall Quick Assist	卸载快速助手
-UninstallQuickAssistDescription	Removes the Quick Assist remote help app.	卸载快速助手远程协助应用。
-UninstallFamilySafetyName	Uninstall Family Safety	卸载家庭安全
-UninstallFamilySafetyDescription	Removes the Microsoft Family Safety app.	卸载 Microsoft 家庭安全应用。
-UninstallMixedRealityPortalName	Uninstall Mixed Reality Portal	卸载混合现实门户
-UninstallMixedRealityPortalDescription	Removes the Mixed Reality Portal app.	卸载混合现实门户应用。
-UninstallMoviesAndTVName	Uninstall Movies & TV	卸载电影和电视
-UninstallMoviesAndTVDescription	Removes the Movies & TV / Films & TV app.	卸载电影和电视应用。
 DisableNtfs8Dot3NameCreationName	Disable 8.3 short file name creation	禁用 8.3 短文件名
 DisableNtfs8Dot3NameCreationDescription	Creating MS-DOS 8.3 short names for every file slows down folders that contain many files. Disabling it speeds up file creation and applies to newly created files.\nTakes effect after reboot.	为每个文件生成 MS-DOS 8.3 短文件名会拖慢包含大量文件的目录，禁用后可加快文件创建，仅对新建文件生效。\n重启生效。
 DisableNtfsLastAccessUpdateName	Disable NTFS last access timestamp	禁用 NTFS 末次访问时间
@@ -496,10 +446,6 @@ DisableWapPushMessageRoutingServiceName	Disable the WAP Push Message Routing Ser
 DisableWapPushMessageRoutingServiceDescription	The dmwappushservice routes WAP push messages, mainly for device management and telemetry. Most home users can disable it.\nEffective immediately.	dmwappushservice 负责路由 WAP 推送消息，主要用于设备管理和遥测，多数家庭用户可以禁用。\n立即生效。
 DisableDownloadedMapsManagerServiceName	Disable the Downloaded Maps Manager Service	禁用下载的地图管理器服务
 DisableDownloadedMapsManagerServiceDescription	MapsBroker provides offline map data for the Maps app. Disable it if you don't use offline maps.\nEffective immediately.	MapsBroker 为地图应用提供离线地图数据，不使用离线地图可以禁用。\n立即生效。
-DisableRetailDemoServiceName	Disable the Retail Demo Service	禁用零售演示服务
-DisableRetailDemoServiceDescription	RetailDemo is only used for demo mode on store display machines and is useless on personal computers.\nEffective immediately.	RetailDemo 仅用于卖场样机的演示模式，个人电脑上没有用处。\n立即生效。
-DisableFaxServiceName	Disable the Fax Service	禁用传真服务
-DisableFaxServiceDescription	The Fax service supports sending and receiving faxes. Disable it if you have no fax hardware.\nEffective immediately.	传真服务用于收发传真，没有传真设备可以禁用。\n立即生效。
 DisableHibernationName	Disable hibernation	关闭休眠
 DisableHibernationDescription	Hibernation reserves a hiberfil.sys file as large as your RAM and enables Fast Startup. Disabling it frees that disk space and makes shutdown cleaner. Not recommended for laptops that rely on hibernation.\nEffective immediately.	休眠会占用一个与内存大小相当的 hiberfil.sys 文件，并启用快速启动。关闭后可释放该磁盘空间，并让关机更彻底。依赖休眠的笔记本不建议关闭。\n立即生效。
 DisableBackgroundAppsName	Disable background apps	禁用应用后台运行
@@ -530,12 +476,8 @@ DisableCustomerExperienceTasksName	Disable Customer Experience Improvement sched
 DisableCustomerExperienceTasksDescription	Disables CEIP/SQM related scheduled tasks (Consolidator, UsbCeip, Autochk Proxy, etc.) that collect and upload usage data.\nEffective immediately.	禁用 CEIP/SQM 相关计划任务（Consolidator、UsbCeip、Autochk Proxy 等），减少使用数据的收集与上传。\n立即生效。
 DisableDiskDiagnosticTasksName	Disable Disk Diagnostic scheduled tasks	禁用磁盘诊断计划任务
 DisableDiskDiagnosticTasksDescription	Disables Windows Disk Diagnostic data collector and resolver tasks that run scheduled disk health checks in the background.\nEffective immediately.	禁用 Windows 磁盘诊断数据收集与解析计划任务，减少后台磁盘健康检查。\n立即生效。
-DisableMapsScheduledTasksName	Disable Maps scheduled tasks	禁用地图计划任务
-DisableMapsScheduledTasksDescription	Disables Maps toast and update tasks used by Windows Maps offline data and notifications.\nEffective immediately.	禁用 Windows 地图用于离线数据与通知的 toast/更新计划任务。\n立即生效。
 DisableFeedbackScheduledTasksName	Disable feedback scheduled tasks	禁用反馈计划任务
 DisableFeedbackScheduledTasksDescription	Disables Feedback Hub / SIUF tasks that prompt for satisfaction surveys and download feedback scenarios.\nEffective immediately.	禁用反馈中心/SIUF 相关计划任务，减少满意度调查提示与反馈场景下载。\n立即生效。
-DisableFamilySafetyScheduledTasksName	Disable Family Safety scheduled tasks	禁用家庭安全计划任务
-DisableFamilySafetyScheduledTasksDescription	Disables Family Safety monitor/refresh/upload tasks. Only for accounts that do not use Microsoft Family Safety.\nEffective immediately.	禁用家庭安全监视/刷新/上传计划任务。仅适用于不使用 Microsoft 家庭安全的帐户。\n立即生效。
 DisableWerQueueReportingTaskName	Disable Windows Error Reporting queue task	禁用 Windows 错误报告队列任务
 DisableWerQueueReportingTaskDescription	Disables the scheduled task that uploads queued Windows Error Reporting data. Pairs well with disabling the WER service.\nEffective immediately.	禁用用于上传 Windows 错误报告队列数据的计划任务。可与禁用 WER 服务一起使用。\n立即生效。
 DisableNearbySharingName	Disable Nearby Sharing	禁用附近共享
@@ -552,32 +494,14 @@ DisableScoobeStartupExperienceName	Disable post-update setup suggestions (SCOOBE
 DisableScoobeStartupExperienceDescription	Stops the secondary OOBE-style prompts after feature updates that suggest more Microsoft apps and services.\nEffective immediately.	禁止功能更新后再次出现的类 OOBE 提示，减少推荐更多微软应用与服务。\n立即生效。
 DisableOfficeTelemetryName	Disable Office telemetry	禁用 Office 遥测
 DisableOfficeTelemetryDescription	Disables Office client telemetry upload and related OSM logging when Microsoft Office is installed. Harmless if Office is not present.\nEffective for new Office processes.	在已安装 Microsoft Office 时禁用客户端遥测上传及相关 OSM 日志。未安装 Office 时一般无影响。\n对新启动的 Office 进程生效。
-DisableGeolocationServiceName	Disable the Geolocation Service	禁用地理位置服务
-DisableGeolocationServiceDescription	lfsvc provides location data to apps and Windows features. Disable it if you do not use location. Does not remove fingerprint/face sign-in.\nEffective immediately.	lfsvc 向应用和 Windows 功能提供位置数据。不使用定位可以禁用。不会影响指纹/人脸登录。\n立即生效。
-DisablePhoneServiceName	Disable the Phone Service	禁用电话服务
-DisablePhoneServiceDescription	PhoneSvc supports cellular/Phone Link related telephony components. Disable it if you do not use phone pairing features.\nEffective immediately.	PhoneSvc 支持蜂窝/手机连接相关电话组件。不使用手机配对功能可以禁用。\n立即生效。
-DisableWindowsMediaPlayerNetworkSharingServiceName	Disable Windows Media Player Network Sharing	禁用 Windows Media Player 网络共享
-DisableWindowsMediaPlayerNetworkSharingServiceDescription	WMPNetworkSvc shares media libraries over the local network. Disable it if you do not use WMP sharing.\nEffective immediately.	WMPNetworkSvc 在局域网共享媒体库。不使用 WMP 共享可以禁用。\n立即生效。
 DisableOfflineFilesServiceName	Disable the Offline Files Service	禁用脱机文件服务
 DisableOfflineFilesServiceDescription	CscService caches network files for offline use. Disable it if you do not use Offline Files.\nEffective immediately.	CscService 缓存网络文件以供脱机使用。不使用脱机文件可以禁用。\n立即生效。
-DisableRemoteRegistryServiceName	Disable the Remote Registry Service	禁用远程注册表服务
-DisableRemoteRegistryServiceDescription	RemoteRegistry allows remote registry access. Most home PCs should keep it disabled for security and to avoid a rarely used service.\nEffective immediately.	RemoteRegistry 允许远程访问注册表。多数家庭电脑应保持禁用，既更安全也少占一个少用服务。\n立即生效。
-DisableWindowsInsiderServiceName	Disable the Windows Insider Service	禁用 Windows 预览体验服务
-DisableWindowsInsiderServiceDescription	wisvc supports Windows Insider flighting. Disable it if you are not on the Insider program.\nEffective immediately.	wisvc 支持 Windows 预览体验计划。未加入预览计划可以禁用。\n立即生效。
-DisableSecondaryLogonServiceName	Disable the Secondary Logon Service	禁用二次登录服务
-DisableSecondaryLogonServiceDescription	seclogon starts processes under alternate credentials (Run as different user). Disable only if you never use that feature; some installers and admin workflows need it.\nEffective immediately.	seclogon 用于以其他凭据启动进程（以其他用户身份运行）。仅在从不使用该功能时禁用；部分安装程序和管理流程需要它。\n立即生效。
-DisablePowerEfficiencyDiagnosticTasksName	Disable Power Efficiency Diagnostics tasks	禁用电源效率诊断计划任务
-DisablePowerEfficiencyDiagnosticTasksDescription	Disables AnalyzeSystem diagnostics that periodically analyze power efficiency and write reports in the background.\nEffective immediately.	禁用定期分析电源效率并在后台写入报告的 AnalyzeSystem 诊断任务。\n立即生效。
-DisableDiskFootprintDiagnosticTasksName	Disable Disk Footprint diagnostics tasks	禁用磁盘占用诊断计划任务
-DisableDiskFootprintDiagnosticTasksDescription	Disables Disk Footprint diagnostics tasks that scan storage usage patterns in the background. Does not disable Storage Sense cleanup.\nEffective immediately.	禁用在后台扫描存储占用模式的 Disk Footprint 诊断任务。不会关闭存储感知清理。\n立即生效。
 DisableCloudExperienceHostTasksName	Disable Cloud Experience Host tasks	禁用云体验主机计划任务
 DisableCloudExperienceHostTasksDescription	Disables Cloud Experience Host CreateObjectTask used for account/cloud onboarding flows that can run in the background.\nEffective immediately.	禁用云体验主机 CreateObjectTask，减少帐户/云端引导类后台任务。\n立即生效。
 DisableSustainabilityTelemetryTasksName	Disable sustainability telemetry tasks	禁用可持续性遥测计划任务
 DisableSustainabilityTelemetryTasksDescription	Disables Windows sustainability telemetry collection scheduled tasks.\nEffective immediately.	禁用 Windows 可持续性遥测收集相关计划任务。\n立即生效。
 DisableOfficeTelemetryTasksName	Disable Office telemetry scheduled tasks	禁用 Office 遥测计划任务
 DisableOfficeTelemetryTasksDescription	Disables Office Telemetry Agent scheduled tasks when Microsoft Office is installed. Items are skipped automatically if Office tasks are not present.\nEffective immediately.	在已安装 Microsoft Office 时禁用 Office 遥测代理计划任务。本机没有 Office 任务时会自动跳过。\n立即生效。
-UninstallGetHelpName	Uninstall Get Help	卸载获取帮助
-UninstallGetHelpDescription	Removes the Get Help support app.	卸载“获取帮助”支持应用。
 UninstallBingSearchName	Uninstall Bing Search	卸载 Bing 搜索
 UninstallBingSearchDescription	Removes the Bing Search package that can integrate web search experiences into Windows Search UI.	卸载可能把网页搜索体验整合进 Windows 搜索界面的 Bing 搜索包。
 UninstallCrossDeviceName	Uninstall Cross Device Experience Host	卸载跨设备体验主机

@@ -66,6 +66,12 @@ public static class DebugMcpContract
                 ["category"] = Prop("string", "Optional tab filter: Optimizing | Antivirus | Personal."),
                 ["only_not_optimized"] = Prop("boolean", "Only list items that are not optimized (default false)."),
             }),
+        Tool("optimization_init_timings",
+            "Startup detection timings: total time, the Microsoft Store package snapshot, and each item's Initialize() duration, slowest first.",
+            new()
+            {
+                ["top"] = Prop("integer", "Number of slowest items to list, 1-1000 (default 30)."),
+            }),
         Tool("time_sync_status",
             "Read Windows Time (W32Time) sync state: service start mode, trigger count, NTP Type, NtpClient, and the matching optimization item.",
             new()),
