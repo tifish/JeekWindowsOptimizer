@@ -109,7 +109,7 @@ public static class DebugMcpContract
             "Run isolated cleanup regression checks in the app. Does not clean user data.",
             new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps | queue | shadows | hibernation | drivers | graphics | installer_baseline | lcu | developer | pnpm | selection.") }),
         Tool("disk_space_scan",
-            "Run the Disk Space scan (all items in parallel, DISM analysis included) and wait for it, then return the item list.",
+            "Run the Disk Space scan (all items in parallel) and wait for it, then return the item list.",
             new()
             {
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 600)."),

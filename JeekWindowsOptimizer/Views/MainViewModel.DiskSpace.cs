@@ -214,7 +214,7 @@ public partial class MainViewModel
             foreach (var item in DiskSpaceRelocationItems)
                 item.SetTargetDrives(drives);
 
-            // Items are independent; DISM analysis alone takes a while, so run them together.
+            // Items are independent and some take a while, so run them together.
             await Task.WhenAll(DiskSpaceItems.Select(item => item.RefreshAsync()));
         }
         catch (Exception ex)

@@ -18,7 +18,7 @@
 
 ## 现有项
 
-清理（`Cleanup/`）：回收站、临时文件、Windows Update 下载缓存、传递优化缓存、崩溃转储、系统日志与错误报告、上一个 Windows 版本（走 cleanmgr 处理器；默认不勾选，但用 Windows.old 创建时间和回滚期天数判断，回滚期已过或只剩升级残留时首次扫描后自动勾选，回滚期读 `HKLM\SYSTEM\Setup\Uninstall` 的 `UninstallWindow`，缺省 10 天）、组件存储（DISM /AnalyzeComponentStore 估算，`/StartComponentCleanup` 清理，**不加** `/ResetBase`——那会连“卸载近期更新”所需的组件一起删掉，属于不可重建的能力，放在工具页作为单独的深度清理项）、浏览器缓存、应用崩溃转储、显卡安装残留、累积更新 LCU 暂存、Windows Installer 基线缓存、驱动库旧驱动、卷影副本、休眠文件，以及单独成组的开发工具缓存（NuGet、pip、npm、npx、pnpm、Yarn、Gradle、Maven、Cargo、Go、Visual Studio、VS Code、Package Cache）。行的先后按“日常缓存 → 安装残留与更新缓存 → 修复/回滚数据与系统功能 → 开发工具缓存”排列；开发缓存的行序在 `CreateItems()` 里逐条写死，不切 `DeveloperCachePaths.Kinds`。
+清理（`Cleanup/`）：回收站、临时文件、Windows Update 下载缓存、传递优化缓存、崩溃转储、系统日志与错误报告、上一个 Windows 版本（走 cleanmgr 处理器；默认不勾选，但用 Windows.old 创建时间和回滚期天数判断，回滚期已过或只剩升级残留时首次扫描后自动勾选，回滚期读 `HKLM\SYSTEM\Setup\Uninstall` 的 `UninstallWindow`，缺省 10 天）、浏览器缓存、应用崩溃转储、显卡安装残留、累积更新 LCU 暂存、Windows Installer 基线缓存、驱动库旧驱动、卷影副本、休眠文件，以及单独成组的开发工具缓存（NuGet、pip、npm、npx、pnpm、Yarn、Gradle、Maven、Cargo、Go、Visual Studio、VS Code、Package Cache）。行的先后按“日常缓存 → 安装残留与更新缓存 → 修复/回滚数据与系统功能 → 开发工具缓存”排列；开发缓存的行序在 `CreateItems()` 里逐条写死，不切 `DeveloperCachePaths.Kinds`。
 
 命令驱动的清理（pnputil、vssadmin）逐项执行：单项失败只记为“未完成”，不丢弃已经删掉的部分，也不放弃后面的项目。子进程输出按控制台代码页解码（`CleanupCommand.Decode`），否则中文系统上的分隔符会在 UTF-8 解码里被吞掉，解析随之错位。
 
@@ -28,7 +28,7 @@
 
 ## 系统访问层
 
-底层调用都在 `SystemAccess`：`FileSystemCleaner`（不跟随重解析点的测量与删除）、`RecycleBin`、`WindowsUpdateCache`、`DeliveryOptimizationCache`、`ComponentStore`、`DiskCleanupTool`（用私有 StateFlags 配置驱动 cleanmgr）、`PagingFile`、`KnownFolders`、`CleanupCommand`（System32 下的控制台工具，按控制台代码页解码、非零退出即报错、可取消）、`DriverStoreCleanup`、`ShadowCopyStorage`、`WindowsServicingState`、`DeveloperCachePaths`、`NuGetCache`、`PnpmStore`、`WslStorage`、`DockerDiskStorage`。
+底层调用都在 `SystemAccess`：`FileSystemCleaner`（不跟随重解析点的测量与删除）、`RecycleBin`、`WindowsUpdateCache`、`DeliveryOptimizationCache`、`DiskCleanupTool`（用私有 StateFlags 配置驱动 cleanmgr）、`PagingFile`、`KnownFolders`、`CleanupCommand`（System32 下的控制台工具，按控制台代码页解码、非零退出即报错、可取消）、`DriverStoreCleanup`、`ShadowCopyStorage`、`WindowsServicingState`、`DeveloperCachePaths`、`NuGetCache`、`PnpmStore`、`WslStorage`、`DockerDiskStorage`。
 
 `KnownFolders.Redirect` 的注意事项：
 
@@ -44,7 +44,7 @@
 - 新增迁移项：继承 `DiskSpaceRelocationItem`，实现 `RefreshCoreAsync` / `GetTargetPath` / `MoveCoreAsync`。
 - 调试：Debug MCP 提供 `disk_space_items`、`disk_space_scan`、`disk_space_clean`、`disk_space_enqueue`、`disk_space_relocation_check`、`disk_space_relocate`、`disk_space_restore_default`、`disk_space_move_checked`，以及只跑隔离样本的 `disk_space_cleanup_probe`、`group_navigation_probe`、`virtual_disk_migration_probe`、`wsl_native_migration_probe`。会真实改动系统的接口只在 Debug 面向开发者暴露。
 
-扫描状态与清理 / 迁移的忙碌状态独立：逐项更新汇总，已完成扫描的项目可以立即操作，无需等待 WinSxS。扫描期间禁止重复全量扫描，清理只包含已完成扫描且不忙碌的项目；汇总会提示仍在扫描。Debug MCP 的 `disk_space_items` 同时返回扫描状态与命令可用性。
+扫描状态与清理 / 迁移的忙碌状态独立：逐项更新汇总，已完成扫描的项目可以立即操作，无需等待耗时项。扫描期间禁止重复全量扫描，清理只包含已完成扫描且不忙碌的项目；汇总会提示仍在扫描。Debug MCP 的 `disk_space_items` 同时返回扫描状态与命令可用性。
 
 清理结果：执行前重新测量，避免沿用过期扫描。`IsFreedBytesKnown` 表示本次是否完成前后测量；取消、执行异常或重扫失败时不沿用上次释放量，也不把未知剩余空间当作零。批量汇总提示失败项目。Debug MCP 的 `disk_space_cleanup_probe`（`scenario=accuracy`）可在进程内验证这些分支，不接触真实文件。
 

@@ -41,7 +41,6 @@ public static class DiskSpaceItemManager
             new DeliveryOptimizationCacheCleanupItem(),
             new WindowsUpdateCacheCleanupItem(),
             new LcuCleanupItem(),
-            new ComponentStoreCleanupItem(),
 
             // Repair/rollback data and system features require more consideration.
             new InstallerBaselineCleanupItem(),

@@ -35,7 +35,7 @@ public abstract partial class DiskSpaceCleanupItem : DiskSpaceItem
     /// </summary>
     protected virtual bool? AutoCheckAfterScan => null;
 
-    /// <summary>True for operations that run for minutes (DISM, cleanmgr).</summary>
+    /// <summary>True for operations that run for minutes (cleanmgr).</summary>
     public virtual bool IsSlow => false;
 
     [ObservableProperty]

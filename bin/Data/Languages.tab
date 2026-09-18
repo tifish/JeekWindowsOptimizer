@@ -577,8 +577,6 @@ WindowsLogsCleanupName	Servicing logs and error reports	系统日志与错误报
 WindowsLogsCleanupDescription	CBS, DISM, and Windows Update logs plus queued Windows Error Reporting files. CBS logs can silently grow to tens of gigabytes.	CBS、DISM、Windows Update 日志以及排队中的 Windows 错误报告文件。CBS 日志可能悄悄膨胀到几十 GB。
 PreviousInstallationCleanupName	Previous Windows installation	上一个 Windows 版本
 PreviousInstallationCleanupDescription	Windows.old and hidden upgrade folders kept after a feature update. Windows offers "go back to the previous version" for a limited number of days; this row is checked automatically once that window has passed.	功能更新后保留的 Windows.old 和隐藏的升级文件夹。Windows 只在有限天数内提供“退回上一版本”，超过这个期限后本项会自动勾选。
-ComponentStoreCleanupName	Component store (WinSxS)	组件存储（WinSxS）
-ComponentStoreCleanupDescription	Superseded update components kept in WinSxS. Runs DISM /StartComponentCleanup, which keeps the components needed to uninstall recent updates. Scanning and cleaning take several minutes.	为卸载更新而保留在 WinSxS 中的旧版本组件。执行 DISM /StartComponentCleanup，会保留卸载近期更新所需的组件。扫描和清理需要几分钟。
 PagingFileRelocationName	Paging file	页面文件
 PagingFileRelocationDescription	Moves the paging file (pagefile.sys) to another drive as a single system-managed file. Takes effect after a reboot. Without a paging file on the system drive Windows cannot write a full kernel memory dump on a blue screen.	将页面文件（pagefile.sys）迁移到其他磁盘，并由系统管理大小。重启后生效。系统盘没有页面文件时，蓝屏将无法写入完整内核内存转储。
 DesktopRelocationName	Desktop	桌面
