@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
@@ -289,8 +289,8 @@ public partial class MainWindow : Window
         if (e.Key == Key.F5 && e.KeyModifiers == KeyModifiers.None
             && DataContext is MainViewModel vm && vm.IsOptimizationTabSelected)
         {
-            if (vm.RefreshOptimizationStatusCommand.CanExecute(null))
-                vm.RefreshOptimizationStatusCommand.Execute(null);
+            if (vm.RefreshOptimizationItemStatesCommand.CanExecute(null))
+                vm.RefreshOptimizationItemStatesCommand.Execute(null);
             e.Handled = true;
             return;
         }

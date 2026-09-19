@@ -216,7 +216,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     partial void OnSelectedTabIndexChanged(int value)
     {
         OnPropertyChanged(nameof(IsOptimizationTabSelected));
-        RefreshOptimizationStatusCommand.NotifyCanExecuteChanged();
+        RefreshOptimizationItemStatesCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(IsDiskSpaceTabSelected));
         OnPropertyChanged(nameof(IsStartupTabSelected));
         OnPropertyChanged(nameof(IsToolsTabSelected));
@@ -503,7 +503,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(AreOptimizationItemControlsEnabled));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
         CheckForUpdatesCommand.NotifyCanExecuteChanged();
-        RefreshOptimizationStatusCommand.NotifyCanExecuteChanged();
+        RefreshOptimizationItemStatesCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSearchTextChanged(string value)
@@ -683,7 +683,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
             // Detection is read-only, so items run together; PowerShell-backed checks still
             // serialize on the exclusive lock, and Store items wait for the snapshot.
             var detectionStopwatch = Stopwatch.StartNew();
-            await Task.WhenAll(GetOptimizationItems().Select(InitializeItemAsync));
+            await Task.WhenAll(
+                GetOptimizationItems().Select(item => InitializeItemAsync(item, recordTiming: true))
+            );
             await storeSnapshot;
             DetectionMilliseconds = detectionStopwatch.ElapsedMilliseconds;
 
@@ -709,12 +711,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private bool CanRefreshOptimizationStatus() => !IsBusy && IsOptimizationTabSelected;
+    private bool CanRefreshOptimizationItemStates() => !IsBusy && IsOptimizationTabSelected;
 
-    [RelayCommand(CanExecute = nameof(CanRefreshOptimizationStatus))]
-    private async Task RefreshOptimizationStatus()
+    [RelayCommand(CanExecute = nameof(CanRefreshOptimizationItemStates))]
+    private async Task RefreshOptimizationItemStates()
     {
-        if (!CanRefreshOptimizationStatus())
+        if (!CanRefreshOptimizationItemStates())
             return;
 
         IsBusy = true;
@@ -723,7 +725,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             // Keep the existing items and their selections; only re-read system state.
             await MicrosoftStore.RefreshSnapshot();
-            var results = await Task.WhenAll(GetOptimizationItems().Select(InitializeItemAsync));
+            var results = await Task.WhenAll(
+                GetOptimizationItems().Select(item => InitializeItemAsync(item, recordTiming: false))
+            );
             var failures = results.Count(success => !success);
             StatusMessage = failures == 0
                 ? Localizer.Get("OptimizationStatusRefreshFinished")
@@ -743,7 +747,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private static async Task<bool> InitializeItemAsync(OptimizationItem item)
+    private static async Task<bool> InitializeItemAsync(OptimizationItem item, bool recordTiming)
     {
         var stopwatch = Stopwatch.StartNew();
         try
@@ -758,7 +762,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
         finally
         {
-            item.InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
+            if (recordTiming)
+                item.InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
         }
     }
 

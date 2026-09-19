@@ -35,7 +35,7 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public abstract Task Initialize();
 
-    /// <summary>How long <see cref="Initialize"/> took at startup; for diagnostics.</summary>
+    /// <summary>How long <see cref="Initialize"/> took at startup (manual refreshes leave it unchanged); for diagnostics.</summary>
     public long InitializeMilliseconds { get; set; }
 
     public async Task<bool> SetIsOptimized(bool value)

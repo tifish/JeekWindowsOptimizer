@@ -33,26 +33,18 @@ public class DisableWindowsDefenderPUAProtectionItem : OptimizationItem
         }
 
         // Get-MpPreference costs several seconds; only needed when no registry value is present.
-        var currentValue = IsOptimized;
+        // Let a failure propagate so the caller reports the item as not checked.
         var isOptimized = await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
             async () =>
             {
-                try
-                {
-                    PowerShellService.Commands.Clear();
-                    PowerShellService
-                        .AddCommand("Get-MpPreference")
-                        .AddCommand("Select-Object")
-                        .AddParameter("ExpandProperty", "PUAProtection");
-                    var result = await PowerShellService.InvokeAsync();
-                    return (byte)result.First().BaseObject == 0;
-                }
-                catch (Exception ex)
-                {
-                    Log.ZLogError(ex, $"Failed to call Get-MpPreference");
-                    return currentValue;
-                }
+                PowerShellService.Commands.Clear();
+                PowerShellService
+                    .AddCommand("Get-MpPreference")
+                    .AddCommand("Select-Object")
+                    .AddParameter("ExpandProperty", "PUAProtection");
+                var result = await PowerShellService.InvokeAsync();
+                return (byte)result.First().BaseObject == 0;
             }
         );
         IsOptimized = isOptimized;

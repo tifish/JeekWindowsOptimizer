@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json.Nodes;
 using Avalonia;
@@ -90,7 +90,7 @@ internal static class DebugMcpServer
         {
             var task = await OnUiAsync(() =>
             {
-                var command = RequireMainVm().RefreshOptimizationStatusCommand;
+                var command = RequireMainVm().RefreshOptimizationItemStatesCommand;
                 return command.CanExecute(null) ? command.ExecuteAsync(null) : null;
             });
             if (task is null)

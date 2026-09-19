@@ -1,4 +1,4 @@
-<Window
+﻿<Window
     x:Class="JeekWindowsOptimizer.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -289,9 +289,9 @@
                 Orientation="Horizontal"
                 Spacing="4">
                 <Button
-                    x:Name="RefreshOptimizationStatusButton"
+                    x:Name="RefreshOptimizationItemStatesButton"
                     Classes="titlebar-icon"
-                    Command="{Binding RefreshOptimizationStatusCommand}"
+                    Command="{Binding RefreshOptimizationItemStatesCommand}"
                     IsVisible="{Binding IsOptimizationTabSelected}"
                     AutomationProperties.Name="{l:Localize RefreshOptimizationStatus}"
                     ToolTip.Tip="{l:Localize RefreshOptimizationStatus}">

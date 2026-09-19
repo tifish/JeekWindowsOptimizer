@@ -14,39 +14,45 @@ public static class MicrosoftStore
     /// Starts the one-time session setup and package snapshot; later calls return the same task,
     /// so it can run alongside other startup detection.
     /// </summary>
-    public static Task Initialize() => _initialization ??= InitializeCore();
+    public static Task Initialize() => _initialization ??= InitializeCore(recordTiming: true);
 
-    /// <summary>Replace the cached package list before re-detecting optimization items.</summary>
+    /// <summary>
+    /// Replace the cached package list before re-detecting optimization items; retries the
+    /// session setup if it failed at startup.
+    /// </summary>
     public static async Task RefreshSnapshot()
     {
         await Initialize();
-        _initialization = InitializeCore(initializeSession: false);
+        _initialization = InitializeCore(recordTiming: false);
         await _initialization;
     }
 
-    /// <summary>How long the session setup and package snapshot took; for diagnostics.</summary>
+    /// <summary>How long the startup session setup and package snapshot took; for diagnostics.</summary>
     public static long InitializeMilliseconds { get; private set; }
 
-    private static async Task InitializeCore(bool initializeSession = true)
+    private static bool _sessionReady;
+
+    private static async Task InitializeCore(bool recordTiming)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         try
         {
-            await InitializeSessionAndSnapshot(initializeSession);
+            await InitializeSessionAndSnapshot();
         }
         finally
         {
-            InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
+            if (recordTiming)
+                InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
         }
     }
 
-    private static async Task InitializeSessionAndSnapshot(bool initializeSession)
+    private static async Task InitializeSessionAndSnapshot()
     {
         await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
             async () =>
             {
-                if (initializeSession)
+                if (!_sessionReady)
                 {
                     try
                     {
@@ -58,15 +64,22 @@ public static class MicrosoftStore
                             .InvokeAsync();
 
                         PowerShellService.Commands.Clear();
+                        PowerShellService.Streams.ClearStreams();
                         await PowerShellService
                             .AddCommand("Import-Module")
                             .AddParameter("Name", "AppX")
                             .AddParameter("UseWindowsPowerShell")
                             .InvokeAsync();
+                        if (PowerShellService.HadErrors)
+                            Log.ZLogError(
+                                $"Failed to import the AppX module: {string.Join("; ", PowerShellService.Streams.Error)}"
+                            );
+                        else
+                            _sessionReady = true;
                     }
                     catch (Exception e)
                     {
-                        Log.ZLogError(e, $"Failed to set execution policy");
+                        Log.ZLogError(e, $"Failed to set up the AppX session");
                     }
                 }
 
@@ -167,23 +180,24 @@ public static class MicrosoftStore
             + $"installed_live={live}{Environment.NewLine}{states}";
     }
 
+    /// <summary>
+    /// Live check for the current user. Throws when the query fails: reporting "not installed"
+    /// would mark the item optimized.
+    /// </summary>
     public static async Task<bool> HasPackage(string packageName)
     {
         return await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
             async () =>
             {
-                try
-                {
-                    AddSessionScript("@(Get-AppxPackage -Name $name).Count -gt 0", packageName);
-                    return (await PowerShellService.InvokeAsync()).FirstOrDefault()?.BaseObject
-                        is true;
-                }
-                catch (Exception e)
-                {
-                    Log.ZLogError(e, $"Failed to check if package {packageName} exists");
-                    return false;
-                }
+                AddSessionScript("@(Get-AppxPackage -Name $name).Count -gt 0", packageName);
+                var results = await PowerShellService.InvokeAsync();
+                if (PowerShellService.HadErrors || results.Count == 0)
+                    throw new InvalidOperationException(
+                        $"Failed to check if package {packageName} exists: "
+                            + string.Join("; ", PowerShellService.Streams.Error)
+                    );
+                return results[0]?.BaseObject is true;
             }
         );
     }
