@@ -74,6 +74,7 @@ public partial class MainWindow : Window
     {
         // The shell's folder-move progress dialog parents itself to this window.
         UserFolderRelocationItem.OwnerWindowHandle = TryGetPlatformHandle()?.Handle ?? IntPtr.Zero;
+        WindowClassIcon.ApplyExeIcon(UserFolderRelocationItem.OwnerWindowHandle);
 
         if (DataContext is MainViewModel vm && vm.LoadedCommand.CanExecute(null))
             vm.LoadedCommand.Execute(null);
