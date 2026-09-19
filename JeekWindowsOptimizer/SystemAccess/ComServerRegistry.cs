@@ -22,7 +22,50 @@ public static class ComServerRegistry
     ///     servers register a command line, so the executable is extracted from it.
     /// </summary>
     public static string? ResolveServer(string? clsid) =>
-        Resolve(clsid, ["InProcServer32", "LocalServer32"]);
+        Resolve(clsid, ["InProcServer32", "LocalServer32"]) ?? ResolveServiceHost(clsid);
+
+    /// <summary>
+    ///     The file behind a class that a service hosts. Such classes register neither server key,
+    ///     only an AppID whose LocalService names the service, so the service's DLL (or its
+    ///     executable, for a service with its own process) is the implementing file.
+    /// </summary>
+    private static string? ResolveServiceHost(string? clsid)
+    {
+        var normalized = Normalize(clsid);
+        if (normalized.Length == 0)
+            return null;
+
+        try
+        {
+            using var classKey = Registry.ClassesRoot.OpenSubKey($@"CLSID\{normalized}");
+            var appId = Normalize(classKey?.GetValue("AppID") as string);
+            if (appId.Length == 0)
+                return null;
+
+            using var appKey = Registry.ClassesRoot.OpenSubKey($@"AppID\{appId}");
+            if (appKey?.GetValue("LocalService") is not string service || string.IsNullOrWhiteSpace(service))
+                return null;
+
+            using var serviceKey = Registry.LocalMachine.OpenSubKey(
+                $@"SYSTEM\CurrentControlSet\Services\{service.Trim()}"
+            );
+            if (serviceKey is null)
+                return null;
+
+            using var parameters = serviceKey.OpenSubKey("Parameters");
+            var dll = parameters?.GetValue("ServiceDll") as string ?? serviceKey.GetValue("ServiceDll") as string;
+            if (!string.IsNullOrWhiteSpace(dll))
+                return Environment.ExpandEnvironmentVariables(dll.Trim()).Trim('"');
+
+            return serviceKey.GetValue("ImagePath") is string imagePath && !string.IsNullOrWhiteSpace(imagePath)
+                ? StartupIdentity.ExtractImagePath(Environment.ExpandEnvironmentVariables(imagePath.Trim()))
+                : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     private static string? Resolve(string? clsid, string[] serverKeys)
     {
