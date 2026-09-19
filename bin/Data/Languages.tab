@@ -5,6 +5,11 @@ ThemeLight	Light	浅色
 ThemeDark	Dark	深色
 ThemeSystem	Follow system	跟随系统
 Update	Update	更新
+RefreshOptimizationStatus	Refresh status (F5)	刷新状态（F5）
+RefreshingOptimizationStatus	Refreshing optimization status...	正在刷新优化状态……
+OptimizationStatusRefreshFinished	Optimization status refreshed	优化状态已刷新
+OptimizationStatusRefreshPartial	Refresh finished; {0} item(s) could not be checked. See logs for details.	刷新完成，{0} 项检测失败，请查看日志。
+OptimizationStatusRefreshFailed	Failed to refresh optimization status. Please try again.	刷新优化状态失败，请重试。
 CheckForUpdates	Check for updates	检查更新
 AutoUpdate	Auto-update	自动更新
 CurrentVersionHeader	Current version: {0}	当前版本：{0}

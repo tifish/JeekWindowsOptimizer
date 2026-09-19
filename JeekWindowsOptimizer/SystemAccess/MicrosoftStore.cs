@@ -16,15 +16,23 @@ public static class MicrosoftStore
     /// </summary>
     public static Task Initialize() => _initialization ??= InitializeCore();
 
+    /// <summary>Replace the cached package list before re-detecting optimization items.</summary>
+    public static async Task RefreshSnapshot()
+    {
+        await Initialize();
+        _initialization = InitializeCore(initializeSession: false);
+        await _initialization;
+    }
+
     /// <summary>How long the session setup and package snapshot took; for diagnostics.</summary>
     public static long InitializeMilliseconds { get; private set; }
 
-    private static async Task InitializeCore()
+    private static async Task InitializeCore(bool initializeSession = true)
     {
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         try
         {
-            await InitializeSessionAndSnapshot();
+            await InitializeSessionAndSnapshot(initializeSession);
         }
         finally
         {
@@ -32,33 +40,38 @@ public static class MicrosoftStore
         }
     }
 
-    private static async Task InitializeSessionAndSnapshot()
+    private static async Task InitializeSessionAndSnapshot(bool initializeSession)
     {
         await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.ExclusiveBackground,
             async () =>
             {
-                try
+                if (initializeSession)
                 {
-                    PowerShellService.Commands.Clear();
-                    await PowerShellService
-                        .AddCommand("Set-ExecutionPolicy")
-                        .AddParameter("Scope", "Process")
-                        .AddParameter("ExecutionPolicy", "Bypass")
-                        .InvokeAsync();
+                    try
+                    {
+                        PowerShellService.Commands.Clear();
+                        await PowerShellService
+                            .AddCommand("Set-ExecutionPolicy")
+                            .AddParameter("Scope", "Process")
+                            .AddParameter("ExecutionPolicy", "Bypass")
+                            .InvokeAsync();
 
-                    PowerShellService.Commands.Clear();
-                    await PowerShellService
-                        .AddCommand("Import-Module")
-                        .AddParameter("Name", "AppX")
-                        .AddParameter("UseWindowsPowerShell")
-                        .InvokeAsync();
-                }
-                catch (Exception e)
-                {
-                    Log.ZLogError(e, $"Failed to set execution policy");
+                        PowerShellService.Commands.Clear();
+                        await PowerShellService
+                            .AddCommand("Import-Module")
+                            .AddParameter("Name", "AppX")
+                            .AddParameter("UseWindowsPowerShell")
+                            .InvokeAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.ZLogError(e, $"Failed to set execution policy");
+                    }
                 }
 
+                // A failed refresh must fall back to live queries, never an old snapshot.
+                _installedPackageNames = null;
                 try
                 {
                     // One snapshot for all items: each Get-AppxPackage call costs ~0.2 s.

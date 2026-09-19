@@ -289,6 +289,15 @@
                 Orientation="Horizontal"
                 Spacing="4">
                 <Button
+                    x:Name="RefreshOptimizationStatusButton"
+                    Classes="titlebar-icon"
+                    Command="{Binding RefreshOptimizationStatusCommand}"
+                    IsVisible="{Binding IsOptimizationTabSelected}"
+                    AutomationProperties.Name="{l:Localize RefreshOptimizationStatus}"
+                    ToolTip.Tip="{l:Localize RefreshOptimizationStatus}">
+                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE72C;" />
+                </Button>
+                <Button
                     Classes="titlebar-icon"
                     Classes.search-active="{Binding IsSearchVisible}"
                     Click="SearchButton_OnClick"
@@ -305,8 +314,8 @@
                     <TextBlock Classes="titlebar-glyph-text" Text="&#xE71C;" />
                 </Button>
                 <Button Classes="titlebar-icon" ToolTip.Tip="{l:Localize Update}">
-                    <!-- Segoe Fluent Icons: Sync (E895) -->
-                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE895;" />
+                    <!-- Segoe Fluent Icons: Download (E896) -->
+                    <TextBlock Classes="titlebar-glyph-text" Text="&#xE896;" />
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuItem

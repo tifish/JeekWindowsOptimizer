@@ -72,6 +72,10 @@ public static class DebugMcpContract
             {
                 ["top"] = Prop("integer", "Number of slowest items to list, 1-1000 (default 30)."),
             }),
+        Tool("optimization_refresh",
+            "Re-read all optimization item states and the Store package snapshot via the UI refresh command. "
+                + "Returns busy/unavailable if disabled; otherwise waits for completion. Does not apply optimizations.",
+            new()),
         Tool("tool_items",
             "List the Tools tab's groups and items (every loaded tool, including ones hidden by the search filter) with execution kind, availability and target. Optional tools whose files are missing are not loaded.",
             new()),

@@ -216,6 +216,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     partial void OnSelectedTabIndexChanged(int value)
     {
         OnPropertyChanged(nameof(IsOptimizationTabSelected));
+        RefreshOptimizationStatusCommand.NotifyCanExecuteChanged();
         OnPropertyChanged(nameof(IsDiskSpaceTabSelected));
         OnPropertyChanged(nameof(IsStartupTabSelected));
         OnPropertyChanged(nameof(IsToolsTabSelected));
@@ -502,6 +503,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(AreOptimizationItemControlsEnabled));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
         CheckForUpdatesCommand.NotifyCanExecuteChanged();
+        RefreshOptimizationStatusCommand.NotifyCanExecuteChanged();
     }
 
     partial void OnSearchTextChanged(string value)
@@ -707,18 +709,57 @@ public partial class MainViewModel : ObservableObject, IDisposable
         }
     }
 
-    private static async Task InitializeItemAsync(OptimizationItem item)
+    private bool CanRefreshOptimizationStatus() => !IsBusy && IsOptimizationTabSelected;
+
+    [RelayCommand(CanExecute = nameof(CanRefreshOptimizationStatus))]
+    private async Task RefreshOptimizationStatus()
+    {
+        if (!CanRefreshOptimizationStatus())
+            return;
+
+        IsBusy = true;
+        StatusMessage = Localizer.Get("RefreshingOptimizationStatus");
+        try
+        {
+            // Keep the existing items and their selections; only re-read system state.
+            await MicrosoftStore.RefreshSnapshot();
+            var results = await Task.WhenAll(GetOptimizationItems().Select(InitializeItemAsync));
+            var failures = results.Count(success => !success);
+            StatusMessage = failures == 0
+                ? Localizer.Get("OptimizationStatusRefreshFinished")
+                : string.Format(Localizer.Get("OptimizationStatusRefreshPartial"), failures);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogError(ex, $"Failed to refresh optimization status");
+            StatusMessage = Localizer.Get("OptimizationStatusRefreshFailed");
+        }
+        finally
+        {
+            RefreshDisplayedOptimizationGroups();
+            UpdateOptimizationTabHeaders();
+            UpdateOptimizeButtonText();
+            IsBusy = false;
+        }
+    }
+
+    private static async Task<bool> InitializeItemAsync(OptimizationItem item)
     {
         var stopwatch = Stopwatch.StartNew();
         try
         {
             await item.Initialize();
+            return true;
         }
         catch (Exception ex)
         {
             Log.ZLogError(ex, $"Failed to initialize {item.Name}");
+            return false;
         }
-        item.InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
+        finally
+        {
+            item.InitializeMilliseconds = stopwatch.ElapsedMilliseconds;
+        }
     }
 
     private static async Task MeasureAsync(Task task, Action<long> report)

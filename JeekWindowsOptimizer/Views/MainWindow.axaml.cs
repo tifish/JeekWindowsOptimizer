@@ -286,6 +286,15 @@ public partial class MainWindow : Window
 
     private void Window_OnKeyDown(object? sender, KeyEventArgs e)
     {
+        if (e.Key == Key.F5 && e.KeyModifiers == KeyModifiers.None
+            && DataContext is MainViewModel vm && vm.IsOptimizationTabSelected)
+        {
+            if (vm.RefreshOptimizationStatusCommand.CanExecute(null))
+                vm.RefreshOptimizationStatusCommand.Execute(null);
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key != Key.F || !e.KeyModifiers.HasFlag(KeyModifiers.Control))
             return;
 

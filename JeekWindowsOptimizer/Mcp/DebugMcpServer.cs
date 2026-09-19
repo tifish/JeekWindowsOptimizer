@@ -86,6 +86,18 @@ internal static class DebugMcpServer
         host.AddTool("defender_status", DefenderStatusAsync);
         host.AddTool("optimization_items", OptimizationItemsAsync);
         host.AddTool("optimization_init_timings", OptimizationInitTimingsAsync);
+        host.AddTool("optimization_refresh", async _ =>
+        {
+            var task = await OnUiAsync(() =>
+            {
+                var command = RequireMainVm().RefreshOptimizationStatusCommand;
+                return command.CanExecute(null) ? command.ExecuteAsync(null) : null;
+            });
+            if (task is null)
+                return ToolText("busy/unavailable: wait for the current operation and select an optimization tab.");
+            await task;
+            return ToolText(await OnUiAsync(() => RequireMainVm().StatusMessage));
+        });
         host.AddTool("tool_items", ToolItemsAsync);
         host.AddTool("store_package_probe", async args =>
             ToolText(await MicrosoftStore.Describe(
