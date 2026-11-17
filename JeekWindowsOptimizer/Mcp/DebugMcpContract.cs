@@ -212,6 +212,9 @@ public static class DebugMcpContract
                 ["entries"] = Prop("boolean", "Include the stored entries (default false)."),
                 ["limit"] = Prop("integer", "Maximum entries to return, 1-2000 (default 100)."),
             }),
+        Tool("startup_auto_apply_probe",
+            "Test immediate background application through the real Startup selection commands on a detached view model. "
+                + "Checks per-row progress, concurrent rows, failure and retry. Does not change Windows or the decision ledger.", new()),
         Tool("startup_service_probe",
             "Deny then allow one real service through the startup toggle and verify the start type, "
                 + "stop on deny, start on allow, and exact restoration of the original start type, "

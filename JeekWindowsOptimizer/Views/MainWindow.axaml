@@ -1162,14 +1162,6 @@
                         Classes="group-toolbar"
                         Command="{Binding ScanStartupCommand}"
                         Content="{l:Localize StartupRescan}" />
-                    <Button
-                        Padding="12,6"
-                        Classes="accent"
-                        Command="{Binding EnforceStartupDecisionsCommand}"
-                        Content="{l:Localize StartupEnforce}"
-                        CornerRadius="6"
-                        FontSize="13"
-                        FontWeight="SemiBold" />
                     <CheckBox
                         VerticalAlignment="Center"
                         Content="{l:Localize StartupShowOnlyPending}"
@@ -1302,7 +1294,7 @@
                                                                 <Button
                                                                     Padding="14,5"
                                                                     Classes.accent="{Binding IsAllowed}"
-                                                                    IsEnabled="{Binding CanToggle}"
+                                                                    IsEnabled="{Binding CanChoose}"
                                                                     Command="{Binding $parent[Window].((local:MainViewModel)DataContext).AllowStartupItemCommand}"
                                                                     CommandParameter="{Binding}"
                                                                     Content="{l:Localize StartupAllow}"
@@ -1311,7 +1303,7 @@
                                                                 <Button
                                                                     Padding="14,5"
                                                                     Classes.accent="{Binding IsDenied}"
-                                                                    IsEnabled="{Binding CanToggle}"
+                                                                    IsEnabled="{Binding CanChoose}"
                                                                     Command="{Binding $parent[Window].((local:MainViewModel)DataContext).DenyStartupItemCommand}"
                                                                     CommandParameter="{Binding}"
                                                                     Content="{l:Localize StartupDeny}"

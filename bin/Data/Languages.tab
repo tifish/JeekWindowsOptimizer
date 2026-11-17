@@ -750,6 +750,7 @@ StartupUnsigned	Unsigned	未签名
 StartupFileMissing	Invalid: file not found	已失效：文件不存在
 StartupSignatureInvalid	Signature not valid	签名无效
 StartupStatusPending	Waiting for your decision	等待你的决定
+StartupStatusApplying	Applying…	正在应用…
 StartupStatusAllowed	Allowed	已允许
 StartupStatusAllowedButOff	Allowed, currently off	已允许，当前未启用
 StartupStatusDenied	Not allowed	已禁止

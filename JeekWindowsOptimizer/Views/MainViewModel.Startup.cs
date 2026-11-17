@@ -73,7 +73,14 @@ public partial class MainViewModel
     [ObservableProperty]
     public partial string StartupBaselinePromptText { get; set; } = "";
 
-    public bool IsStartupActive => IsStartupBusy || IsStartupScanning;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsStartupActive))]
+    [NotifyCanExecuteChangedFor(nameof(ScanStartupCommand))]
+    [NotifyCanExecuteChangedFor(nameof(EnforceStartupDecisionsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AcceptStartupBaselineCommand))]
+    public partial int StartupApplyingCount { get; private set; }
+
+    public bool IsStartupActive => IsStartupBusy || IsStartupScanning || StartupApplyingCount > 0;
 
     public bool IsStartupTabSelected => SelectedTabIndex == StartupTabIndex;
 
@@ -400,25 +407,25 @@ public partial class MainViewModel
 
     // ---------- Decisions ----------
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task AllowStartupItem(StartupItem? item) =>
         await DecideStartupItem(item, StartupDecision.Allow);
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task DenyStartupItem(StartupItem? item) =>
         await DecideStartupItem(item, StartupDecision.Deny);
 
     /// <summary>
     ///     Records a decision and, because the user made it here and now, puts it into effect
     ///     immediately. A decision that merely arrived over sync is not applied this way; it waits
-    ///     for the Apply command.
+    ///     for an explicit selection here or the automatic enforcement setting.
     /// </summary>
     private async Task DecideStartupItem(StartupItem? item, StartupDecision decision)
     {
-        if (item is null || IsStartupBusy)
+        if (item is null || !item.CanChoose || IsStartupBusy || IsStartupScanning)
             return;
 
-        if (!StartupDecisionStore.Decide(item.Key, decision, item.ToSnapshot()))
+        if (!StartupDecisionWriter(item, decision))
         {
             item.ErrorMessage = Localizer.Get("StartupLedgerBlocked");
             return;
@@ -439,28 +446,47 @@ public partial class MainViewModel
 
     private async Task<bool> ApplyStartupItem(StartupItem item, bool enabled)
     {
-        var result = await Task.Run(() => StartupToggle.Apply(item, enabled));
-
-        if (result.Succeeded)
+        item.ErrorMessage = null;
+        item.WarningMessage = null;
+        item.IsApplying = true;
+        StartupApplyingCount++;
+        try
         {
-            item.IsEnabled = enabled;
-            item.ErrorMessage = null;
-            item.WarningMessage = result.Warning;
+            var result = await Task.Run(() => StartupToggleHandler(item, enabled));
+
+            if (result.Succeeded)
+            {
+                item.IsEnabled = enabled;
+                item.ErrorMessage = null;
+                item.WarningMessage = result.Warning;
+            }
+            else
+            {
+                item.WarningMessage = null;
+                item.ErrorMessage = result.Error;
+                StartupLog.ZLogWarning(
+                    $"Failed to apply startup decision for {item.Name}: {result.Error}"
+                );
+            }
+
+            if (result.RequiresExplorerRestart)
+                _startupNeedsExplorerRestart = true;
+
+            return result.Succeeded;
         }
-        else
+        finally
         {
-            item.WarningMessage = null;
-            item.ErrorMessage = result.Error;
-            StartupLog.ZLogWarning(
-                $"Failed to apply startup decision for {item.Name}: {result.Error}"
-            );
+            item.IsApplying = false;
+            StartupApplyingCount--;
         }
-
-        if (result.RequiresExplorerRestart)
-            _startupNeedsExplorerRestart = true;
-
-        return result.Succeeded;
     }
+
+    // Detached Debug probes use synthetic decisions and toggles instead of changing Windows.
+    internal Func<StartupItem, StartupDecision, bool> StartupDecisionWriter { get; init; } =
+        (item, decision) => StartupDecisionStore.Decide(item.Key, decision, item.ToSnapshot());
+
+    internal Func<StartupItem, bool, StartupToggleResult> StartupToggleHandler { get; init; } =
+        StartupToggle.Apply;
 
     private bool _startupNeedsExplorerRestart;
 

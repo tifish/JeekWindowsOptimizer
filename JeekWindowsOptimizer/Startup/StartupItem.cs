@@ -138,7 +138,17 @@ public partial class StartupItem : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCompliant))]
     [NotifyPropertyChangedFor(nameof(StatusKey))]
+    [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(NeedsEnforcement))]
     public partial bool IsEnabled { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanChoose))]
+    [NotifyPropertyChangedFor(nameof(StatusKey))]
+    [NotifyPropertyChangedFor(nameof(StatusText))]
+    public partial bool IsApplying { get; set; }
+
+    public bool CanChoose => CanToggle && !IsApplying;
 
     /// <summary>What the user decided, or null when it has never been decided.</summary>
     [ObservableProperty]
@@ -227,7 +237,8 @@ public partial class StartupItem : ObservableObject
         };
 
     public string StatusKey =>
-        !CanToggle ? ReadOnlyReasonKey ?? "StartupStatusReadOnly"
+        IsApplying ? "StartupStatusApplying"
+        : !CanToggle ? ReadOnlyReasonKey ?? "StartupStatusReadOnly"
         : Decision is null ? "StartupStatusPending"
         : Decision == StartupDecision.Allow
             ? IsEnabled

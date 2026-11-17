@@ -137,6 +137,11 @@ internal static class DebugMcpServer
         host.AddTool("startup_enforce", StartupEnforceAsync);
         host.AddTool("startup_baseline", StartupBaselineAsync);
         host.AddTool("startup_ledger", StartupLedgerAsync);
+        host.AddTool("startup_auto_apply_probe", async _ =>
+        {
+            var task = await OnUiAsync(StartupAutoApplyProbe.RunAsync);
+            return ToolText(await task);
+        });
         host.AddTool("startup_service_probe", async args =>
         {
             var task = await OnUiAsync(() => StartupServiceProbe.RunAsync(
@@ -1111,6 +1116,7 @@ internal static class DebugMcpServer
             sb.AppendLine($"  command={item.Command}");
         sb.AppendLine($"  signer={item.SignerKind} publisher={item.Publisher ?? "(none)"}");
         sb.AppendLine($"  enabled={item.IsEnabled} canToggle={item.CanToggle} orphaned={item.IsOrphaned}");
+        sb.AppendLine($"  applying={item.IsApplying} canChoose={item.CanChoose}");
         sb.AppendLine($"  decision={(item.Decision?.ToString() ?? "pending")} "
             + $"source={item.DecisionSource} compliant={item.IsCompliant} "
             + $"needsEnforcement={item.NeedsEnforcement}");
