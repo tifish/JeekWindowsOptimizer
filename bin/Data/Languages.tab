@@ -747,6 +747,7 @@ StartupKindService	Services	服务
 StartupKindDriver	Drivers	驱动程序
 StartupKindExplorerExtension	Explorer extensions	资源管理器扩展
 StartupUnsigned	Unsigned	未签名
+StartupFileMissing	Invalid: file not found	已失效：文件不存在
 StartupSignatureInvalid	Signature not valid	签名无效
 StartupStatusPending	Waiting for your decision	等待你的决定
 StartupStatusAllowed	Allowed	已允许

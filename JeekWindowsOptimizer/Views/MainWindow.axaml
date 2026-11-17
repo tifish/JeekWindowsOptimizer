@@ -28,6 +28,7 @@
                     <SolidColorBrush x:Key="Win11SettingsCardBackgroundBrush" Color="#FF2B2B2B" />
                     <SolidColorBrush x:Key="Win11SettingsCardBorderBrush" Color="#FF3A3A3A" />
                     <SolidColorBrush x:Key="Win11SecondaryTextBrush" Color="#FFA6A6A6" />
+                    <SolidColorBrush x:Key="StartupMissingFileBrush" Color="#FFFFC857" />
                     <SolidColorBrush x:Key="ToolCardBackgroundPointerOverBrush" Color="#FF333333" />
                     <SolidColorBrush x:Key="ToolCardBackgroundPressedBrush" Color="#FF262626" />
                     <SolidColorBrush x:Key="ToolCardBorderPointerOverBrush" Color="#FF4A4A4A" />
@@ -80,6 +81,7 @@
                     <SolidColorBrush x:Key="Win11SettingsCardBackgroundBrush" Color="#FFFFFFFF" />
                     <SolidColorBrush x:Key="Win11SettingsCardBorderBrush" Color="#FFE5E5E5" />
                     <SolidColorBrush x:Key="Win11SecondaryTextBrush" Color="#FF666666" />
+                    <SolidColorBrush x:Key="StartupMissingFileBrush" Color="#FF915600" />
                     <SolidColorBrush x:Key="ToolCardBackgroundPointerOverBrush" Color="#FFFAFAFA" />
                     <SolidColorBrush x:Key="ToolCardBackgroundPressedBrush" Color="#FFF4F4F4" />
                     <SolidColorBrush x:Key="ToolCardBorderPointerOverBrush" Color="#FFD8D8D8" />
@@ -1241,6 +1243,14 @@
                                                                 FontWeight="SemiBold"
                                                                 Text="{Binding DisplayName}"
                                                                 TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock
+                                                                FontSize="13"
+                                                                FontWeight="SemiBold"
+                                                                Foreground="{DynamicResource StartupMissingFileBrush}"
+                                                                IsVisible="{Binding IsOrphaned}"
+                                                                Text="{l:Localize StartupFileMissing}"
+                                                                TextWrapping="Wrap"
+                                                                ToolTip.Tip="{Binding ImagePath}" />
                                                             <TextBlock
                                                                 FontSize="13"
                                                                 Foreground="{DynamicResource Win11SecondaryTextBrush}"

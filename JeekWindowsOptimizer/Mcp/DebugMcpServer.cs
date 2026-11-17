@@ -1106,6 +1106,7 @@ internal static class DebugMcpServer
         if (item.LooseKey.Length > 0)
             sb.AppendLine($"  looseKey={item.LooseKey}");
         sb.AppendLine($"  location={item.Location}");
+        sb.AppendLine($"  imagePath={item.ImagePath}");
         if (item.Command.Length > 0)
             sb.AppendLine($"  command={item.Command}");
         sb.AppendLine($"  signer={item.SignerKind} publisher={item.Publisher ?? "(none)"}");

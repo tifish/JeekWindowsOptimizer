@@ -169,7 +169,7 @@ public static class DebugMcpContract
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
             }, ["item"]),
         Tool("startup_items",
-            "List the Startup tab's items: kind, name, publisher and signature class, command, location, "
+            "List the Startup tab's items: kind, name, publisher and signature class, command, location, image path, whether the file is missing (orphaned), "
                 + "whether it runs at startup now, the remembered decision and where that decision was made. "
                 + "Runs the scan first if the tab has not been visited yet.",
             new()
