@@ -120,6 +120,7 @@ public static class DebugMcpContract
                 },
             }),
         Tool("group_navigation_probe", "Test actual routed navigation clicks and heading alignment, including repeat clicks, collapsed/filtered groups and a short final group. No cleanup or relocation is performed.", new()),
+        Tool("ui_layout_probe", "Verify UI chrome stability (header/footer height invariant across all 6 tabs in Dark and Light themes), contextual optimization controls, and inline search behavior.", new()),
         Tool("disk_space_items",
             "List the Disk Space tab's items (cleanup and relocation) with global scanning/busy state, scan/clean/move command availability, size, per-item state, checked flag, current location, target drives, and object paths. Creates the items if the tab has not been shown yet.",
             new()),

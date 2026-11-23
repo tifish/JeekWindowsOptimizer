@@ -321,6 +321,7 @@ public partial class MainWindow : Window
         if (DataContext is MainViewModel vm)
             vm.ExitSearchCommand.Execute(null);
 
+        Focus();
         e.Handled = true;
     }
 

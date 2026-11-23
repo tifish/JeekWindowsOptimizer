@@ -21,6 +21,31 @@ public partial class GroupNavItem : ObservableObject
 
     public StartupGroup? StartupGroup { get; private init; }
 
+    public string DisplayName =>
+        OptimizationGroup?.Name
+        ?? ToolGroup?.Name
+        ?? DiskSpaceGroup?.Name
+        ?? StartupGroup?.Name
+        ?? NameKey;
+
+    public int ItemCount =>
+        OptimizationGroup?.Items.Count
+        ?? ToolGroup?.Items.Count
+        ?? DiskSpaceGroup?.Items.Count
+        ?? StartupGroup?.Items.Count
+        ?? 0;
+
+    public string DisplayCountText => ItemCount.ToString();
+
+    public int PendingCount => StartupGroup?.PendingCount ?? 0;
+
+    public bool HasPending => PendingCount > 0;
+
+    public bool ShowNeutralCount => !HasPending;
+
+    public string PendingBadgeText =>
+        PendingCount < ItemCount ? $"{PendingCount}/{ItemCount}" : PendingCount.ToString();
+
     public string DisplayText
     {
         get
@@ -30,14 +55,7 @@ public partial class GroupNavItem : ObservableObject
             if (StartupGroup is { } startupGroup)
                 return startupGroup.NavDisplayName;
 
-            var name =
-                OptimizationGroup?.Name ?? ToolGroup?.Name ?? DiskSpaceGroup?.Name ?? NameKey;
-            var count =
-                OptimizationGroup?.Items.Count
-                ?? ToolGroup?.Items.Count
-                ?? DiskSpaceGroup?.Items.Count
-                ?? 0;
-            return $"{name} ({count})";
+            return $"{DisplayName} ({ItemCount})";
         }
     }
 
@@ -71,6 +89,13 @@ public partial class GroupNavItem : ObservableObject
 
     public void NotifyDisplayChanged()
     {
+        OnPropertyChanged(nameof(DisplayName));
+        OnPropertyChanged(nameof(ItemCount));
+        OnPropertyChanged(nameof(DisplayCountText));
+        OnPropertyChanged(nameof(PendingCount));
+        OnPropertyChanged(nameof(HasPending));
+        OnPropertyChanged(nameof(ShowNeutralCount));
+        OnPropertyChanged(nameof(PendingBadgeText));
         OnPropertyChanged(nameof(DisplayText));
     }
 }

@@ -124,6 +124,12 @@ internal static class DebugMcpServer
                 (Views.MainWindow)Desktop!.MainWindow!, RequireMainVm()));
             return ToolText(await task);
         });
+        host.AddTool("ui_layout_probe", async _ =>
+        {
+            var task = await OnUiAsync(() => UiLayoutProbe.RunAsync(
+                (Views.MainWindow)Desktop!.MainWindow!, RequireMainVm()));
+            return ToolText(await task);
+        });
         host.AddTool("disk_space_items", _ => DiskSpaceItemsAsync());
         host.AddTool("virtual_disk_migration_probe", async _ =>
         {

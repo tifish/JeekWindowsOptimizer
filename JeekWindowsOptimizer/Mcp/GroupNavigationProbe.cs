@@ -160,7 +160,7 @@ internal static class GroupNavigationProbe
             }
 
             foreach (var tab in new[] { (0, "OptimizationGroupNavigation", "OptimizationGroupsItemsControl", "OptimizationContentScrollViewer"),
-                (4, "ToolGroupNavigation", "ToolGroupsItemsControl", "ToolsContentScrollViewer") })
+                (5, "ToolGroupNavigation", "ToolGroupsItemsControl", "ToolsContentScrollViewer") })
             {
                 vm.SearchText = "";
                 vm.SelectedTabIndex = tab.Item1;

@@ -140,12 +140,20 @@ public partial class StartupItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(StatusKey))]
     [NotifyPropertyChangedFor(nameof(StatusText))]
     [NotifyPropertyChangedFor(nameof(NeedsEnforcement))]
+    [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
+    [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
+    [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
+    [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
     public partial bool IsEnabled { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanChoose))]
     [NotifyPropertyChangedFor(nameof(StatusKey))]
     [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
+    [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
+    [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
+    [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
     public partial bool IsApplying { get; set; }
 
     public bool CanChoose => CanToggle && !IsApplying;
@@ -159,6 +167,10 @@ public partial class StartupItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsCompliant))]
     [NotifyPropertyChangedFor(nameof(StatusKey))]
     [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
+    [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
+    [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
+    [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
     public partial StartupDecision? Decision { get; set; }
 
     [ObservableProperty]
@@ -177,6 +189,10 @@ public partial class StartupItem : ObservableObject
     /// <summary>Set when the last apply attempt failed, so the row can show why.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
+    [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
+    [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
+    [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
     public partial string? ErrorMessage { get; set; }
 
     /// <summary>
@@ -185,7 +201,30 @@ public partial class StartupItem : ObservableObject
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
+    [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
+    [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
+    [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
     public partial string? WarningMessage { get; set; }
+
+    public bool IsStatusDanger => !string.IsNullOrEmpty(ErrorMessage) || NeedsEnforcement;
+
+    public bool IsStatusWarning =>
+        !IsStatusDanger
+        && !IsApplying
+        && (IsPending || !string.IsNullOrEmpty(WarningMessage));
+
+    public bool IsStatusSuccess =>
+        !IsStatusDanger
+        && !IsStatusWarning
+        && !IsApplying
+        && IsAllowed
+        && IsEnabled;
+
+    public bool IsStatusNeutral => !IsStatusDanger && !IsStatusWarning && !IsStatusSuccess;
+
+    public bool IsUnsignedOrInvalid =>
+        SignerKind is StartupSignerKind.Unsigned or StartupSignerKind.Invalid;
 
     public bool IsPending => Decision is null;
 

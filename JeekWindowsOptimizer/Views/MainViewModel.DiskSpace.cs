@@ -46,6 +46,7 @@ public partial class MainViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsDiskSpaceActive))]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationActive))]
     [NotifyPropertyChangedFor(nameof(CanScanDiskSpace))]
     [NotifyPropertyChangedFor(nameof(CanCleanDiskSpace))]
     [NotifyPropertyChangedFor(nameof(CanQueueDiskSpace))]
@@ -57,6 +58,7 @@ public partial class MainViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsDiskSpaceActive))]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationActive))]
     [NotifyPropertyChangedFor(nameof(CanScanDiskSpace))]
     [NotifyCanExecuteChangedFor(nameof(ScanDiskSpaceCommand))]
     public partial bool IsDiskSpaceScanning { get; private set; }
@@ -70,7 +72,12 @@ public partial class MainViewModel
     public partial string SystemDriveUsageText { get; set; } = "";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSystemDriveUsageHigh))]
+    [NotifyPropertyChangedFor(nameof(IsSystemDriveUsageCritical))]
     public partial double SystemDriveUsedPercent { get; set; }
+
+    public bool IsSystemDriveUsageHigh => SystemDriveUsedPercent is >= 80 and < 90;
+    public bool IsSystemDriveUsageCritical => SystemDriveUsedPercent >= 90;
 
     public bool IsDiskSpaceTabSelected => SelectedTabIndex == DiskSpaceTabIndex;
 
@@ -723,6 +730,7 @@ public partial class MainViewModel
 
         RefreshSystemDriveUsage();
         UpdateDiskSpaceSummary();
+        OnPropertyChanged(nameof(SelectedTabTitle));
         foreach (var nav in DiskSpaceGroupNavItems)
             nav.NotifyDisplayChanged();
     }

@@ -43,6 +43,7 @@ public partial class MainViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsStartupActive))]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationActive))]
     [NotifyCanExecuteChangedFor(nameof(ScanStartupCommand))]
     [NotifyCanExecuteChangedFor(nameof(EnforceStartupDecisionsCommand))]
     [NotifyCanExecuteChangedFor(nameof(AcceptStartupBaselineCommand))]
@@ -50,6 +51,7 @@ public partial class MainViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsStartupActive))]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationActive))]
     [NotifyCanExecuteChangedFor(nameof(ScanStartupCommand))]
     [NotifyCanExecuteChangedFor(nameof(EnforceStartupDecisionsCommand))]
     [NotifyCanExecuteChangedFor(nameof(AcceptStartupBaselineCommand))]
@@ -57,6 +59,22 @@ public partial class MainViewModel
 
     [ObservableProperty]
     public partial string StartupSummaryText { get; set; } = "";
+
+    [ObservableProperty]
+    public partial int StartupTotalCount { get; private set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasStartupPending))]
+    [NotifyPropertyChangedFor(nameof(StartupTabPendingBadge))]
+    public partial int StartupPendingCount { get; private set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasStartupNeedsEnforcement))]
+    public partial int StartupNeedsEnforcementCount { get; private set; }
+
+    public bool HasStartupPending => StartupPendingCount > 0;
+    public bool HasStartupNeedsEnforcement => StartupNeedsEnforcementCount > 0;
+    public string StartupTabPendingBadge => StartupPendingCount > 0 ? StartupPendingCount.ToString() : "";
 
     /// <summary>Shown when the ledger could not be read, because decisions are not being saved.</summary>
     [ObservableProperty]
@@ -75,6 +93,7 @@ public partial class MainViewModel
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsStartupActive))]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationActive))]
     [NotifyCanExecuteChangedFor(nameof(ScanStartupCommand))]
     [NotifyCanExecuteChangedFor(nameof(EnforceStartupDecisionsCommand))]
     [NotifyCanExecuteChangedFor(nameof(AcceptStartupBaselineCommand))]
@@ -376,6 +395,10 @@ public partial class MainViewModel
         var visible = VisibleStartupItems.ToList();
         var pending = visible.Count(item => item.IsPending);
         var notApplied = visible.Count(item => item.NeedsEnforcement);
+
+        StartupTotalCount = visible.Count;
+        StartupPendingCount = pending;
+        StartupNeedsEnforcementCount = notApplied;
 
         StartupSummaryText = string.Format(
             Localizer.Get("StartupSummary"),

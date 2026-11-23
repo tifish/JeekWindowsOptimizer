@@ -98,6 +98,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
     public string CurrentVersionMenuHeader =>
         string.Format(Localizer.Get("CurrentVersionHeader"), VersionDisplay);
 
+    public string VersionFooterText => VersionDisplay;
+
     private static string VersionDisplay
     {
         get
@@ -194,6 +196,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
         RefreshLanguageMenuCheckState();
         OnPropertyChanged(nameof(WindowTitle));
         OnPropertyChanged(nameof(CurrentVersionMenuHeader));
+        OnPropertyChanged(nameof(VersionFooterText));
+        OnPropertyChanged(nameof(SelectedTabTitle));
+        OnPropertyChanged(nameof(OptimizingTabLabel));
+        OnPropertyChanged(nameof(AntivirusTabLabel));
+        OnPropertyChanged(nameof(PersonalTabLabel));
     }
 
     private void RefreshThemeMenuCheckState()
@@ -222,19 +229,34 @@ public partial class MainViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(IsToolsTabSelected));
         OnPropertyChanged(nameof(CanShowOptimizeButton));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+        OnPropertyChanged(nameof(CanShowShowAllButton));
         OnPropertyChanged(nameof(SelectedTabDescription));
+        OnPropertyChanged(nameof(SelectedTabTitle));
 
         if (value < DiskSpaceTabIndex)
             _selectedCategory = (OptimizationItemCategory)value;
 
         RefreshDisplayedGroups();
         UpdateOptimizeButtonText();
+        UpdateSelectedOptimizationProgress();
 
         if (value == DiskSpaceTabIndex)
             OnDiskSpaceTabSelected();
         else if (value == StartupTabIndex)
             OnStartupTabSelected();
     }
+
+    public string SelectedTabTitle =>
+        SelectedTabIndex switch
+        {
+            0 => Localizer.Get("Optimizing"),
+            1 => Localizer.Get("Antivirus"),
+            2 => Localizer.Get("Personal"),
+            DiskSpaceTabIndex => DiskSpaceTabHeader,
+            StartupTabIndex => Localizer.Get("Startup"),
+            ToolsTabIndex => Localizer.Get("Tools"),
+            _ => "",
+        };
 
     public string SelectedTabDescription =>
         SelectedTabIndex switch
@@ -457,17 +479,30 @@ public partial class MainViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSearchActive))]
     [NotifyPropertyChangedFor(nameof(IsNoSearchResultsVisible))]
+    [NotifyPropertyChangedFor(nameof(CanShowShowAllButton))]
     public partial string SearchText { get; set; } = "";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNoSearchResultsVisible))]
-    public partial bool IsSearchVisible { get; set; }
+    public partial bool IsSearchVisible { get; set; } = true;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNoSearchResultsVisible))]
+    [NotifyPropertyChangedFor(nameof(CanShowShowAllButton))]
     public partial bool ShowOnlyNotOptimized { get; set; }
 
     public bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchText);
+
+    public bool CanShowShowAllButton =>
+        !IsSearchActive && ShowOnlyNotOptimized && IsOptimizationTabSelected;
+
+    [RelayCommand]
+    private void ShowAllOptimizationItems()
+    {
+        ShowOnlyNotOptimized = false;
+    }
+
+    public bool IsAnyOperationActive => IsBusy || IsDiskSpaceActive || IsStartupActive;
 
     public bool IsNoSearchResultsVisible =>
         !IsBusy
@@ -502,6 +537,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(CanShowOptimizeButton));
         OnPropertyChanged(nameof(AreOptimizationItemControlsEnabled));
         OnPropertyChanged(nameof(IsNoSearchResultsVisible));
+        OnPropertyChanged(nameof(IsAnyOperationActive));
         CheckForUpdatesCommand.NotifyCanExecuteChanged();
         RefreshOptimizationItemStatesCommand.NotifyCanExecuteChanged();
     }
@@ -1113,23 +1149,90 @@ public partial class MainViewModel : ObservableObject, IDisposable
         );
     }
 
+    private int _optimizingDone, _optimizingTotal;
+    private int _antivirusDone, _antivirusTotal;
+    private int _personalDone, _personalTotal;
+
+    public string OptimizingTabLabel => Localizer.Get("Optimizing");
+    public string AntivirusTabLabel => Localizer.Get("Antivirus");
+    public string PersonalTabLabel => Localizer.Get("Personal");
+
+    [ObservableProperty]
+    public partial string OptimizingTabBadge { get; set; } = "";
+
+    [ObservableProperty]
+    public partial string AntivirusTabBadge { get; set; } = "";
+
+    [ObservableProperty]
+    public partial string PersonalTabBadge { get; set; } = "";
+
+    [ObservableProperty]
+    public partial double SelectedTabProgressPercent { get; set; }
+
+    [ObservableProperty]
+    public partial string SelectedTabProgressText { get; set; } = "";
+
+    [ObservableProperty]
+    public partial string SelectedTabProgressPercentText { get; set; } = "";
+
+    [ObservableProperty]
+    public partial bool IsSelectedTabFullyOptimized { get; set; }
+
     public void UpdateItemStat(OptimizationItemCategory category)
     {
         var groups = GetStatOptimizationGroups(category).ToList();
 
         var totalItemsCount = groups.Sum(group => group.Items.Count);
         var optimizedItemCount = groups.Sum(group => group.Items.Count(it => it.IsOptimized));
+        var badge = totalItemsCount > 0 ? $"{optimizedItemCount}/{totalItemsCount}" : "";
 
-        // Update the tab header
+        // Update the tab header & compact badge
         if (category == OptimizationItemCategory.Personal)
+        {
+            _personalDone = optimizedItemCount;
+            _personalTotal = totalItemsCount;
+            PersonalTabBadge = badge;
             PersonalTabHeader =
                 $"{Localizer.Get("Personal")} ({optimizedItemCount}/{totalItemsCount})";
+        }
         else if (category == OptimizationItemCategory.Antivirus)
+        {
+            _antivirusDone = optimizedItemCount;
+            _antivirusTotal = totalItemsCount;
+            AntivirusTabBadge = badge;
             AntivirusTabHeader =
                 $"{Localizer.Get("Antivirus")} ({optimizedItemCount}/{totalItemsCount})";
+        }
         else
+        {
+            _optimizingDone = optimizedItemCount;
+            _optimizingTotal = totalItemsCount;
+            OptimizingTabBadge = badge;
             OptimizingTabHeader =
                 $"{Localizer.Get("Optimizing")} ({optimizedItemCount}/{totalItemsCount})";
+        }
+
+        if (IsOptimizationTabSelected && category == _selectedCategory)
+            UpdateSelectedOptimizationProgress();
+    }
+
+    private void UpdateSelectedOptimizationProgress()
+    {
+        if (!IsOptimizationTabSelected)
+            return;
+
+        var (done, total) = _selectedCategory switch
+        {
+            OptimizationItemCategory.Antivirus => (_antivirusDone, _antivirusTotal),
+            OptimizationItemCategory.Personal => (_personalDone, _personalTotal),
+            _ => (_optimizingDone, _optimizingTotal),
+        };
+
+        var percent = total > 0 ? Math.Round(done * 100.0 / total) : 0;
+        SelectedTabProgressPercent = total > 0 ? done * 100.0 / total : 0;
+        SelectedTabProgressText = total > 0 ? $"{done} / {total}" : "0 / 0";
+        SelectedTabProgressPercentText = $"{(int)percent}%";
+        IsSelectedTabFullyOptimized = total > 0 && done >= total;
     }
 
     private void UpdateOptimizationTabHeaders()
@@ -1682,7 +1785,6 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private void ExitSearch()
     {
         SearchText = "";
-        IsSearchVisible = false;
     }
 
     public void Dispose()

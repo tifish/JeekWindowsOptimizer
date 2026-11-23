@@ -810,3 +810,7 @@ StartupWarningServiceStopTimedOut	still stopping after 20s	20 秒内尚未完全
 StartupWarningServiceStopFailed	failed to stop: {0}	停止失败：{0}
 StartupWarningServiceStartFailed	startup type restored, but failed to start: {0}	启动类型已恢复，但立即启动失败：{0}
 StartupWarningDriverReboot	takes effect after reboot	重启后生效
+ShowAllItems	Show all items	显示全部项目
+StartupStatTotal	Total	总计
+StartupStatPending	Pending	待决定
+StartupStatEnforce	Denied · Running	已禁止但运行

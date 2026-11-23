@@ -19,7 +19,7 @@ public class App : Application
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
 
     /// <summary>Win11Fluent dark-mode Checkbox / ToggleSwitch-on fill (~AccentFill).</summary>
-    private static readonly Color Win11FluentControlAccentDark = Color.Parse("#48B2E9");
+    private static readonly Color Win11FluentControlAccentDark = Color.Parse("#4CC2FF");
 
     /// <summary>Win11Fluent light-mode Checkbox / ToggleSwitch-on fill (<see cref="Win11FluentControlAccentDark" /> on white reads harsh).</summary>
     private static readonly Color Win11FluentControlAccentLight = Color.Parse("#0067C0");

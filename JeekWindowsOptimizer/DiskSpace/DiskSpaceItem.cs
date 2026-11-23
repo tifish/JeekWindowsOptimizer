@@ -34,11 +34,15 @@ public abstract partial class DiskSpaceItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(SizeText))]
     [NotifyPropertyChangedFor(nameof(StatusText))]
     [NotifyPropertyChangedFor(nameof(HasStatusText))]
+    [NotifyPropertyChangedFor(nameof(IsFailed))]
+    [NotifyPropertyChangedFor(nameof(IsDone))]
+    [NotifyPropertyChangedFor(nameof(IsQueuedOrWorking))]
     public partial DiskSpaceItemState State { get; protected set; }
 
     /// <summary>Bytes on the system drive this item accounts for; null until scanned.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SizeText))]
+    [NotifyPropertyChangedFor(nameof(HasNonZeroSize))]
     public partial long? SizeBytes { get; protected set; }
 
     [ObservableProperty]
@@ -50,9 +54,14 @@ public abstract partial class DiskSpaceItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsBusy))]
     [NotifyPropertyChangedFor(nameof(StatusText))]
     [NotifyPropertyChangedFor(nameof(HasStatusText))]
+    [NotifyPropertyChangedFor(nameof(IsQueuedOrWorking))]
     public partial int QueuePosition { get; internal set; }
 
     public bool IsBusy => QueuePosition > 0 || State is DiskSpaceItemState.Scanning or DiskSpaceItemState.Working;
+    public bool HasNonZeroSize => SizeBytes is > 0;
+    public bool IsFailed => State == DiskSpaceItemState.Failed;
+    public bool IsDone => State == DiskSpaceItemState.Done;
+    public bool IsQueuedOrWorking => QueuePosition > 0 || State is DiskSpaceItemState.Scanning or DiskSpaceItemState.Working;
 
     internal void ReportOperationFailure(string message)
     {
