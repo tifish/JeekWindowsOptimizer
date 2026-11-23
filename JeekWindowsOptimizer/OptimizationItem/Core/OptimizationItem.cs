@@ -113,7 +113,8 @@ public abstract partial class OptimizationItem : ObservableObject
                         .GetMessageBoxStandard(
                             new MessageBoxStandardParams
                             {
-                                ContentMessage = "请关闭防病毒设置中的篡改防护，然后按确定继续。",
+                                ContentTitle = MessageTitle,
+                                ContentMessage = Localizer.Get("TamperProtectionPromptMessage"),
                                 ButtonDefinitions = ButtonEnum.OkCancel,
                                 Icon = Icon.Info,
                                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -209,7 +210,8 @@ public abstract partial class OptimizationItem : ObservableObject
                     .GetMessageBoxStandard(
                         new MessageBoxStandardParams
                         {
-                            ContentMessage = "需要重启生效。",
+                            ContentTitle = MessageTitle,
+                            ContentMessage = Localizer.Get("RebootRequiredPromptMessage"),
                             ButtonDefinitions = ButtonEnum.Ok,
                             Icon = Icon.Info,
                             WindowStartupLocation = WindowStartupLocation.CenterScreen,

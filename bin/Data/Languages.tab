@@ -6,63 +6,65 @@ ThemeDark	Dark	深色
 ThemeSystem	Follow system	跟随系统
 Update	Update	更新
 RefreshOptimizationStatus	Refresh status (F5)	刷新状态（F5）
-RefreshingOptimizationStatus	Refreshing optimization status...	正在刷新优化状态……
-OptimizationStatusRefreshFinished	Optimization status refreshed	优化状态已刷新
-OptimizationStatusRefreshPartial	Refresh finished; {0} item(s) could not be checked. See logs for details.	刷新完成，{0} 项检测失败，请查看日志。
-OptimizationStatusRefreshFailed	Failed to refresh optimization status. Please try again.	刷新优化状态失败，请重试。
+RefreshingOptimizationStatus	Refreshing status…	正在刷新状态…
+OptimizationStatusRefreshFinished	Status refreshed.	状态已刷新。
+OptimizationStatusRefreshPartial	Refresh finished, but {0} item(s) could not be checked. See logs for details.	刷新完成，有 {0} 项未能检测，详情请查看日志。
+OptimizationStatusRefreshFailed	Failed to refresh status. Please try again.	刷新状态失败，请重试。
 CheckForUpdates	Check for updates	检查更新
 AutoUpdate	Auto-update	自动更新
 CurrentVersionHeader	Current version: {0}	当前版本：{0}
 BuildVersion	Version {0}	版本 {0}
 ProjectHomepage	Project homepage	项目主页
-DevelopmentBuild	Development version	开发版本
-UpdateChecking	Checking for updates...	正在检查更新...
+DevelopmentBuild	Development build	开发版本
+UpdateChecking	Checking for updates…	正在检查更新…
 UpdateCheckFinished	Update check finished.	更新检查已完成。
 UpdateAvailableTitle	Update available	发现新版本
-UpdateAvailableMessage	Version {0} is ready. Restart and install now?	版本 {0} 已就绪。是否立即重启并安装？
-UpdateNoneTitle	No updates	没有更新
-UpdateNoneMessage	You are already using the latest version.	当前已经是最新版本。
-UpdateFailedTitle	Update check failed	更新检查失败
+UpdateAvailableMessage	Version {0} is ready. Restart and install now?	新版本 {0} 已就绪，是否立即重启并安装？
+UpdateNoneTitle	Up to date	已是最新版本
+UpdateNoneMessage	You are already using the latest version.	当前已经是最新版本，无需更新。
+UpdateFailedTitle	Update check failed	检查更新失败
 UpdateFailedMessage	Failed to check for updates: {0}	检查更新失败：{0}
-UpdateLaunchFailedMessage	Failed to launch the updater script.	启动更新脚本失败。
-UpdateDownloading	Downloading update... {0}%	正在下载更新... {0}%
+UpdateLaunchFailedMessage	Failed to launch the updater script.	无法启动更新脚本。
+UpdateDownloading	Downloading update… {0}%	正在下载更新… {0}%
 UpdateDownloadFailedMessage	Failed to download the update: {0}	下载更新失败：{0}
-SearchWatermark	Search settings and tools	搜索设置和工具
+SearchWatermark	Search settings and tools	搜索优化项或工具
 ClearSearch	Clear search	清除搜索
-NoSearchResultsInCurrentTab	No matching results in the current tab.	当前标签页没有匹配结果。
+NoSearchResultsInCurrentTab	No matching items in this tab.	当前标签页没有匹配结果。
 ShowOnlyNotOptimized	Show only not optimized	仅显示未优化
-NoUnoptimizedItemsInCurrentTab	All items in the current tab are optimized.	当前标签页的项目均已优化。
-GroupsNavTitle	Groups	分组
+NoUnoptimizedItemsInCurrentTab	Everything in this tab is already optimized.	当前标签页的项目均已优化。
+GroupsNavTitle	Groups	分组导航
 ExpandAllGroups	Expand all	全部展开
 CollapseAllGroups	Collapse all	全部折叠
 Language	Language	语言
 Theme	Theme	主题
 DefaultFontName	Microsoft YaHei UI, Segoe UI, sans-serif	Microsoft YaHei UI, Segoe UI, sans-serif
-OptimizeSelectedItems	Optimize selected items	优化选中项目
-OptimizeSelectedItemsWithExcludedCount	Optimize selected items ({0} excluded)	优化选中项目（已排除 {0} 项）
-Initializing	Initializing…	正在初始化...
-InitializationFinished	Initialization finished.	初始化完成。
-InitializationFailed	Initialization failed.	初始化出错。
-OperatingItem	Operating: {0}	正在操作：{0}
-OperatingItemFinished	Operation finished: {0}	操作完成：{0}
-PreOptimizationPreparations	Pre-optimization preparations…	优化前准备工作...
+OptimizeSelectedItems	Optimize selected	一键优化选中项
+OptimizeSelectedItemsWithExcludedCount	Optimize selected ({0} excluded)	一键优化选中项（已排除 {0} 项）
+Initializing	Initializing…	正在初始化…
+InitializationFinished	Ready.	初始化完成。
+InitializationFailed	Initialization failed.	初始化失败。
+OperatingItem	Applying: {0}…	正在操作：{0}…
+OperatingItemFinished	Finished: {0}	操作完成：{0}
+PreOptimizationPreparations	Preparing to optimize…	正在执行优化前准备…
 OptimizingItem	Optimizing: {0}…	正在优化：{0}…
-PostOptimizationProcessing	Post-optimization processing…	优化后处理…
-OptimizationCompleted	Optimization completed!	优化已完成！
-PleaseUninstallDriver	Please {0} and restart to continue.	请 {0} 并重启后重试。
-DriverRemovalFailedDetails	The following could not be removed automatically:	以下项目无法自动删除：
+PostOptimizationProcessing	Finishing up…	正在执行后续刷新…
+OptimizationCompleted	Optimization complete.	优化已完成。
+TamperProtectionPromptMessage	Please turn off Tamper Protection in Windows Security, then click OK to continue.	请先在 Windows 安全中心中关闭“篡改防护”，然后点击“确定”继续。
+RebootRequiredPromptMessage	Changes have been applied. Please restart Windows for them to take effect.	设置已应用，重启电脑后生效。
+PleaseUninstallDriver	Please uninstall "{0}" and restart Windows to continue.	请先手动卸载“{0}”并重启电脑，然后再继续。
+DriverRemovalFailedDetails	The following files or services could not be removed automatically:	以下残留文件或服务无法自动删除：
 Optimizing	Optimizing	优化
-OptimizingDescription	Recommended performance and usability tweaks for most PCs. Enable items you need to make Windows snappier and cleaner.	面向大多数电脑的性能与使用体验优化项。按需开启，让 Windows 更流畅、更干净。
+OptimizingDescription	Recommended performance, stability, and usability tweaks with minimal or zero trade-offs. All power-plan tweaks apply only when plugged in (AC) without affecting battery life.	面向大多数电脑的高性价比优化项，兼顾流畅度、稳定性与简洁体验，副作用极小。其中电源方案相关项均仅在插电时生效，不影响电池续航。
 Antivirus	Antivirus	防病毒
-AntivirusDescription	Antivirus has a huge impact on system performance—especially file access and app startup. This page mainly detects installed security products; uninstall requires your manual action. Review risks carefully.	防病毒对系统性能影响巨大，尤其是文件访问与应用启动。本页主要负责检测已安装的安全产品，卸载需你手工操作；请仔细权衡风险。
+AntivirusDescription	Real-time antivirus hooks inspect every file read/write and noticeably slow down app launches, builds, and I/O. This tab detects installed third-party security products for manual removal; review security trade-offs carefully.	实时防病毒会拦截每次文件读写，对磁盘 I/O、软件启动与编译速度影响显著。本页用于检测已安装的第三方安全软件（卸载需手动确认），请结合自身安全需求谨慎权衡。
 Personal	Personal	个性化
-PersonalDescription	Also optimization items, tailored to personal preference. Review each option and enable only what fits your habits.	同样是优化项，但更贴合个人使用习惯。请逐项查看，按需开启适合自己的选项。
+PersonalDescription	Useful optimizations that depend on personal habits or hardware setup—such as sleep/disk spin-down, hibernation, taskbar layout, or Xbox services. Review and enable what fits you.	同样实用的优化项，但是否开启取决于个人习惯或使用场景（如休眠、硬盘停转、任务栏布局、Xbox 服务等）。请逐项按需选择。
 Optimized	Optimized	已优化
 NotOptimized	Not optimized	未优化
 Uninstall	Uninstall	卸载
 Kernel	Kernel	内核
 System	System	系统
-ThirdParty	Third party	第三方
+ThirdParty	Third-party security	第三方安全软件
 Services	Services	服务
 ScheduledTasks	Scheduled Tasks	计划任务
 Display	Display	显示
@@ -299,88 +301,88 @@ DisableConnectedUserExperiencesAndTelemetryServiceDescription	Stops the DiagTrac
 DisableWindowsErrorReportingServiceName	Disable Windows Error Reporting service	禁用 Windows 错误报告服务
 DisableWindowsErrorReportingServiceDescription	Stops Windows from packaging and uploading application crash reports to Microsoft after a crash, saving disk/network activity and avoiding "Checking for a solution" waits. Local crash logs still work.\nEffective immediately.	停止在程序崩溃后打包上传错误报告至微软，省去“正在查找解决方案”的无意义等待和后台上传；本地事件日志仍正常记录。\n立即生效。
 Tools	Tools	工具
-ToolsDescription	Built-in and packaged utilities for diagnosis, cleanup, network fixes, and everyday maintenance.	内置与随包工具，用于诊断、清理、网络修复和日常维护。
+ToolsDescription	Curated diagnostic, system repair, network troubleshooting, and maintenance shortcuts for everyday use.	精选的随包诊断工具与系统快捷入口，用于故障排查、网络修复、磁盘检查与日常维护。
 Other	Other	其他
 Storage	Storage	存储
 Network	Network	网络
 RunTool	Run	运行
-ToolFailed	Failed to run.	运行失败。
+ToolFailed	Failed to run tool.	运行工具失败。
 ToolNotFound	Tool file not found: {0}	找不到工具文件：{0}
-CrystalDiskInfoName	CrystalDiskInfo	CrystalDiskInfo
-CrystalDiskInfoDescription	Check disk SMART health, temperature, and power-on history to detect failing drives early.	查看硬盘 SMART 健康状态、温度和通电记录，提前发现硬盘故障风险。
-CrystalDiskMarkName	CrystalDiskMark	CrystalDiskMark
-CrystalDiskMarkDescription	Benchmark disk read and write speed to identify slow storage or verify SSD performance.	测试磁盘读写速度，用于发现存储性能异常或验证 SSD 性能。
-GeekUninstallerName	Geek Uninstaller	Geek Uninstaller
-GeekUninstallerDescription	Remove desktop applications and scan leftovers when normal uninstall leaves files or registry entries behind.	卸载桌面应用，并在普通卸载残留文件或注册表项时继续清理。
-HotkeyDetectiveName	Hotkey Detective	Hotkey Detective
-HotkeyDetectiveDescription	Find which process registered a global hotkey when a shortcut is occupied or stops responding.	当快捷键被占用或失效时，查找是哪个进程注册了全局快捷键。
-AutorunsName	Autoruns	Autoruns
-AutorunsDescription	Inspect startup programs, services, drivers, scheduled tasks, and shell extensions that slow boot or add background load.	查看启动项、服务、驱动、计划任务和外壳扩展，用于排查开机变慢和后台占用。
-ProcessExplorerName	Process Explorer	Process Explorer
-ProcessExplorerDescription	Analyze running processes, handles, DLLs, and resource usage to find high CPU, file locks, or suspicious processes.	分析运行中的进程、句柄、DLL 和资源占用，用于定位高 CPU、文件占用或可疑进程。
-SystemActivatorName	System activation	系统激活
-SystemActivatorDescription	Run the packaged system activation tool.	运行随包的系统激活工具。
-TcpViewName	TCPView	TCPView
-TcpViewDescription	Inspect active TCP and UDP connections to see which process is using a port or making network connections.	查看当前 TCP 和 UDP 连接，用于定位端口占用或正在联网的进程。
-WinDirStatName	WinDirStat	WinDirStat
-WinDirStatDescription	Visualize disk usage to locate large files and folders when free space is running low.	可视化分析磁盘占用，在空间不足时快速定位大文件和大目录。
+CrystalDiskInfoName	CrystalDiskInfo	CrystalDiskInfo（硬盘健康检测）
+CrystalDiskInfoDescription	Inspect drive SMART health, temperature, bad sectors, and power-on hours to catch failing SSDs or HDDs early. Read-only and completely safe.	查看硬盘 SMART 健康度、温度、坏道与通电时长，提前发现故障隐患。纯只读检测，安全无风险。
+CrystalDiskMarkName	CrystalDiskMark	CrystalDiskMark（磁盘测速）
+CrystalDiskMarkDescription	Benchmark sequential and random read/write speeds to verify SSD performance or diagnose slow storage bottlenecks.	测试磁盘顺序与随机读写速度，用于检验 SSD 真实性能或排查存储变慢原因。
+GeekUninstallerName	Geek Uninstaller	Geek Uninstaller（彻底卸载软件）
+GeekUninstallerDescription	Uninstall desktop software cleanly and scan leftover files and registry entries missed by normal uninstallers.	卸载桌面软件并深度扫描普通卸载残留的文件与注册表项，保持系统干净。
+HotkeyDetectiveName	Hotkey Detective	Hotkey Detective（快捷键冲突检测）
+HotkeyDetectiveDescription	Press any shortcut to find out which background app hijacked that global hotkey.	按下任意快捷键即可查出是哪个后台程序抢占了全局热键，快速解决快捷键失效。
+AutorunsName	Autoruns	Autoruns（全面启动项分析）
+AutorunsDescription	Microsoft Sysinternals tool for inspecting every logon entry, service, driver, scheduled task, and shell extension in detail.	微软 Sysinternals 出品，可深度查看全部登录项、服务、驱动、计划任务与外壳扩展。
+ProcessExplorerName	Process Explorer	Process Explorer（高级任务管理器）
+ProcessExplorerDescription	Microsoft Sysinternals tool for inspecting process trees, loaded DLLs, file locks, and GPU/CPU usage to hunt down high load or locked files.	微软 Sysinternals 出品，可查看进程树、加载 DLL、文件占用句柄与详细资源开销，快速定位卡顿或文件被谁锁住。
+SystemActivatorName	System activation	系统激活工具
+SystemActivatorDescription	Launch the packaged Windows/Office activation helper.	运行随包的 Windows/Office 激活辅助工具。
+TcpViewName	TCPView	TCPView（实时网络连接查看）
+TcpViewDescription	Microsoft Sysinternals tool showing every active TCP/UDP connection and listening port by process—great for checking port conflicts or mystery traffic.	微软 Sysinternals 出品，按进程实时列出所有 TCP/UDP 连接和监听端口，方便排查端口占用或异常联网。
+WinDirStatName	WinDirStat	WinDirStat（磁盘空间可视化分析）
+WinDirStatDescription	Scan any drive and visualize folder sizes as a treemap so you can pinpoint huge files and forgotten folders at a glance.	扫描磁盘并用可视化色块呈现文件夹占用，一眼找出最占空间的“元凶”目录和大文件。
 Repair	Repair	修复
-ToolConfirmTitle	Confirm action	确认操作
-ToolConfirmMessage	Run “{0}”? This action may affect system state.	是否运行“{0}”？此操作可能会影响系统状态。
+ToolConfirmTitle	Confirm action	确认运行
+ToolConfirmMessage	Run “{0}”? This action will modify system or network state.	确定要运行“{0}”吗？此操作会改动系统或网络状态。
 RestartExplorerName	Restart File Explorer	重启文件资源管理器
-RestartExplorerDescription	Restart the Windows shell when the desktop, taskbar, tray icons, or File Explorer are stuck or need settings refreshed.	当桌面、任务栏、托盘图标或文件资源管理器卡住，或需要刷新设置时重启 Windows 外壳。
-RefreshIconCacheName	Refresh icon cache	刷新图标缓存
-RefreshIconCacheDescription	Rebuild icon and thumbnail caches to fix wrong, blank, or stale file and shortcut icons.	重建图标和缩略图缓存，用于修复文件或快捷方式图标错误、空白或不刷新。
-UpdateGroupPolicyName	Update group policy	更新组策略
-UpdateGroupPolicyDescription	Refresh local and domain group policies after changing policy-related settings or joining a managed network.	在修改组策略相关设置或接入受管理网络后，刷新本地和域组策略。
-ServiceManagerName	Service Manager	服务管理器
-ServiceManagerDescription	Manage Windows services to diagnose background components that fail to start, consume resources, or block features.	管理 Windows 服务，用于排查后台组件无法启动、占用资源或影响功能的问题。
+RestartExplorerDescription	Safely restarts explorer.exe when the taskbar, desktop icons, or Explorer freeze, or to apply shell tweaks immediately. Does not close your other open apps.	当任务栏、桌面或资源管理器卡死，或需要立即生效界面设置时安全重启 explorer.exe，不会关闭其他运行中的软件。
+RefreshIconCacheName	Rebuild icon & thumbnail cache	重建图标与缩略图缓存
+RefreshIconCacheDescription	Clears and rebuilds Windows' icon and thumbnail databases to fix blank, broken, or outdated shortcut and file icons.	清理并重建系统图标与缩略图缓存，修复文件或快捷方式图标变白、错乱或不刷新的问题。
+UpdateGroupPolicyName	Refresh Group Policy	刷新组策略（gpupdate）
+UpdateGroupPolicyDescription	Runs gpupdate /force so recently changed policy-based optimizations take effect immediately without waiting.	执行 gpupdate /force，让刚修改的组策略类优化项立即生效，无需等待定时刷新。
+ServiceManagerName	Services (services.msc)	服务管理器
+ServiceManagerDescription	Open Windows Services to start, stop, or inspect startup types of background services.	打开 Windows 服务管理界面，查看、启停或调整各类后台服务的启动方式。
 DeviceManagerName	Device Manager	设备管理器
-DeviceManagerDescription	Check hardware and drivers when devices are missing, disabled, showing errors, or need driver updates.	检查硬件和驱动，用于处理设备丢失、被禁用、报错或需要更新驱动的问题。
+DeviceManagerDescription	Inspect hardware devices, driver versions, exclamation errors, and power management tabs.	查看硬件状态、驱动版本、黄色感叹号报错及设备电源管理选项。
 EventViewerName	Event Viewer	事件查看器
-EventViewerDescription	Review Windows event logs to investigate crashes, service failures, driver errors, and repeated system warnings.	查看 Windows 事件日志，用于排查崩溃、服务失败、驱动错误和反复出现的系统警告。
+EventViewerDescription	Inspect Windows System and Application event logs to diagnose crashes, driver resets (e.g. Event 129), NIC drops, or service errors.	查看 Windows 系统与应用事件日志，排查蓝屏崩溃、硬盘复位、网卡断链或服务报错原因。
 TaskSchedulerName	Task Scheduler	任务计划程序
-TaskSchedulerDescription	Inspect scheduled tasks that run programs automatically, cause popups, wake the PC, or add background work.	查看计划任务，用于排查自动运行程序、弹窗、唤醒电脑或后台任务占用。
-EnvironmentVariablesName	Environment variables	环境变量设置
-EnvironmentVariablesDescription	Edit user and system environment variables such as PATH when command-line tools or development tools cannot be found.	编辑用户和系统环境变量，例如 PATH，用于修复命令行工具或开发工具找不到的问题。
-OptionalFeaturesSettingsName	Optional Features	Windows 可选功能
-OptionalFeaturesSettingsDescription	Enable or disable classic Windows components such as Hyper-V, IIS, SMB, and legacy platform features.	启用或关闭 Hyper-V、IIS、SMB 等传统 Windows 组件和旧版平台功能。
+TaskSchedulerDescription	View and manage scheduled tasks that auto-launch programs, wake the PC, or trigger periodic background scans.	查看并管理各类计划任务，排查定时弹窗、夜间自动唤醒或后台扫描任务。
+EnvironmentVariablesName	Environment Variables	环境变量设置
+EnvironmentVariablesDescription	Edit user and system environment variables (such as PATH) when CLI or development tools cannot be found.	编辑用户和系统环境变量（如 PATH），快速解决命令行或开发工具找不到的问题。
+OptionalFeaturesSettingsName	Windows Optional Features	Windows 可选功能
+OptionalFeaturesSettingsDescription	Enable or disable built-in Windows components such as Hyper-V, WSL, Sandbox, IIS, or SMB support.	开启或关闭 Hyper-V、WSL、Windows 沙盒、IIS、SMB 等系统自带可选组件。
 ReliabilityMonitorName	Reliability Monitor	可靠性监视器
-ReliabilityMonitorDescription	Review a timeline of crashes, failed updates, and app failures to find what changed before instability began.	按时间线查看崩溃、更新失败和应用故障，用于定位系统不稳定前发生了什么变化。
+ReliabilityMonitorDescription	Shows a clean day-by-day timeline of app crashes, blue screens, and recent updates so you can quickly spot what broke stability.	按日期时间线直观汇总近期应用崩溃、蓝屏和更新安装记录，一眼定位系统变不稳前的改动。
 ResourceMonitorName	Resource Monitor	资源监视器
-ResourceMonitorDescription	Inspect CPU, memory, disk, and network activity in detail to find processes causing slowdowns.	详细查看 CPU、内存、磁盘和网络活动，用于定位导致卡顿的进程。
+ResourceMonitorDescription	Live per-process view of CPU, memory, disk I/O paths, and network traffic to diagnose spikes and bottlenecks.	实时细查各进程的 CPU、内存、具体磁盘读写文件路径和网络流量，精准定位卡顿源头。
 FlushDnsName	Flush DNS cache	刷新 DNS 缓存
-FlushDnsDescription	Clear the local DNS cache when websites resolve to old addresses or domain changes do not take effect.	清理本机 DNS 缓存，用于解决网站解析到旧地址或域名变更不生效的问题。
-NetworkConnectionsName	Network connections	网络连接
-NetworkConnectionsDescription	Open adapter settings to enable, disable, rename, or inspect network adapters and IP configuration.	打开网络适配器设置，用于启用、禁用、重命名或查看网卡和 IP 配置。
-WindowsFirewallSettingsName	Windows Firewall settings	Windows 防火墙设置
-WindowsFirewallSettingsDescription	Open Windows Firewall settings to check protection status and turn firewall profiles on or off.	打开 Windows 防火墙设置，用于查看保护状态并开启或关闭各网络配置文件的防火墙。
+FlushDnsDescription	Clears the local DNS resolver cache to fix sites resolving to stale IPs or newly edited hosts entries not taking effect. Safe and instant.	清空本机 DNS 解析缓存，解决网页解析到旧 IP 或刚改的 hosts 不生效问题，安全无副作用。
+NetworkConnectionsName	Network Connections	网络连接（网卡列表）
+NetworkConnectionsDescription	Opens the classic ncpa.cpl adapter list to quickly enable/disable adapters, edit DNS/IP, or check link speed.	直接打开经典网卡管理窗口（ncpa.cpl），方便快速禁用/启用网卡、修改 IP/DNS 或查看协商速率。
+WindowsFirewallSettingsName	Windows Firewall	Windows 防火墙设置
+WindowsFirewallSettingsDescription	Check Windows Defender Firewall status and toggle Domain, Private, or Public network profiles.	查看 Windows 防火墙状态，并按域、专用或公用网络分别开启或关闭防火墙。
 AllowAppsThroughFirewallName	Allow apps through Firewall	允许应用通过防火墙
-AllowAppsThroughFirewallDescription	Choose which apps and features are allowed to communicate through Windows Firewall.	选择允许哪些应用和功能通过 Windows 防火墙进行通信。
-FirewallAdvancedSettingsName	Windows Firewall advanced settings	防火墙高级设置
-FirewallAdvancedSettingsDescription	Manage inbound and outbound firewall rules when an app cannot connect or a port must be allowed or blocked.	管理入站和出站防火墙规则，用于处理应用无法联网、端口放行或端口阻止。
-ResetWinsockName	Reset Winsock	重置 Winsock
-ResetWinsockDescription	Reset the Winsock catalog to fix broken network stacks caused by proxy, VPN, antivirus, or network filter software.	重置 Winsock 目录，用于修复代理、VPN、杀毒或网络过滤软件导致的网络栈异常。
-ResetTcpIpName	Reset TCP/IP	重置 TCP/IP
-ResetTcpIpDescription	Reset TCP/IP settings to repair abnormal IP configuration, gateway, or connectivity issues.	重置 TCP/IP 设置，用于修复 IP 配置、网关或连接异常。
-ReleaseRenewIpName	Release and renew IP	释放/续租 IP
-ReleaseRenewIpDescription	Release and renew DHCP leases when the PC has no valid IP address or cannot reach the network.	释放并续租 DHCP 地址，用于处理电脑没有有效 IP 或无法连接网络的问题。
+AllowAppsThroughFirewallDescription	Choose which applications and services are permitted to accept incoming connections through Windows Firewall.	管理允许通过 Windows 防火墙通信的应用清单，解决局域网联机或本地服务被拦问题。
+FirewallAdvancedSettingsName	Windows Firewall Advanced Security	高级安全 Windows 防火墙
+FirewallAdvancedSettingsDescription	Configure granular inbound and outbound port/program rules when troubleshooting blocked services or locking down traffic.	精细管理入站与出站端口/程序规则，适合放行开发端口或排查连接被拦截。
+ResetWinsockName	Reset Winsock	重置 Winsock 网络目录
+ResetWinsockDescription	Repairs corrupted network socket layers left behind by uninstalled proxies, VPNs, or security filters. Takes effect after reboot.	修复代理、VPN 或安全过滤软件卸载残留导致的网络异常或打不开网页问题。重启后生效。
+ResetTcpIpName	Reset TCP/IP stack	重置 TCP/IP 协议栈
+ResetTcpIpDescription	Resets Windows' TCP/IP configuration to defaults to fix broken routing, gateway, or connectivity issues. Static IP settings will need to be re-entered; reboot recommended.	将系统 TCP/IP 配置恢复默认，修复异常路由、网关或无法上网问题（若曾设过静态 IP 需重新填写，建议重启）。
+ReleaseRenewIpName	Release & renew DHCP IP	释放并重新获取 IP
+ReleaseRenewIpDescription	Drops and requests a fresh DHCP address from your router when the PC has no valid IP or shows "No Internet".	向路由器重新申请 DHCP 地址，快速修复本机无有效 IP 或显示“无 Internet 访问”的问题。
 DiskManagementName	Disk Management	磁盘管理
-DiskManagementDescription	Manage partitions, drive letters, and disk initialization when drives do not appear correctly.	管理分区、盘符和磁盘初始化，用于处理磁盘或分区显示异常。
-DiskCleanupName	Disk Cleanup	磁盘清理
-DiskCleanupDescription	Open Windows Disk Cleanup to remove system caches, temporary files, thumbnails, and other safe cleanup targets.	打开 Windows 磁盘清理，用于清理系统缓存、临时文件、缩略图等安全清理项。
+DiskManagementDescription	Assign drive letters, initialize new drives, and inspect or resize disk partitions.	管理新硬盘初始化、盘符分配以及分区创建与调整。
+DiskCleanupName	Windows Disk Cleanup	Windows 磁盘清理
+DiskCleanupDescription	Opens Windows' built-in Disk Cleanup utility for cleaning standard temporary and system update files.	打开系统自带磁盘清理工具，清理常规临时文件与更新缓存。
 StorageSenseName	Storage Sense settings	存储感知设置
-StorageSenseDescription	Configure automatic cleanup for temporary files, Recycle Bin content, and unused local cloud files.	配置自动清理临时文件、回收站内容和不常用的本地云文件。
-SystemFileCheckerName	Repair system files	修复系统文件
-SystemFileCheckerDescription	Scan and repair protected Windows system files when built-in components crash or behave abnormally.	扫描并修复受保护的 Windows 系统文件，用于处理系统组件崩溃或行为异常。
-DismRestoreHealthName	Repair Windows image	修复 Windows 映像
-DismRestoreHealthDescription	Repair the Windows component store when SFC cannot fix files or system updates and optional features fail.	修复 Windows 组件存储，用于处理 SFC 无法修复、系统更新或可选功能失败的问题。
+StorageSenseDescription	Configure Windows' automatic scheduled cleanup for temporary files, Recycle Bin, and cloud-backed files.	配置系统按计划自动清理临时文件、回收站与云端占位文件。
+SystemFileCheckerName	Repair system files (SFC)	修复系统文件（SFC）
+SystemFileCheckerDescription	Runs sfc /scannow to verify and restore corrupted Windows system files without touching your apps or personal data.	执行 sfc /scannow 扫描并自动修复损坏的 Windows 系统文件，不影响任何已装软件和个人数据。
+DismRestoreHealthName	Repair Windows component store (DISM)	修复系统映像组件（DISM）
+DismRestoreHealthDescription	Runs DISM /RestoreHealth to repair the Windows component store when SFC cannot fix files or Windows Update keeps failing. Safe and non-destructive.	执行 DISM /RestoreHealth 修复系统组件库，解决 SFC 无法修复或 Windows 更新屡次失败的问题，不影响个人文件。
 EditHostsFileName	Edit hosts file	编辑 hosts 文件
-EditHostsFileDescription	Edit the hosts file to override domain resolution for development, testing, or blocking specific domains.	编辑 hosts 文件，用于开发测试时指定域名解析，或阻止特定域名访问。
-SyncSystemTimeName	Sync system time	同步系统时间
-SyncSystemTimeDescription	Synchronize the system clock to fix sign-in, certificate, update, or network errors caused by incorrect time.	同步系统时间，用于修复时间不准导致的登录、证书、更新或网络错误。
-ResetMicrosoftStoreCacheName	Reset Microsoft Store cache	重置 Microsoft Store 缓存
-ResetMicrosoftStoreCacheDescription	Clear Microsoft Store cache when Store pages, downloads, updates, or app installs are stuck or fail.	清理 Microsoft Store 缓存，用于修复商店页面、下载、更新或应用安装卡住和失败。
+EditHostsFileDescription	Opens Windows\System32\drivers\etc\hosts with admin privileges for local development overrides or blocking domains.	以管理员权限打开系统 hosts 文件，方便本地开发绑定域名或屏蔽特定地址。
+SyncSystemTimeName	Sync system clock now	立即同步系统时间
+SyncSystemTimeDescription	Triggers an immediate NTP time sync to fix HTTPS certificate errors, login failures, or 2FA code mismatches caused by clock drift.	立即触发一次 NTP 网络校时，快速修复时间偏差引起的证书报错、登录失败或验证码不匹配。
+ResetMicrosoftStoreCacheName	Reset Microsoft Store cache	重置微软商店缓存
+ResetMicrosoftStoreCacheDescription	Runs wsreset to clear Microsoft Store's cache when Store pages fail to load or app downloads get stuck. Does not uninstall any apps.	执行 wsreset 清理微软商店缓存，修复商店打不开或下载更新卡住的问题，不会卸载任何已装应用。
 ReduceStartupDelayName	Remove startup app delay	取消开机启动项人为延迟
 ReduceStartupDelayDescription	Windows artificially waits up to 10 seconds after showing the desktop before launching startup apps. Removing this delay makes your tray tools ready much faster, with virtually zero downside on modern SSDs.\nTakes effect at next sign-in.	Windows 进入桌面后会人为延迟几秒再启动开机自启程序。取消该延迟可让常用托盘工具更快就绪，在现代 SSD 上几乎没有开机卡顿代价。\n下次登录生效。
 DisableWindowsCopilotName	Disable Windows Copilot	禁用 Windows Copilot
@@ -530,281 +532,281 @@ UninstallGamingServicesName	Uninstall Microsoft Gaming Services	卸载 Microsoft
 UninstallGamingServicesDescription	Removes the background Gaming Services package used by Xbox/Store PC games. Trade-off: breaks PC Game Pass and Xbox Store games (does not affect Steam/Epic); only enable if you don't play Xbox PC games.	卸载供 Xbox/商店 PC 游戏使用的后台游戏服务组件。代价是无法运行 PC Game Pass 与微软商店游戏（不影响 Steam/Epic），仅建议不玩 Xbox PC 游戏的用户开启。
 LanguageSystem	Follow system	跟随系统
 Settings	Settings	设置
-StorageMode	Storage mode	存储模式
-StorageModeDefault	Default (Roaming)	默认（漫游）
-StorageModePortable	Portable	便携
-StorageModeCustom	Custom…	自定义…
-StorageModeCustomPickerTitle	Select a folder to store settings	选择保存设置的文件夹
-StorageSwitchTitle	Switch storage mode	切换存储模式
-StorageSwitchMoveFilesMessage	Move the existing settings files to the new location?\nChoose No to keep the old files and use the new location directly.	是否将现有设置文件移动到新位置？\n选择“否”将保留旧文件，直接使用新位置存储。
-StorageSwitchPortableMustMoveMessage	Leaving portable mode requires moving the settings files, otherwise the app will switch back to portable mode on next start. Move the files and continue?	离开便携模式必须移动设置文件，否则下次启动会自动变回便携模式。是否移动文件并继续？
-UpdateInterval	Check interval	检查间隔
+StorageMode	Settings storage	配置存储位置
+StorageModeDefault	Default (Roaming)	默认（用户漫游目录）
+StorageModePortable	Portable (App folder)	便携（程序目录）
+StorageModeCustom	Custom folder…	自定义目录…
+StorageModeCustomPickerTitle	Choose a folder to store settings	选择用于保存配置的文件夹
+StorageSwitchTitle	Switch settings storage	切换配置存储位置
+StorageSwitchMoveFilesMessage	Move your existing settings files to the new location?\nChoose No to keep the old files where they are and start using the new folder directly.	是否将现有配置文件迁移到新位置？\n选择“否”将保留旧文件，直接改用新位置存储。
+StorageSwitchPortableMustMoveMessage	Leaving portable mode requires moving the settings files out of the app folder, otherwise the app will switch back to portable mode next time. Move the files and continue?	退出便携模式必须移走程序目录中的配置文件，否则下次启动仍会自动进入便携模式。是否迁移文件并继续？
+UpdateInterval	Check interval	自动检查间隔
 UpdateIntervalEvery6Hours	Every 6 hours	每 6 小时
 UpdateIntervalDaily	Daily	每天
 UpdateIntervalWeekly	Weekly	每周
-UpdateIntervalNever	Never	无
+UpdateIntervalNever	Never	从不
 DiskSpace	{0}: Drive Space	{0} 盘空间
-DiskSpaceDescription	What to do when the system drive runs out of room: scan how much can be reclaimed and clean it, then move large folders and the paging file to another drive.	系统盘空间不足时的处理方案：先扫描可释放空间并清理，再把大文件夹和页面文件迁移到其他磁盘。
+DiskSpaceDescription	Running low on system-drive space? Scan and safely clean system and developer caches first, then relocate large user folders, the paging file, or WSL/Docker disks to another drive.	系统盘空间告急？先扫描并安全清理系统与开发缓存，再将大体积用户文件夹、页面文件或 WSL/Docker 虚拟磁盘迁移到其他硬盘。
 DiskSpaceCleanup	System and application cleanup	系统与应用清理
-DiskSpaceRelocation	Move to another drive	迁移到其他磁盘
+DiskSpaceRelocation	Relocate to another drive	迁移到其他磁盘
 ScanDiskSpace	Rescan	重新扫描
-CleanCheckedDiskSpaceItems	Clean checked items	清理选中项
+CleanCheckedDiskSpaceItems	Clean checked	清理选中项
 DiskSpaceSlowHint	Takes a while	耗时较长
 DiskSpaceNotScanned	Not scanned yet	尚未扫描
 DiskSpaceScanning	Scanning…	正在扫描…
 DiskSpaceScanningAll	Scanning disk space…	正在扫描磁盘空间…
-DiskSpaceScanFinished	Scan finished. About {0} can be reclaimed.	扫描完成，约可释放 {0}。
-DiskSpaceScanFinishedUpTo	Scan finished. Up to {0} can be reclaimed.	扫描完成，最多可释放 {0}。
-DiskSpaceReclaimableSummary	Reclaimable: about {0} (checked: {1})	可释放约 {0}（已选中 {1}）
-DiskSpaceReclaimableSummaryUpTo	Reclaimable: up to {0} (checked: {1})	可释放最多 {0}（已选中 {1}）
+DiskSpaceScanFinished	Scan complete. About {0} can be freed.	扫描完成，预计可释放约 {0}。
+DiskSpaceScanFinishedUpTo	Scan complete. Up to {0} can be freed.	扫描完成，最多可释放 {0}。
+DiskSpaceReclaimableSummary	Reclaimable: about {0} (checked: {1})	可释放约 {0}（已选 {1}）
+DiskSpaceReclaimableSummaryUpTo	Reclaimable: up to {0} (checked: {1})	最多可释放 {0}（已选 {1}）
 DiskSpaceUpToSize	up to {0}	最多 {0}
 DiskSpaceCleaning	Cleaning…	正在清理…
 DiskSpaceCleaningItem	Cleaning: {0}…	正在清理：{0}…
 DiskSpaceCleaned	Freed {0}	已释放 {0}
-DiskSpaceCleanIncomplete	Some files could not be removed.	部分文件未能删除。
+DiskSpaceCleanIncomplete	Some files were in use and could not be removed.	部分文件正被占用，未能删除。
 DiskSpaceFailed	Failed: {0}	失败：{0}
-DiskSpaceNothingToClean	Nothing to clean among the checked items.	选中的项目没有可清理内容。
-DiskSpaceCleanConfirmTitle	Clean disk space	清理磁盘空间
-DiskSpaceCleanConfirmMessage	{0} item(s) will be cleaned, freeing about {1}. Deleted files cannot be recovered. Continue?	将清理 {0} 项，预计释放约 {1}。删除的文件无法恢复，是否继续？
-DiskSpaceCleanConfirmMessageUpTo	{0} item(s) will be cleaned, freeing up to {1}. Deleted files cannot be recovered. Continue?	将清理 {0} 项，最多释放 {1}。删除的文件无法恢复，是否继续？
-DiskSpaceCleanCompleted	Cleanup finished. Freed {0}.	清理完成，共释放 {0}。
+DiskSpaceNothingToClean	No reclaimable data in the checked items.	选中的项目当前无需清理。
+DiskSpaceCleanConfirmTitle	Confirm cleanup	确认清理
+DiskSpaceCleanConfirmMessage	Clean {0} item(s) and free about {1}? Deleted files cannot be recovered.	即将清理 {0} 项，预计释放约 {1}。删除后无法恢复，是否继续？
+DiskSpaceCleanConfirmMessageUpTo	Clean {0} item(s) and free up to {1}? Deleted files cannot be recovered.	即将清理 {0} 项，最多可释放 {1}。删除后无法恢复，是否继续？
+DiskSpaceCleanCompleted	Cleanup complete. Freed {0}.	清理完成，共释放 {0}。
 SystemDriveUsage	System drive {0}: {1} used of {2}, {3} free	系统盘 {0}：已用 {1} / 共 {2}，可用 {3}
 DiskSpaceCurrentLocation	Current location: {0}	当前位置：{0}
-DiskSpaceMove	Move	移动
-DiskSpaceMoving	Moving…	正在移动…
-DiskSpaceMovingItem	Moving: {0}…	正在移动：{0}…
-DiskSpaceMoved	Moved to {0}	已移动到 {0}
-DiskSpaceMovedRebootRequired	Set to {0}; takes effect after reboot	已设置为 {0}，重启后生效
-DiskSpaceMoveCompleted	Move finished: {0}	移动完成：{0}
-DiskSpaceMoveFailed	Move failed: {0}	移动失败：{0}
-DiskSpaceNoTargetDrive	No other NTFS drive available	没有可用的其他 NTFS 磁盘
+DiskSpaceMove	Move	迁移
+DiskSpaceMoving	Moving…	正在迁移…
+DiskSpaceMovingItem	Moving: {0}…	正在迁移：{0}…
+DiskSpaceMoved	Moved to {0}	已迁移至 {0}
+DiskSpaceMovedRebootRequired	Set to {0} (takes effect after reboot)	已设为 {0}（重启后生效）
+DiskSpaceMoveCompleted	Relocation complete: {0}	迁移完成：{0}
+DiskSpaceMoveFailed	Relocation failed: {0}	迁移失败：{0}
+DiskSpaceNoTargetDrive	No other NTFS drive available	没有其他可用的 NTFS 磁盘
 DiskSpaceDriveLabel	{0} ({1}, {2} free)	{0}（{1}，可用 {2}）
-DiskSpaceMoveConfirmTitle	Move to another drive	移动到其他磁盘
-DiskSpaceMoveConfirmMessage	Move "{0}" ({3})\nfrom: {1}\nto: {2}\nContinue?	将把“{0}”（{3}）\n从：{1}\n移动到：{2}\n是否继续？
+DiskSpaceMoveConfirmTitle	Confirm relocation	确认迁移
+DiskSpaceMoveConfirmMessage	Move "{0}" ({3})\nfrom: {1}\nto: {2}\nContinue?	将把“{0}”（{3}）\n从：{1}\n迁移到：{2}\n是否继续？
 RecycleBinCleanupName	Recycle Bin	回收站
-RecycleBinCleanupDescription	Permanently removes deleted files still held in the Recycle Bin on all drives.	永久删除所有磁盘回收站中的文件。
-TempFilesCleanupName	Temporary files	临时文件
-TempFilesCleanupDescription	The Windows Temp folder and your user Temp folder. Files in use are skipped.	Windows 的 Temp 目录和当前用户的 Temp 目录。正在使用的文件会被跳过。
+RecycleBinCleanupDescription	Permanently empties deleted files from the Recycle Bin on all drives. Check that you don't need to restore any deleted files first.	永久清空所有磁盘回收站中的文件。清理前请确认其中没有需要还原的误删文件。
+TempFilesCleanupName	Temporary files	系统与用户临时文件
+TempFilesCleanupDescription	Removes leftover temporary files from Windows\Temp and your user Temp folder while automatically skipping files in use. Completely safe, with zero impact on installed apps or personal data.	清理 Windows\Temp 与当前用户 Temp 目录中的临时残留，正在使用的文件会自动跳过。安全可清，不影响已装软件与个人数据。
 WindowsUpdateCacheCleanupName	Windows Update download cache	Windows Update 下载缓存
-WindowsUpdateCacheCleanupDescription	Downloaded update packages in the SoftwareDistribution download folder. Windows re-downloads what it still needs; also fixes stuck update downloads.	SoftwareDistribution 下载目录中的更新包，Windows 会重新下载仍需要的部分。也可用于修复更新下载卡住。
+WindowsUpdateCacheCleanupDescription	Clears downloaded update installers in SoftwareDistribution\Download. Safe to delete—Windows simply re-downloads anything still needed, and clearing it also unsticks failed updates.	清理 SoftwareDistribution\Download 中的已下载更新包。安全可清，系统需要时会自动重新下载，还能顺带修复卡住的系统更新。
 DeliveryOptimizationCacheCleanupName	Delivery Optimization cache	传递优化缓存
-DeliveryOptimizationCacheCleanupDescription	Update and Store packages cached for sharing with other PCs.	为与其他电脑共享而缓存的更新和商店安装包。
-CrashDumpsCleanupName	Crash dumps	崩溃转储文件
-CrashDumpsCleanupDescription	MEMORY.DMP, Minidump, and LiveKernelReports left by blue screens and driver faults. Only needed for troubleshooting.	蓝屏和驱动故障留下的 MEMORY.DMP、Minidump 和 LiveKernelReports。仅在排查故障时有用。
-WindowsLogsCleanupName	Servicing logs and error reports	系统日志与错误报告
-WindowsLogsCleanupDescription	CBS, DISM, and Windows Update logs plus queued Windows Error Reporting files. CBS logs can silently grow to tens of gigabytes.	CBS、DISM、Windows Update 日志以及排队中的 Windows 错误报告文件。CBS 日志可能悄悄膨胀到几十 GB。
-PreviousInstallationCleanupName	Previous Windows installation	上一个 Windows 版本
-PreviousInstallationCleanupDescription	Windows.old and hidden upgrade folders kept after a feature update. Windows offers "go back to the previous version" for a limited number of days; this row is checked automatically once that window has passed.	功能更新后保留的 Windows.old 和隐藏的升级文件夹。Windows 只在有限天数内提供“退回上一版本”，超过这个期限后本项会自动勾选。
-PagingFileRelocationName	Paging file	页面文件
-PagingFileRelocationDescription	Moves the paging file (pagefile.sys) to another drive as a single system-managed file. Takes effect after a reboot. Without a paging file on the system drive Windows cannot write a full kernel memory dump on a blue screen.	将页面文件（pagefile.sys）迁移到其他磁盘，并由系统管理大小。重启后生效。系统盘没有页面文件时，蓝屏将无法写入完整内核内存转储。
-DesktopRelocationName	Desktop	桌面
-DesktopRelocationDescription	Moves the Desktop folder and its contents to the root of the chosen drive (e.g. D:\Desktop), using the same shell redirect as Explorer's Location tab.	将“桌面”文件夹及其内容迁移到所选磁盘的根目录（如 D:\Desktop），采用与资源管理器“位置”页签相同的方式。
-DocumentsRelocationName	Documents	文档
-DocumentsRelocationDescription	Moves the Documents folder and its contents to the root of the chosen drive (e.g. D:\Documents). Apps that store data here (WeChat, games, Office) keep working.	将“文档”文件夹及其内容迁移到所选磁盘的根目录（如 D:\Documents）。在此保存数据的应用（微信、游戏、Office）不受影响。
-DownloadsRelocationName	Downloads	下载
-DownloadsRelocationDescription	Moves the Downloads folder and its contents to the root of the chosen drive (e.g. D:\Downloads). Usually the biggest user folder.	将“下载”文件夹及其内容迁移到所选磁盘的根目录（如 D:\Downloads）。通常是最大的用户文件夹。
-PicturesRelocationName	Pictures	图片
-PicturesRelocationDescription	Moves the Pictures folder and its contents to the root of the chosen drive (e.g. D:\Pictures).	将“图片”文件夹及其内容迁移到所选磁盘的根目录（如 D:\Pictures）。
-MusicRelocationName	Music	音乐
-MusicRelocationDescription	Moves the Music folder and its contents to the root of the chosen drive (e.g. D:\Music).	将“音乐”文件夹及其内容迁移到所选磁盘的根目录（如 D:\Music）。
-VideosRelocationName	Videos	视频
-VideosRelocationDescription	Moves the Videos folder and its contents to the root of the chosen drive (e.g. D:\Videos).	将“视频”文件夹及其内容迁移到所选磁盘的根目录（如 D:\Videos）。
+DeliveryOptimizationCacheCleanupDescription	Deletes cached Windows Update and Store chunks kept for sharing with other PCs. Completely safe to clean with zero impact on installed apps or updates.	清理为向其他电脑分发而缓存的更新和商店安装包。安全可清，不影响已装应用或系统更新。
+CrashDumpsCleanupName	System crash dumps	系统蓝屏崩溃转储
+CrashDumpsCleanupDescription	Removes MEMORY.DMP, Minidump, and LiveKernelReports left behind by past blue screens and driver crashes, often reclaiming several gigabytes. Only useful if you are actively debugging a recent crash.	清理历史蓝屏和驱动故障遗留的 MEMORY.DMP、Minidump 与 LiveKernelReports，常可释放数 GB 空间；仅在排查近期蓝屏时有用。
+WindowsLogsCleanupName	Servicing logs & error reports	系统维护日志与错误报告
+WindowsLogsCleanupDescription	Clears CBS, DISM, and Windows Update logs plus queued error-reporting files. CBS logs can silently balloon to tens of gigabytes; safe to clean with no effect on Windows.	清理 CBS、DISM、Windows Update 日志及排队中的错误报告文件。CBS 日志有时会悄悄膨胀到几十 GB，安全可清，不影响系统运行。
+PreviousInstallationCleanupName	Previous Windows version (Windows.old)	上一个 Windows 版本（Windows.old）
+PreviousInstallationCleanupDescription	Removes Windows.old and upgrade leftovers kept after a major Windows update, often freeing 15–30 GB. Automatically checked once Windows' rollback window expires; deleting earlier only gives up rolling back to the old version.	清理大版本升级后保留的 Windows.old 与升级备份，常可释放 15~30 GB。回滚期过后会自动勾选；提前清理仅放弃“退回上一版本”功能，不影响当前系统。
+PagingFileRelocationName	Paging file (virtual memory)	页面文件（虚拟内存）
+PagingFileRelocationDescription	Moves pagefile.sys (often 8–32+ GB) to another drive as a single system-managed file. Takes effect after reboot. Trade-off: without a system-drive pagefile, Windows cannot write a full kernel dump on a blue screen (normal system operation is unaffected).	将 pagefile.sys（常占 8~32 GB 以上）迁移至其他磁盘并保持系统自动管理，重启生效。代价仅是蓝屏时无法写入完整内核转储，日常使用完全无影响。
+DesktopRelocationName	Desktop folder	桌面文件夹
+DesktopRelocationDescription	Relocates your Desktop folder to the chosen drive (e.g. D:\Desktop) using Windows' native folder redirection so desktop icons and apps keep working seamlessly.	采用 Windows 原生“位置”重定向将“桌面”迁移到所选盘根目录（如 D:\Desktop），桌面图标与所有软件照常使用，以后往桌面放大文件不再占 C 盘。
+DocumentsRelocationName	Documents folder	文档文件夹
+DocumentsRelocationDescription	Relocates your Documents folder to the chosen drive (e.g. D:\Documents) using Windows' native redirection. Apps storing data here (WeChat, games, Office) keep working seamlessly.	采用 Windows 原生重定向将“文档”迁移到所选盘（如 D:\Documents）。存放在此的微信、游戏存档和 Office 文件都会无缝继续工作。
+DownloadsRelocationName	Downloads folder	下载文件夹
+DownloadsRelocationDescription	Relocates your Downloads folder to the chosen drive (e.g. D:\Downloads)—usually the single biggest user folder—so browser downloads stop filling up the system drive.	将通常占用最大的“下载”文件夹迁移到所选盘（如 D:\Downloads），此后浏览器和下载工具默认保存的文件不再塞满系统盘。
+PicturesRelocationName	Pictures folder	图片文件夹
+PicturesRelocationDescription	Relocates your Pictures folder and screenshots to the chosen drive (e.g. D:\Pictures) using Windows' native redirection.	采用 Windows 原生重定向将“图片”及截图文件夹迁移到所选盘（如 D:\Pictures），应用无缝衔接。
+MusicRelocationName	Music folder	音乐文件夹
+MusicRelocationDescription	Relocates your Music folder to the chosen drive (e.g. D:\Music) using Windows' native redirection.	采用 Windows 原生重定向将“音乐”文件夹迁移到所选盘（如 D:\Music），应用无缝衔接。
+VideosRelocationName	Videos folder	视频文件夹
+VideosRelocationDescription	Relocates your Videos folder and screen recordings to the chosen drive (e.g. D:\Videos) using Windows' native redirection.	采用 Windows 原生重定向将“视频”及录屏文件夹迁移到所选盘（如 D:\Videos），应用无缝衔接。
 PagingFileAutomatic	automatically managed	自动管理
-PagingFileSystemManaged	system managed size	系统管理大小
-PagingFileNone	No paging file	未启用页面文件
-DiskSpaceMoveTargetExistsNote	The target folder already exists and is not empty; its contents will be merged with the moved files.	目标文件夹已存在且不为空，移动的文件将与其中的内容合并。
+PagingFileSystemManaged	system-managed size	系统自动管理大小
+PagingFileNone	Disabled	未启用
+DiskSpaceMoveTargetExistsNote	Note: the destination folder already exists and is not empty; moved files will be merged into it.	提示：目标文件夹已存在且不为空，迁移的文件将与其中现有内容合并。
 DiskSpaceMoveProgressCopying	Copying… {0} / {1}	正在复制… {0} / {1}
-DiskSpaceMoveProgressDeleting	Removing source files…	正在删除源文件…
-MoveCheckedDiskSpaceItems	Move checked items	移动选中项
-DiskSpaceMoveSummary	checked to move: {0}	已选中迁移 {0}
-DiskSpaceRestoreDefault	Restore default location	恢复默认位置
-DiskSpaceRestoreDefaultConfirmTitle	Restore default location	恢复默认位置
-DiskSpaceRestoreDefaultConfirmMessage	Move "{0}" ({3})\nfrom: {1}\nback to: {2}\nContinue?	将把“{0}”（{3}）\n从：{1}\n移回：{2}\n是否继续？
-DiskSpaceRestoringItem	Restoring: {0}…	正在恢复：{0}…
-DiskSpaceRestoreCompleted	Restored: {0}	已恢复默认位置：{0}
+DiskSpaceMoveProgressDeleting	Cleaning up source files…	正在清理源文件…
+MoveCheckedDiskSpaceItems	Move checked	迁移选中项
+DiskSpaceMoveSummary	checked to move: {0}	已选迁移 {0}
+DiskSpaceRestoreDefault	Restore default	恢复默认位置
+DiskSpaceRestoreDefaultConfirmTitle	Restore default location	确认恢复默认位置
+DiskSpaceRestoreDefaultConfirmMessage	Move "{0}" ({3})\nfrom: {1}\nback to: {2}\nContinue?	将把“{0}”（{3}）\n从：{1}\n迁回：{2}\n是否继续？
+DiskSpaceRestoringItem	Restoring: {0}…	正在迁回默认位置：{0}…
+DiskSpaceRestoreCompleted	Restored to default: {0}	已迁回默认位置：{0}
 DiskSpaceRestoreFailed	Restore failed: {0}	恢复失败：{0}
-DiskSpaceNoItemsCheckedToMove	No relocation items are checked.	没有选中任何迁移项。
-DiskSpaceBatchMoveConfirmTitle	Move checked items	移动选中项
-DiskSpaceBatchMoveConfirmMessage	{0} item(s), {1} in total, will be moved:\n{2}\nContinue?	将移动 {0} 项，共 {1}：\n{2}\n是否继续？
+DiskSpaceNoItemsCheckedToMove	No relocation items are checked.	请先勾选要迁移的项目。
+DiskSpaceBatchMoveConfirmTitle	Confirm batch relocation	确认批量迁移
+DiskSpaceBatchMoveConfirmMessage	Move {0} item(s) totaling {1}:\n{2}\nContinue?	即将迁移 {0} 项，共 {1}：\n{2}\n是否继续？
 DiskSpaceBatchMoveLine	{0}: {1} → {2} ({3})	{0}：{1} → {2}（{3}）
-DiskSpaceBatchMoveInsufficientSpace	Not enough free space on {0}: {1} needed, {2} available.	{0} 剩余空间不足：需要 {1}，可用 {2}。
-DiskSpaceBatchMoveCompleted	Move finished: {0} succeeded, {1} failed.	移动完成：{0} 项成功，{1} 项失败。
+DiskSpaceBatchMoveInsufficientSpace	Not enough free space on {0}: {1} needed, {2} available.	{0} 可用空间不足：需要 {1}，当前仅剩 {2}。
+DiskSpaceBatchMoveCompleted	Batch relocation complete: {0} succeeded, {1} failed.	批量迁移完成：成功 {0} 项，失败 {1} 项。
 PagingFileDefaultLocation	Automatically managed (system drive)	自动管理（系统盘）
 DriveTypeSsd	SSD	固态硬盘
 DriveTypeHdd	HDD	机械硬盘
-DriveTypeUnknown	disk	硬盘
-DiskSpaceRestored	Restored to default location: {0}	已恢复默认位置：{0}
-DiskSpaceRestoredRebootRequired	Restored to default ({0}); takes effect after reboot	已恢复默认（{0}），重启后生效
-PreviousInstallationRollbackAvailable	You can still go back to the previous Windows version for {0} more day(s); deleting this gives that up.	还可以在 {0} 天内退回上一个 Windows 版本，删除后将放弃该能力。
-PreviousInstallationRollbackExpired	The rollback window has passed; these files are leftovers.	回滚期已过，这些文件已是残留数据。
-DismResetBaseName	Deep-clean the component store (WinSxS)	深度清理组件存储（WinSxS）
-DismResetBaseDescription	Runs DISM /StartComponentCleanup /ResetBase to remove every superseded component, including those kept so recent updates can be uninstalled. Frees the last gigabytes; afterwards installed updates can no longer be uninstalled.	执行 DISM /StartComponentCleanup /ResetBase，删除全部被替代的组件，包括为卸载近期更新而保留的部分。可再释放一些空间，但之后已安装的更新将无法卸载。
-DiskSpaceScanInProgressHint	Still scanning; only finished items are included in cleanup.	仍在扫描；清理仅包含已扫描完成的项目。
-DiskSpaceCleanCancelled	Cleanup cancelled; freed space is unknown. Scan again before retrying.	清理已取消，释放空间未知。请重新扫描后重试。
-DiskSpaceCleanMeasurementFailed	Could not measure remaining files; freed space is unknown.	无法统计剩余文件，释放空间未知。
-DiskSpaceCleanCompletedWithErrors	Cleanup finished with errors. Measured reduction: {0}. Check the failed items.	清理结束，部分项目失败。已统计减少：{0}。请查看失败项目。
+DriveTypeUnknown	Drive	磁盘
+DiskSpaceRestored	Restored to default: {0}	已迁回默认位置：{0}
+DiskSpaceRestoredRebootRequired	Restored to default ({0}, takes effect after reboot)	已恢复默认（{0}，重启后生效）
+PreviousInstallationRollbackAvailable	You can still roll back to the previous Windows version for {0} more day(s); cleaning removes that option.	还剩 {0} 天可退回上一 Windows 版本，清理后将无法回退。
+PreviousInstallationRollbackExpired	The rollback window has passed; safe to remove.	回滚期已过，可放心清理。
+DismResetBaseName	Deep-clean WinSxS component store	深度清理 WinSxS 组件库
+DismResetBaseDescription	Runs DISM /StartComponentCleanup /ResetBase to purge all superseded update components and reclaim extra gigabytes. Trade-off: currently installed updates can no longer be uninstalled (future updates work normally).	执行 DISM /StartComponentCleanup /ResetBase 彻底清除所有被替代的旧更新组件，进一步榨出数 GB 空间。代价仅是已装更新无法再卸载，不影响后续正常更新。
+DiskSpaceScanInProgressHint	Still scanning; cleanup applies only to items that have finished scanning.	仍在扫描中，清理只会处理已完成扫描的项目。
+DiskSpaceCleanCancelled	Cleanup was cancelled; actual freed space is unknown. Rescan before retrying.	清理已取消，实际释放量未知，请重新扫描后再试。
+DiskSpaceCleanMeasurementFailed	Could not measure remaining size; actual freed space is unknown.	无法统计剩余大小，实际释放量未知。
+DiskSpaceCleanCompletedWithErrors	Cleanup finished with some errors. Freed about {0}; check the failed items.	清理完成但部分项失败，已释放约 {0}，请查看失败项提示。
 EdgeCacheCleanupName	Microsoft Edge cache	Microsoft Edge 缓存
 ChromeCacheCleanupName	Google Chrome cache	Google Chrome 缓存
-BrowserCacheCleanupDescription	Web and code caches in standard browser profiles. Close the browser, including background processes, before cleaning. Cookies, passwords, history and site storage are preserved; websites will download caches again.	标准浏览器配置目录中的网页与代码缓存。清理前请关闭浏览器及其后台进程。保留 Cookie、密码、历史记录和网站存储；再次访问网站会重新下载缓存。
-BrowserCacheCloseFirst	Close {0}, including its background processes, before cleaning its cache.	请先关闭 {0} 及其后台进程，再清理缓存。
+BrowserCacheCleanupDescription	Clears web and code caches in standard browser profiles. Close the browser (including background processes) first. Cookies, logins, bookmarks, history, and site data are untouched—pages just re-cache on next visit.	清理标准浏览器配置中的网页与脚本缓存（清理前请彻底关闭浏览器）。完全保留登录状态、Cookie、书签、历史记录与网站数据，仅下次访问网页时重新缓存。
+BrowserCacheCloseFirst	Please close {0} (including background processes) before cleaning its cache.	请先彻底关闭 {0} 及其后台进程，再清理缓存。
 NuGetHttpCacheCleanupName	NuGet download cache	NuGet 下载缓存
-NuGetHttpCacheCleanupDescription	Clear NuGet HTTP downloads on the system drive using the .NET SDK. Keep extracted packages; future downloads may use the network again. Respects NuGet's configured cache location.	通过 .NET SDK 清理系统盘上的 NuGet HTTP 下载缓存，保留已解压包。后续下载可能重新联网。使用 NuGet 配置的缓存位置。
-NuGetPackagesCleanupName	NuGet extracted packages	NuGet 已解压包
-NuGetPackagesCleanupDescription	Clear NuGet global packages on the system drive using the .NET SDK. Close development tools first. Builds will need package restore and may require network/private feed access; offline builds may fail. Not selected by default.	通过 .NET SDK 清理系统盘上的 NuGet 全局已解压包。请先关闭开发工具。后续构建需要还原依赖，可能需要网络或私有源权限，离线构建可能失败。默认不勾选。
-NuGetCacheQueryFailed	Could not query the NuGet cache. Check that a .NET SDK is installed and its configuration is valid.	无法查询 NuGet 缓存。请检查是否安装了 .NET SDK，以及配置是否有效。
-NuGetCacheClearFailed	NuGet could not clear all cache files. Close development tools and retry.	NuGet 未能清理全部缓存文件。请关闭开发工具后重试。
-NuGetCacheUnsafePath	The NuGet cache path is a protected directory or contains links; automatic cleanup is unavailable.	NuGet 缓存位置是受保护目录或包含链接，无法自动清理。
-UserCrashDumpsCleanupName	Application crash dumps	应用崩溃转储
-UserCrashDumpsCleanupDescription	Application .dmp files in the current user's standard LocalAppData CrashDumps folder on the system drive. Deleting them removes evidence used to investigate past crashes. Not selected by default; custom dump locations are not scanned.	系统盘上当前用户 LocalAppData 下标准 CrashDumps 目录中的应用 .dmp 文件。删除后将失去排查既往崩溃的诊断资料。默认不勾选，不扫描自定义转储位置。
+NuGetHttpCacheCleanupDescription	Clears NuGet HTTP download cache on the system drive via the .NET SDK while keeping extracted packages intact. Safe to clean; future new package downloads will simply fetch from the network again.	通过 .NET SDK 清理系统盘上的 NuGet HTTP 下载缓存，保留已解压包。安全可清，仅后续新拉取包时重新联网下载。
+NuGetPackagesCleanupName	NuGet extracted global packages	NuGet 全局已解压包
+NuGetPackagesCleanupDescription	Clears NuGet's global extracted packages on the system drive (close IDEs first). Safe for projects with online feeds, though next builds will need to restore packages again (offline builds may fail). Unchecked by default.	通过 .NET SDK 清理系统盘上的 NuGet 全局已解压包（请先关闭 IDE）。后续编译会重新还原依赖，离线或内网环境需注意，默认不勾选。
+NuGetCacheQueryFailed	Could not query NuGet cache. Verify that the .NET SDK is installed and configured properly.	无法查询 NuGet 缓存，请确认已安装 .NET SDK 且配置正常。
+NuGetCacheClearFailed	NuGet could not clear all cache files. Close development tools and try again.	NuGet 未能清理全部文件，请关闭开发工具后重试。
+NuGetCacheUnsafePath	The NuGet cache points to a protected folder or symlink; skipped for safety.	NuGet 缓存路径位于受保护目录或包含链接，为安全起见已跳过。
+UserCrashDumpsCleanupName	Application crash dumps	应用程序崩溃转储
+UserCrashDumpsCleanupDescription	Removes .dmp files in LocalAppData\CrashDumps on the system drive left by crashed apps. Safe to delete unless you are debugging a specific app crash; unchecked by default.	清理系统盘 LocalAppData\CrashDumps 中由应用崩溃生成的 .dmp 文件。除非正在排查某款软件的崩溃问题，否则可放心清理；默认不勾选。
 CleanDiskSpaceItem	Clean	清理
 DiskSpaceQueuedButton	Queued	排队中
-DiskSpaceQueuePosition	Queued: position {0}.	已排队，等待顺序：第 {0} 项。
-DiskSpaceOperationQueueRunning	Running: {0}. Waiting: {1}.	正在执行：{0}。等待中：{1} 项。
-DiskSpaceOperationQueueCompleted	Queue finished: {0} succeeded, {1} failed. Measured cleanup reduction: {2}.	队列执行完毕：成功 {0} 项，失败 {1} 项。清理已统计减少：{2}。
-DiskSpaceQueuedSourceChanged	The source location changed while waiting. Scan and confirm the move again.	等待期间源位置已发生变化，请重新扫描并确认移动。
-DiskSpaceQueuedTargetUnavailable	The queued destination is no longer available.	排队时选择的目标位置已不可用。
-ShadowCopiesCleanupName	System restore points / shadow copies	系统还原点 / 卷影副本
-ShadowCopiesCleanupDescription	Keep the newest system-drive restore snapshot and remove older client-accessible snapshots without disabling System Restore. The size is total used shadow storage, an upper bound; the newest snapshot remains.	保留系统盘最新还原快照，删除其余客户端可访问快照，不关闭系统还原。显示已用卷影存储总量（可回收上限），最新快照仍占用空间。
+DiskSpaceQueuePosition	Queued (#{0})	排队中（第 {0} 项）
+DiskSpaceOperationQueueRunning	Running: {0} ({1} waiting)	正在执行：{0}（还有 {1} 项等待）
+DiskSpaceOperationQueueCompleted	Queue finished: {0} succeeded, {1} failed. Freed about {2}.	队列执行完成：成功 {0} 项，失败 {1} 项，共释放约 {2}。
+DiskSpaceQueuedSourceChanged	The source location changed while queued. Please rescan and confirm again.	等待期间源位置已发生变化，请重新扫描后再确认迁移。
+DiskSpaceQueuedTargetUnavailable	The selected destination drive is no longer available.	之前选择的目标磁盘已不可用。
+ShadowCopiesCleanupName	Older System Restore snapshots	旧的系统还原快照（卷影副本）
+ShadowCopiesCleanupDescription	Removes older shadow snapshots while keeping the newest restore point intact and without disabling System Restore. Shown size is total shadow storage (upper bound), as the newest snapshot remains.	删除较旧的卷影快照并保留最新一份还原点，不会关闭系统还原功能。显示大小为卷影总占用（可回收上限），最新快照仍会保留。
 HibernationDiskSpaceName	Hibernation file (hiberfil.sys)	休眠文件（hiberfil.sys）
-HibernationDiskSpaceDescription	Shows current file size. Reduced mode supports Fast Startup but gives up hibernation; Windows chooses the size. Off removes the file and disables both features. Restore enables full hibernation.	显示当前文件大小。缩减模式保留快速启动支持，但不支持休眠；大小由 Windows 决定。关闭将删除文件并停用两项功能；恢复将启用完整休眠。
+HibernationDiskSpaceDescription	Manage hiberfil.sys right here: "Reduce" shrinks it to keep Fast Startup only; "Off" deletes it completely to reclaim the most space (disables Hibernation and Fast Startup); "Restore" re-enables full hibernation.	管理休眠文件占用：“缩减”可减小体积并保留快速启动；“关闭”将彻底删除文件以释放全部空间（同时停用休眠与快速启动）；“恢复”可重新开启完整休眠。
 HibernationReduce	Reduce	缩减
-HibernationOff	Off	关闭
+HibernationOff	Turn off	关闭
 HibernationRestore	Restore	恢复
-HibernationModeUnknown	Mode: unknown (scan to refresh)	当前模式：未知（请扫描刷新）
+HibernationModeUnknown	Mode: unknown (rescan to check)	当前模式：未知（请重新扫描）
 HibernationModeOff	Mode: off	当前模式：已关闭
-HibernationModeReduced	Mode: reduced (Fast Startup only)	当前模式：已缩减（仅支持快速启动）
+HibernationModeReduced	Mode: reduced (Fast Startup only)	当前模式：已缩减（仅快速启动）
 HibernationModeFull	Mode: full hibernation	当前模式：完整休眠
-HibernationModeMismatch	Windows did not apply the requested hibernation mode.	Windows 未应用所请求的休眠模式。
-HibernationConfirmReduced	Reduce hiberfil.sys? Full hibernation will be unavailable; Fast Startup remains supported. Windows will reset any custom hibernation file size.	缩减 hiberfil.sys？将无法使用完整休眠，但保留快速启动支持。Windows 会重置自定义休眠文件大小。
-HibernationConfirmOff	Turn off hibernation and remove hiberfil.sys? Fast Startup will also become unavailable.	关闭休眠并删除 hiberfil.sys？快速启动也将无法使用。
-HibernationConfirmFull	Restore full hibernation? This will increase disk usage.	恢复完整休眠？这将增加磁盘占用。
+HibernationModeMismatch	Windows did not apply the requested hibernation mode.	Windows 未能切换到请求的休眠模式。
+HibernationConfirmReduced	Shrink hiberfil.sys? Full hibernation will be disabled while Fast Startup remains available.	缩减 hiberfil.sys？将停用完整休眠，但保留快速启动支持，并重置自定义休眠文件比例。
+HibernationConfirmOff	Turn off hibernation and delete hiberfil.sys? Both Hibernation and Fast Startup will be disabled (Sleep still works).	关闭休眠并删除 hiberfil.sys？将同时停用休眠与快速启动（“睡眠”功能仍正常）。
+HibernationConfirmFull	Restore full hibernation? This will recreate hiberfil.sys and use disk space.	恢复完整休眠？将重新创建 hiberfil.sys 并占用一定系统盘空间。
 OldDriversCleanupName	Old driver store packages	驱动库中的旧版本驱动
-OldDriversCleanupDescription	Remove unused older versions grouped by original INF name, provider, class and architecture. Keeps the newest version and packages used by devices. Older driver rollback packages will be lost; shared files may reduce actual savings.	按 INF 原始名、厂商、类别和架构分组，删除未使用的旧版本包。保留最新版本及设备正在使用的包。将失去旧驱动回滚包；共享文件可能使实际释放量低于估算。
-GraphicsNvidiaDownloaderCleanupName	NVIDIA downloaded installers	NVIDIA 下载的安装包
-GraphicsNvidiaDownloaderCleanupDescription	Clear ProgramData\NVIDIA Corporation\Downloader. Close NVIDIA installers first; packages will need to be downloaded again.	清理 ProgramData\NVIDIA Corporation\Downloader。请先关闭 NVIDIA 安装程序；以后需要重新下载安装包。
+OldDriversCleanupDescription	Removes unused older driver versions (especially old GPU drivers that pile up gigabytes) while keeping the newest and active drivers. Only gives up rolling back to removed older driver versions.	删除已不再使用的旧版本驱动包（显卡驱动更新久了常堆积数 GB），始终保留最新版本及设备正在使用的驱动；代价仅是无法回滚到这些旧版驱动。
+GraphicsNvidiaDownloaderCleanupName	NVIDIA downloaded installers	NVIDIA 下载缓存安装包
+GraphicsNvidiaDownloaderCleanupDescription	Clears ProgramData\NVIDIA Corporation\Downloader (old downloaded driver setups). Completely safe once installation finishes; does not affect the installed driver.	清理 ProgramData\NVIDIA Corporation\Downloader 中的驱动下载缓存。安装完成后即可放心清理，不影响已装显卡驱动。
 GraphicsNvidiaInstallerCleanupName	NVIDIA Installer2 cache	NVIDIA Installer2 安装缓存
-GraphicsNvidiaInstallerCleanupDescription	Clear Program Files\NVIDIA Corporation\Installer2. Close NVIDIA installers first. Repair or reinstall may require downloading the installer again.	清理 Program Files\NVIDIA Corporation\Installer2。请先关闭 NVIDIA 安装程序；修复或重装可能需要重新下载安装包。
-GraphicsNvidiaRootCleanupName	NVIDIA extracted installers	NVIDIA 解压安装残留
-GraphicsNvidiaRootCleanupDescription	Clear the NVIDIA folder at the system drive root. Close installers first and make sure the folder contains no files you want to keep.	清理系统盘根目录 NVIDIA 文件夹。请先关闭安装程序，并确认其中没有要保留的文件。
-GraphicsAmdRootCleanupName	AMD extracted installers	AMD 解压安装残留
-GraphicsAmdRootCleanupDescription	Clear the AMD folder at the system drive root. Close installers first and make sure the folder contains no files you want to keep.	清理系统盘根目录 AMD 文件夹。请先关闭安装程序，并确认其中没有要保留的文件。
-GraphicsInstallerBusy	A driver installer is running. Finish or close it and try again.	驱动安装程序正在运行，请完成或关闭后重试。
-InstallerBaselineCleanupName	Windows Installer baseline cache	Windows Installer 基线缓存
-InstallerBaselineCleanupDescription	Clear only Windows\Installer\$PatchCache$; preserve all other Installer files. Future repair, patching or patch removal may request original installation media. Close Windows Installer before cleaning.	仅清理 Windows\Installer\$PatchCache$，保留 Installer 下所有其他文件。今后修复、打补丁或卸载补丁可能需要原始安装介质。请先关闭 Windows Installer。
-InstallerBaselineBusy	Windows Installer is running. Finish the installation and try again.	Windows Installer 正在运行，请完成安装后重试。
-LcuCleanupName	Cumulative update staging (LCU)	累积更新 LCU 暂存
-LcuCleanupDescription	Clear Windows\servicing\LCU only after restarting and completing Windows Update. Pending restarts, active servicing and files created or changed since boot block cleanup. Confirm the latest update works before removing its staging files.	重启并完成 Windows 更新后，清理 Windows\servicing\LCU。待重启、更新维护运行中或本次启动后新增/修改文件时禁止清理。请确认最新更新正常工作后再删除暂存文件。
-LcuNeedsReboot	Restart Windows and scan again before cleaning.	需重启 Windows 后重新扫描才可清理。
-LcuServicingBusy	Windows update servicing is active. Wait until it finishes and scan again.	Windows 更新维护正在运行，请完成后重新扫描。
+GraphicsNvidiaInstallerCleanupDescription	Clears Program Files\NVIDIA Corporation\Installer2 (kept for repairing/reinstalling NVIDIA components). Safe to delete to reclaim hundreds of MB; future repairs simply re-download the installer.	清理 Program Files\NVIDIA Corporation\Installer2（常占数百 MB）。安全可清，不影响已装驱动，仅日后修复安装时需重新下载安装包。
+GraphicsNvidiaRootCleanupName	NVIDIA extracted installer folder	C:\NVIDIA 解压安装残留
+GraphicsNvidiaRootCleanupDescription	Removes the extracted driver setup files in C:\NVIDIA. Safe once driver installation is complete; close any NVIDIA installer first and ensure you haven't stored personal files there.	清理系统盘根目录的 NVIDIA 驱动解压残留。驱动装完后即可安全删除，请确认未在其中存放个人文件。
+GraphicsAmdRootCleanupName	AMD extracted installer folder	C:\AMD 解压安装残留
+GraphicsAmdRootCleanupDescription	Removes the extracted driver setup files in C:\AMD. Safe once driver installation is complete; close any AMD installer first and ensure you haven't stored personal files there.	清理系统盘根目录的 AMD 驱动解压残留。驱动装完后即可安全删除，请确认未在其中存放个人文件。
+GraphicsInstallerBusy	A graphics driver installer is running. Finish or close it first, then try again.	检测到显卡驱动安装程序正在运行，请完成或关闭后再试。
+InstallerBaselineCleanupName	Windows Installer patch baseline cache	Windows Installer 补丁基线缓存
+InstallerBaselineCleanupDescription	Clears only Windows\Installer\$PatchCache$ while keeping all other Installer metadata intact. Trade-off: repairing or uninstalling certain MSI updates later may ask for the original installer.	仅清理 Windows\Installer\$PatchCache$，保留其余安装元数据。代价是今后修复或卸载部分 MSI 补丁时可能需要重新提供原始安装包。
+InstallerBaselineBusy	Windows Installer is busy. Wait for the current installation to finish and try again.	Windows Installer 正在运行，请等待当前安装完成后重试。
+LcuCleanupName	Cumulative update staging (LCU)	系统累积更新暂存（LCU）
+LcuCleanupDescription	Clears Windows\servicing\LCU once Windows Update has completed and the PC has rebooted cleanly. Automatically blocked if updates or restarts are still pending; confirm the latest update runs smoothly before cleaning.	在系统更新完成并重启正常后，清理 Windows\servicing\LCU 暂存文件。若存在待重启或更新维护中会自动阻止清理，确认更新无异常即可放心释放。
+LcuNeedsReboot	Restart Windows and rescan before cleaning LCU staging files.	请先重启 Windows 并重新扫描，再清理 LCU 暂存文件。
+LcuServicingBusy	Windows Update servicing is active. Wait for it to finish and rescan.	Windows 更新维护正在运行，请待其完成后重新扫描。
 DiskSpaceSelectAll	Select all	全选
 DiskSpaceSelectNone	Select none	全不选
-DiskSpaceSelectionScope	Applies to visible items in this group. Busy items are skipped; selecting moves requires an available target drive.	仅作用于本组当前显示的项目。跳过忙碌项目；移动全选仅选择有可用目标磁盘的项目。
+DiskSpaceSelectionScope	Applies to visible items in this group. Busy items are skipped, and relocation select-all requires an available target drive.	仅作用于本组当前显示项（跳过执行中的项；迁移全选需有可用目标盘）。
 DiskSpaceDeveloperCleanup	Developer caches	开发工具缓存
-DeveloperCacheUnsafePath	The cache path is a protected directory, a project root, or contains links. Automatic cleanup is unavailable.	缓存位置是受保护目录、项目根目录或包含目录链接，无法自动清理。
-DeveloperCachePathChanged	The cache location changed. Scan again before cleaning.	缓存位置已改变，请重新扫描后再清理。
-DeveloperCacheBusy	A related development tool or installer is running. Close it and its background processes, then retry.	相关开发工具或安装程序正在运行，请关闭它及后台进程后重试。
-DeveloperPipCleanupName	pip download and wheel cache	pip 下载与 wheel 缓存
-DeveloperPipCleanupDescription	Clear the standard LocalAppData\pip\Cache or PIP_CACHE_DIR on the system drive. Close Python first. Later installs need downloads/rebuilding wheels; installed environments are preserved. Other pip.ini locations are not scanned.	清理系统盘标准 LocalAppData\pip\Cache 或 PIP_CACHE_DIR。请先关闭 Python；后续安装需重新下载或构建 wheel，保留已安装环境。不扫描 pip.ini 指定的其他位置。
-DeveloperNpmCleanupName	npm download cache and logs	npm 下载缓存与日志
-DeveloperNpmCleanupDescription	Clear only _cacache and _logs within npm's standard cache, npm_config_cache or user .npmrc cache path. Close Node.js first. Packages must be downloaded again; node_modules, credentials and npx cache are preserved.	仅清理 npm 标准缓存、npm_config_cache 或用户 .npmrc 缓存位置中的 _cacache 和 _logs。请先关闭 Node.js；后续需重新下载包。保留 node_modules、凭据和 npx 缓存。
-DeveloperNpxCleanupName	npx temporary tool packages	npx 临时工具包
-DeveloperNpxCleanupDescription	Clear only _npx in the same npm cache locations. Close Node.js first. Tools started by npx must be downloaded again; globally installed tools and project dependencies are preserved.	仅清理 npm 缓存位置中的 _npx。请先关闭 Node.js；npx 启动的工具需重新下载，保留全局工具和项目依赖。
-DeveloperYarnCleanupName	Yarn Classic package cache	Yarn Classic 包缓存
-DeveloperYarnCleanupDescription	Clear LocalAppData\Yarn\Cache or YARN_CACHE_FOLDER on the system drive. Close Node.js first. Future installs require downloads. Project-local Yarn caches and modern Yarn globalFolder overrides are not scanned.	清理系统盘 LocalAppData\Yarn\Cache 或 YARN_CACHE_FOLDER。请先关闭 Node.js，后续安装需重新下载。不扫描项目内 Yarn 缓存及新版 Yarn globalFolder 配置位置。
-DeveloperGradleCleanupName	Gradle dependency and build caches	Gradle 依赖与构建缓存
-DeveloperGradleCleanupDescription	Clear only caches under GRADLE_USER_HOME or .gradle. Close Java/Gradle daemons first. Builds need downloads and regeneration; offline builds may fail. Keep settings, credentials, JDKs and wrapper distributions.	仅清理 GRADLE_USER_HOME 或 .gradle 下的 caches。请先关闭 Java/Gradle 守护进程；构建需重新下载和生成缓存，离线构建可能失败。保留配置、凭据、JDK 和 Gradle 发行包。
+DeveloperCacheUnsafePath	This cache points to a protected folder, project root, or symlink; skipped for safety.	该缓存路径位于受保护目录、项目根目录或包含链接，为安全起见已跳过。
+DeveloperCachePathChanged	The cache location changed since the last scan. Please rescan first.	缓存路径较上次扫描已变化，请重新扫描后再清理。
+DeveloperCacheBusy	A related development tool or installer is running. Close it and its background processes first.	相关开发工具或安装程序正在运行，请先彻底关闭后再试。
+DeveloperPipCleanupName	pip download & wheel cache	pip 下载与 wheel 缓存
+DeveloperPipCleanupDescription	Clears LocalAppData\pip\Cache (or PIP_CACHE_DIR) on the system drive. Safe to clean—installed Python environments stay untouched; future pip installs just download or build wheels again.	清理系统盘上的 pip 下载与 wheel 缓存（请先关闭 Python）。不影响已装好的虚拟环境和包，仅后续重新安装时需再次下载或编译 wheel。
+DeveloperNpmCleanupName	npm package cache & logs	npm 包缓存与日志
+DeveloperNpmCleanupDescription	Clears only _cacache and _logs inside npm's cache directory. Safe to clean—project node_modules, credentials, and npx cache stay intact; future installs just re-download packages.	仅清理 npm 缓存目录中的 _cacache 与 _logs（请先关闭 Node.js）。保留项目 node_modules、凭据与 npx 缓存，仅后续安装需重新下载。
+DeveloperNpxCleanupName	npx temporary tool cache	npx 临时工具缓存
+DeveloperNpxCleanupDescription	Clears only _npx temporary packages inside npm's cache. Safe to clean—global tools and project dependencies stay intact; npx tools simply download again on next run.	仅清理 npm 缓存中的 _npx 临时包（请先关闭 Node.js）。保留全局工具和项目依赖，下次运行 npx 时按需重新下载。
+DeveloperYarnCleanupName	Yarn Classic cache	Yarn Classic 包缓存
+DeveloperYarnCleanupDescription	Clears LocalAppData\Yarn\Cache (or YARN_CACHE_FOLDER) on the system drive. Safe to clean; future Yarn installs simply re-download packages.	清理系统盘上的 Yarn Classic 包缓存（请先关闭 Node.js）。不影响已有项目，仅后续安装需重新下载。
+DeveloperGradleCleanupName	Gradle dependency & build cache	Gradle 依赖与构建缓存
+DeveloperGradleCleanupDescription	Clears only the caches folder under .gradle / GRADLE_USER_HOME while keeping settings, credentials, JDKs, and wrapper distributions intact. Next builds will re-download dependencies (close Gradle daemons first).	仅清理 .gradle 下的 caches 目录（请先关闭 Gradle 守护进程），保留配置、凭据、JDK 和发行包；下次构建会重新拉取依赖（离线环境需注意）。
 DeveloperGradleDistributionsCleanupName	Gradle Wrapper distributions	Gradle Wrapper 发行包
-DeveloperGradleDistributionsCleanupDescription	Clear only wrapper\dists under GRADLE_USER_HOME or .gradle. Close Java/Gradle daemons first. Each Gradle version must be downloaded again; project wrapper scripts are preserved.	仅清理 GRADLE_USER_HOME 或 .gradle 下的 wrapper\dists。请先关闭 Java/Gradle 守护进程；所需 Gradle 版本需重新下载，保留项目 wrapper 脚本。
-DeveloperMavenCleanupName	Maven local repository	Maven 本地仓库
-DeveloperMavenCleanupDescription	Clear .m2\repository or localRepository from user .m2\settings.xml on the system drive. Close Java first. Locally installed/private artifacts may exist only here and cannot necessarily be downloaded again; back them up first. Global/project overrides are not scanned; settings.xml is preserved.	清理系统盘 .m2\repository 或用户 .m2\settings.xml 的 localRepository。请先关闭 Java。本地安装或私有构件可能仅存在于此，未必能重新下载，请先备份。不扫描全局/项目级覆盖位置，保留 settings.xml。
-DeveloperCargoCleanupName	Cargo downloaded crate archives	Cargo 已下载 crate 包
-DeveloperCargoCleanupDescription	Clear only registry\cache under CARGO_HOME or .cargo. Close Cargo/rustc first. Archives must be downloaded again when needed. Keep binaries, credentials, extracted sources, Git repositories and toolchains.	仅清理 CARGO_HOME 或 .cargo 下的 registry\cache。请先关闭 Cargo/rustc；需要时重新下载包。保留二进制工具、凭据、已解压源码、Git 仓库和工具链。
-DeveloperGoBuildCleanupName	Go build cache	Go 构建缓存
-DeveloperGoBuildCleanupDescription	Clear LocalAppData\go-build or the GOCACHE environment path on the system drive. Close Go builds first. Next builds are slower. Module downloads and source code are preserved; go env configuration-file overrides are not scanned.	清理系统盘 LocalAppData\go-build 或 GOCACHE 环境变量位置。请先停止 Go 构建；下次构建会较慢。保留模块下载和源码，不扫描 go env 配置文件覆盖的位置。
-DeveloperVsComponentModelCleanupName	Visual Studio ComponentModelCache	Visual Studio 组件模型缓存
-DeveloperVsComponentModelCleanupDescription	Clear only ComponentModelCache in installed-version folders under LocalAppData\Microsoft\VisualStudio. Close Visual Studio first. Extension composition is rebuilt on next launch; settings and extensions are preserved.	仅清理 LocalAppData\Microsoft\VisualStudio 各版本目录下的 ComponentModelCache。请先关闭 Visual Studio；下次启动重新生成扩展组件缓存，保留设置和扩展。
-DeveloperVsCodeCleanupName	VS Code runtime caches	VS Code 运行缓存
-DeveloperVsCodeCleanupDescription	Clear Cache, Code Cache, CachedData and GPUCache in standard Code/Code - Insiders user-data folders. Close VS Code first. Startup may be slower; settings, extensions, workspaces, local history and unsaved backups are preserved. Portable/custom user-data folders are not scanned.	清理标准 Code/Code - Insiders 用户目录中的 Cache、Code Cache、CachedData、GPUCache。请先关闭 VS Code；下次启动可能较慢。保留设置、扩展、工作区、本地历史和未保存备份。不扫描便携/自定义用户目录。
-DeveloperPackageCacheCleanupName	VS / shared installer Package Cache	VS / 共享安装程序 Package Cache
-DeveloperPackageCacheCleanupDescription	Clear ProgramData\Package Cache shared by Visual Studio prerequisites and other installers. Close installers first. Repair, modification or uninstall may require original installers/media; some cached installers may no longer be downloadable. Does not touch Windows\Installer or modern VS Packages metadata. Back up needed installers first.	清理 VS 前置组件及其他安装程序共享的 ProgramData\Package Cache。请先关闭安装程序；修复、修改或卸载可能需要原始安装包/介质，部分包可能已无法下载。不触碰 Windows\Installer 或新版 VS Packages 元数据。请先备份需要的安装包。
-PnpmStoreCleanupName	pnpm unreferenced store packages	pnpm store 未引用包
-PnpmStoreCleanupDescription	Use pnpm store path and store prune to remove unreferenced packages on the system drive. Shows total store size as an upper bound, not guaranteed savings. Close package operations first. Future installs may download packages again; project node_modules and global tools are preserved. Uses user/global configuration, not individual project overrides.	使用 pnpm store path 和 store prune 清理系统盘 store 的未引用包。显示 store 总量作为上限，不代表全部可释放。请先停止包管理操作，后续安装可能需重新下载；保留项目 node_modules 和全局工具。使用用户/全局配置，不扫描各项目覆盖位置。
-PnpmStoreQueryFailed	Cannot resolve pnpm's store path or layout. Check the installed pnpm and its configuration.	无法识别 pnpm store 路径或布局，请检查已安装的 pnpm 和配置。
-PnpmStoreCommandFailed	pnpm could not complete the operation. Stop active installs or the store server and retry.	pnpm 操作未完成，请停止正在运行的安装或 store server 后重试。
-PnpmNotInstalled	No usable pnpm installation found; install pnpm and restart this app to scan.	未找到可用的 pnpm，请安装后重启本程序再扫描。
-WslMigrationDescription	Move this WSL 2 distribution using WSL's native move command. Save your work first: this stops the selected distribution and its services. Back up important data. Windows bind mounts are not moved. Select any other NTFS drive to move it again.	通过 WSL 原生命令迁移此 WSL 2 发行版。请先保存工作：操作会停止所选发行版及其服务。请备份重要数据；Windows 绑定挂载目录不会迁移。可选择其他 NTFS 盘再次迁移。
-DockerLegacyMigrationDescription	Move the legacy Docker data distribution with WSL. Quit Docker Desktop and stop containers first. Back up important volumes. Windows bind mounts are not moved.	通过 WSL 迁移旧版 Docker 数据发行版。请先停止容器并退出 Docker Desktop，备份重要数据卷；Windows 绑定挂载目录不会迁移。
-WslMigrationUpdateRequired	This WSL does not support --manage --move. Update WSL with wsl --update, then retry.	当前 WSL 不支持 --manage --move，请执行 wsl --update 更新后重试。
-WslMigrationVersionRequired	Native migration requires a WSL 2 distribution.	原生迁移需要 WSL 2 发行版。
-WslMigrationMissing	The WSL distribution is no longer registered. Scan again.	此 WSL 发行版已不再注册，请重新扫描。
-WslMigrationMoving	Stopping the selected distribution and moving its virtual disk…	正在停止所选发行版并迁移虚拟磁盘…
-DockerMigrationName	Docker Desktop disk data	Docker Desktop 磁盘数据
-DockerMigrationDescription	Move Docker's managed WSL 2 disk, verify its contents, and retain its configured path with an NTFS directory junction. Quit Docker Desktop and stop containers first; keep Docker closed during migration. Back up important volumes. Windows bind mounts are not moved. Restore returns data to the original path.	迁移 Docker 托管的 WSL 2 磁盘，校验内容后通过 NTFS 目录联接保留配置路径。请先停止容器并退出 Docker Desktop，迁移期间保持关闭；请备份重要数据卷。Windows 绑定挂载目录不会迁移。恢复默认位置会将数据搬回原路径。
-DockerMigrationStopRequired	Quit Docker Desktop and stop its background processes before moving data. If the disk is still in use, save WSL work and run wsl --shutdown yourself.	请先退出 Docker Desktop 并停止其后台进程。若磁盘仍被占用，请保存 WSL 工作后自行执行 wsl --shutdown。
-DockerMigrationLayoutUnsupported	This Docker disk layout cannot be migrated automatically. Use Docker Desktop Settings > Resources > Advanced to change its disk image location.	此 Docker 磁盘布局暂不支持自动迁移，请在 Docker Desktop 设置 > Resources > Advanced 中更改磁盘映像位置。
-DockerMigrationMissing	No managed Docker WSL disk found. Legacy Docker data appears as a separate WSL distribution when installed.	未发现 Docker 托管的 WSL 磁盘；已安装的旧版 Docker 数据将显示为单独的 WSL 发行版。
+DeveloperGradleDistributionsCleanupDescription	Clears downloaded Gradle binaries under wrapper\dists while keeping project wrapper scripts intact. Each needed Gradle version will re-download automatically on next build.	仅清理 wrapper\dists 中已下载的 Gradle 发行包（请先关闭 Gradle 守护进程），保留项目脚本；下次构建会自动按需重新下载。
+DeveloperMavenCleanupName	Maven local repository	Maven 本地仓库（.m2）
+DeveloperMavenCleanupDescription	Clears .m2\repository on the system drive while keeping settings.xml. Warning: locally installed or private artifacts that aren't hosted on a remote repo cannot be re-downloaded—back them up first.	清理系统盘上的 .m2\repository（保留 settings.xml，请先关闭 Java）。注意：仅存于本地的私有构件无法重新下载，清理前请确认已备份。
+DeveloperCargoCleanupName	Cargo crate download cache	Cargo 已下载 crate 压缩包
+DeveloperCargoCleanupDescription	Clears only registry\cache under .cargo / CARGO_HOME while keeping installed binaries, credentials, extracted sources, and toolchains intact. Safe to clean; crates re-download only when needed.	仅清理 .cargo 下的 registry\cache（请先关闭 Cargo/rustc），保留已装工具、凭据、源码与工具链。安全可清，需要时按需重新下载。
+DeveloperGoBuildCleanupName	Go build cache	Go 编译构建缓存
+DeveloperGoBuildCleanupDescription	Clears LocalAppData\go-build (or GOCACHE) on the system drive while keeping source code and module downloads intact. Safe to clean—the next build just compiles from scratch once.	清理系统盘上的 Go 构建缓存（请先停止 Go 构建），保留源码与已下载模块。安全可清，仅下次构建会慢一次。
+DeveloperVsComponentModelCleanupName	Visual Studio component cache	Visual Studio 组件模型缓存
+DeveloperVsComponentModelCleanupDescription	Clears only ComponentModelCache for installed Visual Studio versions (close VS first). Safe to clean—settings and extensions stay intact and the cache rebuilds automatically on next launch (often fixes extension glitches too).	仅清理 Visual Studio 各版本的 ComponentModelCache（请先关闭 VS）。保留所有设置与扩展，下次启动自动重建，还能顺带修复部分扩展加载异常。
+DeveloperVsCodeCleanupName	VS Code runtime cache	VS Code 运行缓存
+DeveloperVsCodeCleanupDescription	Clears Cache, Code Cache, CachedData, and GPUCache in standard VS Code folders (close VS Code first). Settings, extensions, workspaces, and unsaved drafts are untouched.	清理标准 VS Code 目录中的 Cache、Code Cache、CachedData 与 GPUCache（请先关闭 VS Code）。完全保留设置、扩展、工作区、本地历史和未保存草稿。
+DeveloperPackageCacheCleanupName	Visual Studio / shared Package Cache	VS / 共享安装程序 Package Cache
+DeveloperPackageCacheCleanupDescription	Clears ProgramData\Package Cache shared by Visual Studio prerequisites and other installers. Trade-off: repairing, modifying, or uninstalling older components later may need original installers (some may no longer be online). Back up if unsure.	清理 VS 前置组件及其他安装程序共享的 ProgramData\Package Cache。代价是日后修复、修改或卸载旧组件时可能需要重新提供原始安装包（部分旧包可能已下架），请按需谨慎清理。
+PnpmStoreCleanupName	pnpm unreferenced store packages	pnpm store 未引用冗余包
+PnpmStoreCleanupDescription	Runs "pnpm store prune" to remove packages no longer referenced by any project while preserving all project node_modules and global tools. Displayed size is the full store (upper bound, not guaranteed savings).	执行 pnpm store prune 仅清理不再被任何项目引用的冗余包，保留所有项目的 node_modules 与全局工具。显示大小为 store 总占用（可回收上限）。
+PnpmStoreQueryFailed	Could not locate pnpm's store path. Verify pnpm is installed and configured properly.	无法识别 pnpm store 路径，请检查已安装的 pnpm 及其配置。
+PnpmStoreCommandFailed	pnpm prune failed. Stop any running installs or store server and try again.	pnpm 清理未完成，请先停止正在进行的安装或 store server 后重试。
+PnpmNotInstalled	pnpm is not installed. Install pnpm and restart the app to scan.	未检测到 pnpm，安装后重启本程序即可扫描。
+WslMigrationDescription	Moves this WSL 2 virtual disk to another NTFS drive using WSL's native --manage --move command. Stops the distribution during transfer; save work and back up important data first (Windows bind mounts stay untouched).	使用 WSL 原生 --manage --move 命令将此 WSL 2 虚拟磁盘迁移到其他 NTFS 盘，大幅释放系统盘空间。迁移期间会停止该发行版，请先保存工作并备份重要数据（挂载的 Windows 目录不受影响）。
+DockerLegacyMigrationDescription	Moves the legacy Docker Desktop WSL data distribution to another drive. Quit Docker Desktop and stop all containers first, and back up important volumes.	通过 WSL 迁移旧版 Docker Desktop 数据发行版以释放系统盘空间。请先停止容器并退出 Docker Desktop，提前备份重要数据卷。
+WslMigrationUpdateRequired	Your WSL version does not support --manage --move. Run "wsl --update" and try again.	当前 WSL 版本不支持 --manage --move，请先运行 wsl --update 更新后再试。
+WslMigrationVersionRequired	Native disk migration requires a WSL 2 distribution.	原生虚拟磁盘迁移仅支持 WSL 2 发行版。
+WslMigrationMissing	This WSL distribution is no longer registered. Please rescan.	此 WSL 发行版已不存在，请重新扫描。
+WslMigrationMoving	Stopping distribution and moving virtual disk…	正在停止发行版并迁移虚拟磁盘…
+DockerMigrationName	Docker Desktop virtual disk	Docker Desktop 虚拟磁盘数据
+DockerMigrationDescription	Moves Docker Desktop's managed WSL 2 disk to another NTFS drive, verifies data integrity, and links it back via an NTFS directory junction so Docker works transparently. Quit Docker Desktop first and back up important volumes.	将 Docker Desktop 的虚拟磁盘迁移到其他 NTFS 盘，校验完整后通过目录联接无缝衔接原路径，Docker 无需改配置即可继续使用。请先彻底退出 Docker Desktop 并备份重要数据卷。
+DockerMigrationStopRequired	Please quit Docker Desktop and its background processes first. If the disk stays locked, save WSL work and run "wsl --shutdown".	请先彻底退出 Docker Desktop 及其后台进程；若磁盘仍被占用，请保存 WSL 工作后执行 wsl --shutdown。
+DockerMigrationLayoutUnsupported	This Docker storage layout cannot be migrated automatically. Change the disk image location in Docker Desktop → Settings → Resources → Advanced.	当前 Docker 存储布局暂不支持自动迁移，请在 Docker Desktop 的 Settings → Resources → Advanced 中修改磁盘映像位置。
+DockerMigrationMissing	No managed Docker Desktop WSL disk found. Legacy Docker data appears as a separate WSL distribution if present.	未发现新版 Docker 托管磁盘；如为旧版 Docker 数据，会以独立 WSL 发行版形式显示。
 DockerMigrationCopying	Copying Docker virtual disk…	正在复制 Docker 虚拟磁盘…
-DockerMigrationVerifying	Verifying Docker virtual disk contents…	正在校验 Docker 虚拟磁盘内容…
-DockerMigrationRecoveryRequired	A previous migration backup exists or the path is redirected. Inspect this path before retrying: {0}	检测到上次迁移备份或路径重定向，请检查后重试：{0}
-DockerMigrationCleanupRequired	Data was switched to the new location, but old-data cleanup failed. Keep the new location. Inspect the old path {0} and backup {1} before removing leftovers.	数据已切换至新位置，但旧数据清理失败。请保留新位置，检查旧路径 {0} 和备份 {1} 后清理残留。
-VirtualDiskMigrationInvalidPath	Choose a separate local NTFS directory without symbolic links or junctions.	请选择独立的本地 NTFS 目录，路径不能包含符号链接或目录联接。
-VirtualDiskMigrationTargetExists	The destination already exists. It will not be overwritten or merged; choose another drive or move the existing destination aside first.	目标路径已存在，不会覆盖或合并。请选择其他盘，或先移走已有目标目录。
-VirtualDiskMigrationNoSpace	The destination drive does not have enough free space for the virtual disk.	目标盘可用空间不足以存放虚拟磁盘。
-VirtualDiskMigrationVerificationFailed	Migration verification failed. Keep both locations and inspect them before retrying.	迁移结果校验失败，请保留两处数据并检查后再重试。
+DockerMigrationVerifying	Verifying copied Docker disk…	正在校验已复制的 Docker 虚拟磁盘…
+DockerMigrationRecoveryRequired	A previous migration backup or junction already exists. Inspect it before retrying: {0}	检测到上次迁移留下的备份或联接，请先检查后再重试：{0}
+DockerMigrationCleanupRequired	Docker now points to the new location, but removing old files failed. Keep the new location and inspect old path {0} and backup {1} manually.	已成功切换到新位置，但清理旧文件失败。请保留新位置数据，手动检查旧路径 {0} 与备份 {1} 后再清理。
+VirtualDiskMigrationInvalidPath	Choose a standalone local NTFS folder without symbolic links or junctions.	请选择不含符号链接或目录联接的本地独立 NTFS 目录。
+VirtualDiskMigrationTargetExists	Destination folder already exists and will not be overwritten. Choose another drive or move the existing folder aside first.	目标目录已存在，为防误覆盖已中止迁移；请更换磁盘或先移走现有目录。
+VirtualDiskMigrationNoSpace	Not enough free space on the destination drive for this virtual disk.	目标磁盘剩余空间不足以容纳该虚拟磁盘。
+VirtualDiskMigrationVerificationFailed	Post-copy verification failed. Both copies were kept intact; inspect them before retrying.	迁移校验失败，已保留原路径和目标路径两份数据，请检查后再试。
 Startup	Startup	启动项
-StartupDescription	Only what you allow is permitted to start; anything new waits for your decision. Your choices are remembered for good, including for entries that are not on this machine, and travel with your settings folder to your other computers.	只有你允许的项目才能启动，新出现的项目等你决定。你的选择会被永久记住，包括本机当前不存在的项目，并随配置目录同步到你的其他电脑。
+StartupDescription	Whitelist-based startup control: only entries you allow may run at startup, and anything new waits for your decision. Choices are remembered permanently and sync across your PCs via the settings folder.	采用白名单模式管理开机自启：仅放行你允许的项目，新出现的启动项会等待你决定。所有选择都会永久记住，并可随配置目录同步到你的其他电脑，提前拦截曾禁止过的软件。
 StartupKindLogonRegistry	Logon entries	登录启动项
 StartupKindStartupFolder	Startup folder	启动文件夹
 StartupKindScheduledTask	Scheduled tasks	计划任务
-StartupKindService	Services	服务
+StartupKindService	Services	系统服务
 StartupKindDriver	Drivers	驱动程序
 StartupKindExplorerExtension	Explorer extensions	资源管理器扩展
 StartupUnsigned	Unsigned	未签名
-StartupFileMissing	Invalid: file not found	已失效：文件不存在
-StartupSignatureInvalid	Signature not valid	签名无效
-StartupStatusPending	Waiting for your decision	等待你的决定
+StartupFileMissing	Missing file	文件已不存在
+StartupSignatureInvalid	Invalid signature	签名无效
+StartupStatusPending	Pending decision	待决定
 StartupStatusApplying	Applying…	正在应用…
 StartupStatusAllowed	Allowed	已允许
-StartupStatusAllowedButOff	Allowed, currently off	已允许，当前未启用
-StartupStatusDenied	Not allowed	已禁止
-StartupStatusDeniedNotApplied	Not allowed, still running	已禁止，但仍在运行
+StartupStatusAllowedButOff	Allowed (currently off)	已允许（当前未启用）
+StartupStatusDenied	Denied	已禁止
+StartupStatusDeniedNotApplied	Denied (still running)	已禁止（仍在运行）
 StartupStatusReadOnly	Read-only	只读
 StartupStatusPolicyManaged	Managed by Group Policy	由组策略管理
-StartupStatusRunOnce	Runs once, then removes itself	运行一次后自动删除
-StartupStatusBootCritical	Boot-critical driver, not changed	引导关键驱动，不作修改
-StartupStatusTaskProtected	Protected by permissions	受权限保护
-StartupApplyFailed	Could not apply: {0}	应用失败：{0}
-StartupDecidedOnOtherMachine	Decided on {0}	在 {0} 上做的决定
-StartupDecidedByLooseMatch	Matched to a decision for the same program in another location	匹配到同一程序在其他位置的决定
-StartupSummary	{0} entries, {1} waiting for a decision, {2} denied but still running	共 {0} 项，{1} 项等待决定，{2} 项已禁止但仍在运行
-StartupBaselinePrompt	This computer has not been set up yet. {0} entries are already here. Accept them as the starting point, and only entries appearing after that will ask for a decision.	这台电脑尚未建立基线，当前已有 {0} 个项目。可以把它们作为起点接受下来，之后新出现的项目才会询问你。
-StartupAcceptBaseline	Accept as baseline	接受为基线
-StartupBaselineConfirm	Record the current state of {0} entries as your decisions? What runs today becomes allowed, what is already off becomes denied. Nothing on the system changes.	把当前 {0} 个项目的状态记录为你的选择吗？现在会启动的记为允许，已关闭的记为禁止。系统本身不会有任何改动。
+StartupStatusRunOnce	Runs once, then removes itself	仅运行一次，随后自动删除
+StartupStatusBootCritical	Boot-critical driver (protected)	开机关键驱动（受保护，不作修改）
+StartupStatusTaskProtected	Protected by system permissions	受系统权限保护
+StartupApplyFailed	Failed to apply: {0}	应用失败：{0}
+StartupDecidedOnOtherMachine	Decided on {0}	在 {0} 上已决定
+StartupDecidedByLooseMatch	Matched decision from another startup location of the same program	已沿用同一程序在其他启动位置的选择
+StartupSummary	{0} total · {1} pending · {2} denied but running	共 {0} 项 · {1} 项待决定 · {2} 项已禁止但仍在运行
+StartupBaselinePrompt	No startup baseline on this PC yet ({0} entries found). Accept the current state as your starting baseline—enabled items become Allowed and disabled ones become Denied without changing Windows—so you only review newly added items later.	本机尚未建立启动项基线，当前共检测到 {0} 个项目。可先将现状接受为起点（已开启的记为允许、已关闭的记为禁止，不会改动系统），此后只需审批新冒出来的启动项。
+StartupAcceptBaseline	Accept current state as baseline	接受当前状态为基线
+StartupBaselineConfirm	Record the current state of {0} entries as your baseline? Running items will be marked Allowed and off items marked Denied; nothing on Windows will be changed.	将当前 {0} 个项目的状态记录为基线吗？目前开启的记为“允许”，已关闭的记为“禁止”，系统本身不会发生任何改动。
 StartupRescan	Rescan	重新扫描
-StartupEnforce	Apply decisions	应用决定
-StartupEnforceConfirm	Turn off {0} entries that you have denied but that still run?	关闭 {0} 个你已禁止但仍在运行的项目？
-StartupEnforceResult	{0} entries turned off, {1} failed.	已关闭 {0} 项，{1} 项失败。
-StartupRestartExplorerPrompt	Explorer has to restart before the shell extension changes take effect. Restart it now?	资源管理器扩展的改动需要重启资源管理器才会生效。现在重启吗？
-StartupShowOnlyPending	Only waiting for a decision	只看等待决定
-StartupShowWindowsEntries	Show Windows entries	显示 Windows 项目
-StartupShowWindowsEntriesHint	Entries signed as Windows system components are hidden by default. They are still scanned, so a file that stops being Windows-signed reappears here.	带 Windows 系统组件签名的项目默认隐藏。它们仍会被扫描，一旦某个文件不再是 Windows 签名就会重新显示出来。
+StartupEnforce	Apply denied items	清理已禁止项
+StartupEnforceConfirm	Disable {0} startup item(s) that are marked Denied but still enabled?	立即关闭这 {0} 个已标记“禁止”但仍在运行的启动项吗？
+StartupEnforceResult	Disabled {0} item(s), {1} failed.	已关闭 {0} 项，失败 {1} 项。
+StartupRestartExplorerPrompt	Explorer must restart for shell extension changes to take effect. Restart Explorer now?	资源管理器扩展的改动需重启文件资源管理器才会生效，是否立即重启？
+StartupShowOnlyPending	Only pending	仅看待决定
+StartupShowWindowsEntries	Show Windows components	显示 Windows 系统组件
+StartupShowWindowsEntriesHint	Entries signed as Windows system components are hidden by default to reduce noise, but are still monitored—if one loses its Windows signature it will reappear for review.	带有 Windows 系统组件签名的项目默认隐藏以减少干扰，但仍在持续监控；一旦签名变化或失效会立即重新浮现等待审核。
 StartupHideMicrosoftEntries	Hide other Microsoft entries	隐藏其他微软项目
 StartupAllow	Allow	允许
 StartupDeny	Deny	禁止
-StartupReveal	Show the file in Explorer	在资源管理器中定位文件
-StartupScanning	Scanning startup entries…	正在扫描启动项...
-StartupScanFinished	Startup scan finished: {0} entries, {1} waiting for a decision.	启动项扫描完成：共 {0} 项，{1} 项等待决定。
-StartupScanFailed	The startup scan failed: {0}	启动项扫描失败：{0}
-StartupLedgerUnreadable	Your saved decisions could not be read ({0}), so nothing is being saved right now. This is usually a sync tool replacing the file; it will retry on its own.	无法读取已保存的决定（{0}），当前不会写入任何改动。这通常是同步工具正在替换文件，程序会自动重试。
-StartupLedgerBlocked	Decisions cannot be saved while the saved file is unreadable.	存档文件不可读期间无法保存决定。
-StartupForgetAllConfirm	Forget all {0} remembered decisions, on this computer and on every computer you sync with? Nothing on the system changes, but every entry will ask again.	忘记全部 {0} 条已记住的决定吗？本机和所有同步的电脑都会清空。系统本身不会改动，但每个项目都会重新询问。
-StartupKindRunOnce	Run once	一次性启动项
+StartupReveal	Reveal in Explorer	在资源管理器中定位
+StartupScanning	Scanning startup entries…	正在扫描启动项…
+StartupScanFinished	Scan complete: {0} total, {1} pending decision.	扫描完成：共 {0} 项，{1} 项待决定。
+StartupScanFailed	Startup scan failed: {0}	启动项扫描失败：{0}
+StartupLedgerUnreadable	Saved decisions could not be read ({0}), so saving is paused to avoid overwriting them. This usually happens while a sync tool replaces the file and will recover automatically.	暂时无法读取启动项决策文件（{0}），为防覆盖已暂停写入。通常是同步工具正在替换文件，稍后会自动恢复。
+StartupLedgerBlocked	Saving is paused while the decision file is unreadable.	决策文件暂时不可读，已暂停保存。
+StartupForgetAllConfirm	Clear all {0} remembered startup decisions across this PC and every synced PC? Nothing on Windows changes, and every item will ask for your decision again.	确定清空全部 {0} 条已记住的启动项决定（包括所有同步电脑）吗？不会修改系统现有设置，但所有项目都会重新变为“待决定”。
+StartupKindRunOnce	Run-once entries	一次性启动项
 StartupKindInternetExplorerExtension	Browser add-ons	浏览器加载项
-StartupStatusNoSwitch	No supported switch; shown for visibility	Windows 未提供开关，仅供查看
+StartupStatusNoSwitch	No Windows toggle (view only)	Windows 未提供开关（仅供查看）
 StartupStatusWithWarning	{0} ({1})	{0}（{1}）
-StartupWarningServiceHasDependents	still running because {0} depend on it	仍在运行，因为 {0} 依赖它
-StartupWarningServiceCannotStop	still running; it does not accept a stop request, takes effect after restart	仍在运行，该服务不接受停止，重启后生效
-StartupWarningServiceStopTimedOut	still stopping after 20 seconds	20 秒内未能停止
-StartupWarningServiceStopFailed	could not stop: {0}	停止失败：{0}
-StartupWarningServiceStartFailed	start type restored, but it did not start: {0}	已恢复启动类型，但启动失败：{0}
-StartupWarningDriverReboot	takes effect after restart	重启后生效
+StartupWarningServiceHasDependents	still running because {0} depend on it	仍在运行，因为 {0} 依赖此服务
+StartupWarningServiceCannotStop	still running; cannot stop immediately, takes effect after reboot	仍在运行，该服务不支持即时停止，重启后生效
+StartupWarningServiceStopTimedOut	still stopping after 20s	20 秒内尚未完全停止
+StartupWarningServiceStopFailed	failed to stop: {0}	停止失败：{0}
+StartupWarningServiceStartFailed	startup type restored, but failed to start: {0}	启动类型已恢复，但立即启动失败：{0}
+StartupWarningDriverReboot	takes effect after reboot	重启后生效

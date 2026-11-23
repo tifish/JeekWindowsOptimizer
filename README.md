@@ -1,6 +1,6 @@
 # JeekWindowsOptimizer
 
-A Windows system optimization tool: performance and usability tweaks, antivirus detection, service / scheduled-task / driver cleanup, and a toolbox of packaged utilities.
+A Windows optimization and maintenance tool featuring performance, stability, and usability tweaks, antivirus detection, system-drive cleanup and folder/WSL/Docker relocation, whitelist-based startup management, and a built-in diagnostics toolbox.
 
 ## Install
 
