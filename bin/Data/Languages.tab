@@ -73,142 +73,141 @@ Security	Security	安全
 Privacy	Privacy	隐私
 Software	Software	软件
 UninstallOneDriveName	Uninstall OneDrive	卸载 OneDrive
-UninstallOneDriveDescription	OneDrive is Microsoft's cloud storage service. It consumes resources and can be uninstalled if not in use.\nEffective immediately.	OneDrive 是微软的云盘服务，占用资源，不使用可以卸载。\n立即生效。
-DisableProgramCompatibilityAssistantServiceName	Disable the Program Compatibility Assistant Service	禁用程序兼容性助手
-DisableProgramCompatibilityAssistantServiceDescription	Monitor installed and running programs and notify of compatibility issues.\nEffective immediately.	监控安装和运行的程序，提示兼容性问题。\n立即生效。
-DisableDiagnosticPolicyServiceName	Disable the Diagnostic Policy Service	禁用诊断策略服务
-DisableDiagnosticPolicyServiceDescription	The Diagnostic Policy Service provides troubleshooting but solves few practical issues.\nEffective immediately.	诊断策略服务提供疑难解答，解决不了什么实际问题。\n立即生效。
-DisableWindowsSearchServiceName	Disable the Windows Search Service	禁用 Windows 搜索服务
-DisableWindowsSearchServiceDescription	Windows Search scans for file changes in the background, sometimes noticeably affecting performance, but is less practical compared to Everything.\nEffective immediately.	Windows 搜索在后台扫描文件改动，有时会明显影响性能，但实际作用却不大，不如 everything 好用。\n立即生效。
-DisableSysMainServiceName	Disable the SysMain Service	禁用 SysMain 服务
-DisableSysMainServiceDescription	The SysMain service compresses and merges memory in the background and preloads frequently used applications. On computers with large memory and SSDs, its effects are negligible, and it consumes background resources.\nEffective immediately.	SysMain 服务在后台压缩和合并内存，并预加载常用应用，在大内存和 SSD 电脑上效果不明显，还占用后台资源。\n立即生效。
+UninstallOneDriveDescription	Removes the built-in OneDrive client to stop background syncing, tray prompts, and shell hooks. Does not delete files already in the cloud, and you can still access OneDrive via a browser or reinstall it anytime.\nEffective immediately.	移除自带 OneDrive 客户端，停止后台同步、托盘提示与资源管理器注入。不会删除云端已有文件，仍可随时通过网页访问或重新安装。\n立即生效。
+DisableProgramCompatibilityAssistantServiceName	Disable Program Compatibility Assistant service	禁用程序兼容性助手服务
+DisableProgramCompatibilityAssistantServiceDescription	Stops PcaSvc from monitoring every program you install or launch and popping up compatibility dialogs, reducing background overhead. Rarely solves real issues, and you can still set compatibility mode manually in a file's Properties.\nEffective immediately.	停止 PcaSvc 监控每次软件安装和启动，减少后台开销与无用弹窗。它很少真正解决兼容性问题，且仍可在文件属性中手动设置兼容模式。\n立即生效。
+DisableDiagnosticPolicyServiceName	Disable Diagnostic Policy service	禁用诊断策略服务
+DisableDiagnosticPolicyServiceDescription	Stops the background troubleshooting service (DPS) from collecting diagnostic data and running automated probes. Only disables Windows' built-in guided troubleshooters, which rarely fix real problems and do not affect normal system operation.\nEffective immediately.	停止后台诊断服务（DPS）持续收集诊断信息。仅会影响系统自带的“疑难解答”向导（实际作用有限），不影响任何正常系统功能。\n立即生效。
+DisableWindowsSearchServiceName	Disable Windows Search indexing service	禁用 Windows 搜索索引服务
+DisableWindowsSearchServiceDescription	Stops Windows Search from continuously crawling files and burning disk I/O and CPU in the background. Basic filename search still works (just slower), and free tools like Everything are far faster with almost no overhead.\nEffective immediately.	停止后台持续扫描和索引文件，明显降低磁盘读写与 CPU 占用。禁用后仍可搜索，只是未建索引会变慢；搭配 Everything 搜索文件更快且几乎零开销。\n立即生效。
+DisableSysMainServiceName	Disable SysMain (Superfetch) service	禁用 SysMain（内存预加载）服务
+DisableSysMainServiceDescription	Stops background app preloading and aggressive memory compression, cutting idle disk activity and occasional micro-stutters. Built for slow mechanical hard drives; on SSDs with 16 GB+ RAM the benefit is minimal, so turning it off has virtually no downside.\nEffective immediately.	停止后台预加载应用与高频内存压缩，减少空闲磁盘读写和偶发微卡顿。该服务主要为老旧机械硬盘设计，在 SSD + 大内存电脑上几乎没有加速效果，禁用几乎零代价。\n立即生效。
 UninstallCortanaName	Uninstall Cortana	卸载 Cortana
-UninstallCortanaDescription	Cortana is Microsoft’s voice assistant. If not used, it can be uninstalled.	Cortana 是微软的语音助手，不使用可以卸载。
+UninstallCortanaDescription	Removes the legacy Cortana app package to free up clutter and background registration. Microsoft has retired consumer Cortana, so uninstalling it has zero impact on daily use.	移除旧版 Cortana 应用包，减少系统冗余。微软已停止面向个人用户的 Cortana 服务，卸载完全不影响日常使用。
 UninstallSkypeName	Uninstall Skype	卸载 Skype
-UninstallSkypeDescription	Skype is Microsoft’s instant messaging tool. If not used, it can be uninstalled.	Skype 是微软的即时通讯工具，不使用可以卸载。
-DisableWindowsRealTimeAntivirusName	Disable windows real-time antivirus	禁用 Windows 实时防病毒
-DisableWindowsRealTimeAntivirusDescription	Disabling Windows real-time antivirus can improve performance for file access. This only disables real-time scanning, behavior monitoring, and automatic quarantine during file access, but allows automatic scanning of downloaded files, threat alerts, and regular manual scans.\nEffective immediately.	Windows 实时防病毒会影响所有文件访问的性能，建议禁用。此项仅禁用访问文件时的实时扫描、行为监控、自动隔离，但允许自动扫描下载文件、提示威胁、定期手动扫描。\n立即生效。
-DisableMeltdownAndSpectrePatchesName	Disable meltdown and spectre patches	禁用 Meltdown 和 Spectre 补丁
-DisableMeltdownAndSpectrePatchesDescription	Meltdown and Spectre are CPU hardware vulnerabilities that can access kernel data. Patches affect performance; decide whether to disable based on your situation.\nTakes effect after reboot.	Meltdown 和 Spectre 是 CPU 硬件漏洞，可以获取内核数据。补丁影响性能，请根据实际情况选择是否禁用。\n重启生效。
-DisableKernelMemoryIntegrityProtectionName	Disable kernel memory integrity protection	禁用内核内存完整性保护
-DisableKernelMemoryIntegrityProtectionDescription	Kernel memory integrity protection is recommended to be disabled for regular users.\nTakes effect after reboot.	内核内存完整性保护，普通用户建议禁用。\n重启生效。
-DisableWindowsDefenderApplicationControlName	Disable windows defender application control	禁用 Windows Defender 应用控制
-DisableWindowsDefenderApplicationControlDescription	Windows Defender Application Control checks applications against system policies at startup, slowing down the boot process.\nTakes effect after reboot.	Windows Defender 应用控制在启动应用时检查是否符合系统策略，拖慢启动速度。\n重启生效。
-DisableWindowsDefenderPUAProtectionName	Disable Windows Defender blocking potentially unwanted apps	禁用 Windows Defneder 阻止可能不需要的应用
-DisableWindowsDefenderPUAProtectionDescription	Blocking unwanted apps may slow down app startup.	阻止行为可能会减慢启动应用的速度。
-DisableSmartScreenName	Disable smartscreen	禁用 SmartScreen
-DisableSmartScreenDescription	SmartScreen checks files when opening applications and installation packages, affecting startup speed and blocking downloads of certain files.\nEffective immediately.	SmartScreen 在打开应用和安装包时会检查文件，影响启动速度，还会阻止下载某些文件。\n立即生效。
-DisableFastStartupName	Disable fast startup	禁用快速启动
-DisableFastStartupDescription	Fast Startup saves the kernel state during a system restart for quicker boot times, but may cause system sluggishness and high memory usage. Since restarting is infrequent, it’s advisable to disable it. If hibernation is disabled, Fast Startup is ineffective.\nEffective immediately.	快速启动在重启系统时，保存内核状态，使得启动更快速。但有可能造成系统卡顿、内存占用高等异常情况。毕竟重启是低频行为，建议关闭。\n如果禁用了休眠功能，则快速启动失效。\n立即生效。
-DisableWindowsPlatformBinaryTableName	Disable vendor programs during early startup (WPBT)	禁用厂商开机早期运行的程序（WPBT）
-DisableWindowsPlatformBinaryTableDescription	Stops OEM programs at very early boot.\nTakes effect after reboot.	阻止开机很早阶段运行的厂商程序（多为预装推广）。\n重启生效。
-DisableSystemRestoreName	Disable system restore	禁用系统还原
-DisableSystemRestoreDescription	System Restore uses some disk space and slows down the installation of system patches. Consider disabling if you don’t frequently modify your system.\nEffective immediately.	系统还原会占用一定的磁盘空间，安装系统补丁时会减慢速度，如果不是经常折腾系统，可以考虑关闭。\n立即生效。
-DisableMicrosoftCustomerExperienceImprovementProgramName	Disable Microsoft customer experience improvement program	禁用微软客户体验改善计划
-DisableMicrosoftCustomerExperienceImprovementProgramDescription	The Microsoft Customer Experience Improvement Program automatically sends various computer information to Microsoft.\nEffective immediately.	微软客户体验改善计划会自动向微软发送电脑的各种信息。\n立即生效。
-DisableUACName	Disable UAC	禁用 UAC
-DisableUACDescription	UAC prompts for administrative permission when installing and starting programs, making users decide on safety without knowledge. It affects system performance, slows application launch, and is cumbersome.\nTakes effect after reboot.	UAC 在安装和启动程序时提示是否允许管理员权限，让用户自己判断是否安全。用户没法知道安不安全，只能点允许。影响系统性能，拖慢应用开启速度，操作繁琐。\n重启生效。
-DisableWarningForOpeningDownloadedFilesName	Disable warning for opening downloaded files	禁用打开下载文件的警告
-DisableWarningForOpeningDownloadedFilesDescription	Downloaded executable files are marked as unsafe, triggering warnings on opening and slowing startup.\nEffective immediately.	下载的可执行文件会被标记为不安全，打开时弹出警告，拖慢启动速度。\n立即生效。
-ShowKeyboardAccessKeyUnderlinesName	Show keyboard access key underlines	为键盘访问键显示下划线
-ShowKeyboardAccessKeyUnderlinesDescription	Displaying underlines for ALT+shortcut keys aids in quick keyboard operations.	显示ALT+快捷按键的下划线提示，方便快速键盘操作。
-DisableTaskbarAndWindowTransparencyName	Disable taskbar and window transparency	禁止任务栏和窗口半透明
-DisableTaskbarAndWindowTransparencyDescription	Transparency continuously consumes computing power, so it’s recommended to disable it.\nEffective immediately.	半透明会持续消耗计算性能，建议禁用。\n立即生效。
+UninstallSkypeDescription	Removes the preinstalled Skype Store app to keep the Start menu and background updates clean. Can be reinstalled from Microsoft Store anytime if ever needed.	移除预装的 Skype 商店应用，减少开始菜单杂项与后台更新。若日后需要可随时从微软商店重新安装。
+DisableWindowsRealTimeAntivirusName	Disable Windows Defender real-time scanning	禁用 Windows Defender 实时扫描
+DisableWindowsRealTimeAntivirusDescription	Greatly speeds up file access, software builds, and app launches by turning off on-access scanning and behavior monitoring. Download scanning, threat alerts, and manual scans still remain; trade-off is reduced automatic protection against unknown executables—only disable if you practice safe download habits.\nEffective immediately.	关闭访问文件时的实时扫描与行为监控，可大幅加快文件读写、编译打包与软件启动速度。仍保留下载文件扫描、威胁提示和手动查杀；代价是降低了运行未知程序时的自动拦截能力，请结合自身上网习惯权衡。\n立即生效。
+DisableMeltdownAndSpectrePatchesName	Disable Meltdown and Spectre mitigations	禁用 Meltdown 和 Spectre 漏洞缓解补丁
+DisableMeltdownAndSpectrePatchesDescription	Reclaims CPU and syscall performance lost to speculative-execution mitigations, noticeably helping I/O-heavy workloads and older CPUs. Trade-off: weakens hardware-level isolation against side-channel exploits; acceptable for single-user personal PCs that do not run untrusted code.\nTakes effect after reboot.	恢复因 CPU 硬件漏洞软件缓解损失的系统调用与计算性能，对高频 I/O 和较老处理器提升更明显。代价是削弱对侧信道攻击的底层隔离；个人单用户电脑在不运行不可信代码时风险较低，请按需权衡。\n重启生效。
+DisableKernelMemoryIntegrityProtectionName	Disable Kernel Memory Integrity (HVCI)	禁用内核内存完整性保护（HVCI）
+DisableKernelMemoryIntegrityProtectionDescription	Turns off hypervisor-enforced code integrity to reduce virtualization overhead, often improving gaming frame rates, lowering latency, and fixing older driver compatibility. Trade-off: removes one kernel-level hardening layer, though standard Windows driver signing still remains active.\nTakes effect after reboot.	关闭基于虚拟化的代码完整性检查，可降低虚拟化开销、提升游戏帧率与响应速度并减少旧驱动兼容问题。代价是少一层内核加固，但系统标准的驱动签名校验依然生效。\n重启生效。
+DisableWindowsDefenderApplicationControlName	Disable Smart App Control / Defender Application Control	禁用智能应用控制（WDAC）
+DisableWindowsDefenderApplicationControlDescription	Stops Windows from verifying every launched executable against reputation policies, making apps start faster and preventing false blocks on unsigned tools. Trade-off: disables reputation-based execution blocking, which most power users and developers find overly restrictive.\nTakes effect after reboot.	停止启动应用时按云端信誉策略逐一拦截校验，加快应用打开速度并避免误拦开发工具或小众软件。代价是关闭基于信誉的拦截，对熟悉软件来源的用户基本无感。\n重启生效。
+DisableWindowsDefenderPUAProtectionName	Disable Windows Defender PUA blocking	禁用 Windows Defender 潜在不受欢迎应用（PUA）拦截
+DisableWindowsDefenderPUAProtectionDescription	Stops Defender from scanning and flagging "potentially unwanted" bundled installers, speeding up app launches and avoiding false positives on niche utilities. Does not disable core malware detection.\nEffective immediately.	停止对“潜在不受欢迎应用”的额外拦截检查，加快启动并减少对小众工具的误报。不会关闭核心病毒木马查杀。\n立即生效。
+DisableSmartScreenName	Disable SmartScreen filter	禁用 SmartScreen 筛选器
+DisableSmartScreenDescription	Removes online reputation checks before opening downloaded files and installers, making launches snappier and eliminating false "Windows protected your PC" blocks. Trade-off: skips Microsoft's cloud reputation warning, so verify download sources yourself.\nEffective immediately.	取消打开下载文件和安装包前的云端信誉检查，加快打开速度并减少“Windows 已保护你的电脑”误拦弹窗。代价是少了微软云端信誉提示，自行确认下载来源即可。\n立即生效。
+DisableFastStartupName	Disable Fast Startup	禁用快速启动
+DisableFastStartupDescription	Makes "Shut down" perform a real clean kernel shutdown instead of saving kernel state to disk, preventing driver glitches, memory leaks, Wake-on-LAN issues, and dual-boot filesystem corruption. On modern SSDs, cold boot is only 1–3 seconds slower—well worth the stability gain. (Has no effect if hibernation is off.)\nEffective immediately.	让“关机”执行真正的完整内核关闭，避免因长期保存旧内核状态引发的驱动异常、内存占用高、网卡异常及双系统磁盘损坏。在现代 SSD 上开机仅慢 1~3 秒，换来的稳定性完全值得。（关闭休眠后本项自动不生效。）\n立即生效。
+DisableWindowsPlatformBinaryTableName	Disable OEM early-boot programs (WPBT)	禁用厂商开机早期运行程序（WPBT）
+DisableWindowsPlatformBinaryTableDescription	Blocks motherboard/laptop firmware from silently injecting vendor utilities or bloatware during early Windows boot, improving cleanliness and security. Does not affect BIOS updates or normal drivers installed later.\nTakes effect after reboot.	阻止主板/笔记本固件在系统启动极早期静默注入厂商工具或推广软件，更干净也更安全。不影响正常驱动安装或 BIOS 更新。\n重启生效。
+DisableSystemRestoreName	Disable System Restore	禁用系统还原
+DisableSystemRestoreDescription	Stops Windows from automatically creating restore snapshots before updates and installs, freeing gigabytes of SSD space and speeding up patch/software installations. Trade-off: you cannot roll back via Windows restore points (use regular file/image backups instead if needed).\nEffective immediately.	停止在系统更新和安装软件时自动创建还原快照，可释放数 GB 磁盘空间并加快更新与安装速度。代价是无法使用系统还原点回退（重要系统可用镜像备份替代）。\n立即生效。
+DisableMicrosoftCustomerExperienceImprovementProgramName	Disable Customer Experience Improvement Program (CEIP)	禁用微软客户体验改善计划（CEIP）
+DisableMicrosoftCustomerExperienceImprovementProgramDescription	Stops Windows from collecting and uploading usage statistics to Microsoft, saving minor background work and improving privacy. Zero impact on any Windows feature.\nEffective immediately.	停止向微软收集和上传使用习惯统计数据，减少后台活动并保护隐私。对所有系统功能完全无影响。\n立即生效。
+DisableUACName	Disable User Account Control (UAC)	禁用用户帐户控制（UAC）
+DisableUACDescription	Eliminates repetitive administrator approval prompts when installing software or running admin tools, making power-user workflows much smoother. Trade-off: programs run without an elevation prompt (reduces protection if you accidentally launch malware); disable only if you know what you run.\nTakes effect after reboot.	取消安装软件和运行管理工具时反复弹出的管理员确认框，操作更顺畅无打断。代价是程序不再经手动弹窗拦截即可提权，存在误点恶意软件的风险，仅建议熟悉自身软件环境的用户开启。\n重启生效。
+DisableWarningForOpeningDownloadedFilesName	Disable "Open File – Security Warning" for downloads	取消打开下载文件时的安全警告
+DisableWarningForOpeningDownloadedFilesDescription	Removes the repetitive "Do you want to run this file?" confirmation prompt on files downloaded from the internet, saving clicks and startup delay. Does not disable browser download checks or antivirus scanning.\nEffective immediately.	取消每次打开网上下载的可执行文件时反复弹出的“是否运行此文件”确认框，省去多余点击。不影响浏览器下载检查和杀毒扫描。\n立即生效。
+ShowKeyboardAccessKeyUnderlinesName	Always show keyboard access key underlines	始终显示菜单快捷键下划线（Alt 提示）
+ShowKeyboardAccessKeyUnderlinesDescription	Keeps Alt+key shortcut underlines visible in menus and dialogs so keyboard navigation is faster without pressing Alt first. Purely visual, with zero performance cost.\nTakes effect after reboot.	在菜单和对话框中直接显示 Alt+字母快捷键的下划线提示，无需先按 Alt 就能看清快捷键，纯界面偏好且零性能开销。\n重启生效。
+DisableTaskbarAndWindowTransparencyName	Disable taskbar and window transparency	关闭任务栏和窗口半透明效果
+DisableTaskbarAndWindowTransparencyDescription	Turns off Acrylic/Mica blur compositing on the taskbar, Start menu, and windows, lowering GPU usage and making window movement snappier (especially on integrated graphics or remote desktop). Only trades translucent glass styling for clean solid colors.\nEffective immediately.	关闭任务栏、开始菜单和窗口的亚克力/云母模糊渲染，可降低 GPU 合成开销、让窗口拖动和远程桌面更流畅。代价仅是界面由半透明变为纯色，观感反而更清晰。\n立即生效。
 ShowFileExtensionsName	Show file extensions	显示文件扩展名
-ShowFileExtensionsDescription	File extensions determine file types in Windows; enabling them helps better identify files.\nEffective immediately.	Windows 下文件扩展名决定了文件类型，建议打开以便更好地识别文件。\n立即生效。
-ReduceMenuDelayName	Reduce menu delay	降低菜单延迟
-ReduceMenuDelayDescription	Windows waits before opening some menus and submenus. Reducing the delay makes menus respond faster without disabling menu animations completely.\nTakes effect at next sign-in.	Windows 在打开部分菜单和子菜单前会等待一小段时间。降低延迟可以让菜单响应更快，同时不完全禁用菜单动画。\n下次登录生效。
-ReduceMouseHoverTimeName	Reduce mouse hover delay	降低鼠标悬停延迟
-ReduceMouseHoverTimeDescription	Windows waits before triggering hover actions such as tooltips and hover-open controls. Reducing the delay makes hover interactions respond faster.\nTakes effect at next sign-in.	Windows 在触发工具提示、悬停打开控件等悬停动作前会等待一小段时间。降低延迟可以让悬停交互响应更快。\n下次登录生效。
-DisplayThisPCWhenOpeningFileExplorerName	Display this PC when opening file explorer	打开文件资源管理器时显示我的电脑
-DisplayThisPCWhenOpeningFileExplorerDescription	Opening File Explorer usually involves searching for files, so showing ‘My Computer’ directly is quicker.\nEffective immediately.	打开资源管理器通常就是要找文件，直接显示我的电脑更快捷。\n立即生效。
-DoNotAddShortcutTextWhenCreatingShortcutsName	Do not add “shortcut” text when creating shortcuts	创建快捷方式时不添加“快捷方式”文字
-DoNotAddShortcutTextWhenCreatingShortcutsDescription	Shortcut names already have an arrow indicator, so additional “Shortcut” text is unnecessary and inconvenient to manually remove each time. It’s recommended to disable this.\nEffective immediately.	快捷方式的名称已经有箭头标识，不需要额外的“快捷方式”文字，每次都要手工修改一下很麻烦，建议关闭。\n立即生效。
-PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenName	Prevent snap layouts from showing when dragging windows to the top of the screen	禁止窗口拖动到屏幕顶端时显示贴靠布局
-PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenDescription	Snap Layouts can cause lag while dragging windows and lead to misoperations, so it’s recommended to disable them.\nEffective immediately.	显示贴靠布局会导致拖动窗口时卡顿，也容易误操作，建议关闭。\n立即生效。
-DisableSnapAssistName	Disable Snap Assist	禁用贴靠助手
-DisableSnapAssistDescription	Snap Assist shows thumbnails of other open windows after you snap a window. Disabling it reduces shell popups and avoids interruptions while keeping edge and corner snapping available.\nTakes effect after restarting Explorer.	贴靠助手会在贴靠一个窗口后显示其他打开窗口的缩略图。禁用后可以减少系统弹层和操作打断，同时保留拖到屏幕边缘和角落的贴靠功能。\n重启资源管理器生效。
+ShowFileExtensionsDescription	Displays full file suffixes (like .exe, .pdf, .zip) in File Explorer so you can easily tell file types apart and spot disguised executables (e.g. invoice.pdf.exe). Practically zero downside.\nEffective immediately.	在文件资源管理器中完整显示 .exe、.pdf、.zip 等后缀名，既方便识别和修改文件类型，也能一眼识破伪装成文档的木马（如“简历.pdf.exe”），几乎零代价。\n立即生效。
+ReduceMenuDelayName	Reduce menu open delay	降低菜单展开延迟
+ReduceMenuDelayDescription	Cuts the built-in wait time before submenus open from 400 ms to 100 ms so the desktop feels noticeably snappier, while keeping smooth animations intact. Zero performance cost.\nTakes effect at next sign-in.	将子菜单展开前的默认等待时间从 400 ms 缩短到 100 ms，让右键和多级菜单明显更跟手，同时保留动画不显生硬，零性能代价。\n下次登录生效。
+ReduceMouseHoverTimeName	Reduce mouse hover delay	降低鼠标悬停响应延迟
+ReduceMouseHoverTimeDescription	Shortens the wait before tooltips and hover previews appear from 400 ms to 100 ms, making desktop interactions feel quicker. Easily reversible if you prefer a longer pause.\nTakes effect at next sign-in.	将工具提示和悬停预览的触发延迟从 400 ms 缩短到 100 ms，鼠标交互更利落；若觉得触发太快可随时取消。\n下次登录生效。
+DisplayThisPCWhenOpeningFileExplorerName	Open File Explorer to "This PC"	打开文件资源管理器时直接显示“此电脑”
+DisplayThisPCWhenOpeningFileExplorerDescription	Jumps straight to your drives and folders instead of the cluttered Home/Quick Access view, saving clicks and avoiding slow loading of recent/cloud file lists. Quick Access is still available in the left sidebar.\nEffective immediately.	打开资源管理器直接进入磁盘分区列表，免去主页/快速访问加载最近文件和云端记录的拖慢，左侧栏仍随时可点回快速访问。\n立即生效。
+DoNotAddShortcutTextWhenCreatingShortcutsName	Do not add "- Shortcut" suffix to new shortcuts	创建快捷方式时不添加“- 快捷方式”后缀
+DoNotAddShortcutTextWhenCreatingShortcutsDescription	Keeps newly created shortcut names clean without manually renaming them every time. Shortcut icons still show the standard arrow badge so they remain easy to identify.\nEffective immediately.	新建快捷方式时不再自动追加冗长的“- 快捷方式”文字，省去每次手动重命名；图标左下角仍保留标准箭头标识，完全不会混淆。\n立即生效。
+PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenName	Disable Snap Layouts bar at top of screen	拖动窗口到屏幕顶部时不弹出贴靠布局
+PreventSnapLayoutsFromShowingWhenDraggingWindowsToTheTopOfTheScreenDescription	Stops the Snap Layouts flyout from popping up accidentally and causing drag stutter when moving windows near the top edge. You can still use Snap Layouts via Win+Z or by hovering over the Maximize button.\nTakes effect after restarting Explorer.	避免把窗口拖到屏幕顶部最大化时误触弹出贴靠布局或引发拖动卡顿。仍可通过 Win+Z 或鼠标悬停在最大化按钮上随时使用分屏布局。\n重启资源管理器生效。
+DisableSnapAssistName	Disable Snap Assist	禁用贴靠助手（分屏后推荐其他窗口）
+DisableSnapAssistDescription	Stops Windows from showing thumbnails of other open windows after you snap one to a screen edge, eliminating visual clutter and interruption. Edge and corner window snapping itself keeps working normally.\nTakes effect after restarting Explorer.	窗口贴靠到屏幕边缘后不再弹出其余窗口的缩略图列表，减少视觉打断；拖动到屏幕边缘和角落自动分屏的功能本身完全保留。\n重启资源管理器生效。
 DisablePreviewHandlersName	Disable File Explorer preview handlers	禁用文件资源管理器预览处理器
-DisablePreviewHandlersDescription	Preview handlers render document, PDF, email, and other file previews inside File Explorer. Disabling them reduces background parsing, file locks, and slow third-party preview extensions.\nTakes effect after restarting Explorer.	预览处理器会在文件资源管理器中渲染文档、PDF、邮件等文件预览。禁用后可减少后台解析、文件占用和缓慢的第三方预览扩展影响。\n重启资源管理器生效。
-TurnOffSearchHighlightsName	Turn off search highlights	关闭搜索热点
-TurnOffSearchHighlightsDescription	Search highlights in the search bar constantly update online trending topics.\nEffective immediately.	搜索热点在搜索栏右侧显示，会不断的更新网上的热点消息。\n立即生效。
-TurnOffWidgetsName	Turn off widgets	关闭小组件
-TurnOffWidgetsDescription	Widgets display news and information on the taskbar’s left side.\nEffective immediately.	小组件显示在任务栏左侧，更新各种新闻和信息。\n立即生效。
-HideTheSearchBoxName	Hide the search box	隐藏搜索框
-HideTheSearchBoxDescription	The taskbar search box takes up space for multitask viewing, and the Start menu search is simpler.\nTakes effect after restarting Explorer.	任务栏搜索框占用了多任务窗口的显示空间，而通过开始菜单搜索更简便。\n重启资源管理器生效。
-HideTaskViewButtonName	Hide task view button	隐藏任务视图按钮
-HideTaskViewButtonDescription	Task View can be launched with the shortcut WIN+TAB, eliminating the need for an extra button.\nEffective immediately.	通过快捷键 WIN+TAB 即可启动任务视图，不需要额外的按钮。\n立即生效。
-NeverCombineTaskbarIconsName	Never combine taskbar icons	从不合并任务栏图标
-NeverCombineTaskbarIconsDescription	Merging taskbar icons removes text labels, making it harder to distinguish between different windows of the same software. For higher work efficiency, it’s recommended never to merge them.\nTakes effect after restarting Explorer.	任务栏图标合并后没有文字描述，难以区分同一个软件的不同窗口，建议从不合并，工作效率更高。\n重启资源管理器生效。
-PreventStartMenuFromSearchingTheWebName	Prevent start menu from searching the web	禁止开始菜单搜索网页
-PreventStartMenuFromSearchingTheWebDescription	Start Menu input is generally for searching apps and system settings; web searches waste resources.\nTakes effect after restarting Explorer.	开始菜单输入通常是为了搜索应用程序和系统设置，搜索网页浪费资源。\n重启资源管理器后生效。
-PreventStartMenuFromSearchingCloudContentName	Prevent start menu from searching cloud content	禁止开始菜单搜索云端内容
-PreventStartMenuFromSearchingCloudContentDescription	Block searches of cloud information like OneDrive, SharePoint, Outlook, etc.\nEffective immediately.	阻止搜索 OneDrive、SharePoint、Outlook 等云端信息。\n立即生效。
-DisableRecommendedAppsName	Disable recommended apps	禁止推荐应用
-DisableRecommendedAppsDescription	Effective immediately.	立即生效。
-DisableAutoPlayName	Disable autoplay	禁止自动播放
-DisableAutoPlayDescription	Auto-playing CDs or USB drives could lead to virus infections.\nEffective immediately.	自动播放光盘或者 U 盘可能导致中毒。\n立即生效。
-EnableWindowsDeliveryOptimizationName	Enable windows delivery optimization	开启 Windows 传递优化
-EnableWindowsDeliveryOptimizationDescription	Windows Delivery Optimization can download system updates from other computers in the local network, improving efficiency.\nEffective immediately.	Windows 传递优化可以从局域网其他电脑下载系统补丁，提升效率。\n立即生效。
-NoAutoRebootAfterWindowsUpdateName	No auto-reboot after Windows update	Windows 更新后不自动重启
-NoAutoRebootAfterWindowsUpdateDescription	No auto-restart with logged on users for scheduled automatic updates installations.	如果当前用户已登录，则 Windows 更新后不自动重启。
-AllowEdgeToDownloadDangerousFileTypesWithoutWarningName	Allow Edge to download .exe, .msi, .crx without warning	允许 Edge 下载 .exe, .msi, .crx 文件时不弹出警告
-AllowEdgeToDownloadDangerousFileTypesWithoutWarningDescription	Effective immediately.	立即生效。
-AllowEdgeToDownloadDangerousFileTypesDescription	Effective immediately.	立即生效。
-DoNotShowFrequentFoldersInFileExplorerName	Do not show frequent folders in file explorer	文件资源管理器中不显示常用文件夹
-DoNotShowFrequentFoldersInFileExplorerDescription	Effective immediately.	立即生效。
-DoNotShowRecentlyUsedFilesInFileExplorerName	Do not show recently used files in file explorer	文件资源管理器中不显示最近使用的文件
-DoNotShowRecentlyUsedFilesInFileExplorerDescription	Effective immediately.	立即生效。
-DoNotShowFilesFromOfficeComInFileExplorerName	Do not show files from office.com in file explorer	文件资源管理器中不显示来自 Office.com 的文件
-DoNotShowFilesFromOfficeComInFileExplorerDescription	Effective immediately.	立即生效。
-DoNotShowNewlyInstalledAppsInTheStartMenuName	Do not show newly installed apps in the start menu	开始菜单不显示新安装的应用
-DoNotShowNewlyInstalledAppsInTheStartMenuDescription	Effective immediately.	立即生效。
-DoNotShowFrequentlyUsedAppsInTheStartMenuName	Do not show frequently used apps in the start menu	开始菜单不显示常用的应用
-DoNotShowFrequentlyUsedAppsInTheStartMenuDescription	Effective immediately.	立即生效。
-DisablePersonalizedAdsName	Disable personalized ads	禁用个性化广告
-DisablePersonalizedAdsDescription	Personalized ad tracking follows my advertising ID to learn my preferences.\nEffective immediately.	个性化广告跟踪我的广告 ID，了解我的喜好。\n立即生效。
-PreventWebsitesFromKnowingMyLanguageName	Prevent websites from knowing my language	禁止网站知道我使用的语言
-PreventWebsitesFromKnowingMyLanguageDescription	Effective immediately.	立即生效。
-AllowWindowsTrackingAppsILaunchName	Allow windows tracking apps I launch	允许 Windows 跟踪我启动的应用
-AllowWindowsTrackingAppsILaunchDescription	So runned command can be remembered. Effective immediately.	运行对话框中的命令才能被记住。立即生效。
-PreventWindowsFromTrackingFilesIOpenName	Prevent windows from tracking files I open	禁止 Windows 跟踪我我打开的文件
-PreventWindowsFromTrackingFilesIOpenDescription	Effective immediately.	立即生效。
-PreventWindowsFromTrackingMySystemSettingsName	Prevent windows from tracking my system settings	禁止 Windows 跟踪我的系统设置
-PreventWindowsFromTrackingMySystemSettingsDescription	Effective immediately.	立即生效。
+DisablePreviewHandlersDescription	Stops File Explorer from loading third-party document, PDF, and email previewers inside the preview pane, preventing slow folder browsing, crashes, and "file in use" locks. Normal image thumbnails still work.\nTakes effect after restarting Explorer.	停止在资源管理器预览窗格中加载 PDF、Office、邮件等第三方预览插件，可避免浏览文件夹卡顿、崩溃和“文件被占用无法删除”的问题；普通图片缩略图不受影响。\n重启资源管理器生效。
+TurnOffSearchHighlightsName	Turn off taskbar Search Highlights	关闭任务栏搜索热点图标
+TurnOffSearchHighlightsDescription	Removes the daily doodle and trending news cards from the taskbar search box, cutting visual distraction and online fetches. Local search keeps working identically.\nEffective immediately.	移除任务栏搜索栏右侧的每日热点图标与网络热搜卡片，界面更清爽并减少联网拉取，不影响正常搜索功能。\n立即生效。
+TurnOffWidgetsName	Turn off Widgets	关闭任务栏小组件
+TurnOffWidgetsDescription	Disables the news/weather Widgets panel and its background WebView2 processes, freeing RAM and stopping accidental hover popups. Does not affect any other taskbar feature.\nEffective immediately.	关闭任务栏左侧的资讯/天气小组件及其后台 WebView2 进程，节省内存并避免鼠标滑过误弹出，不影响其他任务栏功能。\n立即生效。
+HideTheSearchBoxName	Hide taskbar search box	隐藏任务栏搜索框
+HideTheSearchBoxDescription	Reclaims substantial taskbar space for open app windows. Searching is still just as fast—press the Win key and start typing directly in the Start menu.\nTakes effect after restarting Explorer.	释放任务栏大片空间以显示更多应用窗口。想搜索时直接按 Win 键打字即可，效率完全不变。\n重启资源管理器生效。
+HideTaskViewButtonName	Hide Task View button	隐藏任务栏“任务视图”按钮
+HideTaskViewButtonDescription	Frees up taskbar space by hiding an extra icon that is rarely clicked. Task View and virtual desktops remain fully accessible anytime via Win+Tab.\nEffective immediately.	隐藏很少点击的多余图标以让任务栏更简洁；随时可按 Win+Tab 打开任务视图和虚拟桌面，功能无任何损失。\n立即生效。
+NeverCombineTaskbarIconsName	Never combine taskbar buttons	从不合并任务栏图标
+NeverCombineTaskbarIconsDescription	Shows each open window with its own title label on the taskbar so you can switch directly in one click instead of hovering through grouped previews. Only uses more horizontal taskbar width when many windows are open.\nTakes effect after restarting Explorer.	让同一软件的每个窗口都在任务栏单独展开并显示标题，一键直达目标窗口而不用反复悬停挑选。仅在同时开大量窗口时占用更多任务栏宽度。\n重启资源管理器生效。
+PreventStartMenuFromSearchingTheWebName	Disable web search in Start menu	禁止开始菜单搜索网页
+PreventStartMenuFromSearchingTheWebDescription	Stops Start menu searches from sending your keystrokes to Bing and showing slow web cards, making local app and file search noticeably faster and more private. You can still search the web in your browser as usual.\nTakes effect after restarting Explorer.	阻止开始菜单把搜索词发往 Bing 并加载网页卡片，让本机应用与设置搜索更快、结果更干净也更保护隐私，完全不影响正常上网。\n重启资源管理器生效。
+PreventStartMenuFromSearchingCloudContentName	Disable cloud content in Windows Search	禁止 Windows 搜索拉取云端内容
+PreventStartMenuFromSearchingCloudContentDescription	Stops local search from querying OneDrive, SharePoint, and Outlook cloud data, speeding up search results and reducing unnecessary network requests. Local search is unaffected.\nEffective immediately.	阻止搜索栏额外查询 OneDrive、SharePoint、Outlook 等云端内容，加快本机搜索响应并减少多余联网请求，不影响本地文件搜索。\n立即生效。
+DisableRecommendedAppsName	Disable recommended apps in Start menu	禁用开始菜单推荐应用
+DisableRecommendedAppsDescription	Removes promotional app recommendations and tips from the Start menu's Recommended area, keeping the layout clean with zero loss of functionality.\nEffective immediately.	移除开始菜单中微软推送的广告应用与推广提示，让开始菜单更清爽，不影响任何正常功能。\n立即生效。
+DisableAutoPlayName	Disable AutoPlay for removable media	禁止 U 盘与光盘自动播放
+DisableAutoPlayDescription	Prevents USB drives, memory cards, and discs from automatically launching actions on insertion, blocking a classic malware propagation vector and annoying popups. You can still open drives normally in File Explorer.\nEffective immediately.	插上 U 盘、存储卡或光盘时不再自动弹出操作或运行程序，既减少打扰又降低感染病毒风险；仍可在“此电脑”中正常打开设备。\n立即生效。
+EnableWindowsDeliveryOptimizationName	Allow LAN peer sharing for Windows Updates	开启局域网 Windows 更新传递优化
+EnableWindowsDeliveryOptimizationDescription	Allows Windows to fetch update chunks from other PCs on your own local network (LAN-only mode, not over the internet), speeding up updates when you have multiple PCs without using external upload bandwidth.\nEffective immediately.	允许从同一局域网内其他电脑获取系统更新片段（仅限内网，不对外网上传），多台电脑更新更快且不消耗公网上传带宽。\n立即生效。
+NoAutoRebootAfterWindowsUpdateName	Prevent automatic reboot after Windows Update	Windows 更新后不自动重启
+NoAutoRebootAfterWindowsUpdateDescription	Stops Windows from forcibly rebooting while you are signed in and losing unsaved work or interrupting 24/7 tasks. Updates still install cleanly whenever you choose to restart manually.\nEffective immediately.	只要当前有用户登录，Windows 安装更新后就不会强制自动重启，避免丢失未保存的工作或打断挂机任务；等你方便时手动重启即可完成更新。\n立即生效。
+AllowEdgeToDownloadDangerousFileTypesWithoutWarningName	Allow Edge to download .exe/.msi/.crx without warning	允许 Edge 下载 .exe/.msi/.crx 时不弹出拦截警告
+AllowEdgeToDownloadDangerousFileTypesWithoutWarningDescription	Stops Microsoft Edge from holding back common installers (.exe, .msi) and extensions (.crx) behind multi-step "Keep anyway" prompts, saving friction for developers and power users. Standard download checks for other threats stay intact; just confirm the download source yourself.\nEffective immediately.	让 Edge 下载常见的 .exe/.msi 安装包和 .crx 扩展时不再层层拦截、反复点击“保留”，大幅减少日常下载阻力；仅需自行确认下载来源可信。\n立即生效。
+DoNotShowFrequentFoldersInFileExplorerName	Hide frequent folders in File Explorer	不在文件资源管理器中显示常用文件夹
+DoNotShowFrequentFoldersInFileExplorerDescription	Stops File Explorer from automatically adding frequently visited folders to Quick Access, keeping the view clean and protecting privacy on shared screens. Folders you manually pin stay untouched.\nEffective immediately.	阻止资源管理器自动把常打开的目录塞进“快速访问”，界面更整洁且共享屏幕时更护隐私；你手动固定的文件夹不会受影响。\n立即生效。
+DoNotShowRecentlyUsedFilesInFileExplorerName	Hide recent files in File Explorer	不在文件资源管理器中显示最近使用的文件
+DoNotShowRecentlyUsedFilesInFileExplorerDescription	Hides the auto-generated recent files list in File Explorer so private documents aren't exposed when opening folders or sharing your screen, and reduces extra list loading. Files themselves are untouched.\nEffective immediately.	隐藏资源管理器自动记录的“最近使用的文件”列表，防止投屏或他人查看时暴露隐私文档并减少加载开销，不会删除任何文件。\n立即生效。
+DoNotShowFilesFromOfficeComInFileExplorerName	Hide Office.com cloud files in File Explorer	不在文件资源管理器中显示 Office.com 云端文件
+DoNotShowFilesFromOfficeComInFileExplorerDescription	Removes online Office.com / Microsoft 365 cloud file suggestions from File Explorer, keeping the view local-only, faster, and less cluttered. Your cloud files remain accessible in Office apps and browsers.\nEffective immediately.	隐藏资源管理器中穿插的 Office.com/Microsoft 365 云端文档记录，让视图专注本地文件、更清爽快捷；云端文档仍可在 Office 或网页端正常打开。\n立即生效。
+DoNotShowNewlyInstalledAppsInTheStartMenuName	Hide recently added apps in Start menu	开始菜单不显示“最近添加”应用
+DoNotShowNewlyInstalledAppsInTheStartMenuDescription	Removes the "Recently added" section at the top of the Start menu app list so newly installed utilities don't push down your regular list. All apps remain in the normal A–Z list and search.\nEffective immediately.	关闭开始菜单顶部的“最近添加”分组，减少视觉干扰；所有已装软件仍可从全部应用列表或搜索正常打开。\n立即生效。
+DoNotShowFrequentlyUsedAppsInTheStartMenuName	Hide most used apps in Start menu	开始菜单不显示“最常用”应用
+DoNotShowFrequentlyUsedAppsInTheStartMenuDescription	Hides the dynamically changing "Most used" app list in the Start menu, improving privacy and keeping the Start menu layout predictable. Pinned apps are unaffected.\nEffective immediately.	隐藏开始菜单自动统计的“最常用”应用列表，保护使用隐私且避免菜单布局频繁变动；你手动固定的应用不受影响。\n立即生效。
+DisablePersonalizedAdsName	Disable Windows advertising ID	禁用 Windows 广告 ID 与个性化广告
+DisablePersonalizedAdsDescription	Turns off the system advertising ID so apps cannot track your usage across apps to build ad profiles. Has zero negative impact on normal app functionality.\nEffective immediately.	关闭系统广告 ID，阻止应用跨软件追踪偏好并推送定向广告，对任何正常功能零影响。\n立即生效。
+PreventWebsitesFromKnowingMyLanguageName	Do not share Windows language list with websites	禁止网站读取本机语言列表
+PreventWebsitesFromKnowingMyLanguageDescription	Stops Windows from sharing your installed language list with websites for regional ad/content targeting, slightly reducing browser fingerprinting with no impact on normal browsing.\nEffective immediately.	阻止 Windows 向网站提供本机语言列表用于地域推广，减少额外隐私暴露，不影响正常浏览网页。\n立即生效。
+AllowWindowsTrackingAppsILaunchName	Keep app launch tracking (for Run history)	保留应用启动跟踪（用于记住“运行”历史）
+AllowWindowsTrackingAppsILaunchDescription	Keeps Windows' local launch history enabled so the Win+R Run dialog remembers your previous commands and Start menu search stays responsive. Stored locally only, with negligible overhead.\nEffective immediately.	保留本机应用启动记录，否则 Win+R“运行”对话框会丢失历史命令记忆。仅在本机生效，性能开销几乎为零。\n立即生效。
+PreventWindowsFromTrackingFilesIOpenName	Stop tracking recently opened files	禁止 Windows 跟踪打开的文件记录
+PreventWindowsFromTrackingFilesIOpenDescription	Stops Windows from recording opened documents for Jump Lists and Start/Explorer recent lists, improving privacy when others use or view your screen. Only removes automatic "Recent" jump list history.\nEffective immediately.	禁止 Windows 记录你打开过的文档历史（如任务栏跳转列表和开始菜单最近项目），更保护隐私；代价仅是不再自动生成“最近打开”历史列表。\n立即生效。
+PreventWindowsFromTrackingMySystemSettingsName	Disable suggested content in Settings	禁用“设置”应用中的推荐内容
+PreventWindowsFromTrackingMySystemSettingsDescription	Turns off promotional cards and feature suggestions inside the Windows Settings app, keeping Settings cleaner without removing any actual settings.\nEffective immediately.	关闭 Windows“设置”页面中穿插的推广卡片与功能建议，界面更干净，不会缺少任何系统设置项。\n立即生效。
 DisableWindowsSpotlightName	Disable Windows Spotlight	禁用 Windows 聚焦
-DisableWindowsSpotlightDescription	Windows Spotlight downloads daily lock screen and desktop background content from Microsoft. Disable it if you do not use Spotlight backgrounds.\nEffective after group policy refresh.	Windows 聚焦会从 Microsoft 下载每日锁屏和桌面背景内容。不使用聚焦背景时可以禁用。\n刷新组策略后生效。
-DisableMicrosoftConsumerFeaturesName	Disable Microsoft consumer features	禁用微软消费者体验
-DisableMicrosoftConsumerFeaturesDescription	Microsoft consumer features can show Start suggestions, membership notifications, post-OOBE app installs, and redirect tiles. Disabling them reduces promotional content and background setup work.\nEffective after group policy refresh.	微软消费者体验可能显示开始菜单建议、会员通知、首次设置后的应用安装和跳转磁贴。禁用后可减少推广内容和后台设置任务。\n刷新组策略后生效。
-DisableSuggestedAppInstallationName	Disable suggested app installation	禁用推荐应用静默安装
-DisableSuggestedAppInstallationDescription	Windows may silently prepare or install suggested apps for the current user. Disabling this prevents those suggested app installs without changing existing installed apps.\nEffective immediately.	Windows 可能会为当前用户静默准备或安装推荐应用。禁用后可阻止这些推荐应用安装，不会改变已经安装的应用。\n立即生效。
-DisableStartAndSettingsSuggestionsName	Disable Start and Settings suggestions	禁用开始菜单和设置建议
-DisableStartAndSettingsSuggestionsDescription	Windows can show tips, third-party suggestions, Settings suggestions, and welcome experience content. Disabling these suggestions reduces promotional UI and notification noise.\nEffective after group policy refresh.	Windows 可能显示提示、第三方建议、设置应用建议和欢迎体验内容。禁用后可减少推广界面和通知干扰。\n刷新组策略后生效。
-UseClassicalContextMenuName	Use the classic right-click menu in Windows 10	使用 Win10 经典右键菜单
-UseClassicalContextMenuDescription	The default right-click menu in Windows 11 lacks many software features and has compatibility issues. Restarting File Explorer will apply the changes.	Windows 11 默认右键菜单少了许多软件的功能，兼容性不佳。\n重启资源管理器生效。
-DisableVisualEffectDescription	Disable this visual effect to reduce animation and rendering overhead.\nSome changes require re-logging to take effect.	禁用这项视觉效果，以减少动画和渲染开销。\n部分需要重新登录生效。
-EnableVisualEffectDescription	Keep this visual effect enabled to preserve readability while using custom visual effect settings.\nSome changes require re-logging to take effect.	使用自定义视觉效果设置时保留这项视觉效果，以保持易读性。\n部分需要重新登录生效。
+DisableWindowsSpotlightDescription	Stops Windows from downloading daily Bing wallpapers, lock-screen tips, and promotional links in the background, saving network/disk activity and removing desktop "Learn about this picture" icons. You can use any local wallpaper instead.\nEffective after group policy refresh.	停止后台自动下载每日聚焦壁纸、锁屏推广链接及桌面“了解此图片”图标，减少联网和界面杂项，可自由使用本地壁纸。\n刷新组策略后生效。
+DisableMicrosoftConsumerFeaturesName	Disable Microsoft consumer promotions	禁用微软消费级推广功能
+DisableMicrosoftConsumerFeaturesDescription	Blocks Windows from auto-installing promotional Store apps (like casual games or partner apps) and pushing Microsoft 365/account nagging tiles after updates. Keeps the system clean with zero impact on apps you install yourself.\nEffective after group policy refresh.	阻止系统更新后自动塞入推广游戏、合作应用及账号/会员推广磁贴，让系统保持纯净，不影响你自己从商店安装应用。\n刷新组策略后生效。
+DisableSuggestedAppInstallationName	Disable silent suggested app installs	禁用推荐应用静默安装
+DisableSuggestedAppInstallationDescription	Prevents Windows from quietly downloading and installing "suggested" third-party apps in the background for your user account, saving disk space and bandwidth with zero downside.\nEffective immediately.	阻止 Windows 在后台为当前账户静默下载并安装推荐的第三方应用，节省空间与流量，完全无副作用。\n立即生效。
+DisableStartAndSettingsSuggestionsName	Disable Start, Settings, and welcome suggestions	禁用开始菜单、设置与欢迎体验推广建议
+DisableStartAndSettingsSuggestionsDescription	Turns off promotional tips, third-party suggestions, and post-update welcome nags across Start and Settings. Eliminates popups and clutter without removing any system feature.\nEffective after group policy refresh.	关闭开始菜单、设置及更新后的各类提示、第三方推荐和欢迎引导弹窗，显著减少打扰且不影响任何正常功能。\n刷新组策略后生效。
+UseClassicalContextMenuName	Use classic Windows 10 right-click menu	恢复 Win10 经典完整右键菜单
+UseClassicalContextMenuDescription	Replaces Windows 11's collapsed right-click menu so all actions (7-Zip, Git, Notepad++, copy/paste) appear immediately without clicking "Show more options" every time. Slightly taller menu, far faster daily workflow.\nTakes effect after restarting Explorer.	跳过 Windows 11 的二级折叠右键菜单，一次右键直接显示压缩、Git、编辑器等全部选项，免去每次再点“显示更多选项”，日常效率高得多。\n重启资源管理器生效。
+DisableVisualEffectDescription	Turns off this decorative UI animation or effect so the desktop responds more crisply with lower GPU/DWM compositing overhead. Purely visual, with zero functional downside.\nSome changes require signing out and back in.	关闭这项装饰性界面动画或特效，让桌面操作更干脆利落并降低 GPU/桌面合成开销。纯视觉精简，无任何功能损失。\n部分需要重新登录生效。
+EnableVisualEffectDescription	Keeps this essential visual cue enabled when using custom visual effects so text stays sharp and windows remain easy to read and drag, at virtually zero performance cost.\nSome changes require signing out and back in.	在自定义精简视觉效果时保留这项关键显示效果，确保字体清晰、窗口层次分明且操作顺手，性能开销几乎为零。\n部分需要重新登录生效。
 DisableClientAreaAnimationName	Disable animations inside windows	禁用窗口内控件和元素动画
 DisableWindowAnimationName	Disable window minimize and maximize animations	禁用窗口最小化和最大化动画
 DisableTaskbarAnimationName	Disable taskbar animations	禁用任务栏动画
-DisableAeroPeekName	Disable Peek	禁用 Peek
-DisableMenuAnimationName	Disable menu fade and slide animations	禁用菜单淡入淡出或滑动动画
-DisableTooltipAnimationName	Disable tooltip fade and slide animations	禁用工具提示淡入淡出或滑动动画
+DisableAeroPeekName	Disable Aero Peek	禁用 Aero Peek 桌面透视
+DisableMenuAnimationName	Disable menu fade and slide animations	禁用菜单淡入淡出与滑动动画
+DisableTooltipAnimationName	Disable tooltip fade and slide animations	禁用工具提示淡入淡出与滑动动画
 DisableMenuFadeOutName	Disable menu fade-out after clicking	禁用点击后菜单淡出效果
-DisableTaskbarThumbnailCacheName	Disable saving taskbar thumbnail previews	禁用保存任务栏缩略图预览
-EnableMousePointerShadowName	Show shadows under mouse pointer	显示鼠标指针阴影
-EnableWindowShadowName	Show shadows under windows	显示窗口阴影
-EnableTranslucentSelectionRectangleName	Show translucent selection rectangle	显示半透明选择框
-EnableWindowContentWhileDraggingName	Show window contents while dragging	拖动时显示窗口内容
-DisableComboBoxAnimationName	Disable combo box slide-open animation	禁用组合框滑动展开动画
-EnableFontSmoothingName	Smooth edges of screen fonts	平滑屏幕字体边缘
-DisableListBoxSmoothScrollingName	Disable smooth scrolling in list boxes	禁用列表框平滑滚动
-EnableDesktopIconLabelShadowName	Use drop shadows for desktop icon labels	为桌面图标标签使用阴影
+DisableTaskbarThumbnailCacheName	Disable saving taskbar thumbnail previews	禁用保存任务栏缩略图预览缓存
+EnableMousePointerShadowName	Keep mouse pointer shadow	保留鼠标指针阴影
+EnableWindowShadowName	Keep shadows under windows	保留窗口阴影
+EnableTranslucentSelectionRectangleName	Keep translucent selection rectangle	保留半透明框选矩形
+EnableWindowContentWhileDraggingName	Keep window contents visible while dragging	拖动窗口时显示完整内容
+DisableComboBoxAnimationName	Disable combo box slide-open animation	禁用下拉框滑动展开动画
+EnableFontSmoothingName	Keep screen font edge smoothing	保留屏幕字体边缘平滑
+DisableListBoxSmoothScrollingName	Disable list box smooth scrolling	禁用列表框平滑滚动
+EnableDesktopIconLabelShadowName	Keep drop shadows for desktop icon labels	保留桌面图标文字阴影
 WindowsActivatorName	Activate Windows	激活 Windows
-WindowsActivatorDescription	An unactivated Windows lacks some features and doesn’t perform optimally, so activation is recommended. Changes take effect immediately.	未激活的 Windows 缺少部分功能，性能也不是最佳，建议激活。\n立即生效。
+WindowsActivatorDescription	Activates Windows so personalization settings work normally and activation watermarks/restrictions are removed.\nEffective immediately.	激活 Windows 以解锁个性化设置并消除未激活水印与功能限制。\n立即生效。
 WindowsUpdateName	Enable Windows Update	启用 Windows 更新
-WindowsUpdateDescription	Windows Update can fix system vulnerabilities and improve system security. It is recommended to enable it. Changes take effect immediately.	Windows 更新可以修复系统漏洞，提高系统安全性，建议启用。\n立即生效。
-EnableTimeSynchronizationName	Enable automatic time synchronization	开启时间同步
-EnableTimeSynchronizationDescription	Keeps the system clock accurate by enabling the Windows Time service and NTP client. Incorrect time can break certificates, sign-in, and updates.\nEffective immediately.	启用 Windows 时间服务和 NTP 客户端，保持系统时钟准确。时间不准会导致证书、登录和更新失败。\n立即生效。
+WindowsUpdateDescription	Keeps Windows Update enabled so security patches, driver fixes, and stability improvements remain available when you want them. Pair with "Prevent automatic reboot" so updates won't interrupt your work.\nEffective immediately.	保持 Windows 更新服务可用，确保需要时能正常获取安全补丁、驱动和稳定性修复；搭配“更新后不自动重启”即可避免打断工作。\n立即生效。
+EnableTimeSynchronizationName	Enable automatic time synchronization	开启自动时间同步
+EnableTimeSynchronizationDescription	Keeps the system clock accurate via Windows Time (NTP), preventing HTTPS certificate errors, login failures, 2FA mismatches, and update issues. Uses virtually zero CPU or network bandwidth.\nEffective immediately.	通过 Windows 时间服务（NTP）保持系统时钟准确，避免因时间偏差引发网页证书报错、登录失败、两步验证不匹配和更新异常，资源占用几乎为零。\n立即生效。
 BestPerformancePowerModeName	Best performance power mode	最佳性能电源模式
 BestPerformancePowerModeDescription	Prioritizes CPU performance and responsiveness when plugged in and avoids big-little core scheduling issues. Only changes plugged-in (AC) behavior so battery life is unaffected; the CPU still scales down when idle without noticeable extra heat or fan noise.\nEffective immediately.	插电时优先保证 CPU 性能释放和响应速度，并避免大小核调度异常。仅修改插电（AC）设置，不影响使用电池时的续航；空闲时 CPU 仍会自动降频节能，不会明显增加日常发热或噪音。\n立即生效。
 DisablePcieAspmName	Disable PCIe Link State Power Management (ASPM)	关闭 PCIe 链接状态电源管理（ASPM）
@@ -225,80 +224,80 @@ DisableEthernetPowerSavingName	Disable wired Ethernet power saving (EEE and devi
 DisableEthernetPowerSavingDescription	Turns off Energy-Efficient Ethernet (EEE), vendor green power modes, and “Allow the computer to turn off this device to save power” on physical wired NICs, helping prevent random link drops, speed downgrades, and wake disconnects. Trade-off: typically under 0.5W extra power with no noticeable impact.\nTakes effect after reboot (or after re-enabling the adapter).	关闭物理有线网卡的节能以太网（EEE）及“允许系统关闭设备省电”，可有效避免 Intel/Realtek 等网卡随机断链、协商降速（如万兆降千兆、千兆降百兆）或休眠后断网。关闭后额外功耗通常不到 0.5W，几乎无感。\n重启（或重新启用网卡）后生效。
 DisableDiskIdleName	Do not turn off hard disks when idle	禁止硬盘空闲自动关闭
 DisableDiskIdleDescription	Prevents drives from spinning down when idle while plugged in. Eliminates 3–5 second Explorer pauses waiting for HDD spin-up and avoids excessive start/stop wear from background wakes on 24/7 PCs (harmless on SSDs). Trade-off: roughly 4–6W per spinning HDD plus light hum; battery (DC) settings stay untouched. Leave unchecked if you want cold-storage HDDs to spin down for silence.\nEffective immediately.	插电时不让硬盘空闲自动停转，可避免打开文件或资源管理器时整机卡住 3~5 秒等机械盘起转；对 7×24 小时开机也更护盘，避免后台频繁唤醒导致机械盘反复启停损耗（对 SSD 无影响）。代价为每块常转机械盘约 4~6W 且持续微弱运转声；仅插电生效、不影响电池续航，若有纯冷数据盘需停转静音可不勾选。\n立即生效。
-SetIdleTimeName	The computer does not automatically sleep.	电脑不自动休眠
-SetIdleTimeDescription	Set the computer not to sleep or hibernate automatically. Does not change when the screen turns off. Applies only when plugged in.\nEffective immediately.	设置电脑不自动睡眠或休眠，不修改关闭屏幕时间。仅在插电时生效。\n立即生效。
-DisableSystemSoundsName	Disable system sounds.	禁止系统音效
-DisableSystemSoundsDescription	The system often makes various notification sounds, which can be quite annoying.\nEffective immediately.	系统经常会发出各种提示音，比较烦人。\n立即生效。
-DisableEdgeFromRunningInBackgroundName	Prevent Edge Browser from Running in the Background	禁止 Edge 浏览器在后台运行
-DisableEdgeFromRunningInBackgroundDescription	Disables Edge prelaunch, Startup Boost, and background mode so the browser does not keep running after you close it.\nEffective after group policy refresh.	禁用 Edge 预启动、启动提升和后台模式，关闭浏览器后不再继续占用资源。\n刷新组策略后生效。
-TurnOnGameModeName	Turn on game mode	开启游戏模式
-TurnOnGameModeDescription	Game mode can improve game performance and stability.\nEffective immediately.	游戏模式可以提高游戏运行的性能和稳定性。\n立即生效
-DisableGameDvrCaptureName	Disable Game DVR capture	禁用 Game DVR 捕获
-DisableGameDvrCaptureDescription	Game DVR capture enables Xbox Game Bar game recording and broadcasting, including background clip capture. Disabling it avoids GPU encoder, memory, and disk I/O overhead when you do not use game recording. Game Mode is not disabled.\nEffective after group policy refresh.	Game DVR 捕获会启用 Xbox Game Bar 的游戏录制和广播，包括后台片段捕获。不使用游戏录制时禁用它，可以避免 GPU 编码器、内存和磁盘 I/O 开销。不会禁用游戏模式。\n刷新组策略后生效。
-ShowThumbnailsName	Show image thumbnails	显示图片预览
-ShowThumbnailsDescription	Show image thumbnails in File Explorer instead of generic icons, so you can preview images when browsing folders.\nEffective immediately.	在文件资源管理器中显示图片缩略图而不是通用图标，浏览文件夹时便于预览图片。\n立即生效。
+SetIdleTimeName	Prevent automatic sleep and hibernation when plugged in	插电时禁止电脑自动睡眠与休眠
+SetIdleTimeDescription	Keeps the PC awake for downloads, remote desktop, builds, and 24/7 tasks when plugged in without changing the screen-off timeout. Only changes plugged-in (AC) settings so battery auto-sleep stays intact.\nEffective immediately.	插电时避免电脑自动睡眠或休眠，确保远程桌面、下载、编译和挂机任务不被中断；不改变自动息屏时间，且不影响使用电池时的自动省电。\n立即生效。
+DisableSystemSoundsName	Disable Windows system sounds	关闭 Windows 系统提示音
+DisableSystemSoundsDescription	Silences Windows notification chimes, error dings, and popups so your audio stays distraction-free. Does not mute music, games, videos, or app audio.\nEffective immediately.	静音系统各类弹窗叮咚声与错误提示音，避免打断听歌、开会或工作；不影响音乐、视频、游戏等任何应用声音。\n立即生效。
+DisableEdgeFromRunningInBackgroundName	Prevent Edge from running in the background	禁止 Edge 浏览器在后台驻留
+DisableEdgeFromRunningInBackgroundDescription	Turns off Edge prelaunch, Startup Boost, and background extensions so closing Edge actually frees its RAM and CPU. Launching Edge only takes a fraction of a second longer.\nEffective after group policy refresh.	关闭 Edge 预启动、启动增强和后台模式，关掉浏览器后真正释放内存和 CPU；再次打开仅慢零点几秒，完全可接受。\n刷新组策略后生效。
+TurnOnGameModeName	Enable Windows Game Mode	开启 Windows 游戏模式
+TurnOnGameModeDescription	Tells Windows to pause update restarts and suppress background notifications while gaming for steadier frame pacing. Zero impact when you are not playing games.\nEffective immediately.	游戏时自动抑制系统更新重启与后台通知干扰，让帧率表现更稳定；平时不玩游戏时零开销、无任何副作用。\n立即生效。
+DisableGameDvrCaptureName	Disable Game DVR background recording	禁用 Game DVR 后台录屏
+DisableGameDvrCaptureDescription	Turns off Xbox Game Bar's background video capture to eliminate hidden GPU encoder, RAM, and disk I/O overhead during games and 3D apps. Keeps Game Mode enabled; only needed if you rely on built-in Xbox clip recording.\nEffective after group policy refresh.	关闭 Xbox Game Bar 的游戏录制与后台片段捕获，避免默默占用 GPU 编码器、内存和磁盘读写。不影响游戏模式，不使用内置录屏可放心关闭。\n刷新组策略后生效。
+ShowThumbnailsName	Show image thumbnails in File Explorer	在文件资源管理器中显示图片缩略图
+ShowThumbnailsDescription	Displays image and media previews directly on file icons so browsing photos and assets is much faster, with negligible overhead on modern SSDs.\nEffective immediately.	浏览文件夹时直接预览图片与媒体缩略图，找图选图效率高得多；在现代 SSD 上缓存开销极低。\n立即生效。
 KingsoftAntivirusName	Uninstall Kingsoft Antivirus	卸载金山毒霸
-KingsoftAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect file I/O and system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响文件 I/O 与系统性能。
+KingsoftAntivirusDescription	Detected by known drivers or services. Third-party antivirus hooks every file read/write and network packet, noticeably slowing the PC and adding popups; Windows Defender already covers baseline protection.	通过已知驱动或服务检测。第三方杀毒会拦截每次文件读写和网络访问，明显拖慢系统并增加弹窗；卸载后系统自带安全能力仍可兜底。
 HuoRongSecurityName	Uninstall HuoRong Security	卸载火绒安全
-HuoRongSecurityDescription	Detected by known drivers or services. Third-party antivirus can significantly affect file I/O and system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响文件 I/O 与系统性能。
+HuoRongSecurityDescription	Detected by known drivers or services. Third-party file-system filter drivers add overhead to every file I/O, compile, and app launch; remove if you want maximum I/O speed.	通过已知驱动或服务检测。第三方文件过滤驱动会给每次文件读写、编译和软件启动带来额外开销；追求极致磁盘和响应速度可卸载。
 360AntivirusName	Uninstall 360 Security / Antivirus	卸载 360 安全卫士/杀毒
-360AntivirusDescription	Detected by known drivers or services. 360 security products can significantly affect system performance.	通过已知驱动或服务检测。360 安全产品会显著影响系统性能。
+360AntivirusDescription	Detected by known drivers or services. Heavy kernel hooks, background scans, and frequent popups noticeably slow down disk I/O and startup; Windows Defender already covers baseline protection.	通过已知驱动或服务检测。常驻内核拦截、后台扫描与弹窗会明显拖慢磁盘 I/O 和开机速度；卸载后系统更清爽流畅。
 DASEDRName	Uninstall DAS EDR	卸载明御终端安全及防病毒系统
-DASEDRDescription	Detected by known drivers or services. EDR software can significantly affect system performance.	通过已知驱动或服务检测。EDR 软件会显著影响系统性能。
+DASEDRDescription	Detected by known drivers or services. Enterprise EDR hooks file and process activity continuously, causing heavy CPU and disk overhead. Check company policy before removing on a managed work PC.	通过已知驱动或服务检测。企业 EDR 会持续拦截文件与进程活动，显著占用 CPU 和磁盘；若为公司受管电脑，卸载前请确认合规要求。
 RisingAntivirusName	Uninstall Rising Antivirus	卸载瑞星杀毒
-RisingAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+RisingAntivirusDescription	Detected by known drivers or services. Third-party antivirus hooks every file read/write and noticeably slows app launches and builds; Windows Defender already covers baseline protection.	通过已知驱动或服务检测。第三方杀毒会拦截每次文件读写，明显拖慢应用启动与编译；卸载后可显著恢复响应速度。
 TencentPCManagerName	Uninstall Tencent PC Manager	卸载腾讯电脑管家
-TencentPCManagerDescription	Detected by known drivers or services. PC manager / antivirus suites can significantly affect system performance.	通过已知驱动或服务检测。电脑管家类产品会显著影响系统性能。
+TencentPCManagerDescription	Detected by known drivers or services. Background services, filter drivers, and promotional popups consume CPU/RAM and slow file I/O; uninstalling makes the system cleaner and faster.	通过已知驱动或服务检测。后台常驻服务、驱动拦截与弹窗会持续占用资源并拖慢文件读写，卸载后系统明显更轻快。
 KasperskyAntivirusName	Uninstall Kaspersky	卸载卡巴斯基
-KasperskyAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+KasperskyAntivirusDescription	Detected by known drivers or services. Deep file and HTTPS inspection noticeably slows file I/O, installs, and builds; remove if you prefer maximum performance over third-party AV.	通过已知驱动或服务检测。深度文件与 HTTPS 扫描会明显拖慢文件读写、安装和编译速度；如追求性能可按需卸载。
 AvastAntivirusName	Uninstall Avast	卸载 Avast
-AvastAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+AvastAntivirusDescription	Detected by known drivers or services. Real-time shields and upsell prompts add noticeable CPU/disk overhead; Windows Defender already provides lightweight baseline protection.	通过已知驱动或服务检测。实时防护与推广弹窗会增加明显的 CPU 和磁盘开销；卸载后系统更轻快干净。
 AvgAntivirusName	Uninstall AVG	卸载 AVG
-AvgAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+AvgAntivirusDescription	Detected by known drivers or services. Background shields and popups add noticeable CPU and disk I/O overhead; Windows Defender already covers baseline protection.	通过已知驱动或服务检测。后台拦截与推广弹窗会增加明显的 CPU 与磁盘开销；卸载后可明显改善流畅度。
 BitdefenderAntivirusName	Uninstall Bitdefender	卸载 Bitdefender
-BitdefenderAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+BitdefenderAntivirusDescription	Detected by known drivers or services. Heavy real-time scanning consumes substantial RAM and slows file I/O and builds; remove if you prioritize responsiveness.	通过已知驱动或服务检测。高强度实时扫描会占用较多内存并拖慢文件读写与编译；如更看重响应速度可按需卸载。
 EsetAntivirusName	Uninstall ESET	卸载 ESET
-EsetAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+EsetAntivirusDescription	Detected by known drivers or services. Third-party file-system filter drivers add overhead to every file access and compile; remove if you want maximum I/O throughput.	通过已知驱动或服务检测。第三方文件过滤驱动会给每次文件访问与编译带来额外开销；追求极致 I/O 性能可按需卸载。
 McAfeeAntivirusName	Uninstall McAfee	卸载 McAfee
-McAfeeAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+McAfeeAntivirusDescription	Detected by known drivers or services. Frequently preinstalled bloatware that slows file access and pushes subscription popups; uninstalling immediately improves speed and cleanliness.	通过已知驱动或服务检测。常见预装软件，会拖慢文件读写并频繁弹出续费广告，卸载后流畅度立竿见影。
 NortonAntivirusName	Uninstall Norton	卸载诺顿
-NortonAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+NortonAntivirusDescription	Detected by known drivers or services. Heavy background services and upsell notifications slow down startup and disk I/O; uninstalling frees resources with no loss of system features.	通过已知驱动或服务检测。较重的后台服务与推广提醒会拖慢开机和磁盘读写，卸载后可明显释放系统资源。
 MalwarebytesAntivirusName	Uninstall Malwarebytes	卸载 Malwarebytes
-MalwarebytesAntivirusDescription	Detected by known drivers or services. Security suites can significantly affect system performance.	通过已知驱动或服务检测。安全套件会显著影响系统性能。
+MalwarebytesAntivirusDescription	Detected by known drivers or services. Real-time protection hooks add ongoing CPU, RAM, and file I/O overhead; remove if you only need occasional on-demand checks.	通过已知驱动或服务检测。常驻实时拦截会持续占用 CPU、内存与磁盘 I/O；不需要常驻时卸载可释放资源。
 TrendMicroAntivirusName	Uninstall Trend Micro	卸载趋势科技
-TrendMicroAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+TrendMicroAntivirusDescription	Detected by known drivers or services. Real-time monitoring drivers noticeably slow file access and app startup; uninstalling improves responsiveness.	通过已知驱动或服务检测。实时监控驱动会明显拖慢文件访问和应用启动，卸载后可恢复系统流畅度。
 AviraAntivirusName	Uninstall Avira	卸载 Avira
-AviraAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+AviraAntivirusDescription	Detected by known drivers or services. Background guards and promotional popups consume resources and slow file I/O; uninstalling keeps Windows cleaner and snappier.	通过已知驱动或服务检测。后台监控和推广弹窗会占用资源并拖慢文件访问，卸载后系统更干净流畅。
 Security2345Name	Uninstall 2345 Security	卸载 2345 安全卫士
-Security2345Description	Detected by known drivers or services. PC manager / security suites can significantly affect system performance.	通过已知驱动或服务检测。电脑管家类安全软件会显著影响系统性能。
+Security2345Description	Detected by known drivers or services. Heavy background hooks and ad popups noticeably degrade performance and user experience; strongly recommended to remove.	通过已知驱动或服务检测。后台驻留拦截与弹窗广告会严重影响系统性能和使用体验，强烈建议卸载。
 BaiduAntivirusName	Uninstall Baidu Antivirus / Guard	卸载百度杀毒/卫士
-BaiduAntivirusDescription	Detected by known drivers or services. Third-party antivirus can significantly affect system performance.	通过已知驱动或服务检测。第三方杀毒软件会显著影响系统性能。
+BaiduAntivirusDescription	Detected by known drivers or services. Legacy filter drivers and background services slow file I/O and offer little value on modern Windows; safe to remove.	通过已知驱动或服务检测。老旧过滤驱动与后台服务会拖慢文件读写且在现代系统上意义不大，建议卸载。
 QiAnXinTianqingName	Uninstall QiAnXin Tianqing	卸载奇安信天擎
-QiAnXinTianqingDescription	Detected by known drivers or services. Enterprise endpoint security can significantly affect system performance.	通过已知驱动或服务检测。企业终端安全产品会显著影响系统性能。
-UseWindowsTerminalName	Use Windows Terminal instead of legacy Windows Console Host	使用 Windows Terminal 代替旧版的 Windows 控制台
-UseWindowsTerminalDescription	Windows Terminal is a modern, powerful, and customizable terminal application. It supports multiple tabs, themes, and plugins, making it a better alternative to the legacy Windows Console Host.	Windows Terminal 是一个现代、强大且可定制的终端应用程序。它支持多个标签页、主题和插件，是一个比旧版 Windows 控制台更好的替代品。
-WindowsTerminalUseNewWindowName	Create new window when opening Windows Terminal	使用新窗口打开 Windows Terminal
-WindowsTerminalUseNewWindowDescription	When opening Windows Terminal, a new window is created by default, providing better compatibility and less interference.	打开 Windows Terminal 时，默认打开一个新窗口，有更好的兼容性，干扰更少。
+QiAnXinTianqingDescription	Detected by known drivers or services. Enterprise endpoint security hooks file and network activity heavily, noticeably slowing the PC. Check company policy before removing on a managed work PC.	通过已知驱动或服务检测。企业终端安全会深度拦截文件和网络活动，明显拖慢性能；若为公司受管电脑，卸载前请确认合规要求。
+UseWindowsTerminalName	Use Windows Terminal as default console	将 Windows Terminal 设为默认终端
+UseWindowsTerminalDescription	Replaces the legacy Console Host with Microsoft's modern GPU-accelerated Windows Terminal supporting tabs, UTF-8, smooth scrolling, and themes. Fully compatible with cmd and PowerShell with practically zero downside.\nEffective immediately.	用微软现代 GPU 加速的 Windows Terminal 替代老旧控制台，支持多标签、UTF-8、流畅滚动与配色，完全兼容 cmd/PowerShell，几乎零代价。\n立即生效。
+WindowsTerminalUseNewWindowName	Open Windows Terminal in a new window by default	打开 Windows Terminal 时默认新建窗口
+WindowsTerminalUseNewWindowDescription	Opens each launch in its own window instead of silently attaching a tab to an existing window on another desktop or monitor, preventing focus surprises and script interference. You can still open tabs inside any window with Ctrl+Shift+T.\nEffective immediately.	每次启动都打开独立新窗口，避免标签页跑到其他显示器或虚拟桌面的旧窗口里引发误操作；窗口内仍可随时按 Ctrl+Shift+T 新建标签。\n立即生效。
 YunTianEDRName	Uninstall YunTian EDR	卸载云天 EDR
-YunTianEDRDescription	Detected by known drivers or services. EDR software can significantly affect system performance.	通过已知驱动或服务检测。EDR 软件会显著影响系统性能。
-TortoiseSVNCacheTypeName	TortoiseSVN use simple cache	TortoiseSVN 使用简单缓存
-TortoiseSVNCacheTypeDescription	For large repositories, simple cache strategies avoid large CPU and disk usage in the background.	对于大型仓库，简单缓存策略避免了后台的大量 CPU 和磁盘占用。
-TortoiseGitCacheTypeName	TortoiseGit use simple cache	TortoiseGit 使用简单缓存
-TortoiseGitCacheTypeDescription	For large repositories, simple cache strategies avoid large CPU and disk usage in the background.	对于大型仓库，简单缓存策略避免了后台的大量 CPU 和磁盘占用。
-DisableRemoteDesktopSecurityWarningName	Disable remote desktop security warning	禁用远程桌面安全警告
-DisableRemoteDesktopSecurityWarningDescription	Disable the security warning that appears when connecting via Remote Desktop.\nEffective immediately.	禁用远程桌面连接时弹出的安全警告。立即生效。
-DisableTelemetryName	Disable data collection	禁用数据收集
-DisableTelemetryDescription	Sets the diagnostic data policy to the minimum level, reducing data sent to Microsoft.\nEffective immediately.	将诊断数据策略设置为最低级别，减少向微软发送的数据。\n立即生效。
-DisablePowerShell7TelemetryName	Disable PowerShell 7 data collection	禁用 PowerShell 7 数据收集
-DisablePowerShell7TelemetryDescription	Stops PowerShell 7 from sending usage data.\nEffective for new PowerShell 7 processes.	阻止 PowerShell 7 发送使用数据。\n对新启动的 PowerShell 7 进程生效。
-DisableActivityHistoryName	Disable activity history	禁用活动历史记录
-DisableActivityHistoryDescription	Stops Windows from publishing user activity history to Microsoft and syncing it across devices.\nEffective immediately.	禁止 Windows 上报用户活动历史并跨设备同步。\n立即生效。
-DisableFeedbackPromptsName	Disable feedback prompts	禁用反馈提示
-DisableFeedbackPromptsDescription	Stops Windows from popping up satisfaction surveys and feedback request dialogs.\nEffective immediately.	禁止 Windows 弹出满意度调查和反馈请求对话框。\n立即生效。
-DisableConnectedUserExperiencesAndTelemetryServiceName	Disable the Connected User Experiences and Data Collection Service	禁用连接用户体验和数据收集服务
-DisableConnectedUserExperiencesAndTelemetryServiceDescription	The DiagTrack service uploads diagnostic data to Microsoft. Disabling it breaks the Feedback Hub and Windows Insider enrollment.\nEffective immediately.	DiagTrack 服务负责将诊断数据上传到微软。禁用后反馈中心和 Windows 预览体验计划将无法使用。\n立即生效。
-DisableWindowsErrorReportingServiceName	Disable the Windows Error Reporting Service	禁用 Windows 错误报告服务
-DisableWindowsErrorReportingServiceDescription	Stops the system from uploading application crash reports to Microsoft.\nEffective immediately.	停止将应用崩溃报告上传到微软。\n立即生效。
+YunTianEDRDescription	Detected by known drivers or services. Enterprise EDR hooks file and process activity continuously, causing heavy CPU and disk overhead. Check company policy before removing on a managed work PC.	通过已知驱动或服务检测。企业 EDR 会持续拦截文件与进程活动，显著占用 CPU 和磁盘；若为公司受管电脑，卸载前请确认合规要求。
+TortoiseSVNCacheTypeName	Use simple status cache in TortoiseSVN	TortoiseSVN 改用简单状态缓存
+TortoiseSVNCacheTypeDescription	Switches TortoiseSVN from the heavy background TSVNCache daemon to Shell cache, preventing constant CPU/disk thrashing and folder locks in large repositories. Trade-off: parent folders only update their overlay badge when opened (usually unnoticeable).\nEffective immediately.	将 TortoiseSVN 切换为轻量 Shell 缓存，避免 TSVNCache 在大仓库里持续狂扫磁盘、占满 CPU 或锁死目录。代价仅是上级目录的图标角标不会递归实时刷新，通常几乎无感。\n立即生效。
+TortoiseGitCacheTypeName	Use simple status cache in TortoiseGit	TortoiseGit 改用简单状态缓存
+TortoiseGitCacheTypeDescription	Switches TortoiseGit from the heavy background TGitCache daemon to Shell cache, stopping high CPU/disk usage and locked .git folders in large repos. Trade-off: parent folder badges only refresh on open, which is a tiny price for smooth disk I/O.\nEffective immediately.	将 TortoiseGit 切换为轻量 Shell 缓存，避免 TGitCache 在大仓库里高占 CPU/磁盘或锁住目录。代价仅是上级目录状态角标打开时才刷新，换来流畅体验完全值得。\n立即生效。
+DisableRemoteDesktopSecurityWarningName	Disable Remote Desktop security warning	禁用远程桌面连接安全警告
+DisableRemoteDesktopSecurityWarningDescription	Skips the repetitive resource-redirection warning dialog when connecting via mstsc to your own servers or PCs, saving clicks every session. Only connect to trusted machines.\nEffective immediately.	使用 mstsc 连接自己的电脑或服务器时，跳过每次重复弹出的资源重定向警告框，省去多余点击（连接信任的主机即可）。\n立即生效。
+DisableTelemetryName	Minimize Windows telemetry and diagnostic data	最小化 Windows 遥测与诊断数据收集
+DisableTelemetryDescription	Sets Windows diagnostic reporting to the minimum allowed level, cutting background data collection and upload to Microsoft with no impact on normal apps or Windows Update.\nEffective immediately.	将系统诊断数据上报降至最低级别，减少后台采集与上传微软的数据量，不影响正常应用和系统更新。\n立即生效。
+DisablePowerShell7TelemetryName	Disable PowerShell 7 telemetry	禁用 PowerShell 7 遥测
+DisablePowerShell7TelemetryDescription	Sets POWERSHELL_TELEMETRY_OPTOUT=1 so PowerShell 7 stops sending usage telemetry to Microsoft. Zero effect on PowerShell scripts or features.\nEffective for new PowerShell 7 processes.	通过环境变量 POWERSHELL_TELEMETRY_OPTOUT=1 阻止 PowerShell 7 向微软发送使用遥测，对脚本和功能完全零影响。\n对新启动的 PowerShell 7 进程生效。
+DisableActivityHistoryName	Disable Windows Activity History	禁用 Windows 活动历史记录
+DisableActivityHistoryDescription	Stops Windows from logging your opened apps/files and syncing them to Microsoft servers, improving privacy and removing unnecessary background tracking with zero daily downside.\nEffective immediately.	禁止 Windows 记录你使用过的应用与文件并同步至微软云端，提升隐私并减少后台记录，对日常使用几乎无影响。\n立即生效。
+DisableFeedbackPromptsName	Disable Windows feedback prompts	禁用 Windows 反馈提示
+DisableFeedbackPromptsDescription	Silences periodic "How satisfied are you with Windows?" surveys and feedback popups, eliminating interruptions with zero functional downside.\nEffective immediately.	关闭系统不定期弹出的满意度调查与反馈请求通知，彻底免打扰且无任何副作用。\n立即生效。
+DisableConnectedUserExperiencesAndTelemetryServiceName	Disable Connected User Experiences and Telemetry service	禁用遥测与诊断跟踪服务（DiagTrack）
+DisableConnectedUserExperiencesAndTelemetryServiceDescription	Stops the DiagTrack service from collecting and uploading telemetry in the background, reducing background disk/network activity. Only affects Feedback Hub and Windows Insider preview enrollment.\nEffective immediately.	停用 DiagTrack 后台遥测采集与上传服务，减少后台磁盘和联网活动。仅会影响“反馈中心”和加入 Windows 预览体验计划，绝大多数用户完全用不到。\n立即生效。
+DisableWindowsErrorReportingServiceName	Disable Windows Error Reporting service	禁用 Windows 错误报告服务
+DisableWindowsErrorReportingServiceDescription	Stops Windows from packaging and uploading application crash reports to Microsoft after a crash, saving disk/network activity and avoiding "Checking for a solution" waits. Local crash logs still work.\nEffective immediately.	停止在程序崩溃后打包上传错误报告至微软，省去“正在查找解决方案”的无意义等待和后台上传；本地事件日志仍正常记录。\n立即生效。
 Tools	Tools	工具
 ToolsDescription	Built-in and packaged utilities for diagnosis, cleanup, network fixes, and everyday maintenance.	内置与随包工具，用于诊断、清理、网络修复和日常维护。
 Other	Other	其他
@@ -382,153 +381,153 @@ SyncSystemTimeName	Sync system time	同步系统时间
 SyncSystemTimeDescription	Synchronize the system clock to fix sign-in, certificate, update, or network errors caused by incorrect time.	同步系统时间，用于修复时间不准导致的登录、证书、更新或网络错误。
 ResetMicrosoftStoreCacheName	Reset Microsoft Store cache	重置 Microsoft Store 缓存
 ResetMicrosoftStoreCacheDescription	Clear Microsoft Store cache when Store pages, downloads, updates, or app installs are stuck or fail.	清理 Microsoft Store 缓存，用于修复商店页面、下载、更新或应用安装卡住和失败。
-ReduceStartupDelayName	Remove startup app delay	取消启动项延迟
-ReduceStartupDelayDescription	Windows delays auto-start apps for several seconds after the desktop loads. Removing the delay lets them start immediately.\nTakes effect at next sign-in.	Windows 在桌面加载后会延迟几秒再运行启动项，取消该延迟可让启动项立即运行。\n下次登录生效。
+ReduceStartupDelayName	Remove startup app delay	取消开机启动项人为延迟
+ReduceStartupDelayDescription	Windows artificially waits up to 10 seconds after showing the desktop before launching startup apps. Removing this delay makes your tray tools ready much faster, with virtually zero downside on modern SSDs.\nTakes effect at next sign-in.	Windows 进入桌面后会人为延迟几秒再启动开机自启程序。取消该延迟可让常用托盘工具更快就绪，在现代 SSD 上几乎没有开机卡顿代价。\n下次登录生效。
 DisableWindowsCopilotName	Disable Windows Copilot	禁用 Windows Copilot
-DisableWindowsCopilotDescription	Windows Copilot runs in the background and consumes resources. Disable it if you don't use it.\nTakes effect after restarting Explorer.	Windows Copilot 在后台运行并占用资源，不使用可以禁用。\n重启资源管理器生效。
-DisableRecallName	Disable Recall	禁用 Recall 回顾
-DisableRecallDescription	Recall periodically takes snapshots of your screen, using significant CPU and disk space. Disable it if you don't use it.\nEffective immediately.	Recall 回顾会定期截取屏幕快照，占用大量 CPU 和磁盘空间，不使用建议禁用。\n立即生效。
-DisableClickToDoName	Disable Click to Do	禁用点击即用 (Click to Do)
-DisableClickToDoDescription	Click to Do is a Windows AI feature that analyzes on-screen content when you click. Disable it if you do not use it.\nEffective immediately.	点击即用是 Windows 的 AI 功能，点击时会分析屏幕内容。不使用可以禁用。\n立即生效。
-DisableEdgeAIFeaturesName	Disable Edge AI features	禁用 Edge AI 功能
-DisableEdgeAIFeaturesDescription	Disables Copilot, sidebar, compose, and other AI features in Microsoft Edge to reduce background work and promotional AI UI.\nEffective after group policy refresh.	禁用 Microsoft Edge 中的 Copilot、侧边栏、撰写等 AI 功能，减少后台占用和 AI 推广界面。\n刷新组策略后生效。
-DisablePaintAIFeaturesName	Disable Paint AI features	禁用画图 AI 功能
-DisablePaintAIFeaturesDescription	Disables Cocreator, generative fill, image creator, and related AI tools in Microsoft Paint.\nEffective immediately.	禁用微软画图中的共同创作、生成式填充、图像创建器等相关 AI 功能。\n立即生效。
-DisableNotepadAIFeaturesName	Disable Notepad AI features	禁用记事本 AI 功能
-DisableNotepadAIFeaturesDescription	Disables AI rewrite and related features in Windows Notepad.\nEffective immediately.	禁用 Windows 记事本中的 AI 改写等相关功能。\n立即生效。
-DisableEdgeAdsAndSuggestionsName	Disable Edge ads and suggestions	禁用 Edge 广告与建议
-DisableEdgeAdsAndSuggestionsDescription	Disables new-tab content, shopping assistant, recommendations, diagnostics personalization, and similar Edge promotional features.\nEffective after group policy refresh.	禁用新标签页内容、购物助手、推荐、诊断个性化等 Edge 推广功能。\n刷新组策略后生效。
-EnableTaskbarEndTaskName	Enable End Task on the taskbar	启用任务栏结束任务
-EnableTaskbarEndTaskDescription	Adds End Task to the taskbar app right-click menu so you can force-close unresponsive apps without Task Manager.\nEffective immediately.	在任务栏应用右键菜单中增加“结束任务”，无需打开任务管理器即可强制关闭无响应应用。\n立即生效。
-EnableLastActiveClickName	Enable Last Active Click on the taskbar	启用任务栏上次活动点击
-EnableLastActiveClickDescription	Clicking a taskbar app with multiple windows focuses the last active window and cycles through open windows of that app.\nEffective immediately.	点击有多个窗口的任务栏图标时，直接聚焦上次活动窗口，并可重复点击在该应用窗口间切换。\n立即生效。
-HideChatTaskbarButtonName	Hide Chat / Teams taskbar button	隐藏任务栏聊天/Teams 按钮
-HideChatTaskbarButtonDescription	Hides the Chat or Meet Now button from the taskbar.\nEffective immediately.	从任务栏隐藏聊天或立即开会按钮。\n立即生效。
-DisableLockScreenTipsName	Disable lock screen tips and fun facts	禁用锁屏提示与趣闻
-DisableLockScreenTipsDescription	Stops Windows from showing tips, fun facts, and similar overlays on the lock screen.\nEffective immediately.	禁止 Windows 在锁屏上显示提示、趣闻等覆盖内容。\n立即生效。
-DisableSettings365AdsName	Disable Microsoft 365 ads in Settings	禁用设置中的 Microsoft 365 广告
-DisableSettings365AdsDescription	Hides Microsoft account and Microsoft 365 promotional content on the Settings Home page.\nEffective after group policy refresh.	隐藏设置主页上的 Microsoft 帐户与 Microsoft 365 推广内容。\n刷新组策略后生效。
-HideSettingsHomePageName	Hide Settings Home page	隐藏设置主页
-HideSettingsHomePageDescription	Hides the Settings Home page, which is mainly promotional content, and opens Settings to System instead.\nEffective immediately.	隐藏以推广内容为主的设置主页，打开设置时直接进入系统页。\n立即生效。
-DisableLocationServicesName	Disable location services	禁用位置服务
-DisableLocationServicesDescription	Turns off Windows location services system-wide for privacy and to reduce background location access.\nEffective after group policy refresh.	在系统范围关闭 Windows 位置服务，提升隐私并减少后台位置访问。\n刷新组策略后生效。
-DisableFindMyDeviceName	Disable Find My Device	禁用查找我的设备
-DisableFindMyDeviceDescription	Stops Find My Device location tracking for this PC.\nEffective after group policy refresh.	停止本机的“查找我的设备”位置跟踪。\n刷新组策略后生效。
-DisableSearchHistoryName	Disable Windows search history	禁用 Windows 搜索历史
-DisableSearchHistoryDescription	Stops Windows Search from saving device search history.\nEffective immediately.	禁止 Windows 搜索保存本机搜索历史。\n立即生效。
+DisableWindowsCopilotDescription	Hides the Copilot taskbar button and stops its system integration from running in the background, freeing memory and clutter. Does not affect using AI tools in a browser.\nTakes effect after restarting Explorer.	隐藏 Copilot 按钮并停用系统级集成，减少后台内存占用与界面干扰，完全不影响在浏览器中使用各类 AI 工具。\n重启资源管理器生效。
+DisableRecallName	Disable Windows Recall	禁用 Windows Recall（回顾）
+DisableRecallDescription	Stops Recall from continuously taking and indexing screen snapshots, saving significant CPU, NPU, and disk space while protecting screen privacy. Zero impact if you don't use Recall.\nEffective immediately.	禁止系统持续截屏并建索引，大幅节省 CPU、NPU 和磁盘空间并保护屏幕隐私；不使用回顾功能完全零代价。\n立即生效。
+DisableClickToDoName	Disable Click to Do	禁用点击即用（Click to Do）
+DisableClickToDoDescription	Turns off on-screen AI content analysis overlays when clicking or selecting items, reducing background AI overhead and visual distractions with no loss of normal Windows features.\nEffective immediately.	关闭点击或框选屏幕时的 AI 内容分析覆盖层，减少后台 AI 占用与界面打扰，不影响正常系统操作。\n立即生效。
+DisableEdgeAIFeaturesName	Disable Edge AI features	禁用 Edge 浏览器 AI 功能
+DisableEdgeAIFeaturesDescription	Turns off Copilot sidebar, inline compose, AI history search, and local model prompts in Edge, cutting memory usage and sidebar clutter while keeping normal browsing untouched.\nEffective after group policy refresh.	关闭 Edge 中的 Copilot 侧边栏、写作提示、AI 历史搜索与本地模型推广，显著降低内存占用并清爽界面，正常浏览网页完全不受影响。\n刷新组策略后生效。
+DisablePaintAIFeaturesName	Disable AI features in Paint	禁用“画图”中的 AI 功能
+DisablePaintAIFeaturesDescription	Hides Cocreator, generative fill, and AI image tools in Microsoft Paint so the classic lightweight editor opens faster and stays uncluttered. Normal drawing, cropping, and resizing remain intact.\nEffective immediately.	关闭微软画图中的生成式填充、共同创作等 AI 工具，保持画图轻快简洁；裁剪、标注、缩放等常用功能完全不受影响。\n立即生效。
+DisableNotepadAIFeaturesName	Disable AI features in Notepad	禁用“记事本”中的 AI 功能
+DisableNotepadAIFeaturesDescription	Turns off AI rewrite and summarize menus in Windows Notepad, keeping it fast, distraction-free, and private without losing any standard text editing features.\nEffective immediately.	关闭记事本中的 AI 改写与总结菜单，保持纯文本编辑轻快无打扰，不损失任何基础编辑功能。\n立即生效。
+DisableEdgeAdsAndSuggestionsName	Disable Edge ads, news feed, and shopping prompts	禁用 Edge 广告、资讯流与购物提示
+DisableEdgeAdsAndSuggestionsDescription	Turns off the MSN new-tab news feed, shopping assistant, first-run nags, and personalized ad reporting in Edge, making new tabs instant and clean with zero loss of browsing features.\nEffective after group policy refresh.	关闭 Edge 新标签页资讯流、购物助手、推广推荐与首次引导，新标签页秒开更清爽，不影响任何正常浏览功能。\n刷新组策略后生效。
+EnableTaskbarEndTaskName	Add "End Task" to taskbar right-click menu	任务栏右键菜单增加“结束任务”
+EnableTaskbarEndTaskDescription	Lets you force-close frozen apps directly from their taskbar icon without opening Task Manager, saving time when a program hangs. Zero background overhead.\nEffective immediately.	应用卡死时直接在任务栏图标上右键即可强制结束，免去打开任务管理器寻找进程，且零后台开销。\n立即生效。
+EnableLastActiveClickName	Switch to last active window on taskbar click	点击任务栏图标直接切回上次活动窗口
+EnableLastActiveClickDescription	Clicking a multi-window taskbar icon immediately focuses the last active window (and clicks again to cycle windows) instead of forcing you to pick from tiny thumbnails every time. Hover previews still work.\nEffective immediately.	点击多窗口应用的任务栏图标时，直接切回上次使用的窗口（再点即可轮换窗口），无需每次从缩略图里点选；鼠标悬停预览仍正常保留。\n立即生效。
+HideChatTaskbarButtonName	Hide Chat / Teams button on taskbar	隐藏任务栏“聊天/Teams”按钮
+HideChatTaskbarButtonDescription	Removes the Chat / Meet Now button from the taskbar to save space and clutter. Teams itself is not uninstalled if you still use it.\nEffective immediately.	隐藏任务栏上的聊天/立即开会图标，释放任务栏空间；不会卸载 Teams 本体，需要时仍可正常打开。\n立即生效。
+DisableLockScreenTipsName	Disable lock screen tips and ads	禁用锁屏提示与推广文案
+DisableLockScreenTipsDescription	Removes promotional tips, fun facts, and clickable links from the lock screen, keeping it clean with zero functional downside.\nEffective immediately.	移除锁屏界面上的推广提示、趣闻与跳转链接，让锁屏保持干净整洁，无任何副作用。\n立即生效。
+DisableSettings365AdsName	Disable Microsoft 365 ads in Settings	禁用设置中的 Microsoft 365 推广广告
+DisableSettings365AdsDescription	Hides Microsoft 365, OneDrive storage, and account subscription banners inside Settings, making Settings cleaner without affecting your Microsoft account or Office apps.\nEffective after group policy refresh.	隐藏“设置”中的 Microsoft 365、OneDrive 扩容与订阅横幅，界面更干净，不影响 Microsoft 帐户或 Office 正常使用。\n刷新组策略后生效。
+HideSettingsHomePageName	Skip Settings Home page	跳过“设置”主页（直接进入系统页）
+HideSettingsHomePageDescription	Hides the promo-heavy Settings Home page so opening Settings lands straight on System, saving a click every time. Every real setting remains accessible in the left sidebar.\nEffective immediately.	隐藏以推广卡片为主的“设置主页”，打开设置直接进入“系统”页，少点一次更高效；所有设置项仍在左侧栏完整保留。\n立即生效。
+DisableLocationServicesName	Disable Windows location services	禁用 Windows 位置服务
+DisableLocationServicesDescription	Turns off system-wide location tracking so Windows and apps cannot read your location in the background, improving privacy and saving minor background work. Only needed if you rely on automatic desktop weather/maps positioning.\nEffective after group policy refresh.	全局关闭系统位置定位，阻止后台获取地理位置以保护隐私。仅在依赖桌面天气或地图自动定位时需要，台式机基本用不到。\n刷新组策略后生效。
+DisableFindMyDeviceName	Disable Find My Device	禁用“查找我的设备”
+DisableFindMyDeviceDescription	Stops Windows from periodically uploading this PC's location to Microsoft for device tracking, improving privacy with zero impact on desktop PCs that never leave home/office.\nEffective after group policy refresh.	停止定期向微软上报本机位置用于设备找回，提升隐私。对不会随身携带的台式机几乎完全没有必要开启。\n刷新组策略后生效。
+DisableSearchHistoryName	Disable Windows search history	禁用 Windows 搜索历史记录
+DisableSearchHistoryDescription	Stops Windows Search from storing past search queries on this device, improving privacy on shared PCs with no impact on search speed or results.\nEffective immediately.	禁止 Windows 搜索保存本机历史搜索词，保护隐私且不影响搜索速度与结果。\n立即生效。
 DisableSearchHistoryUcpdMessage	Automatic apply failed (Windows UCPD is blocking registry writes to SearchSettings).\n\nSettings → Privacy & security → Search permissions has been opened.\nTurn off "Search history on this device", then toggle this item again or restart the app.	自动应用失败（Windows UCPD 阻止写入 SearchSettings）。\n\n已打开「设置 → 隐私和安全性 → 搜索权限」。\n请关闭「此设备上的搜索历史记录」，然后重新切换本项或重启本程序。
 ShowHiddenFilesAndFoldersName	Show hidden files and folders	显示隐藏的文件和文件夹
-ShowHiddenFilesAndFoldersDescription	Shows files and folders marked as hidden in File Explorer.\nEffective immediately.	在文件资源管理器中显示标记为隐藏的文件和文件夹。\n立即生效。
-HideHomeFromExplorerName	Hide Home from File Explorer navigation pane	隐藏资源管理器导航窗格中的主页
-HideHomeFromExplorerDescription	Removes the Home entry from the File Explorer navigation pane.\nTakes effect after restarting Explorer.	从文件资源管理器导航窗格移除“主页”项。\n重启资源管理器生效。
-HideGalleryFromExplorerName	Hide Gallery from File Explorer navigation pane	隐藏资源管理器导航窗格中的图库
-HideGalleryFromExplorerDescription	Removes the Gallery entry from the File Explorer navigation pane.\nTakes effect after restarting Explorer.	从文件资源管理器导航窗格移除“图库”项。\n重启资源管理器生效。
-HideOneDriveFromExplorerName	Hide OneDrive from File Explorer navigation pane	隐藏资源管理器导航窗格中的 OneDrive
-HideOneDriveFromExplorerDescription	Removes the OneDrive entry from the File Explorer navigation pane without uninstalling OneDrive.\nTakes effect after restarting Explorer.	从文件资源管理器导航窗格移除 OneDrive 项，不会卸载 OneDrive。\n重启资源管理器生效。
-DisableStickyKeysShortcutName	Disable Sticky Keys shortcut	禁用粘滞键快捷方式
-DisableStickyKeysShortcutDescription	Prevents the Sticky Keys prompt from appearing when Shift is pressed five times.\nEffective immediately.	禁止连续按五次 Shift 时弹出粘滞键提示。\n立即生效。
-DisableBitLockerAutoEncryptionName	Disable BitLocker automatic device encryption	禁用 BitLocker 自动设备加密
-DisableBitLockerAutoEncryptionDescription	Prevents Windows from automatically enabling device encryption on new setups. Does not decrypt an already encrypted drive.\nEffective immediately.	阻止 Windows 在新系统上自动启用设备加密。不会解密已经加密的驱动器。\n立即生效。
-DisableModernStandbyNetworkingName	Disable network during Modern Standby	禁用新式待机时的网络连接
-DisableModernStandbyNetworkingDescription	Disconnects networking during Modern Standby (S0 low power idle) to reduce battery drain on supported devices.\nEffective after group policy refresh.	在支持的设备上，于新式待机（S0 低功耗空闲）期间断开网络，以减少耗电。\n刷新组策略后生效。
-DisableShareDragTrayName	Disable share Drag Tray	禁用拖放共享托盘
-DisableShareDragTrayDescription	Disables the Windows 11 Drag Tray that appears when dragging files for sharing or moving.\nEffective immediately.	禁用 Windows 11 在拖动文件共享或移动时出现的拖放托盘。\n立即生效。
-DisableGameBarIntegrationName	Disable Xbox Game Bar integration	禁用 Xbox Game Bar 集成
-DisableGameBarIntegrationDescription	Stops the controller shortcut and related Game Bar integration from opening Game Bar. Pair with Disable Game DVR capture for a fuller disable.\nEffective immediately.	禁止通过手柄快捷键及相关集成打开 Game Bar。可与“禁用 Game DVR 捕获”一起使用以更彻底关闭。\n立即生效。
-DisableUpdateAsSoonAsAvailableName	Do not get updates as soon as they are available	不要尽快获取更新
-DisableUpdateAsSoonAsAvailableDescription	Turns off continuous innovation opt-in so Windows does not pull the latest updates as soon as they are available.\nEffective immediately.	关闭持续创新选项，避免 Windows 一有最新更新就立刻获取。\n立即生效。
-PreventDeviceCompanionAppAutoInstallName	Prevent automatic companion app installs	禁止自动安装设备配套应用
-PreventDeviceCompanionAppAutoInstallDescription	Prevents Windows from downloading device metadata and companion apps from the network for connected hardware.\nEffective after group policy refresh.	禁止 Windows 从网络下载已连接硬件的设备元数据和配套应用。\n刷新组策略后生效。
-DisablePhoneLinkInStartName	Disable Phone Link in Start menu	禁用开始菜单中的手机连接
-DisablePhoneLinkInStartDescription	Hides the mobile device / Phone Link companion section in the Start menu.\nEffective immediately.	隐藏开始菜单中的移动设备/手机连接区域。\n立即生效。
-DisableCortanaInSearchName	Disable Cortana in Windows Search	禁用 Windows 搜索中的 Cortana
-DisableCortanaInSearchDescription	Disables Cortana integration and consent in Windows Search policy.\nEffective after group policy refresh.	通过策略禁用 Windows 搜索中的 Cortana 集成与同意项。\n刷新组策略后生效。
-DisableWSAIFabricServiceName	Disable the Windows AI Fabric Service	禁用 Windows AI Fabric 服务
-DisableWSAIFabricServiceDescription	WSAIFabricSvc supports Windows AI features. Disable it if you do not use system AI features, to reduce background services.\nEffective immediately.	WSAIFabricSvc 为 Windows AI 功能提供支持。不使用系统 AI 功能时可禁用，以减少后台服务。\n立即生效。
+ShowHiddenFilesAndFoldersDescription	Makes hidden config folders (like AppData and .git) visible in File Explorer so troubleshooting and development are much easier. Protected OS files remain hidden to prevent accidental deletion.\nEffective immediately.	在资源管理器中显示 AppData、.git 等隐藏配置目录，便于日常排查和开发；受保护的系统关键文件仍默认隐藏，不易误删。\n立即生效。
+HideHomeFromExplorerName	Hide "Home" from File Explorer sidebar	隐藏资源管理器左侧栏“主页”
+HideHomeFromExplorerDescription	Removes the redundant Home entry from the navigation pane so your drives and pinned folders sit higher and cleaner. Does not delete any files.\nTakes effect after restarting Explorer.	从左侧导航栏移除冗余的“主页”入口，让磁盘和常用目录更靠前清爽，不会删除任何文件。\n重启资源管理器生效。
+HideGalleryFromExplorerName	Hide "Gallery" from File Explorer sidebar	隐藏资源管理器左侧栏“图库”
+HideGalleryFromExplorerDescription	Removes the Gallery photo view from the navigation pane, preventing accidental slow photo indexing and keeping the sidebar compact. Your Pictures folder remains untouched.\nTakes effect after restarting Explorer.	从左侧导航栏移除“图库”入口，避免误点触发海量图片加载卡顿并让侧栏更精简；图片文件夹本身不受任何影响。\n重启资源管理器生效。
+HideOneDriveFromExplorerName	Hide OneDrive from File Explorer sidebar	隐藏资源管理器左侧栏 OneDrive
+HideOneDriveFromExplorerDescription	Removes the OneDrive shortcut from the navigation pane to declutter the sidebar without uninstalling OneDrive or deleting any synced files.\nTakes effect after restarting Explorer.	仅从资源管理器左侧栏隐藏 OneDrive 入口以保持简洁，不会卸载 OneDrive 也不会删除任何同步文件。\n重启资源管理器生效。
+DisableStickyKeysShortcutName	Disable Sticky Keys 5×Shift popup	禁用连按 5 次 Shift 弹出粘滞键提示
+DisableStickyKeysShortcutDescription	Stops the loud beep and Sticky Keys dialog from interrupting games or typing when Shift is tapped five times. You can still turn Sticky Keys on anytime in Accessibility settings.\nEffective immediately.	防止玩游戏或快速打字连按五次 Shift 时突然发出“滴”声并弹窗打断；需要时仍可在辅助功能设置中手动开启。\n立即生效。
+DisableBitLockerAutoEncryptionName	Prevent automatic BitLocker device encryption	阻止自动启用 BitLocker 设备加密
+DisableBitLockerAutoEncryptionDescription	Stops Windows from silently encrypting drives on new setups, avoiding unexpected SSD I/O overhead and recovery-key lockouts after BIOS/hardware changes. Does not decrypt drives that are already encrypted, and you can still enable BitLocker manually anytime.\nEffective immediately.	阻止系统静默自动加密磁盘，避免无感知的磁盘性能损耗及升级 BIOS/换硬件后因缺恢复密钥导致数据锁死。不会解密已加密的盘，需要时仍可手动开启。\n立即生效。
+DisableModernStandbyNetworkingName	Disconnect network during Modern Standby	新式待机时断开网络连接
+DisableModernStandbyNetworkingDescription	Stops laptops/PCs in Modern Standby (S0 low-power sleep) from staying connected to Wi-Fi and waking up in a bag, preventing overnight battery drain and heat. Only delays background mail/notifications until you wake the PC.\nEffective after group policy refresh.	在支持新式待机（S0）的设备上休眠期间断开网络，防止电脑合盖放包里持续联网发热掉电；仅在唤醒后再收取新消息，完全可接受。\n刷新组策略后生效。
+DisableShareDragTrayName	Disable drag-to-share tray	禁用拖动文件时的顶部共享托盘
+DisableShareDragTrayDescription	Turns off the Windows 11 top-of-screen share bar that pops up whenever you drag a file, preventing accidental drops and visual clutter. Normal drag-and-drop and right-click Share are unaffected.\nEffective immediately.	关闭拖动文件时屏幕顶部自动弹出的共享托盘，避免误拖和视觉干扰；正常拖放文件与右键共享功能不受影响。\n立即生效。
+DisableGameBarIntegrationName	Disable Xbox Game Bar shortcuts & integration	禁用 Xbox Game Bar 快捷键与集成
+DisableGameBarIntegrationDescription	Prevents controller guide buttons and system hooks from popping up Xbox Game Bar overlays during games. Pair with "Disable Game DVR" for a fuller cleanup; Game Mode stays active.\nEffective immediately.	阻止手柄按键及相关系统钩子在游戏时误弹出 Xbox Game Bar 覆盖层，可与“禁用 Game DVR”搭配使用，不影响游戏模式。\n立即生效。
+DisableUpdateAsSoonAsAvailableName	Do not install early preview updates automatically	关闭“尽快获取最新更新”
+DisableUpdateAsSoonAsAvailableDescription	Opts out of early-wave "seeker" feature updates so your PC receives tested regular updates instead of acting as an early guinea pig. Regular monthly security updates continue normally.\nEffective immediately.	关闭抢先推送尝鲜更新，避免当微软首批测试小白鼠引发兼容问题；正常的月度稳定版安全补丁仍照常接收。\n立即生效。
+PreventDeviceCompanionAppAutoInstallName	Prevent auto-installing vendor companion apps	禁止自动安装硬件厂商配套应用
+PreventDeviceCompanionAppAutoInstallDescription	Stops Windows from automatically downloading bloated vendor companion apps (like printer/mouse promo suites) whenever you plug in hardware. Standard hardware drivers from Windows Update still install normally.\nEffective after group policy refresh.	插入外设时不再自动从网络下载臃肿的厂商配套推广软件，保持系统干净；Windows Update 提供的正常硬件驱动仍可照常安装。\n刷新组策略后生效。
+DisablePhoneLinkInStartName	Hide Phone Link panel in Start menu	隐藏开始菜单中的“手机连接”侧栏
+DisablePhoneLinkInStartDescription	Removes the mobile companion side panel from the Start menu so it stays compact and uncluttered. Does not uninstall Phone Link if you still open it manually.\nEffective immediately.	隐藏开始菜单旁附带的手机连接面板，让开始菜单更紧凑清爽；不会卸载手机连接应用本身。\n立即生效。
+DisableCortanaInSearchName	Disable Cortana in Windows Search	禁用 Windows 搜索中的 Cortana 集成
+DisableCortanaInSearchDescription	Turns off legacy Cortana hooks and consent policies inside Windows Search, keeping search cleaner with zero impact on local search.\nEffective after group policy refresh.	通过策略关闭 Windows 搜索中残留的 Cortana 集成与授权项，减少冗余逻辑，对本地搜索零影响。\n刷新组策略后生效。
+DisableWSAIFabricServiceName	Disable Windows AI Fabric service	禁用 Windows AI 基础服务（WSAIFabricSvc）
+DisableWSAIFabricServiceDescription	Stops the background service powering built-in Windows AI features (like Recall and Click to Do), freeing background resources. Safe to disable if you don't use built-in Windows AI tools.\nEffective immediately.	停用支撑系统内置 AI 功能（如 Recall、点击即用）的后台服务，减少常驻占用；不使用系统自带 AI 功能完全零影响。\n立即生效。
 UninstallCopilotName	Uninstall Microsoft Copilot	卸载 Microsoft Copilot
-UninstallCopilotDescription	Removes the Microsoft Copilot app package. Use with Disable Windows Copilot for a fuller cleanup.	卸载 Microsoft Copilot 应用包。可与“禁用 Windows Copilot”一起使用以更彻底清理。
-UninstallTeamsName	Uninstall Microsoft Teams	卸载 Microsoft Teams
-UninstallTeamsDescription	Removes the new Microsoft Teams app if installed.	卸载新版 Microsoft Teams 应用（若已安装）。
+UninstallCopilotDescription	Removes the preinstalled Microsoft Copilot Store app package to free up clutter and background updates. Can be reinstalled from Microsoft Store or used in a browser anytime.	卸载预装的 Microsoft Copilot 应用包，减少界面冗余与后台更新；需要时可随时用网页版或重新安装。
+UninstallTeamsName	Uninstall Microsoft Teams	卸载新版 Microsoft Teams
+UninstallTeamsDescription	Removes the preinstalled consumer Microsoft Teams app to free space and avoid auto-start clutter. Can be reinstalled anytime if you need Teams meetings.	卸载预装的新版 Microsoft Teams 应用，减少空间占用与自启干扰；需要使用时可随时重新安装。
 UninstallTeamsLegacyName	Uninstall legacy Microsoft Teams	卸载旧版 Microsoft Teams
-UninstallTeamsLegacyDescription	Removes the older Microsoft Store Teams package if present.	卸载旧版 Microsoft Store Teams 包（若存在）。
-UninstallPhoneLinkName	Uninstall Phone Link	卸载手机连接
-UninstallPhoneLinkDescription	Removes Phone Link (Your Phone) for connecting Android/iOS devices.	卸载用于连接 Android/iOS 设备的手机连接（Your Phone）。
-UninstallXboxGamingAppName	Uninstall Xbox Gaming App	卸载 Xbox 游戏应用
-UninstallXboxGamingAppDescription	Removes the modern Xbox app used for the Xbox PC library and some game installs. May break Game Pass / Xbox PC gaming workflow. Only for users who do not play Xbox PC games.	卸载用于 Xbox PC 库和部分游戏安装的新版 Xbox 应用。可能影响 Game Pass / Xbox PC 游戏流程。仅建议不玩 Xbox PC 游戏的用户使用。
+UninstallTeamsLegacyDescription	Removes the discontinued legacy Teams Store app package that is no longer needed, with zero downside.	卸载已淘汰的旧版 Microsoft Teams 商店包，清理历史残留，完全无副作用。
+UninstallPhoneLinkName	Uninstall Phone Link	卸载“手机连接”应用
+UninstallPhoneLinkDescription	Removes the Phone Link (Your Phone) app and its background companion processes. Safe to uninstall if you don't sync phone messages/calls on this PC, and reinstallable from Microsoft Store anytime.	卸载“手机连接（Your Phone）”应用及其后台进程；不用电脑同步手机短信/通话时卸载完全无影响，需要时可从商店装回。
+UninstallXboxGamingAppName	Uninstall Xbox app	卸载 Xbox 游戏应用
+UninstallXboxGamingAppDescription	Removes the Xbox PC store/library app to cut background services and updates. Trade-off: breaks PC Game Pass and Xbox-app game management—only enable if you don't play Xbox/Game Pass PC games.	卸载用于管理 Xbox PC 游戏库的应用，减少后台占用与更新。代价是无法使用 PC Game Pass 或通过 Xbox 应用启动游戏，仅建议不玩 Xbox PC 游戏的用户开启。
 UninstallPCManagerName	Uninstall Microsoft PC Manager	卸载微软电脑管家
-UninstallPCManagerDescription	Removes Microsoft PC Manager if preinstalled.	卸载预装的微软电脑管家（若存在）。
-DisableNtfs8Dot3NameCreationName	Disable 8.3 short file name creation	禁用 8.3 短文件名
-DisableNtfs8Dot3NameCreationDescription	Creating MS-DOS 8.3 short names for every file slows down folders that contain many files. Disabling it speeds up file creation and applies to newly created files.\nTakes effect after reboot.	为每个文件生成 MS-DOS 8.3 短文件名会拖慢包含大量文件的目录，禁用后可加快文件创建，仅对新建文件生效。\n重启生效。
-DisableNtfsLastAccessUpdateName	Disable NTFS last access timestamp	禁用 NTFS 末次访问时间
-DisableNtfsLastAccessUpdateDescription	Updating the last access time on every file read adds extra disk writes. Disabling it reduces disk I/O.\nUses the modern user-managed flag (0x80000001) so the setting persists across reboot.	每次读取文件都更新末次访问时间会产生额外的磁盘写入，禁用后可减少磁盘 I/O。\n使用现代用户管理标志 (0x80000001)，重启后设置仍会保持。
-DisableWapPushMessageRoutingServiceName	Disable the WAP Push Message Routing Service	禁用 WAP 推送消息路由服务
-DisableWapPushMessageRoutingServiceDescription	The dmwappushservice routes WAP push messages, mainly for device management and telemetry. Most home users can disable it.\nEffective immediately.	dmwappushservice 负责路由 WAP 推送消息，主要用于设备管理和遥测，多数家庭用户可以禁用。\n立即生效。
-DisableDownloadedMapsManagerServiceName	Disable the Downloaded Maps Manager Service	禁用下载的地图管理器服务
-DisableDownloadedMapsManagerServiceDescription	MapsBroker provides offline map data for the Maps app. Disable it if you don't use offline maps.\nEffective immediately.	MapsBroker 为地图应用提供离线地图数据，不使用离线地图可以禁用。\n立即生效。
-DisableHibernationName	Disable hibernation	关闭休眠
-DisableHibernationDescription	Hibernation reserves a hiberfil.sys file as large as your RAM and enables Fast Startup. Disabling it frees that disk space and makes shutdown cleaner. Not recommended for laptops that rely on hibernation.\nEffective immediately.	休眠会占用一个与内存大小相当的 hiberfil.sys 文件，并启用快速启动。关闭后可释放该磁盘空间，并让关机更彻底。依赖休眠的笔记本不建议关闭。\n立即生效。
-DisableBackgroundAppsName	Disable background apps	禁用应用后台运行
-DisableBackgroundAppsDescription	Stops UWP and Store apps from running in the background when closed, reducing idle CPU, memory, and network use.\nEffective immediately for most apps.	禁止 UWP/商店应用在关闭后继续在后台运行，降低空闲时的 CPU、内存和网络占用。\n对多数应用立即生效。
-DisableAutomaticMaintenanceName	Disable automatic maintenance	禁用自动维护
-DisableAutomaticMaintenanceDescription	Windows Automatic Maintenance runs diagnostics, updates, and other tasks during idle time and can cause sudden disk or CPU spikes. Disable it if you prefer to maintain the PC yourself.\nEffective immediately.	Windows 自动维护会在空闲时运行诊断、更新等任务，可能造成突然的磁盘或 CPU 高峰。若你自行维护电脑，可以禁用。\n立即生效。
+UninstallPCManagerDescription	Removes preinstalled Microsoft PC Manager to avoid redundant background monitoring and tray clutter, with zero impact on Windows functionality.	卸载预装的微软电脑管家，避免重复的后台常驻监控与托盘干扰，对系统正常功能零影响。
+DisableNtfs8Dot3NameCreationName	Disable NTFS 8.3 short filename creation	禁用 NTFS 8.3 短文件名生成
+DisableNtfs8Dot3NameCreationDescription	Stops NTFS from generating legacy MS-DOS 8.3 aliases for every new file, noticeably speeding up file creation and directory enumeration in folders with thousands of files (like node_modules or build outputs). Only affects ultra-legacy 16-bit DOS apps that modern PCs never run.\nTakes effect after reboot.	新建文件时不再额外生成古老的 MS-DOS 8.3 短文件名，在包含海量文件的目录（如代码仓库、编译产物）中可明显加快创建和遍历速度；现代 32/64 位软件完全不依赖它，几乎零代价。\n重启生效。
+DisableNtfsLastAccessUpdateName	Disable NTFS last access timestamp	禁用 NTFS 末次访问时间更新
+DisableNtfsLastAccessUpdateDescription	Stops Windows from writing a new timestamp to disk every time a file is merely read, cutting unnecessary SSD wear and metadata I/O. Only affects rare backup/audit tools that check "Last Accessed" time (Modified and Created times stay accurate).\nEffective immediately.	读取文件时不再顺带回写“末次访问时间”，减少大量无意义的磁盘元数据写入与 SSD 磨损。不影响“修改时间”和“创建时间”，绝大多数用户和软件完全无感。\n立即生效。
+DisableWapPushMessageRoutingServiceName	Disable WAP Push Message Routing service	禁用 WAP 推送消息路由服务
+DisableWapPushMessageRoutingServiceDescription	Stops the dmwappushservice background service used mainly for enterprise MDM push and telemetry routing, reducing background clutter with zero impact on home or personal PCs.\nEffective immediately.	停用主要用于企业 MDM 推送和遥测路由的 dmwappushservice 后台服务，减少冗余常驻，对个人电脑完全零影响。\n立即生效。
+DisableDownloadedMapsManagerServiceName	Disable Downloaded Maps Manager service	禁用离线地图管理服务
+DisableDownloadedMapsManagerServiceDescription	Stops MapsBroker from running in the background to update downloaded Windows Maps data. Only needed if you use the built-in Windows Maps app offline.\nEffective immediately.	停用后台检查和更新离线地图数据的 MapsBroker 服务；只要不用系统自带的离线地图，禁用完全零影响。\n立即生效。
+DisableHibernationName	Disable hibernation (delete hiberfil.sys)	关闭休眠（释放 hiberfil.sys 空间）
+DisableHibernationDescription	Deletes hiberfil.sys (often 10–30+ GB on high-RAM PCs) and forces clean full shutdowns instead of Fast Startup. Trade-off: disables Hibernation (Sleep still works normally); great for desktops and plugged-in PCs, but keep off if your laptop relies on Hibernation.\nEffective immediately.	关闭休眠并直接删除与内存容量相当的 hiberfil.sys（大内存电脑可立省十几至几十 GB 空间），同时让关机更彻底。代价是无法使用“休眠”功能（“睡眠”仍正常）；台式机收益很大，依赖休眠的笔记本不建议开启。\n立即生效。
+DisableBackgroundAppsName	Disable UWP/Store background apps	禁用商店应用后台运行
+DisableBackgroundAppsDescription	Stops UWP/Microsoft Store apps from quietly running in the background when you aren't using them, reducing idle CPU, RAM, and network activity. Does not affect normal desktop (.exe) software; only delays background updates/notifications for Store apps.\nEffective immediately for most apps.	阻止 UWP/微软商店应用在关闭后继续于后台偷偷运行，降低空闲 CPU、内存与联网占用。不影响普通桌面（.exe）软件，仅会暂停商店应用关闭后的后台静默刷新。\n对多数应用立即生效。
+DisableAutomaticMaintenanceName	Disable Windows Automatic Maintenance	禁用 Windows 自动维护
+DisableAutomaticMaintenanceDescription	Stops Windows from launching unexpected diagnostics, defrag, and maintenance scans whenever you step away, preventing sudden fan spin-up, CPU spikes, and disk thrashing. You can still run updates and cleanup manually whenever you like.\nEffective immediately.	阻止电脑一空闲就自动启动诊断、整理与扫描任务，避免突然风扇狂转、磁盘满载或打断后台工作；需要时仍可随时手动更新与清理。\n立即生效。
 DisablePowerThrottlingName	Disable power throttling	禁用电源限流
 DisablePowerThrottlingDescription	Stops Windows from throttling background processes (downloads, sync, builds, audio/capture tools), keeping multitasking and background tasks consistently responsive. Extra power draw is minimal when plugged in, but this setting also applies on battery power so laptops that rely on battery life should leave it off.\nTakes effect after reboot.	避免 Windows 自动把后台进程（如下载、同步、编译、音频/录屏工具）降频限速，让多任务和后台工作更稳定跟手。插电使用时额外功耗很低、几乎无感；但此项同时作用于电池状态，经常不插电移动办公的笔记本建议保持关闭。\n重启生效。
-EnableHardwareAcceleratedGpuSchedulingName	Enable hardware-accelerated GPU scheduling	启用硬件加速 GPU 计划
-EnableHardwareAcceleratedGpuSchedulingDescription	Lets the GPU manage its own video memory scheduling (HAGS), which can lower latency in games and GPU-heavy apps. Requires a compatible GPU and driver; disable if you see instability.\nTakes effect after reboot.	让 GPU 自行管理显存调度（HAGS），可降低游戏和 GPU 密集应用的延迟。需要兼容的 GPU 与驱动；若出现不稳定可关闭。\n重启生效。
-PreferProgramsProcessorSchedulingName	Prefer programs for processor scheduling	处理器计划优先程序
-PreferProgramsProcessorSchedulingDescription	Sets Win32PrioritySeparation so foreground programs get higher CPU priority than background services (the usual desktop default). Useful if the PC was switched to “Background services”.\nApplies to new processes.	将 Win32PrioritySeparation 设为前台程序优先于后台服务（桌面系统常见默认）。若曾改为“后台服务”优先，可用此项恢复。\n对新进程生效。
-DisableConnectedDevicesPlatformServiceName	Disable the Connected Devices Platform Service	禁用连接设备平台服务
-DisableConnectedDevicesPlatformServiceDescription	CDPSvc supports nearby sharing, cross-device experiences, and related background connectivity. Disable it if you do not use those features.\nEffective immediately.	CDPSvc 支持附近共享、跨设备体验及相关后台连接。不使用这些功能可以禁用。\n立即生效。
-DisableConnectedDevicesPlatformUserServiceName	Disable the Connected Devices Platform User Service	禁用连接设备平台用户服务
-DisableConnectedDevicesPlatformUserServiceDescription	CDPUserSvc is the per-user companion to CDPSvc (name may include a suffix). Disabling it reduces cross-device and sharing background work for the current user sessions.\nEffective immediately.	CDPUserSvc 是 CDPSvc 的每用户配套服务（名称可能带后缀）。禁用后可减少当前用户会话的跨设备与共享后台工作。\n立即生效。
-DisableXboxAuthManagerServiceName	Disable the Xbox Live Auth Manager Service	禁用 Xbox Live 身份验证管理器服务
-DisableXboxAuthManagerServiceDescription	XblAuthManager handles Xbox Live sign-in. Disable it if you do not use Xbox apps, Game Pass, or Xbox PC games.\nEffective immediately.	XblAuthManager 负责 Xbox Live 登录。不使用 Xbox 应用、Game Pass 或 Xbox PC 游戏可以禁用。\n立即生效。
-DisableXboxGameSaveServiceName	Disable the Xbox Live Game Save Service	禁用 Xbox Live 游戏保存服务
-DisableXboxGameSaveServiceDescription	XblGameSave syncs Xbox game saves to the cloud. Disable it if you do not use Xbox cloud saves.\nEffective immediately.	XblGameSave 将 Xbox 游戏存档同步到云端。不使用 Xbox 云存档可以禁用。\n立即生效。
-DisableXboxNetApiServiceName	Disable the Xbox Live Networking Service	禁用 Xbox Live 网络服务
-DisableXboxNetApiServiceDescription	XboxNetApiSvc provides Xbox Live networking support. Disable it if you do not use Xbox online features.\nEffective immediately.	XboxNetApiSvc 提供 Xbox Live 网络支持。不使用 Xbox 联机功能可以禁用。\n立即生效。
-DisableXboxGipServiceName	Disable the Xbox Accessory Management Service	禁用 Xbox 配件管理服务
-DisableXboxGipServiceDescription	XboxGipSvc manages Xbox game controllers and accessories. Disable it if you do not use Xbox input devices.\nEffective immediately.	XboxGipSvc 管理 Xbox 手柄与配件。不使用 Xbox 输入设备可以禁用。\n立即生效。
-DisableApplicationExperienceTasksName	Disable Application Experience scheduled tasks	禁用应用程序兼容性相关计划任务
-DisableApplicationExperienceTasksDescription	Disables Microsoft Compatibility Appraiser and related Application Experience tasks that scan software and send compatibility telemetry in the background.\nEffective immediately.	禁用 Microsoft Compatibility Appraiser 等应用程序体验计划任务，减少后台扫描软件与上报兼容性遥测。\n立即生效。
-DisableCustomerExperienceTasksName	Disable Customer Experience Improvement scheduled tasks	禁用客户体验改善计划任务
-DisableCustomerExperienceTasksDescription	Disables CEIP/SQM related scheduled tasks (Consolidator, UsbCeip, Autochk Proxy, etc.) that collect and upload usage data.\nEffective immediately.	禁用 CEIP/SQM 相关计划任务（Consolidator、UsbCeip、Autochk Proxy 等），减少使用数据的收集与上传。\n立即生效。
+EnableHardwareAcceleratedGpuSchedulingName	Enable Hardware-Accelerated GPU Scheduling (HAGS)	启用硬件加速 GPU 计划（HAGS）
+EnableHardwareAcceleratedGpuSchedulingDescription	Offloads video memory scheduling from the CPU to the GPU's own processor, reducing input latency and enabling features like DLSS 3 Frame Generation. Minimal risk on modern RTX/RDNA drivers; easily reversible if a specific app stutters.\nTakes effect after reboot.	将显存调度从 CPU 下放给显卡自行处理，可降低游戏延迟并解锁 DLSS 帧生成等新特性。在现代显卡驱动上已非常成熟，如遇个别软件异常可随时关回。\n重启生效。
+PreferProgramsProcessorSchedulingName	Prioritize foreground apps in CPU scheduling	CPU 调度优先前台程序
+PreferProgramsProcessorSchedulingDescription	Restores the standard desktop Win32PrioritySeparation setting so active foreground apps feel snappy over background services. Zero downside on desktop/workstation PCs.\nApplies to new processes.	确保 CPU 时间片优先响应当前前台操作窗口而非后台服务（标准桌面推荐配置），让交互更跟手，对桌面电脑几乎零代价。\n对新进程生效。
+DisableConnectedDevicesPlatformServiceName	Disable Connected Devices Platform service	禁用连接设备平台服务（CDPSvc）
+DisableConnectedDevicesPlatformServiceDescription	Stops CDPSvc from running background cross-device discovery and sync (Nearby Sharing, Phone Link, Continue on PC), saving background memory and network chatter. Safe to disable if you don't use those Windows cross-device features.\nEffective immediately.	停用负责附近共享、手机连接与跨设备接力的 CDPSvc 后台服务，减少后台占用与局域网广播；不使用这些 Windows 跨设备功能完全零影响。\n立即生效。
+DisableConnectedDevicesPlatformUserServiceName	Disable Connected Devices Platform user service	禁用连接设备平台用户服务（CDPUserSvc）
+DisableConnectedDevicesPlatformUserServiceDescription	Stops the per-user companion service to CDPSvc to further cut cross-device background activity. Only affects Nearby Sharing and Windows cross-device sync.\nEffective immediately.	停用 CDPSvc 的每用户配套后台服务，进一步减少跨设备与共享后台占用；仅影响附近共享及跨设备体验。\n立即生效。
+DisableXboxAuthManagerServiceName	Disable Xbox Live Auth Manager service	禁用 Xbox Live 身份验证服务
+DisableXboxAuthManagerServiceDescription	Stops the Xbox Live sign-in service (XblAuthManager) from staying registered in the background. Zero downside if you don't use Xbox apps, Game Pass, or Microsoft Store games.\nEffective immediately.	停用负责 Xbox Live 登录的后台服务。若不玩 Game Pass 或 Xbox 商店游戏，禁用完全无影响。\n立即生效。
+DisableXboxGameSaveServiceName	Disable Xbox Live Game Save service	禁用 Xbox Live 云存档服务
+DisableXboxGameSaveServiceDescription	Stops the Xbox cloud save sync service (XblGameSave). Does not affect Steam/Epic/other game launchers; only needed for Xbox/Microsoft Store games.\nEffective immediately.	停用 Xbox 云存档同步服务。完全不影响 Steam、Epic 等其他平台游戏，仅在玩 Xbox/商店游戏时需要。\n立即生效。
+DisableXboxNetApiServiceName	Disable Xbox Live Networking service	禁用 Xbox Live 网络服务
+DisableXboxNetApiServiceDescription	Stops the Xbox Live multiplayer networking service (XboxNetApiSvc). Does not affect regular internet, Steam, or other games—only Xbox/Microsoft Store online games.\nEffective immediately.	停用 Xbox Live 联机支持服务。不影响正常上网或 Steam 等其他游戏，仅玩 Xbox/商店联机游戏时需要。\n立即生效。
+DisableXboxGipServiceName	Disable Xbox Accessory Management service	禁用 Xbox 配件管理服务
+DisableXboxGipServiceDescription	Stops XboxGipSvc for Xbox controller firmware and accessories. Trade-off: disables Xbox wireless/wired controller support—only enable if you do not use Xbox controllers on this PC.\nEffective immediately.	停用管理 Xbox 手柄与配件的后台服务。代价是会影响 Xbox 手柄连接，仅建议完全不用 Xbox 手柄的用户开启。\n立即生效。
+DisableApplicationExperienceTasksName	Disable Application Experience scheduled tasks	禁用应用程序体验计划任务
+DisableApplicationExperienceTasksDescription	Disables background compatibility scanners (such as Microsoft Compatibility Appraiser) that frequently spike disk and CPU to upload software inventory telemetry. Does not affect running or installing programs.\nEffective immediately.	禁用后台定期全盘扫描软件并上报遥测的兼容性评估任务，避免莫名其妙的磁盘与 CPU 飙升，完全不影响软件正常运行与安装。\n立即生效。
+DisableCustomerExperienceTasksName	Disable Customer Experience (CEIP/SQM) tasks	禁用客户体验改善（CEIP/SQM）计划任务
+DisableCustomerExperienceTasksDescription	Disables scheduled telemetry tasks (Consolidator, UsbCeip, KernelCeip, Autochk Proxy) that periodically wake to collect and upload usage stats. Zero impact on system functionality.\nEffective immediately.	禁用定期唤醒收集并上传使用数据的遥测计划任务，减少后台干扰与隐私上传，对系统功能零影响。\n立即生效。
 DisableDiskDiagnosticTasksName	Disable Disk Diagnostic scheduled tasks	禁用磁盘诊断计划任务
-DisableDiskDiagnosticTasksDescription	Disables Windows Disk Diagnostic data collector and resolver tasks that run scheduled disk health checks in the background.\nEffective immediately.	禁用 Windows 磁盘诊断数据收集与解析计划任务，减少后台磁盘健康检查。\n立即生效。
-DisableFeedbackScheduledTasksName	Disable feedback scheduled tasks	禁用反馈计划任务
-DisableFeedbackScheduledTasksDescription	Disables Feedback Hub / SIUF tasks that prompt for satisfaction surveys and download feedback scenarios.\nEffective immediately.	禁用反馈中心/SIUF 相关计划任务，减少满意度调查提示与反馈场景下载。\n立即生效。
-DisableWerQueueReportingTaskName	Disable Windows Error Reporting queue task	禁用 Windows 错误报告队列任务
-DisableWerQueueReportingTaskDescription	Disables the scheduled task that uploads queued Windows Error Reporting data. Pairs well with disabling the WER service.\nEffective immediately.	禁用用于上传 Windows 错误报告队列数据的计划任务。可与禁用 WER 服务一起使用。\n立即生效。
+DisableDiskDiagnosticTasksDescription	Disables background disk diagnostic telemetry tasks so Windows doesn't trigger extra disk checks and reporting. You can check drive SMART health much more clearly anytime using CrystalDiskInfo in the Tools tab.\nEffective immediately.	禁用后台磁盘诊断数据收集任务，减少多余磁盘检测与上报；需要查看硬盘健康随时可用“工具”页的 CrystalDiskInfo，信息更直观。\n立即生效。
+DisableFeedbackScheduledTasksName	Disable feedback scheduled tasks	禁用反馈调查计划任务
+DisableFeedbackScheduledTasksDescription	Disables background SIUF tasks that download survey scenarios and schedule feedback prompts, cutting pointless background wakeups with zero downside.\nEffective immediately.	禁用定期下载调查问卷并触发反馈弹窗的后台计划任务，减少无意义唤醒，完全零副作用。\n立即生效。
+DisableWerQueueReportingTaskName	Disable Windows Error Reporting queue task	禁用 Windows 错误报告队列上传任务
+DisableWerQueueReportingTaskDescription	Disables the scheduled task that uploads queued crash reports to Microsoft, avoiding unnecessary background uploads while leaving local Event Viewer logs intact.\nEffective immediately.	禁用定时把崩溃报告队列上传至微软的计划任务，减少多余联网，不影响本地事件查看器排错。\n立即生效。
 DisableNearbySharingName	Disable Nearby Sharing	禁用附近共享
-DisableNearbySharingDescription	Stops Nearby Sharing so this PC does not advertise or receive shared files from nearby devices, reducing background discovery work.\nEffective immediately.	关闭附近共享，避免本机向附近设备广播或接收共享文件，减少后台发现占用。\n立即生效。
+DisableNearbySharingDescription	Turns off Bluetooth/Wi-Fi Nearby Sharing discovery so this PC stops broadcasting to nearby devices, saving background radio work and improving privacy. Easy to re-enable if you ever transfer files this way.\nEffective immediately.	关闭基于蓝牙/Wi-Fi 的附近共享发现，避免电脑持续对外广播并保护隐私，需要传文件时随时可重新开启。\n立即生效。
 DisableCloudClipboardSyncName	Disable cloud clipboard sync	禁用剪贴板云同步
-DisableCloudClipboardSyncDescription	Prevents clipboard content from syncing across devices via your Microsoft account. Local clipboard history is not removed by this setting.\nEffective after group policy refresh.	禁止剪贴板内容通过 Microsoft 帐户跨设备同步。不会关闭本机剪贴板历史。\n刷新组策略后生效。
-DisableSharedExperiencesName	Disable shared experiences	禁用共享体验
-DisableSharedExperiencesDescription	Turns off cross-device shared experiences (continue apps/activities on other devices) that rely on the Connected Devices platform.\nEffective immediately.	关闭依赖连接设备平台的跨设备共享体验（在其他设备上继续应用/活动）。\n立即生效。
-DisableWindowsTipsAndSuggestionsName	Disable Windows tips and suggestions	禁用 Windows 使用技巧与建议
-DisableWindowsTipsAndSuggestionsDescription	Stops Windows from showing tips, tricks, and suggestion content in the UI (Soft Landing, system pane suggestions, and related subscribed content).\nEffective immediately.	禁止 Windows 在界面中显示使用技巧、提示和建议内容（Soft Landing、系统窗格建议及相关订阅内容）。\n立即生效。
-DisableAccountNotificationsName	Disable account-related notifications	禁用帐户相关通知
-DisableAccountNotificationsDescription	Turns off Microsoft account notifications in Settings that often promote subscriptions or account actions.\nEffective immediately.	关闭设置中与 Microsoft 帐户相关的通知，减少订阅或帐户操作类推广。\n立即生效。
-DisableScoobeStartupExperienceName	Disable post-update setup suggestions (SCOOBE)	禁用更新后设置建议（SCOOBE）
-DisableScoobeStartupExperienceDescription	Stops the secondary OOBE-style prompts after feature updates that suggest more Microsoft apps and services.\nEffective immediately.	禁止功能更新后再次出现的类 OOBE 提示，减少推荐更多微软应用与服务。\n立即生效。
-DisableOfficeTelemetryName	Disable Office telemetry	禁用 Office 遥测
-DisableOfficeTelemetryDescription	Disables Office client telemetry upload and related OSM logging when Microsoft Office is installed. Harmless if Office is not present.\nEffective for new Office processes.	在已安装 Microsoft Office 时禁用客户端遥测上传及相关 OSM 日志。未安装 Office 时一般无影响。\n对新启动的 Office 进程生效。
-DisableOfflineFilesServiceName	Disable the Offline Files Service	禁用脱机文件服务
-DisableOfflineFilesServiceDescription	CscService caches network files for offline use. Disable it if you do not use Offline Files.\nEffective immediately.	CscService 缓存网络文件以供脱机使用。不使用脱机文件可以禁用。\n立即生效。
+DisableCloudClipboardSyncDescription	Stops copied text and passwords from uploading to Microsoft's cloud for cross-device sync, improving privacy and security. Local Win+V clipboard history keeps working normally.\nEffective after group policy refresh.	禁止把复制的文本和密码上传至微软云端跨设备同步，更安全护隐私；本机 Win+V 剪贴板历史功能完全不受影响。\n刷新组策略后生效。
+DisableSharedExperiencesName	Disable cross-device shared experiences	禁用跨设备共享体验
+DisableSharedExperiencesDescription	Turns off background "continue apps on other devices" sync, reducing background Connected Devices activity with zero impact if you work primarily on this PC.\nEffective immediately.	关闭“在其他设备上继续使用应用”的后台同步机制，减少后台资源占用；主要在单机工作时完全零影响。\n立即生效。
+DisableWindowsTipsAndSuggestionsName	Disable Windows tips and suggestions	禁用 Windows 使用技巧与推广建议
+DisableWindowsTipsAndSuggestionsDescription	Turns off Soft Landing popups, Settings tips, and promotional Windows suggestions, eliminating notification noise with zero functional loss.\nEffective immediately.	关闭系统各处弹出的使用技巧、提示卡片和推广建议，界面清净无打扰，不损失任何功能。\n立即生效。
+DisableAccountNotificationsName	Disable Microsoft account notifications	禁用 Microsoft 帐户推广通知
+DisableAccountNotificationsDescription	Silences nagging banners in Settings and Start pushing Microsoft 365, backup, or account actions, without affecting your actual Microsoft account sign-in.\nEffective immediately.	关闭开始菜单和设置中反复催促开通会员、备份或完善账户的通知横幅，不影响 Microsoft 帐户正常登录。\n立即生效。
+DisableScoobeStartupExperienceName	Disable post-update setup prompts (SCOOBE)	禁用更新后的全屏设置引导（SCOOBE）
+DisableScoobeStartupExperienceDescription	Stops the full-screen "Let's finish setting up your device" nag screens that appear after Windows updates trying to switch defaults to Edge/OneDrive/365. Zero downside.\nEffective immediately.	禁止系统更新重启后弹出“让我们完成设备设置”的全屏推销界面（诱导切换 Edge/OneDrive/365），彻底免打扰且零副作用。\n立即生效。
+DisableOfficeTelemetryName	Disable Microsoft Office telemetry	禁用 Microsoft Office 遥测
+DisableOfficeTelemetryDescription	Stops Microsoft Office from collecting usage telemetry and logging document/add-in telemetry via OSM, improving privacy with zero impact on Word, Excel, or PowerPoint. Harmless if Office is not installed.\nEffective for new Office processes.	关闭 Microsoft Office 客户端遥测上传与 OSM 日志记录，保护文档使用隐私，不影响 Word/Excel/PowerPoint 任何功能；未安装 Office 也无副作用。\n对新启动的 Office 进程生效。
+DisableOfflineFilesServiceName	Disable Offline Files service	禁用脱机文件服务
+DisableOfflineFilesServiceDescription	Stops CscService from managing cached copies of corporate network shares. Almost no home or personal PC uses Windows Offline Files, so disabling it cuts background overhead with zero downside.\nEffective immediately.	停用主要用于缓存企业网络共享文件夹的脱机文件服务（CscService），个人电脑几乎用不到，禁用可减少后台开销且零影响。\n立即生效。
 DisableCloudExperienceHostTasksName	Disable Cloud Experience Host tasks	禁用云体验主机计划任务
-DisableCloudExperienceHostTasksDescription	Disables Cloud Experience Host CreateObjectTask used for account/cloud onboarding flows that can run in the background.\nEffective immediately.	禁用云体验主机 CreateObjectTask，减少帐户/云端引导类后台任务。\n立即生效。
+DisableCloudExperienceHostTasksDescription	Disables background account/cloud onboarding scheduled tasks that run post-setup prompts, reducing unnecessary background work with zero downside.\nEffective immediately.	禁用后台运行账户与云端引导提示的计划任务，减少无用后台活动，完全无副作用。\n立即生效。
 DisableSustainabilityTelemetryTasksName	Disable sustainability telemetry tasks	禁用可持续性遥测计划任务
-DisableSustainabilityTelemetryTasksDescription	Disables Windows sustainability telemetry collection scheduled tasks.\nEffective immediately.	禁用 Windows 可持续性遥测收集相关计划任务。\n立即生效。
+DisableSustainabilityTelemetryTasksDescription	Disables scheduled tasks that collect and upload device energy/carbon telemetry to Microsoft. Zero effect on power management or performance.\nEffective immediately.	禁用向微软收集并上传能耗/碳排放遥测数据的计划任务，不影响电脑正常电源管理与性能。\n立即生效。
 DisableOfficeTelemetryTasksName	Disable Office telemetry scheduled tasks	禁用 Office 遥测计划任务
-DisableOfficeTelemetryTasksDescription	Disables Office Telemetry Agent scheduled tasks when Microsoft Office is installed. Items are skipped automatically if Office tasks are not present.\nEffective immediately.	在已安装 Microsoft Office 时禁用 Office 遥测代理计划任务。本机没有 Office 任务时会自动跳过。\n立即生效。
-UninstallBingSearchName	Uninstall Bing Search	卸载 Bing 搜索
-UninstallBingSearchDescription	Removes the Bing Search package that can integrate web search experiences into Windows Search UI.	卸载可能把网页搜索体验整合进 Windows 搜索界面的 Bing 搜索包。
+DisableOfficeTelemetryTasksDescription	Disables Office Telemetry Agent scheduled tasks that periodically scan and upload Office usage data, saving background wakeups without affecting any Office features. Safely skipped if Office isn't installed.\nEffective immediately.	禁用定期唤醒扫描并上传 Office 使用数据的遥测代理计划任务，减少后台占用且不影响任何 Office 功能；未装 Office 时自动跳过。\n立即生效。
+UninstallBingSearchName	Uninstall Bing Search package	卸载 Bing 搜索组件
+UninstallBingSearchDescription	Removes the Bing web-search integration package from Windows Search, making Start menu search cleaner and faster with zero impact on local search or using Bing in a browser.	卸载集成在 Windows 搜索中的 Bing 网页搜索组件，让开始菜单搜索更纯粹流畅，不影响本地搜索或在浏览器访问 Bing。
 UninstallCrossDeviceName	Uninstall Cross Device Experience Host	卸载跨设备体验主机
-UninstallCrossDeviceDescription	Removes the Cross Device package used for phone/PC continuity features.	卸载用于手机/电脑连续体验的跨设备包。
+UninstallCrossDeviceDescription	Removes the background host used to bridge Android/iOS phones with Windows (camera/file sync). Safe to remove if you don't link your phone to Windows, and reinstallable anytime.	卸载用于桥接手机与 Windows 同步的跨设备体验后台组件；不把手机绑定到 Windows 时卸载完全无影响，需要时可装回。
 UninstallStartExperiencesAppName	Uninstall Start Experiences App	卸载开始体验应用
-UninstallStartExperiencesAppDescription	Removes the Start Experiences app when present on the system.	卸载系统上存在的开始体验应用。
-UninstallGamingServicesName	Uninstall Gaming Services	卸载游戏服务
-UninstallGamingServicesDescription	Removes Microsoft Gaming Services used by some Store/Xbox PC games. Only for users who do not play those games.	卸载部分商店/Xbox PC 游戏依赖的 Microsoft 游戏服务。仅建议不玩此类游戏的用户使用。
+UninstallStartExperiencesAppDescription	Removes the Microsoft Start Experiences companion package that powers web/feed widgets in Start, reducing bloat without affecting normal Start menu app launching.	卸载为开始菜单提供资讯/推广内容的附加组件，减少系统冗余，不影响正常的开始菜单启动软件。
+UninstallGamingServicesName	Uninstall Microsoft Gaming Services	卸载 Microsoft 游戏服务
+UninstallGamingServicesDescription	Removes the background Gaming Services package used by Xbox/Store PC games. Trade-off: breaks PC Game Pass and Xbox Store games (does not affect Steam/Epic); only enable if you don't play Xbox PC games.	卸载供 Xbox/商店 PC 游戏使用的后台游戏服务组件。代价是无法运行 PC Game Pass 与微软商店游戏（不影响 Steam/Epic），仅建议不玩 Xbox PC 游戏的用户开启。
 LanguageSystem	Follow system	跟随系统
 Settings	Settings	设置
 StorageMode	Storage mode	存储模式
