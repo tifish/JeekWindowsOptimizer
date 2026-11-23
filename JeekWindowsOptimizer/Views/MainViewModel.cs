@@ -636,6 +636,12 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
             // Desktop-only: power performance tweaks are not suitable for laptops.
             var hasBattery = await batteryCheck;
+            var hasPhysicalWiredEthernet =
+                !hasBattery
+                && await OptimizationExecutionScheduler.RunAsync(
+                    OptimizationExecutionAffinity.Background,
+                    () => EthernetPowerManagement.HasPhysicalWiredAdapters()
+                );
 
             foreach (var item in RegistryItemManager.Items)
             {
@@ -658,8 +664,15 @@ public partial class MainViewModel : ObservableObject, IDisposable
             AddOptimizationItem(new WindowsUpdateItem());
             AddOptimizationItem(new EnableTimeSynchronizationItem());
             if (!hasBattery)
+            {
                 AddOptimizationItem(new BestPerformancePowerModeItem());
+                foreach (var item in PowerPlanSettingItem.CreateDesktopItems())
+                    AddOptimizationItem(item);
+                if (hasPhysicalWiredEthernet)
+                    AddOptimizationItem(new DisableEthernetPowerSavingItem());
+            }
             AddOptimizationItem(new SetIdleTimeItem());
+            AddOptimizationItem(PowerPlanSettingItem.CreateDisableDiskIdleItem());
             AddOptimizationItem(new DisableSystemSounds());
             AddOptimizationItem(new DisableHibernationItem());
             AddOptimizationItem(new DisableNtfsLastAccessUpdateItem());

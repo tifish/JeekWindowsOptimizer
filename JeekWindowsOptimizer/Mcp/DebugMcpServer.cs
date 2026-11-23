@@ -104,6 +104,17 @@ internal static class DebugMcpServer
                 args["name"]?.GetValue<string>()
                     ?? throw new ArgumentException("name is required"))));
         host.AddTool("time_sync_status", TimeSyncStatusAsync);
+        host.AddTool("hardware_power_status", async _ =>
+        {
+            var task = await OnUiAsync(() => HardwarePowerProbe.DescribeStatusAsync(RequireMainVm()));
+            return ToolText(await task);
+        });
+        host.AddTool("hardware_power_probe", async args =>
+        {
+            var includeLive = args["include_live_power_plan_toggle"]?.GetValue<bool>() ?? false;
+            var task = await OnUiAsync(() => HardwarePowerProbe.RunProbeAsync(RequireMainVm(), includeLive));
+            return ToolText(await task);
+        });
         host.AddTool("service_probe", ServiceProbeAsync);
         host.AddTool("service_delete", ServiceDeleteAsync);
         host.AddTool("driver_remove_probe", DriverRemoveProbeAsync);

@@ -86,6 +86,15 @@ public static class DebugMcpContract
         Tool("time_sync_status",
             "Read Windows Time (W32Time) sync state: service start mode, trigger count, NTP Type, NtpClient, and the matching optimization item.",
             new()),
+        Tool("hardware_power_status",
+            "Read active power scheme, live AC values/defaults for desktop hardware power-saving items (PCIe ASPM, USB, AHCI, NVMe, wireless, disk idle), physical wired Ethernet adapter PnPCapabilities/NDI power params, and matching optimization items.",
+            new()),
+        Tool("hardware_power_probe",
+            "Run isolated HKCU regression checks for EthernetPowerManagement (physical Intel/Realtek adapters, Wi-Fi/virtual exclusion, bit preservation, revert). With include_live_power_plan_toggle=true, also toggles every registered PowerPlanSettingItem and restores exact original AC values.",
+            new()
+            {
+                ["include_live_power_plan_toggle"] = Prop("boolean", "Also toggle live power-plan items on the active scheme and restore exact original AC values (default false)."),
+            }),
         Tool("service_probe",
             "Report whether a Windows service exists and its start mode.",
             new() { ["name"] = Prop("string", "Service name.") }, ["name"]),
