@@ -110,6 +110,15 @@ public static class PowerPlanSettings
         FallbackDefaultValue: 1
     );
 
+    public static bool IsOnAcPower()
+    {
+        if (!GetSystemPowerStatus(out var status))
+            return true;
+
+        // 0 = Offline (DC battery), 1 = Online (AC), 255 = Unknown (treat as AC).
+        return status.ACLineStatus != 0;
+    }
+
     public static Guid GetActiveScheme()
     {
         var result = PowerGetActiveScheme(IntPtr.Zero, out var schemePtr);
@@ -296,4 +305,19 @@ public static class PowerPlanSettings
 
     [DllImport("kernel32.dll")]
     private static extern IntPtr LocalFree([In] IntPtr hMem);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetSystemPowerStatus(out SystemPowerStatus status);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct SystemPowerStatus
+    {
+        public byte ACLineStatus;
+        public byte BatteryFlag;
+        public byte BatteryLifePercent;
+        public byte SystemStatusFlag;
+        public uint BatteryLifeTime;
+        public uint BatteryFullLifeTime;
+    }
 }

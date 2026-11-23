@@ -7,20 +7,35 @@ internal static class HardwarePowerProbe
 {
     private const string SyntheticProbeKeyPrefix =
         @"Software\JeekWindowsOptimizer\DebugProbe\EthernetPower";
+    private const string SyntheticOverlayProbeKeyPrefix =
+        @"Software\JeekWindowsOptimizer\DebugProbe\OverlayPower";
 
     public static async Task<string> DescribeStatusAsync(MainViewModel vm)
     {
         var sb = new StringBuilder();
 
-        var (scheme, ethernetAdapters) = await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.Background,
-            () => (
-                PowerPlanSettings.GetActiveScheme(),
-                EthernetPowerManagement.GetPhysicalWiredAdapterStatuses()
-            )
-        );
+        var (scheme, hasBattery, isOnAc, overlayAc, overlayDc, ethernetAdapters) =
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Background,
+                () => (
+                    PowerPlanSettings.GetActiveScheme(),
+                    Battery.HasBattery(),
+                    PowerPlanSettings.IsOnAcPower(),
+                    BestPerformancePowerModeItem.ReadOverlayPowerSchemeRaw(
+                        BestPerformancePowerModeItem.ActiveOverlayAcValueName
+                    ),
+                    BestPerformancePowerModeItem.ReadOverlayPowerSchemeRaw(
+                        BestPerformancePowerModeItem.ActiveOverlayDcValueName
+                    ),
+                    EthernetPowerManagement.GetPhysicalWiredAdapterStatuses()
+                )
+            );
 
         sb.AppendLine($"activePowerScheme={scheme}");
+        sb.AppendLine($"hasBattery={hasBattery} isOnAcPower={isOnAc}");
+        sb.AppendLine(
+            $"activeOverlayAc={overlayAc ?? "unset"} activeOverlayDc={overlayDc ?? "unset"}"
+        );
         sb.AppendLine();
 
         var powerItems = FindHardwarePowerItems(vm);
@@ -78,6 +93,7 @@ internal static class HardwarePowerProbe
         var failures = new List<string>();
 
         await RunSyntheticEthernetProbeAsync(sb, failures);
+        await RunSyntheticBatteryAndAcOverlayProbeAsync(sb, failures);
 
         if (includeLivePowerPlanToggle)
             await RunLivePowerPlanToggleProbeAsync(vm, sb, failures);
@@ -266,6 +282,85 @@ internal static class HardwarePowerProbe
         );
     }
 
+    private static Task RunSyntheticBatteryAndAcOverlayProbeAsync(
+        StringBuilder sb,
+        List<string> failures
+    )
+    {
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.ExclusiveBackground,
+            () =>
+            {
+                Check(
+                    MainViewModel.ResolvePowerThrottlingCategory(hasBattery: false)
+                        == OptimizationItemCategory.Default,
+                    "DisablePowerThrottling should be Default (Optimizing) when no battery",
+                    failures
+                );
+                Check(
+                    MainViewModel.ResolvePowerThrottlingCategory(hasBattery: true)
+                        == OptimizationItemCategory.Personal,
+                    "DisablePowerThrottling should be Personal when battery is present",
+                    failures
+                );
+
+                var probePath = $@"{SyntheticOverlayProbeKeyPrefix}\{Guid.NewGuid():N}";
+                using var hkcu = RegistryKey.OpenBaseKey(
+                    RegistryHive.CurrentUser,
+                    RegistryView.Registry64
+                );
+
+                try
+                {
+                    var dcPowerEfficiency = PowerManagerAPI.PowerModeGuids.BestPowerEfficiency.ToString("D");
+                    using (var key = hkcu.CreateSubKey(probePath))
+                    {
+                        key.SetValue(
+                            BestPerformancePowerModeItem.ActiveOverlayDcValueName,
+                            dcPowerEfficiency,
+                            RegistryValueKind.String
+                        );
+                    }
+
+                    BestPerformancePowerModeItem.WriteOverlayAcPowerScheme(
+                        PowerManagerAPI.PowerModeGuids.BestPerformance,
+                        RegistryHive.CurrentUser,
+                        probePath
+                    );
+
+                    var readOk = BestPerformancePowerModeItem.TryReadOverlayAcPowerScheme(
+                        out var acGuid,
+                        RegistryHive.CurrentUser,
+                        probePath
+                    );
+                    var dcAfter = BestPerformancePowerModeItem.ReadOverlayPowerSchemeRaw(
+                        BestPerformancePowerModeItem.ActiveOverlayDcValueName,
+                        RegistryHive.CurrentUser,
+                        probePath
+                    );
+                    Check(
+                        readOk && acGuid == PowerManagerAPI.PowerModeGuids.BestPerformance,
+                        $"AC overlay should be BestPerformance, got {acGuid}",
+                        failures
+                    );
+                    Check(
+                        string.Equals(dcAfter, dcPowerEfficiency, StringComparison.OrdinalIgnoreCase),
+                        $"DC overlay must remain untouched ({dcPowerEfficiency}), got {dcAfter}",
+                        failures
+                    );
+
+                    sb.AppendLine(
+                        "synthetic_battery_and_ac_overlay_probe: checked PowerThrottling category split and AC-only overlay write preserving DC overlay."
+                    );
+                }
+                finally
+                {
+                    hkcu.DeleteSubKeyTree(probePath, throwOnMissingSubKey: false);
+                }
+            }
+        );
+    }
+
     private static async Task RunLivePowerPlanToggleProbeAsync(
         MainViewModel vm,
         StringBuilder sb,
@@ -415,7 +510,12 @@ internal static class HardwarePowerProbe
                 for (var ii = 0; ii < group.Items.Count; ii++)
                 {
                     var item = group.Items[ii];
-                    if (item is PowerPlanSettingItem or DisableEthernetPowerSavingItem)
+                    if (
+                        item is PowerPlanSettingItem
+                        or DisableEthernetPowerSavingItem
+                        or BestPerformancePowerModeItem
+                        || item.NameKey == "DisablePowerThrottlingName"
+                    )
                         results.Add((category, item, $"MainVm.{prop}[{gi}].Items[{ii}]"));
                 }
             }

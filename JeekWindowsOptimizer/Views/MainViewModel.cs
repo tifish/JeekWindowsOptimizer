@@ -634,19 +634,19 @@ public partial class MainViewModel : ObservableObject, IDisposable
             );
             DataLoadMilliseconds = totalStopwatch.ElapsedMilliseconds;
 
-            // Desktop-only: power performance tweaks are not suitable for laptops.
+            // Global power-throttling disable affects battery life, so on battery-equipped PCs
+            // move it to Personal rather than hiding it (supports plugged-in laptop / UPS desktop use).
+            // AC-only power plan tweaks and wired Ethernet power saving are shown for all PCs.
             var hasBattery = await batteryCheck;
-            var hasPhysicalWiredEthernet =
-                !hasBattery
-                && await OptimizationExecutionScheduler.RunAsync(
-                    OptimizationExecutionAffinity.Background,
-                    () => EthernetPowerManagement.HasPhysicalWiredAdapters()
-                );
+            var hasPhysicalWiredEthernet = await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Background,
+                () => EthernetPowerManagement.HasPhysicalWiredAdapters()
+            );
 
             foreach (var item in RegistryItemManager.Items)
             {
-                if (hasBattery && item.NameKey is "DisablePowerThrottlingName")
-                    continue;
+                if (item.NameKey is "DisablePowerThrottlingName")
+                    item.Category = ResolvePowerThrottlingCategory(hasBattery);
                 AddOptimizationItem(item);
             }
 
@@ -663,14 +663,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 AddOptimizationItem(new WindowsActivatorItem());
             AddOptimizationItem(new WindowsUpdateItem());
             AddOptimizationItem(new EnableTimeSynchronizationItem());
-            if (!hasBattery)
-            {
-                AddOptimizationItem(new BestPerformancePowerModeItem());
-                foreach (var item in PowerPlanSettingItem.CreateDesktopItems())
-                    AddOptimizationItem(item);
-                if (hasPhysicalWiredEthernet)
-                    AddOptimizationItem(new DisableEthernetPowerSavingItem());
-            }
+            AddOptimizationItem(new BestPerformancePowerModeItem());
+            foreach (var item in PowerPlanSettingItem.CreateAcOptimizationItems())
+                AddOptimizationItem(item);
+            if (hasPhysicalWiredEthernet)
+                AddOptimizationItem(new DisableEthernetPowerSavingItem());
             AddOptimizationItem(new SetIdleTimeItem());
             AddOptimizationItem(PowerPlanSettingItem.CreateDisableDiskIdleItem());
             AddOptimizationItem(new DisableSystemSounds());
@@ -722,6 +719,11 @@ public partial class MainViewModel : ObservableObject, IDisposable
             IsBusy = false;
             StatusMessage = Localizer.Get("InitializationFailed");
         }
+    }
+
+    internal static OptimizationItemCategory ResolvePowerThrottlingCategory(bool hasBattery)
+    {
+        return hasBattery ? OptimizationItemCategory.Personal : OptimizationItemCategory.Default;
     }
 
     private bool CanRefreshOptimizationItemStates() => !IsBusy && IsOptimizationTabSelected;

@@ -24,7 +24,7 @@ public sealed class PowerPlanSettingItem : OptimizationItem
         Specs = specs;
     }
 
-    public static IEnumerable<PowerPlanSettingItem> CreateDesktopItems()
+    public static IEnumerable<PowerPlanSettingItem> CreateAcOptimizationItems()
     {
         yield return new PowerPlanSettingItem(
             "DisablePcieAspmName",
