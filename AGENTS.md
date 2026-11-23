@@ -9,6 +9,7 @@
   - Automatically build and launch the program.
     - If the program from the current worktree is already running, kill only the process whose executable path matches this worktree, then run it again. Leave Debug instances from other worktrees running.
   - Use the current worktree's Debug MCP (`JeekWindowsOptimizerDebugMcp.cmd` at the repo root, which starts the fixed per-user `JeekWindowsOptimizerMcp.exe` with `--surface debug --app <this worktree\bin\JeekWindowsOptimizer.exe>` and forwards stdio to this worktree's named pipe) to test the feature or bug, if anything wrong, try to fix it and test again, until all done.
+  - Automatically commit and push changes once verified.
 - When reading code, logs and the Debug MCP are not enough to locate a problem, use a debugger:
   - Use netcoredbg on the Debug build to set breakpoints, step, and inspect variables; feed it a command script via stdin, and drive the program to the breakpoint through the Debug MCP.
   - Use dotnet-dump to analyze hangs and crashes.
