@@ -23,6 +23,14 @@ public static class WindowsScheduledTask
         Failed,
     }
 
+    public enum DeleteResult
+    {
+        Success,
+        NotFound,
+        AccessDenied,
+        Failed,
+    }
+
     public static bool Exists(string fullTaskPath)
     {
         return TryGetTask(fullTaskPath, out var task, out var folder, out var service)
@@ -116,6 +124,52 @@ public static class WindowsScheduledTask
         finally
         {
             Cleanup(task, folder, service);
+        }
+    }
+
+    public static DeleteResult TryDelete(string fullTaskPath)
+    {
+        if (string.IsNullOrWhiteSpace(fullTaskPath))
+            return DeleteResult.NotFound;
+
+        object? service = null;
+        object? folder = null;
+
+        try
+        {
+            var serviceType =
+                Type.GetTypeFromProgID("Schedule.Service")
+                ?? throw new InvalidOperationException("Schedule.Service COM ProgID not found");
+            service =
+                Activator.CreateInstance(serviceType)
+                ?? throw new InvalidOperationException("Failed to create Schedule.Service");
+
+            InvokeCom(service, "Connect");
+
+            SplitTaskPath(fullTaskPath, out var folderPath, out var taskName);
+            folder = InvokeCom(service, "GetFolder", folderPath);
+            if (folder is null)
+                return DeleteResult.NotFound;
+
+            InvokeCom(folder, "DeleteTask", taskName, 0);
+            return DeleteResult.Success;
+        }
+        catch (Exception ex) when (IsTaskMissing(ex))
+        {
+            return DeleteResult.NotFound;
+        }
+        catch (Exception ex) when (IsAccessDenied(ex))
+        {
+            return DeleteResult.AccessDenied;
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to delete scheduled task {fullTaskPath}");
+            return DeleteResult.Failed;
+        }
+        finally
+        {
+            Cleanup(null, folder, service);
         }
     }
 

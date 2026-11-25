@@ -172,6 +172,7 @@ public static class ScheduledTaskScanner
                     CanToggle = canModify,
                     ReadOnlyReasonKey = canModify ? null : "StartupStatusTaskProtected",
                     RestoreState = path,
+                    DeleteTarget = canModify ? new ScheduledTaskDeleteTarget(path) : null,
                 };
             }
             finally

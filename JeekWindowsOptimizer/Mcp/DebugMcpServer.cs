@@ -151,6 +151,12 @@ internal static class DebugMcpServer
         host.AddTool("startup_items", StartupItemsAsync);
         host.AddTool("startup_scan", StartupScanAsync);
         host.AddTool("startup_decide", StartupDecideAsync);
+        host.AddTool("startup_delete", StartupDeleteAsync);
+        host.AddTool("startup_delete_probe", async _ =>
+        {
+            var task = await OnUiAsync(StartupDeleteProbe.RunAsync);
+            return ToolText(await task);
+        });
         host.AddTool("startup_enforce", StartupEnforceAsync);
         host.AddTool("startup_baseline", StartupBaselineAsync);
         host.AddTool("startup_ledger", StartupLedgerAsync);
@@ -999,6 +1005,44 @@ internal static class DebugMcpServer
         return ToolText(text);
     }
 
+    private static async Task<JsonObject> StartupDeleteAsync(JsonObject args)
+    {
+        var key = args["key"]?.GetValue<string>();
+        if (string.IsNullOrWhiteSpace(key))
+            return ToolText("'key' is required.", isError: true);
+
+        await (await OnUiAsync(() => RequireMainVm().EnsureStartupItemsAsync()));
+
+        var (work, item) = await OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            var found = vm.StartupItems.FirstOrDefault(i =>
+                string.Equals(i.Key, key, StringComparison.Ordinal));
+            if (found is null)
+                return (Task.FromResult(false), (StartupItem?)null);
+
+            return (vm.DeleteStartupItemForDebugAsync(found), found);
+        });
+
+        if (item is null)
+            return ToolText($"No startup item with key '{key}'.", isError: true);
+
+        if (!item.CanDelete)
+            return ToolText(
+                $"Startup item '{item.Name}' cannot be deleted (orphaned={item.IsOrphaned}, canDelete={item.CanDelete}).",
+                isError: true
+            );
+
+        var deleted = await work;
+        var summary = await OnUiAsync(() =>
+            $"deleted={deleted}\n"
+            + $"name={item.Name}\n"
+            + $"kind={item.Kind}\n"
+            + $"error={item.ErrorMessage ?? ""}\n"
+            + $"remainingTotal={RequireMainVm().StartupTotalCount}");
+        return ToolText(summary, !deleted);
+    }
+
     private static async Task<JsonObject> StartupEnforceAsync(JsonObject args)
     {
         var timeout = TimeSpan.FromSeconds(
@@ -1132,8 +1176,8 @@ internal static class DebugMcpServer
         if (item.Command.Length > 0)
             sb.AppendLine($"  command={item.Command}");
         sb.AppendLine($"  signer={item.SignerKind} publisher={item.Publisher ?? "(none)"}");
-        sb.AppendLine($"  enabled={item.IsEnabled} canToggle={item.CanToggle} orphaned={item.IsOrphaned}");
-        sb.AppendLine($"  applying={item.IsApplying} canChoose={item.CanChoose}");
+        sb.AppendLine($"  enabled={item.IsEnabled} canToggle={item.CanToggle} orphaned={item.IsOrphaned} canDelete={item.CanDelete}");
+        sb.AppendLine($"  applying={item.IsApplying} deleting={item.IsDeleting} canChoose={item.CanChoose} canDeleteNow={item.CanDeleteNow}");
         sb.AppendLine($"  decision={(item.Decision?.ToString() ?? "pending")} "
             + $"source={item.DecisionSource} compliant={item.IsCompliant} "
             + $"needsEnforcement={item.NeedsEnforcement}");

@@ -105,6 +105,7 @@ public static partial class ServiceRegistryScanner
                             // Remember the exact original start type so allowing an item again puts
                             // it back to Manual or Automatic as it was, not to a guessed value.
                             RestoreState = start.ToString(),
+                            DeleteTarget = critical ? null : new ServiceDeleteTarget(name),
                         }
                     );
                 }
@@ -192,6 +193,53 @@ public static partial class ServiceRegistryScanner
         catch (Exception ex)
         {
             Log.ZLogWarning(ex, $"Failed to set start mode for service {serviceName}");
+            error = ex.Message;
+            return false;
+        }
+    }
+
+    /// <summary>Stops if needed and deletes an orphaned service or non-boot-critical driver registration.</summary>
+    public static bool Delete(string serviceName, out string? error)
+    {
+        error = null;
+
+        try
+        {
+            if (ServiceRuntime.IsRunning(serviceName))
+            {
+                var stop = ServiceRuntime.Stop(serviceName, ServiceRuntime.DefaultTimeout);
+                if (!stop.IsStopped)
+                {
+                    error = stop.Outcome switch
+                    {
+                        ServiceStopOutcome.HasRunningDependents =>
+                            $"Still running with dependent services: {string.Join(", ", stop.RunningDependents.Take(3))}",
+                        ServiceStopOutcome.CannotStop =>
+                            "The service is still running and cannot be stopped.",
+                        ServiceStopOutcome.TimedOut =>
+                            "Timed out waiting for the service to stop.",
+                        _ => stop.Error ?? "The service could not be stopped.",
+                    };
+                    return false;
+                }
+            }
+
+            foreach (var instance in ServiceRuntime.FindUserServiceInstances(serviceName))
+                ServiceRuntime.Stop(instance, ServiceRuntime.DefaultTimeout);
+
+            using var service = new WindowsService(serviceName);
+            if (!service.Delete())
+            {
+                error = "The service registration could not be deleted.";
+                return false;
+            }
+
+            StartupLocalState.ForgetServiceStart(serviceName);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to delete service registration {serviceName}");
             error = ex.Message;
             return false;
         }

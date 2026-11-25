@@ -36,4 +36,10 @@ public sealed record RawStartupEntry
 
     /// <summary>Identifiers the toggle needs, e.g. the CLSIDs behind an Explorer DLL.</summary>
     public IReadOnlyList<string> Handles { get; init; } = [];
+
+    /// <summary>
+    ///     How to remove this registration if its target file is missing. Null for protected
+    ///     entries (Group Policy runs, protected tasks, boot-critical drivers).
+    /// </summary>
+    public StartupDeleteTarget? DeleteTarget { get; init; }
 }

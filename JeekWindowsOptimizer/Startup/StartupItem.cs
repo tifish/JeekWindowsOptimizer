@@ -125,6 +125,9 @@ public partial class StartupItem : ObservableObject
     /// <summary>True when the item's file is missing. The decision is still remembered.</summary>
     public bool IsOrphaned { get; init; }
 
+    /// <summary>How to delete this registration when <see cref="IsOrphaned" /> is true.</summary>
+    public StartupDeleteTarget? DeleteTarget { get; init; }
+
     /// <summary>False for entries this build refuses to touch, such as boot-start drivers.</summary>
     public bool CanToggle { get; init; } = true;
 
@@ -148,6 +151,7 @@ public partial class StartupItem : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanChoose))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteNow))]
     [NotifyPropertyChangedFor(nameof(StatusKey))]
     [NotifyPropertyChangedFor(nameof(StatusText))]
     [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
@@ -156,7 +160,22 @@ public partial class StartupItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
     public partial bool IsApplying { get; set; }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StatusKey))]
+    [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
+    [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
+    [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
+    [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
+    public partial bool IsDeleting { get; set; }
+
     public bool CanChoose => CanToggle && !IsApplying;
+
+    /// <summary>True when this entry's file is missing and its registration can be deleted.</summary>
+    public bool CanDelete => IsOrphaned && DeleteTarget is not null;
+
+    /// <summary>True when the user can delete this entry right now.</summary>
+    public bool CanDeleteNow => CanDelete && !IsApplying;
 
     /// <summary>What the user decided, or null when it has never been decided.</summary>
     [ObservableProperty]
@@ -186,7 +205,10 @@ public partial class StartupItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(DecidedOnText))]
     public partial DateTime? DecidedAtUtc { get; set; }
 
-    /// <summary>Set when the last apply attempt failed, so the row can show why.</summary>
+    /// <summary>Localization format key for <see cref="ErrorMessage" /> (defaults to StartupApplyFailed).</summary>
+    public string? ErrorFormatKey { get; set; }
+
+    /// <summary>Set when the last apply or delete attempt failed, so the row can show why.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StatusText))]
     [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
@@ -276,7 +298,8 @@ public partial class StartupItem : ObservableObject
         };
 
     public string StatusKey =>
-        IsApplying ? "StartupStatusApplying"
+        IsDeleting ? "StartupStatusDeleting"
+        : IsApplying ? "StartupStatusApplying"
         : !CanToggle ? ReadOnlyReasonKey ?? "StartupStatusReadOnly"
         : Decision is null ? "StartupStatusPending"
         : Decision == StartupDecision.Allow
@@ -291,7 +314,10 @@ public partial class StartupItem : ObservableObject
         get
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
-                return string.Format(Localizer.Get("StartupApplyFailed"), ErrorMessage);
+                return string.Format(
+                    Localizer.Get(ErrorFormatKey ?? "StartupApplyFailed"),
+                    ErrorMessage
+                );
             if (!string.IsNullOrEmpty(WarningMessage))
                 return string.Format(
                     Localizer.Get("StartupStatusWithWarning"),

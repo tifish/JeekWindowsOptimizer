@@ -179,7 +179,7 @@ public static class DebugMcpContract
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
             }, ["item"]),
         Tool("startup_items",
-            "List the Startup tab's items: kind, name, publisher and signature class, command, location, image path, whether the file is missing (orphaned), "
+            "List the Startup tab's items: kind, name, publisher and signature class, command, location, image path, whether the file is missing (orphaned), whether it can be deleted, "
                 + "whether it runs at startup now, the remembered decision and where that decision was made. "
                 + "Runs the scan first if the tab has not been visited yet.",
             new()
@@ -203,6 +203,18 @@ public static class DebugMcpContract
                 ["key"] = Prop("string", "Ledger key from startup_items."),
                 ["decision"] = Prop("string", "allow | deny"),
             }, ["key", "decision"]),
+        Tool("startup_delete",
+            "Permanently delete one orphaned startup entry (whose target file is missing) without the GUI confirmation. "
+                + "Refuses healthy or protected entries. Changes the system; debug surface only.",
+            new()
+            {
+                ["key"] = Prop("string", "Ledger key from startup_items."),
+            }, ["key"]),
+        Tool("startup_delete_probe",
+            "Run isolated end-to-end deletion checks against temporary scratch fixtures (Run, RunOnce, Startup folder shortcut, "
+                + "Scheduled Task, Service, Boot driver protection, Explorer/IE extensions, existing-file safety guard, and ViewModel). "
+                + "Cleans up all scratch fixtures and never touches real user startup entries or the decision ledger.",
+            new()),
         Tool("startup_enforce",
             "Turn off every entry that is denied but still runs, without the GUI confirmation. "
                 + "Changes the system; debug surface only.",

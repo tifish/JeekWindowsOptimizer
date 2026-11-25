@@ -814,3 +814,10 @@ ShowAllItems	Show all items	显示全部项目
 StartupStatTotal	Total	总计
 StartupStatPending	Pending	待决定
 StartupStatEnforce	Denied · Running	已禁止但运行
+StartupDelete	Delete	删除
+StartupDeleteHint	Delete this startup entry because its target file is missing	目标文件已不存在，可直接删除此启动项
+StartupDeleteConfirm	Delete the startup entry "{0}"?\n\nLocation: {1}\nMissing file: {2}\n\nThis permanently removes the startup registration.	确定删除启动项“{0}”吗？\n\n位置：{1}\n缺失文件：{2}\n\n此操作会永久移除该启动项注册。
+StartupStatusDeleting	Deleting…	正在删除…
+StartupDeleteFailed	Failed to delete: {0}	删除失败：{0}
+StartupDeleteSucceeded	Deleted startup entry: {0}	已删除启动项：{0}
+StartupDeleteFileExistsNow	The target file exists now; rescan before taking action.	目标文件现已存在，已取消删除，请重新扫描。

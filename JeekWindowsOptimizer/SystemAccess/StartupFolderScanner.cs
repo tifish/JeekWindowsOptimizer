@@ -57,6 +57,11 @@ public static class StartupFolderScanner
                             ImagePath = imagePath,
                             IsEnabled = StartupRegistryScanner.IsStartupFolderEnabled(perUser, fileName),
                             RestoreState = StartupRegistryScanner.StartupFolderHandle(perUser, fileName),
+                            DeleteTarget = new StartupFolderDeleteTarget(
+                                file,
+                                perUser ? RegistryHive.CurrentUser : RegistryHive.LocalMachine,
+                                fileName
+                            ),
                         }
                     );
                 }
@@ -121,6 +126,37 @@ public static class StartupFolderScanner
         catch
         {
             return "";
+        }
+    }
+
+    /// <summary>Deletes an orphaned Startup folder entry (typically a broken shortcut) and its StartupApproved flag.</summary>
+    public static bool Delete(StartupFolderDeleteTarget target, out string? error)
+    {
+        error = null;
+
+        try
+        {
+            if (File.Exists(target.FilePath))
+                File.Delete(target.FilePath);
+
+            if (File.Exists(target.FilePath))
+            {
+                error = "The startup folder item could not be deleted.";
+                return false;
+            }
+
+            StartupRegistryScanner.DeleteApprovedValue(
+                target.ApprovedHive,
+                "StartupFolder",
+                target.FileName
+            );
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to delete startup folder item {target.FilePath}");
+            error = ex.Message;
+            return false;
         }
     }
 }

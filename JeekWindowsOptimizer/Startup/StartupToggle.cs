@@ -23,14 +23,22 @@ public readonly record struct StartupToggleResult(
     public static StartupToggleResult Fail(string? error) => new(false, error, false);
 }
 
+/// <summary>The outcome of permanently deleting an orphaned startup entry.</summary>
+public readonly record struct StartupDeleteResult(bool Succeeded, string? Error)
+{
+    public static StartupDeleteResult Ok() => new(true, null);
+
+    public static StartupDeleteResult Fail(string? error) => new(false, error);
+}
+
 /// <summary>
 ///     Turns a decision into an actual system change.
 ///     <para>
-///         Every mechanism here is Windows' own on/off switch rather than a private scheme: the
-///         StartupApproved flags Task Manager writes, a service's Start value, the Task Scheduler
-///         Enabled flag, Explorer's blocked-CLSID list. Registrations are never deleted or moved.
-///         That keeps this tab consistent with what the rest of Windows reports, and makes
-///         re-enabling exact instead of approximate.
+///         Every toggle mechanism here is Windows' own on/off switch rather than a private scheme:
+///         the StartupApproved flags Task Manager writes, a service's Start value, the Task
+///         Scheduler Enabled flag, Explorer's blocked-CLSID list. Healthy registrations are never
+///         deleted or moved, keeping this tab consistent with Windows and making re-enabling exact.
+///         Only orphaned registrations whose target file no longer exists may be deleted directly.
 ///     </para>
 /// </summary>
 public static class StartupToggle
@@ -176,5 +184,67 @@ public static class StartupToggle
             ServiceStopOutcome.TimedOut => Localizer.Get("StartupWarningServiceStopTimedOut"),
             _ => string.Format(Localizer.Get("StartupWarningServiceStopFailed"), problem.Error ?? ""),
         };
+    }
+
+    /// <summary>
+    ///     Permanently deletes an orphaned startup registration after re-verifying that its target
+    ///     file is still missing.
+    /// </summary>
+    public static StartupDeleteResult Delete(StartupItem item)
+    {
+        if (!item.CanDelete || item.DeleteTarget is null)
+            return StartupDeleteResult.Fail("This startup entry cannot be deleted.");
+
+        // Re-check on disk right before deleting so a file on a reconnected drive or a newly
+        // reinstalled program cannot be removed because of a stale scan.
+        if (item.ImagePath.Length == 0 || File.Exists(item.ImagePath))
+            return StartupDeleteResult.Fail(Localizer.Get("StartupDeleteFileExistsNow"));
+
+        try
+        {
+            switch (item.DeleteTarget)
+            {
+                case RegistryValueDeleteTarget registryTarget:
+                    return StartupRegistryScanner.Delete(registryTarget, out var registryError)
+                        ? StartupDeleteResult.Ok()
+                        : StartupDeleteResult.Fail(registryError);
+
+                case StartupFolderDeleteTarget folderTarget:
+                    return StartupFolderScanner.Delete(folderTarget, out var folderError)
+                        ? StartupDeleteResult.Ok()
+                        : StartupDeleteResult.Fail(folderError);
+
+                case ScheduledTaskDeleteTarget taskTarget:
+                {
+                    var result = WindowsScheduledTask.TryDelete(taskTarget.TaskPath);
+                    return result switch
+                    {
+                        WindowsScheduledTask.DeleteResult.Success
+                        or WindowsScheduledTask.DeleteResult.NotFound => StartupDeleteResult.Ok(),
+                        WindowsScheduledTask.DeleteResult.AccessDenied =>
+                            StartupDeleteResult.Fail("Access to the scheduled task was denied."),
+                        _ => StartupDeleteResult.Fail("The scheduled task could not be deleted."),
+                    };
+                }
+
+                case ServiceDeleteTarget serviceTarget:
+                    return ServiceRegistryScanner.Delete(serviceTarget.ServiceName, out var serviceError)
+                        ? StartupDeleteResult.Ok()
+                        : StartupDeleteResult.Fail(serviceError);
+
+                case ShellExtensionDeleteTarget shellTarget:
+                    return ShellExtensionScanner.Delete(shellTarget, out var shellError)
+                        ? StartupDeleteResult.Ok()
+                        : StartupDeleteResult.Fail(shellError);
+
+                default:
+                    return StartupDeleteResult.Fail("Unsupported startup entry type.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to delete orphaned startup entry {item.Name}");
+            return StartupDeleteResult.Fail(ex.Message);
+        }
     }
 }

@@ -43,6 +43,7 @@ public partial class StartupGroup : ObservableObject
 
     public void NotifyCountsChanged()
     {
+        OnPropertyChanged(nameof(ItemCount));
         OnPropertyChanged(nameof(PendingCount));
         OnPropertyChanged(nameof(NavDisplayName));
     }

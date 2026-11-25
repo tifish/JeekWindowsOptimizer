@@ -114,6 +114,15 @@ public static class StartupRegistryScanner
                                     ? "StartupStatusRunOnce"
                                     : null,
                             RestoreState = Handle(location, valueName),
+                            DeleteTarget = location.PolicyManaged
+                                ? null
+                                : new RegistryValueDeleteTarget(
+                                    location.Hive,
+                                    location.View,
+                                    location.SubKey,
+                                    valueName,
+                                    location.ApprovedSubKey
+                                ),
                         }
                     );
                 }
@@ -257,4 +266,50 @@ public static class StartupRegistryScanner
     /// <summary>The handle <see cref="SetEnabled" /> expects for a Startup folder shortcut.</summary>
     public static string StartupFolderHandle(bool perUser, string fileName) =>
         $"{(perUser ? RegistryHive.CurrentUser : RegistryHive.LocalMachine)}|{RegistryView.Registry64}|StartupFolder|{fileName}";
+
+    /// <summary>Deletes an orphaned Run or RunOnce registry value and its StartupApproved flag if present.</summary>
+    public static bool Delete(RegistryValueDeleteTarget target, out string? error)
+    {
+        error = null;
+
+        try
+        {
+            using var baseKey = RegistryKey.OpenBaseKey(target.Hive, target.View);
+            using var key = baseKey.OpenSubKey(target.SubKey, writable: true);
+            if (key is not null)
+            {
+                key.DeleteValue(target.ValueName, throwOnMissingValue: false);
+                if (key.GetValue(target.ValueName) is not null)
+                {
+                    error = "The registry value could not be deleted.";
+                    return false;
+                }
+            }
+
+            if (target.ApprovedSubKey is not null)
+                DeleteApprovedValue(target.Hive, target.ApprovedSubKey, target.ValueName);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to delete startup registry value {target.ValueName}");
+            error = ex.Message;
+            return false;
+        }
+    }
+
+    internal static void DeleteApprovedValue(RegistryHive hive, string approvedSubKey, string valueName)
+    {
+        try
+        {
+            using var baseKey = RegistryKey.OpenBaseKey(hive, RegistryView.Registry64);
+            using var key = baseKey.OpenSubKey($@"{ApprovedRoot}\{approvedSubKey}", writable: true);
+            key?.DeleteValue(valueName, throwOnMissingValue: false);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to clean up StartupApproved value {valueName}");
+        }
+    }
 }

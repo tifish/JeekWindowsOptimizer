@@ -142,6 +142,7 @@ public static class StartupItemManager
                 Publisher = signature.SignerName,
                 SignerKind = signerKind,
                 IsOrphaned = expanded.Length > 0 && !File.Exists(expanded),
+                DeleteTarget = entry.DeleteTarget,
                 CanToggle = entry.CanToggle,
                 ReadOnlyReasonKey = entry.ReadOnlyReasonKey,
                 RestoreState = entry.RestoreState,

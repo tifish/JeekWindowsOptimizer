@@ -458,6 +458,7 @@ public partial class MainViewModel
         item.DecisionSource = StartupDecisionSource.ThisMachine;
         item.DecidedOnMachine = Environment.MachineName;
         item.DecidedAtUtc = DateTime.UtcNow;
+        item.ErrorFormatKey = null;
         item.ErrorMessage = null;
 
         var wanted = decision == StartupDecision.Allow;
@@ -469,6 +470,7 @@ public partial class MainViewModel
 
     private async Task<bool> ApplyStartupItem(StartupItem item, bool enabled)
     {
+        item.ErrorFormatKey = null;
         item.ErrorMessage = null;
         item.WarningMessage = null;
         item.IsApplying = true;
@@ -480,12 +482,14 @@ public partial class MainViewModel
             if (result.Succeeded)
             {
                 item.IsEnabled = enabled;
+                item.ErrorFormatKey = null;
                 item.ErrorMessage = null;
                 item.WarningMessage = result.Warning;
             }
             else
             {
                 item.WarningMessage = null;
+                item.ErrorFormatKey = "StartupApplyFailed";
                 item.ErrorMessage = result.Error;
                 StartupLog.ZLogWarning(
                     $"Failed to apply startup decision for {item.Name}: {result.Error}"
@@ -504,12 +508,97 @@ public partial class MainViewModel
         }
     }
 
-    // Detached Debug probes use synthetic decisions and toggles instead of changing Windows.
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private Task DeleteStartupItem(StartupItem? item) => DeleteStartupItemAsync(item, confirm: true);
+
+    internal async Task<bool> DeleteStartupItemAsync(StartupItem? item, bool confirm)
+    {
+        if (item is null || !item.CanDeleteNow || IsStartupBusy || IsStartupScanning)
+            return false;
+
+        if (confirm)
+        {
+            var answer = await ShowUpdateDialogAsync(
+                Localizer.Get("Startup"),
+                string.Format(
+                    Localizer.Get("StartupDeleteConfirm"),
+                    item.DisplayName,
+                    item.Location,
+                    item.ImagePath
+                ),
+                ButtonEnum.YesNo,
+                MsBox.Avalonia.Enums.Icon.Warning
+            );
+            if (answer != ButtonResult.Yes)
+                return false;
+
+            if (!item.CanDeleteNow || IsStartupBusy || IsStartupScanning)
+                return false;
+        }
+
+        item.ErrorFormatKey = null;
+        item.ErrorMessage = null;
+        item.WarningMessage = null;
+        item.IsDeleting = true;
+        item.IsApplying = true;
+        StartupApplyingCount++;
+        try
+        {
+            var result = await Task.Run(() => StartupDeleteHandler(item));
+            if (result.Succeeded)
+            {
+                RemoveStartupItemFromGroups(item);
+                RefreshDisplayedStartupGroups();
+                UpdateStartupSummary();
+                StatusMessage = string.Format(
+                    Localizer.Get("StartupDeleteSucceeded"),
+                    item.DisplayName
+                );
+                StartupLog.ZLogInformation(
+                    $"Deleted orphaned startup entry {item.Name} ({item.Kind}) at {item.Location}"
+                );
+                return true;
+            }
+
+            item.ErrorFormatKey = "StartupDeleteFailed";
+            item.ErrorMessage = result.Error;
+            StartupLog.ZLogWarning(
+                $"Failed to delete orphaned startup entry {item.Name} ({item.Kind}): {result.Error}"
+            );
+            return false;
+        }
+        finally
+        {
+            item.IsDeleting = false;
+            item.IsApplying = false;
+            StartupApplyingCount--;
+            UpdateStartupSummary();
+        }
+    }
+
+    private void RemoveStartupItemFromGroups(StartupItem item)
+    {
+        for (var i = AllStartupGroups.Count - 1; i >= 0; i--)
+        {
+            var group = AllStartupGroups[i];
+            if (!group.Items.Remove(item))
+                continue;
+
+            if (group.Items.Count == 0)
+                AllStartupGroups.RemoveAt(i);
+            break;
+        }
+    }
+
+    // Detached Debug probes use synthetic decisions, toggles and deletes instead of changing Windows.
     internal Func<StartupItem, StartupDecision, bool> StartupDecisionWriter { get; init; } =
         (item, decision) => StartupDecisionStore.Decide(item.Key, decision, item.ToSnapshot());
 
     internal Func<StartupItem, bool, StartupToggleResult> StartupToggleHandler { get; init; } =
         StartupToggle.Apply;
+
+    internal Func<StartupItem, StartupDeleteResult> StartupDeleteHandler { get; init; } =
+        StartupToggle.Delete;
 
     private bool _startupNeedsExplorerRestart;
 
@@ -703,6 +792,10 @@ public partial class MainViewModel
 
     /// <summary>Enforces without the confirmation dialog. Debug surface only.</summary>
     public Task EnforceStartupDecisionsForDebugAsync() => EnforceStartupDecisionsCore(silent: true);
+
+    /// <summary>Deletes an orphaned entry without the confirmation dialog. Debug surface only.</summary>
+    public Task<bool> DeleteStartupItemForDebugAsync(StartupItem item) =>
+        DeleteStartupItemAsync(item, confirm: false);
 
     /// <summary>Re-reads the ledger into the rows and refreshes the tab. Debug surface only.</summary>
     public void RefreshStartupAfterLedgerChangeForDebug()

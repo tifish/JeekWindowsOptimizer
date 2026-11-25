@@ -92,6 +92,7 @@ public static class ShellExtensionScanner
         public required HookHost Host { get; init; }
         public List<string> Clsids { get; } = [];
         public List<string> HookPoints { get; } = [];
+        public List<ShellExtensionRegistration> Registrations { get; } = [];
         public string? FriendlyName { get; set; }
 
         /// <summary>
@@ -106,7 +107,13 @@ public static class ShellExtensionScanner
         var groups = new Dictionary<string, DllGroup>(StringComparer.OrdinalIgnoreCase);
         var clsidToDll = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
 
-        void Register(string? clsid, string hookPoint, HookHost host, ToggleMechanism mechanism)
+        void Register(
+            string? clsid,
+            string hookPoint,
+            HookHost host,
+            ToggleMechanism mechanism,
+            ShellExtensionRegistration registration
+        )
         {
             if (string.IsNullOrWhiteSpace(clsid))
                 return;
@@ -145,6 +152,9 @@ public static class ShellExtensionScanner
 
             if (!group.HookPoints.Contains(hookPoint, StringComparer.OrdinalIgnoreCase))
                 group.HookPoints.Add(hookPoint);
+
+            if (!group.Registrations.Contains(registration))
+                group.Registrations.Add(registration);
         }
 
         ScanExplorerLists(Register);
@@ -175,6 +185,13 @@ public static class ShellExtensionScanner
                     HookPoints = group.HookPoints,
                     Handles = group.Clsids,
                     RestoreState = string.Join(';', group.Clsids),
+                    DeleteTarget = group.Registrations.Count > 0
+                        ? new ShellExtensionDeleteTarget(
+                            group.Registrations,
+                            group.Clsids,
+                            group.Host == HookHost.Explorer
+                        )
+                        : null,
                 })
                 .OrderBy(entry => entry.Name, StringComparer.CurrentCultureIgnoreCase),
         ];
@@ -183,29 +200,30 @@ public static class ShellExtensionScanner
     // ---------- Explorer ----------
 
     private static void ScanExplorerLists(
-        Action<string?, string, HookHost, ToggleMechanism> register
+        Action<string?, string, HookHost, ToggleMechanism, ShellExtensionRegistration> register
     )
     {
-        void Explorer(string? clsid, string hookPoint) =>
-            register(clsid, hookPoint, HookHost.Explorer, ToggleMechanism.ShellBlockedList);
+        void Explorer(string? clsid, string hookPoint, ShellExtensionRegistration registration) =>
+            register(clsid, hookPoint, HookHost.Explorer, ToggleMechanism.ShellBlockedList, registration);
 
         ForEachHive(
-            (hive, hiveName) =>
+            (hiveKey, hive, hiveName) =>
             {
                 // Keys whose value names are CLSIDs.
-                ReadValueNamesAsClsids(hive, $@"{ExplorerPath}\ShellExecuteHooks", Explorer, $"{hiveName} ShellExecuteHooks");
-                ReadValueNamesAsClsids(hive, $@"{ExplorerPath}\SharedTaskScheduler", Explorer, $"{hiveName} SharedTaskScheduler");
+                ReadValueNamesAsClsids(hiveKey, hive, $@"{ExplorerPath}\ShellExecuteHooks", Explorer, $"{hiveName} ShellExecuteHooks");
+                ReadValueNamesAsClsids(hiveKey, hive, $@"{ExplorerPath}\SharedTaskScheduler", Explorer, $"{hiveName} SharedTaskScheduler");
 
                 // Keys whose subkey names are CLSIDs.
-                ReadSubKeyNamesAsClsids(hive, $@"{ExplorerPath}\ShellServiceObjects", Explorer, $"{hiveName} ShellServiceObjects");
-                ReadSubKeyNamesAsClsids(hive, $@"{ExplorerPath}\Desktop\NameSpace", Explorer, $"{hiveName} Desktop namespace");
-                ReadSubKeyNamesAsClsids(hive, $@"{ExplorerPath}\MyComputer\NameSpace", Explorer, $"{hiveName} This PC namespace");
+                ReadSubKeyNamesAsClsids(hiveKey, hive, $@"{ExplorerPath}\ShellServiceObjects", Explorer, $"{hiveName} ShellServiceObjects");
+                ReadSubKeyNamesAsClsids(hiveKey, hive, $@"{ExplorerPath}\Desktop\NameSpace", Explorer, $"{hiveName} Desktop namespace");
+                ReadSubKeyNamesAsClsids(hiveKey, hive, $@"{ExplorerPath}\MyComputer\NameSpace", Explorer, $"{hiveName} This PC namespace");
 
                 // Values whose data is the CLSID.
-                ReadValueDataAsClsids(hive, $@"{ExplorerPath}\ShellServiceObjectDelayLoad", Explorer, $"{hiveName} ShellServiceObjectDelayLoad");
+                ReadValueDataAsClsids(hiveKey, hive, $@"{ExplorerPath}\ShellServiceObjectDelayLoad", Explorer, $"{hiveName} ShellServiceObjectDelayLoad");
 
                 // Icon overlays: each subkey's default value is the CLSID.
                 ReadSubKeyDefaultsAsClsids(
+                    hiveKey,
                     hive,
                     $@"{ExplorerPath}\ShellIconOverlayIdentifiers",
                     Explorer,
@@ -216,11 +234,11 @@ public static class ShellExtensionScanner
     }
 
     private static void ScanShellExHandlers(
-        Action<string?, string, HookHost, ToggleMechanism> register
+        Action<string?, string, HookHost, ToggleMechanism, ShellExtensionRegistration> register
     )
     {
-        void Explorer(string? clsid, string hookPoint) =>
-            register(clsid, hookPoint, HookHost.Explorer, ToggleMechanism.ShellBlockedList);
+        void Explorer(string? clsid, string hookPoint, ShellExtensionRegistration registration) =>
+            register(clsid, hookPoint, HookHost.Explorer, ToggleMechanism.ShellBlockedList, registration);
 
         foreach (var className in ShellExClasses)
         {
@@ -228,6 +246,7 @@ public static class ShellExtensionScanner
             {
                 ReadSubKeyDefaultsAsClsids(
                     Registry.ClassesRoot,
+                    RegistryHive.ClassesRoot,
                     $@"{className}\ShellEx\{handlerGroup}",
                     Explorer,
                     name => $"{className} {Humanize(handlerGroup)} ({name})"
@@ -236,8 +255,13 @@ public static class ShellExtensionScanner
 
             foreach (var handler in ShellExDirectHandlers)
             {
-                var clsid = ReadDefaultValue(Registry.ClassesRoot, $@"{className}\ShellEx\{handler}");
-                Explorer(clsid, $"{className} {Humanize(handler)}");
+                var subKeyPath = $@"{className}\ShellEx\{handler}";
+                var clsid = ReadDefaultValue(Registry.ClassesRoot, subKeyPath);
+                Explorer(
+                    clsid,
+                    $"{className} {Humanize(handler)}",
+                    new ShellExtensionRegistration(RegistryHive.ClassesRoot, subKeyPath, null)
+                );
             }
         }
     }
@@ -250,40 +274,41 @@ public static class ShellExtensionScanner
     ///     control, so they remain worth listing and worth switching off.
     /// </summary>
     private static void ScanBrowserAddOns(
-        Action<string?, string, HookHost, ToggleMechanism> register
+        Action<string?, string, HookHost, ToggleMechanism, ShellExtensionRegistration> register
     )
     {
-        void AddOn(string? clsid, string hookPoint) =>
-            register(clsid, hookPoint, HookHost.InternetExplorer, ToggleMechanism.BrowserAddOnFlag);
+        void AddOn(string? clsid, string hookPoint, ShellExtensionRegistration registration) =>
+            register(clsid, hookPoint, HookHost.InternetExplorer, ToggleMechanism.BrowserAddOnFlag, registration);
 
         ForEachHive(
-            (hive, hiveName) =>
+            (hiveKey, hive, hiveName) =>
             {
                 // Browser Helper Objects live under the Explorer key but load into the browser.
-                ReadSubKeyNamesAsClsids(hive, $@"{ExplorerPath}\Browser Helper Objects", AddOn, $"{hiveName} Browser Helper Object");
+                ReadSubKeyNamesAsClsids(hiveKey, hive, $@"{ExplorerPath}\Browser Helper Objects", AddOn, $"{hiveName} Browser Helper Object");
 
-                ReadValueNamesAsClsids(hive, $@"{InternetExplorerPath}\Toolbar", AddOn, $"{hiveName} toolbar");
-                ReadValueNamesAsClsids(hive, $@"{InternetExplorerPath}\Toolbar\WebBrowser", AddOn, $"{hiveName} browser toolbar");
-                ReadValueNamesAsClsids(hive, $@"{InternetExplorerPath}\Toolbar\ShellBrowser", AddOn, $"{hiveName} shell toolbar");
-                ReadValueNamesAsClsids(hive, $@"{InternetExplorerPath}\URLSearchHooks", AddOn, $"{hiveName} URL search hook");
-                ReadSubKeyNamesAsClsids(hive, $@"{InternetExplorerPath}\Explorer Bars", AddOn, $"{hiveName} Explorer bar");
-                ReadSubKeyNamesAsClsids(hive, $@"{InternetExplorerPath}\Extensions", AddOn, $"{hiveName} browser extension");
+                ReadValueNamesAsClsids(hiveKey, hive, $@"{InternetExplorerPath}\Toolbar", AddOn, $"{hiveName} toolbar");
+                ReadValueNamesAsClsids(hiveKey, hive, $@"{InternetExplorerPath}\Toolbar\WebBrowser", AddOn, $"{hiveName} browser toolbar");
+                ReadValueNamesAsClsids(hiveKey, hive, $@"{InternetExplorerPath}\Toolbar\ShellBrowser", AddOn, $"{hiveName} shell toolbar");
+                ReadValueNamesAsClsids(hiveKey, hive, $@"{InternetExplorerPath}\URLSearchHooks", AddOn, $"{hiveName} URL search hook");
+                ReadSubKeyNamesAsClsids(hiveKey, hive, $@"{InternetExplorerPath}\Explorer Bars", AddOn, $"{hiveName} Explorer bar");
+                ReadSubKeyNamesAsClsids(hiveKey, hive, $@"{InternetExplorerPath}\Extensions", AddOn, $"{hiveName} browser extension");
             }
         );
     }
 
     private static void ScanProtocolHandlers(
-        Action<string?, string, HookHost, ToggleMechanism> register
+        Action<string?, string, HookHost, ToggleMechanism, ShellExtensionRegistration> register
     )
     {
         // Protocol filters and handlers are URL moniker features used by the browser stack. Windows
         // offers no supported switch for them, so they are listed read-only rather than disabled by
         // deleting the registration, which a repair install would silently put back anyway.
-        void Protocol(string? clsid, string hookPoint) =>
-            register(clsid, hookPoint, HookHost.InternetExplorer, ToggleMechanism.None);
+        void Protocol(string? clsid, string hookPoint, ShellExtensionRegistration registration) =>
+            register(clsid, hookPoint, HookHost.InternetExplorer, ToggleMechanism.None, registration);
 
         ReadSubKeyDefaultsAsClsids(
             Registry.ClassesRoot,
+            RegistryHive.ClassesRoot,
             @"Protocols\Filter",
             Protocol,
             name => $"Protocol filter ({name})"
@@ -299,7 +324,15 @@ public static class ShellExtensionScanner
             {
                 using var handler = handlers.OpenSubKey(name);
                 var clsid = handler?.GetValue("CLSID") as string ?? handler?.GetValue("") as string;
-                Protocol(clsid, $"Protocol handler ({name})");
+                Protocol(
+                    clsid,
+                    $"Protocol handler ({name})",
+                    new ShellExtensionRegistration(
+                        RegistryHive.ClassesRoot,
+                        $@"Protocols\Handler\{name}",
+                        null
+                    )
+                );
             }
         }
         catch (Exception ex)
@@ -310,26 +343,27 @@ public static class ShellExtensionScanner
 
     // ---------- Registry readers ----------
 
-    private static void ForEachHive(Action<RegistryKey, string> action)
+    private static void ForEachHive(Action<RegistryKey, RegistryHive, string> action)
     {
-        action(Registry.LocalMachine, "HKLM");
-        action(Registry.CurrentUser, "HKCU");
+        action(Registry.LocalMachine, RegistryHive.LocalMachine, "HKLM");
+        action(Registry.CurrentUser, RegistryHive.CurrentUser, "HKCU");
     }
 
     private static void ReadValueNamesAsClsids(
-        RegistryKey hive,
+        RegistryKey hiveKey,
+        RegistryHive hive,
         string path,
-        Action<string?, string> register,
+        Action<string?, string, ShellExtensionRegistration> register,
         string hookPoint
     )
     {
         try
         {
-            using var key = hive.OpenSubKey(path);
+            using var key = hiveKey.OpenSubKey(path);
             if (key is null)
                 return;
             foreach (var valueName in key.GetValueNames())
-                register(valueName, hookPoint);
+                register(valueName, hookPoint, new ShellExtensionRegistration(hive, path, valueName));
         }
         catch (Exception ex)
         {
@@ -338,19 +372,24 @@ public static class ShellExtensionScanner
     }
 
     private static void ReadValueDataAsClsids(
-        RegistryKey hive,
+        RegistryKey hiveKey,
+        RegistryHive hive,
         string path,
-        Action<string?, string> register,
+        Action<string?, string, ShellExtensionRegistration> register,
         string hookPoint
     )
     {
         try
         {
-            using var key = hive.OpenSubKey(path);
+            using var key = hiveKey.OpenSubKey(path);
             if (key is null)
                 return;
             foreach (var valueName in key.GetValueNames())
-                register(key.GetValue(valueName) as string, hookPoint);
+                register(
+                    key.GetValue(valueName) as string,
+                    hookPoint,
+                    new ShellExtensionRegistration(hive, path, valueName)
+                );
         }
         catch (Exception ex)
         {
@@ -359,19 +398,24 @@ public static class ShellExtensionScanner
     }
 
     private static void ReadSubKeyNamesAsClsids(
-        RegistryKey hive,
+        RegistryKey hiveKey,
+        RegistryHive hive,
         string path,
-        Action<string?, string> register,
+        Action<string?, string, ShellExtensionRegistration> register,
         string hookPoint
     )
     {
         try
         {
-            using var key = hive.OpenSubKey(path);
+            using var key = hiveKey.OpenSubKey(path);
             if (key is null)
                 return;
             foreach (var subKeyName in key.GetSubKeyNames())
-                register(subKeyName, hookPoint);
+                register(
+                    subKeyName,
+                    hookPoint,
+                    new ShellExtensionRegistration(hive, $@"{path}\{subKeyName}", null)
+                );
         }
         catch (Exception ex)
         {
@@ -380,22 +424,27 @@ public static class ShellExtensionScanner
     }
 
     private static void ReadSubKeyDefaultsAsClsids(
-        RegistryKey hive,
+        RegistryKey hiveKey,
+        RegistryHive hive,
         string path,
-        Action<string?, string> register,
+        Action<string?, string, ShellExtensionRegistration> register,
         Func<string, string> describe
     )
     {
         try
         {
-            using var key = hive.OpenSubKey(path);
+            using var key = hiveKey.OpenSubKey(path);
             if (key is null)
                 return;
 
             foreach (var subKeyName in key.GetSubKeyNames())
             {
                 using var subKey = key.OpenSubKey(subKeyName);
-                register(subKey?.GetValue("") as string, describe(subKeyName));
+                register(
+                    subKey?.GetValue("") as string,
+                    describe(subKeyName),
+                    new ShellExtensionRegistration(hive, $@"{path}\{subKeyName}", null)
+                );
             }
         }
         catch (Exception ex)
@@ -504,6 +553,125 @@ public static class ShellExtensionScanner
             Log.ZLogWarning(ex, $"Failed to change the blocked shell extension list");
             error = ex.Message;
             return false;
+        }
+    }
+
+    /// <summary>Deletes every hook registration collected for an orphaned shell or browser extension DLL.</summary>
+    public static bool Delete(ShellExtensionDeleteTarget target, out string? error)
+    {
+        error = null;
+
+        if (target.Registrations.Count == 0)
+        {
+            error = "No shell extension registrations to delete.";
+            return false;
+        }
+
+        string? firstError = null;
+
+        foreach (var registration in target.Registrations)
+        {
+            if (registration.Hive == RegistryHive.ClassesRoot)
+            {
+                DeleteClassesRootRegistration(registration, ref firstError);
+            }
+            else
+            {
+                DeleteRegistrationInHive(
+                    registration.Hive,
+                    RegistryView.Registry64,
+                    registration.SubKeyPath,
+                    registration.ValueName,
+                    ref firstError
+                );
+            }
+        }
+
+        if (target.IsExplorer && target.Clsids.Count > 0)
+            CleanupBlockedClsids(target.Clsids);
+
+        error = firstError;
+        return firstError is null;
+    }
+
+    private static void DeleteClassesRootRegistration(
+        ShellExtensionRegistration registration,
+        ref string? firstError
+    )
+    {
+        var classesSubKey = $@"Software\Classes\{registration.SubKeyPath}";
+        foreach (var hive in new[] { RegistryHive.CurrentUser, RegistryHive.LocalMachine })
+        foreach (var view in new[] { RegistryView.Registry64, RegistryView.Registry32 })
+        {
+            DeleteRegistrationInHive(
+                hive,
+                view,
+                classesSubKey,
+                registration.ValueName,
+                ref firstError
+            );
+        }
+    }
+
+    private static void DeleteRegistrationInHive(
+        RegistryHive hive,
+        RegistryView view,
+        string subKeyPath,
+        string? valueName,
+        ref string? firstError
+    )
+    {
+        try
+        {
+            using var baseKey = RegistryKey.OpenBaseKey(hive, view);
+            using var probe = baseKey.OpenSubKey(subKeyPath);
+            if (probe is null)
+                return;
+
+            if (valueName is not null)
+            {
+                if (probe.GetValue(valueName) is null)
+                    return;
+
+                using var writable = baseKey.OpenSubKey(subKeyPath, writable: true);
+                writable?.DeleteValue(valueName, throwOnMissingValue: false);
+                return;
+            }
+
+            baseKey.DeleteSubKeyTree(subKeyPath, throwOnMissingSubKey: false);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to delete shell extension registration {hive}\\{subKeyPath}");
+            firstError ??= ex.Message;
+        }
+    }
+
+    private static void CleanupBlockedClsids(IReadOnlyList<string> clsids)
+    {
+        foreach (var (hive, path) in new[]
+        {
+            (Registry.LocalMachine, BlockedPath),
+            (Registry.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked"),
+        })
+        {
+            try
+            {
+                using var key = hive.OpenSubKey(path, writable: true);
+                if (key is null)
+                    continue;
+
+                foreach (var clsid in clsids)
+                {
+                    var normalized = ComServerRegistry.Normalize(clsid);
+                    if (normalized.Length > 0)
+                        key.DeleteValue(normalized, throwOnMissingValue: false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.ZLogWarning(ex, $"Failed to clean up blocked shell extension entries");
+            }
         }
     }
 }

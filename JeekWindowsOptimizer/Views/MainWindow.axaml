@@ -625,6 +625,20 @@
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
         </Style>
+        <Style Selector="Button.startup-delete /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerBorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
+        </Style>
+        <Style Selector="Button.startup-delete">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
+        </Style>
+        <Style Selector="Button.startup-delete:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource DangerTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerBarBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
+        </Style>
 
         <!-- Tool Card (2-column tactile card) -->
         <Style Selector="Button.tool-card">
@@ -2085,8 +2099,22 @@
                                                                         CommandParameter="{Binding}"
                                                                         Content="{l:Localize StartupDeny}" />
                                                                     <Button
+                                                                        Classes="startup-action startup-delete"
+                                                                        Padding="10,5"
+                                                                        IsVisible="{Binding CanDelete}"
+                                                                        IsEnabled="{Binding CanDeleteNow}"
+                                                                        Command="{Binding $parent[Window].((local:MainViewModel)DataContext).DeleteStartupItemCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        ToolTip.Tip="{l:Localize StartupDeleteHint}">
+                                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                                            <TextBlock Classes="glyph" FontSize="12.5" Text="&#xE74D;" />
+                                                                            <TextBlock VerticalAlignment="Center" Text="{l:Localize StartupDelete}" />
+                                                                        </StackPanel>
+                                                                    </Button>
+                                                                    <Button
                                                                         Classes="startup-action"
                                                                         Padding="9,5"
+                                                                        IsVisible="{Binding !CanDelete}"
                                                                         IsEnabled="{Binding CanReveal}"
                                                                         Command="{Binding $parent[Window].((local:MainViewModel)DataContext).OpenStartupItemLocationCommand}"
                                                                         CommandParameter="{Binding}"
