@@ -136,7 +136,9 @@ public static class StartupItemManager
                 Location = entry.Location,
                 Command = entry.Command,
                 ImagePath = expanded,
-                Description = ReadFileDescription(expanded),
+                Description = !string.IsNullOrWhiteSpace(entry.DisplayName)
+                    ? entry.DisplayName
+                    : ReadFileDescription(expanded),
                 HookPoints = entry.HookPoints,
                 Handles = entry.Handles,
                 Publisher = signature.SignerName,

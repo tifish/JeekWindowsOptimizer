@@ -11,6 +11,13 @@ public sealed record RawStartupEntry
     /// <summary>Registry value name, file name, service name or task name.</summary>
     public required string Name { get; init; }
 
+    /// <summary>
+    ///     Optional display name supplied by the registration itself (e.g. a service's registry
+    ///     <c>DisplayName</c>). Preferred over the target executable's file description so services
+    ///     hosted by shared wrappers like <c>svchost.exe</c> or <c>nssm.exe</c> keep distinct names.
+    /// </summary>
+    public string? DisplayName { get; init; }
+
     /// <summary>Where it is registered, in a form the user can go and look at.</summary>
     public required string Location { get; init; }
 

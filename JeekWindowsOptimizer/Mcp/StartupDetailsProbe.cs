@@ -41,7 +41,7 @@ internal static class StartupDetailsProbe
         {
             RunOnceEndToEndScenario(token, Check);
             ScheduledTaskMetadataScenario(token, Check);
-            ServiceMetadataScenario(Check);
+            ServiceMetadataScenario(token, Check);
         });
 
         await RunOnceViewModelScenarioAsync(Check);
@@ -62,6 +62,7 @@ internal static class StartupDetailsProbe
             Location = entry.Location,
             Command = entry.Command,
             ImagePath = expanded,
+            Description = entry.DisplayName,
             HookPoints = entry.HookPoints,
             Handles = entry.Handles,
             IsOrphaned = expanded.Length > 0 && !File.Exists(expanded),
@@ -230,17 +231,47 @@ internal static class StartupDetailsProbe
         }
     }
 
-    private static void ServiceMetadataScenario(CheckFn check)
+    private static void ServiceMetadataScenario(string token, CheckFn check)
     {
         var savedLanguage = Localizer.Language;
+        var namedSvc = $"JeekNameProbeA_{token}";
+        var unnamedSvc = $"JeekNameProbeB_{token}";
 
         try
         {
+            using (var keyA = Registry.LocalMachine.CreateSubKey($@"SYSTEM\CurrentControlSet\Services\{namedSvc}", writable: true))
+            {
+                keyA!.SetValue("Type", 0x10, RegistryValueKind.DWord);
+                keyA.SetValue("Start", 3, RegistryValueKind.DWord);
+                keyA.SetValue("DisplayName", $"Custom Service {token}", RegistryValueKind.String);
+                keyA.SetValue("ImagePath", @"C:\Windows\System32\cmd.exe", RegistryValueKind.ExpandString);
+            }
+            using (var keyB = Registry.LocalMachine.CreateSubKey($@"SYSTEM\CurrentControlSet\Services\{unnamedSvc}", writable: true))
+            {
+                keyB!.SetValue("Type", 0x10, RegistryValueKind.DWord);
+                keyB.SetValue("Start", 3, RegistryValueKind.DWord);
+                keyB.SetValue("ImagePath", @"C:\Windows\System32\cmd.exe", RegistryValueKind.ExpandString);
+            }
+
             var scanned = ServiceRegistryScanner.Scan();
             var rpcRaw = scanned.FirstOrDefault(e =>
                 e.Kind == StartupItemKind.Service
                 && string.Equals(e.Name, "RpcSs", StringComparison.OrdinalIgnoreCase));
             var rpcItem = rpcRaw is not null ? Materialize(rpcRaw) : null;
+
+            check("RpcSs uses its service DisplayName rather than svchost.exe FileDescription",
+                rpcItem is not null
+                && !string.IsNullOrWhiteSpace(rpcItem.DisplayName)
+                && !rpcItem.DisplayName.Contains("Host Process", StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(rpcItem.DisplayName, "svchost.exe", StringComparison.OrdinalIgnoreCase),
+                rpcItem?.DisplayName ?? "(not found)");
+
+            var rawA = scanned.FirstOrDefault(e => e.Name == namedSvc);
+            var rawB = scanned.FirstOrDefault(e => e.Name == unnamedSvc);
+            check("services sharing one host binary keep distinct service display/key names",
+                rawA?.DisplayName == $"Custom Service {token}"
+                && rawB?.DisplayName == unnamedSvc,
+                $"A='{rawA?.DisplayName}', B='{rawB?.DisplayName}'");
 
             check("RpcSs scans as Automatic and Running",
                 rpcItem is
@@ -308,6 +339,8 @@ internal static class StartupDetailsProbe
         finally
         {
             SetLanguage(savedLanguage);
+            try { Registry.LocalMachine.DeleteSubKeyTree($@"SYSTEM\CurrentControlSet\Services\{namedSvc}", false); } catch { }
+            try { Registry.LocalMachine.DeleteSubKeyTree($@"SYSTEM\CurrentControlSet\Services\{unnamedSvc}", false); } catch { }
         }
     }
 

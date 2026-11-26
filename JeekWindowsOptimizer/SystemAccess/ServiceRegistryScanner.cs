@@ -85,7 +85,10 @@ public static partial class ServiceRegistryScanner
                         ? $@"System32\drivers\{name}.sys"
                         : registeredImagePath;
 
-                    var displayName = ResolveIndirectString(key.GetValue("DisplayName") as string);
+                    var rawDisplayName = ResolveIndirectString(key.GetValue("DisplayName") as string);
+                    var displayName = !string.IsNullOrWhiteSpace(rawDisplayName) && rawDisplayName[0] != '@'
+                        ? rawDisplayName.Trim()
+                        : null;
 
                     // Boot- and system-start drivers load before almost everything else. Turning one
                     // off can leave a machine that will not boot, and no allow-list is worth that,
@@ -112,6 +115,9 @@ public static partial class ServiceRegistryScanner
                         {
                             Kind = isDriver ? StartupItemKind.Driver : StartupItemKind.Service,
                             Name = name,
+                            // Services always use their own DisplayName (or service key name) rather than
+                            // the host binary's FileDescription, otherwise svchost/nssm services all collide.
+                            DisplayName = displayName ?? (isDriver ? null : name),
                             Location = $@"HKLM\{ServicesPath}\{name}",
                             Command = registeredImagePath,
                             ImagePath = StartupIdentity.ExtractImagePath(imagePath),
