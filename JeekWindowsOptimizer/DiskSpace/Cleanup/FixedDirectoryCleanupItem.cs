@@ -7,24 +7,7 @@ public abstract class FixedDirectoryCleanupItem : DiskSpaceCleanupItem
     protected FixedDirectoryCleanupItem(string directory)
     {
         DirectoryPath = Path.GetFullPath(directory);
-        if (string.Equals(DirectoryPath.TrimEnd('\\'), Path.GetPathRoot(DirectoryPath)?.TrimEnd('\\'), StringComparison.OrdinalIgnoreCase))
-            throw new ArgumentException("A drive root is not a cache directory.", nameof(directory));
-        // A vendor cache lives inside a system tree, but the tree itself is never the target:
-        // reject the roots themselves and anything that would contain one.
-        var full = Path.TrimEndingDirectorySeparator(DirectoryPath);
-        foreach (var folder in new[] { Environment.SpecialFolder.Windows, Environment.SpecialFolder.ProgramFiles,
-            Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.CommonApplicationData,
-            Environment.SpecialFolder.UserProfile, Environment.SpecialFolder.LocalApplicationData,
-            Environment.SpecialFolder.ApplicationData })
-        {
-            var path = Environment.GetFolderPath(folder);
-            if (string.IsNullOrEmpty(path))
-                continue;
-            var tree = Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
-            if (tree.Equals(full, StringComparison.OrdinalIgnoreCase)
-                || tree.StartsWith(full + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-                throw new ArgumentException("A system or profile root is not a cache directory.", nameof(directory));
-        }
+        FileSystemCleaner.ValidateCacheDirectory(DirectoryPath);
     }
 
     protected virtual void ValidateCleanup() { }

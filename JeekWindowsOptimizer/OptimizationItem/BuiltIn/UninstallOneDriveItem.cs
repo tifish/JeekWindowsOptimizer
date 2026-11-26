@@ -65,6 +65,6 @@ public class UninstallOneDriveItem : OptimizationItem
             return false;
 
         await proc.WaitForExitAsync();
-        return true;
+        return proc.ExitCode == 0;
     }
 }

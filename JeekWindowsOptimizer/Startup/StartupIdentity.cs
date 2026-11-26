@@ -55,11 +55,28 @@ public static partial class StartupIdentity
         }
     }
 
-    /// <summary>
-    ///     Resolves the many shapes a startup entry's path arrives in into one absolute path:
-    ///     native object paths, environment variables, driver paths relative to the Windows folder,
-    ///     and bare executable names.
-    /// </summary>
+    /// <summary>Only a confirmed missing target on a reachable volume is an orphan.</summary>
+    internal static bool IsMissingTarget(string path)
+    {
+        if (!Path.IsPathFullyQualified(path))
+            return false;
+        try
+        {
+            File.GetAttributes(path);
+            return false;
+        }
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+        {
+            return Directory.Exists(Path.GetPathRoot(path));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException
+            or NotSupportedException or System.Security.SecurityException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>Resolves native paths, environment variables, driver paths and bare executable names.</summary>
     public static string ExpandPath(string? path)
     {
         if (string.IsNullOrWhiteSpace(path))

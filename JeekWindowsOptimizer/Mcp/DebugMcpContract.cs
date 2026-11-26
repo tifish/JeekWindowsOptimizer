@@ -69,6 +69,8 @@ public static class DebugMcpContract
                 ["category"] = Prop("string", "Optional tab filter: Optimizing | Antivirus | Personal."),
                 ["only_not_optimized"] = Prop("boolean", "Only list items that are not optimized (default false)."),
             }),
+        Tool("catalog_reload_probe",
+            "Reload the optimization and tool catalogs twice and verify their item keys remain identical.", new()),
         Tool("optimization_init_timings",
             "Startup detection timings: total, data load, battery check, detection phase, the Microsoft Store package snapshot (runs alongside), and each item's Initialize() duration, slowest first.",
             new()
@@ -131,7 +133,7 @@ public static class DebugMcpContract
         Tool("wsl_native_migration_probe", "Create a random temporary WSL 2 distribution, migrate it across two NTFS drives and back, verify its exported filesystem, then unregister only that fixture. Does not move user distributions.", new()),
         Tool("disk_space_cleanup_probe",
             "Run isolated cleanup regression checks in the app. Does not clean user data.",
-            new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps | queue | shadows | hibernation | drivers | graphics | installer_baseline | lcu | developer | pnpm | selection.") }),
+            new() { ["scenario"] = Prop("string", "Scenario: accuracy | browser | nuget | user_dumps | queue | shadows | hibernation | drivers | graphics | installer_baseline | lcu | developer | pnpm | selection | services.") }),
         Tool("disk_space_scan",
             "Run the Disk Space scan (all items in parallel) and wait for it, then return the item list.",
             new()

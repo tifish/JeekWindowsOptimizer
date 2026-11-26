@@ -46,6 +46,6 @@ public class DisableHibernationItem : OptimizationItem
             return false;
 
         await proc.WaitForExitAsync();
-        return true;
+        return proc.ExitCode == 0;
     }
 }

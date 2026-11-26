@@ -37,26 +37,15 @@ public static class StartupItemManager
     {
         var stopwatch = Stopwatch.StartNew();
 
-        var raw = await Task.Run(
-            () =>
-            {
-                // The scanners are independent and each is dominated by registry or COM latency.
-                var tasks = new[]
-                {
-                    Task.Run(StartupRegistryScanner.Scan, cancellationToken),
-                    Task.Run(StartupFolderScanner.Scan, cancellationToken),
-                    Task.Run(ScheduledTaskScanner.Scan, cancellationToken),
-                    Task.Run(ServiceRegistryScanner.Scan, cancellationToken),
-                    Task.Run(ShellExtensionScanner.Scan, cancellationToken),
-                };
+        var scans = await Task.WhenAll(
+            Task.Run(StartupRegistryScanner.Scan, cancellationToken),
+            Task.Run(StartupFolderScanner.Scan, cancellationToken),
+            Task.Run(ScheduledTaskScanner.Scan, cancellationToken),
+            Task.Run(ServiceRegistryScanner.Scan, cancellationToken),
+            Task.Run(ShellExtensionScanner.Scan, cancellationToken)
+        ).WaitAsync(cancellationToken).ConfigureAwait(false);
 
-                Task.WaitAll(tasks, cancellationToken);
-                return tasks.SelectMany(task => task.Result).ToList();
-            },
-            cancellationToken
-        );
-
-        var items = await Task.Run(() => Enrich(raw, cancellationToken), cancellationToken);
+        var items = await Task.Run(() => Enrich(scans.SelectMany(entries => entries).ToList(), cancellationToken), cancellationToken);
 
         stopwatch.Stop();
         Log.ZLogInformation(
@@ -143,7 +132,7 @@ public static class StartupItemManager
                 Handles = entry.Handles,
                 Publisher = signature.SignerName,
                 SignerKind = signerKind,
-                IsOrphaned = expanded.Length > 0 && !File.Exists(expanded),
+                IsOrphaned = StartupIdentity.IsMissingTarget(expanded),
                 DeleteTarget = entry.DeleteTarget,
                 CanToggle = entry.CanToggle,
                 ReadOnlyReasonKey = entry.ReadOnlyReasonKey,
@@ -319,8 +308,8 @@ public static class StartupItemManager
             )
             .ToList();
 
-        StartupDecisionStore.DecideMany(decisions);
-        StartupDecisionStore.Flush();
+        if ((decisions.Count > 0 && !StartupDecisionStore.DecideMany(decisions)) || !StartupDecisionStore.Flush())
+            throw new IOException(Jeek.Avalonia.Localization.Localizer.Get("StartupBaselineSaveFailed"));
         StartupLocalState.MarkBaselineTaken();
 
         return decisions.Count;

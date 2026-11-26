@@ -49,7 +49,7 @@ internal static class PnpmStoreProbe
             }
             return "PASS pnpm: opt-in, upper-bound scan, unused-only prune, referenced data retained, native failure, missing tool; " + cli;
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 
     private sealed class FakeStore(string? path, string unused) : IPnpmStore

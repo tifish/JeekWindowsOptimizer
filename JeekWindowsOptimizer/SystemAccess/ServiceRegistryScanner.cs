@@ -33,6 +33,21 @@ public static partial class ServiceRegistryScanner
     private const int StartSystem = 1;
     private const int StartDisabled = 4;
 
+    internal static int ReadMutableStart(StartupItem item)
+    {
+        using var key = Registry.LocalMachine.OpenSubKey($@"{ServicesPath}\{item.Name}");
+        if (key?.GetValue("Type") is not int type || key.GetValue("Start") is not int start
+            || start is < 0 or > StartDisabled)
+            throw new InvalidOperationException(Jeek.Avalonia.Localization.Localizer.Get("StartupRegistrationChanged"));
+        var isDriver = type is KernelDriver or FileSystemDriver or Recognizer;
+        var command = key.GetValue("ImagePath", null, RegistryValueOptions.DoNotExpandEnvironmentNames) as string ?? "";
+        if (isDriver != (item.Kind == StartupItemKind.Driver) || command != item.Command)
+            throw new InvalidOperationException(Jeek.Avalonia.Localization.Localizer.Get("StartupRegistrationChanged"));
+        if (isDriver && start is StartBoot or StartSystem)
+            throw new InvalidOperationException(Jeek.Avalonia.Localization.Localizer.Get("StartupStatusBootCritical"));
+        return start;
+    }
+
     public static List<RawStartupEntry> Scan()
     {
         var entries = new List<RawStartupEntry>();

@@ -4,7 +4,7 @@ namespace JeekWindowsOptimizer;
 
 public static class ServiceItemManager
 {
-    public static List<ServiceItem> Items { get; } = [];
+    public static List<ServiceItem> Items { get; private set; } = [];
 
     public static async Task Load()
     {
@@ -47,6 +47,6 @@ public static class ServiceItemManager
         // Windows 11 SKUs); otherwise they show up but can never be optimized.
         // Checked together, keeping the table order.
         var exists = await Task.WhenAll(candidates.Select(item => item.ServiceExists()));
-        Items.AddRange(candidates.Where((_, index) => exists[index]));
+        Items = [.. candidates.Where((_, index) => exists[index])];
     }
 }

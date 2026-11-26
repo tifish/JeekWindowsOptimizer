@@ -7,7 +7,7 @@ namespace JeekWindowsOptimizer;
 /// </summary>
 public static class FileSystemCleaner
 {
-    private static EnumerationOptions RecursiveOptions =>
+    private static readonly EnumerationOptions RecursiveOptions =
         new()
         {
             RecurseSubdirectories = true,
@@ -16,7 +16,7 @@ public static class FileSystemCleaner
             ReturnSpecialDirectories = false,
         };
 
-    private static EnumerationOptions TopLevelOptions =>
+    private static readonly EnumerationOptions TopLevelOptions =
         new()
         {
             RecurseSubdirectories = false,
@@ -25,13 +25,30 @@ public static class FileSystemCleaner
             ReturnSpecialDirectories = false,
         };
 
+    internal static void ValidateCacheDirectory(string directory)
+    {
+        var full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(directory));
+        if (string.Equals(full, Path.GetPathRoot(full), StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("A drive root is not a cache directory.", nameof(directory));
+        foreach (var folder in new[] { Environment.SpecialFolder.Windows, Environment.SpecialFolder.ProgramFiles,
+            Environment.SpecialFolder.ProgramFilesX86, Environment.SpecialFolder.CommonApplicationData,
+            Environment.SpecialFolder.UserProfile, Environment.SpecialFolder.LocalApplicationData,
+            Environment.SpecialFolder.ApplicationData })
+        {
+            var tree = Environment.GetFolderPath(folder);
+            if (tree.Equals(full, StringComparison.OrdinalIgnoreCase)
+                || tree.StartsWith(full + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("A system or profile root is not a cache directory.", nameof(directory));
+        }
+    }
+
     public static bool IsReparsePoint(string path)
     {
         try
         {
             return (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0;
         }
-        catch
+        catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
         {
             return false;
         }
@@ -51,7 +68,7 @@ public static class FileSystemCleaner
         CancellationToken cancellationToken = default
     )
     {
-        if (!Directory.Exists(directoryPath) || IsReparsePoint(directoryPath))
+        if (!Directory.Exists(directoryPath) || !IsPlainDirectoryPath(directoryPath))
             return 0;
 
         long total = 0;
@@ -90,7 +107,7 @@ public static class FileSystemCleaner
         CancellationToken cancellationToken = default
     )
     {
-        if (!Directory.Exists(directoryPath))
+        if (!Directory.Exists(directoryPath) || !IsPlainDirectoryPath(directoryPath))
             return 0;
 
         long total = 0;
@@ -131,7 +148,8 @@ public static class FileSystemCleaner
         try
         {
             var info = new FileInfo(filePath);
-            return info.Exists ? info.Length : 0;
+            return info.Exists && info.Directory is { } parent && IsPlainDirectoryPath(parent.FullName)
+                && !IsReparsePoint(info.FullName) ? info.Length : 0;
         }
         catch
         {
@@ -148,7 +166,7 @@ public static class FileSystemCleaner
         CancellationToken cancellationToken = default
     )
     {
-        if (!Directory.Exists(directoryPath) || IsReparsePoint(directoryPath))
+        if (!Directory.Exists(directoryPath) || !IsPlainDirectoryPath(directoryPath))
             return 0;
 
         long freed = 0;
@@ -194,6 +212,9 @@ public static class FileSystemCleaner
         if (!Directory.Exists(directoryPath))
             return 0;
 
+        var parent = Directory.GetParent(directoryPath);
+        if (parent is null || !IsPlainDirectoryPath(parent.FullName))
+            return 0;
         if (IsReparsePoint(directoryPath))
         {
             // Remove the link itself, never its target.
@@ -227,7 +248,7 @@ public static class FileSystemCleaner
         CancellationToken cancellationToken = default
     )
     {
-        if (!Directory.Exists(directoryPath))
+        if (!Directory.Exists(directoryPath) || !IsPlainDirectoryPath(directoryPath))
             return 0;
 
         long freed = 0;
@@ -261,7 +282,8 @@ public static class FileSystemCleaner
         try
         {
             var info = new FileInfo(filePath);
-            return info.Exists ? DeleteFile(info) : 0;
+            return info.Exists && info.Directory is { } parent && IsPlainDirectoryPath(parent.FullName)
+                && !IsReparsePoint(info.FullName) ? DeleteFile(info) : 0;
         }
         catch
         {

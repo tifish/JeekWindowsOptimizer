@@ -278,6 +278,7 @@ public partial class MainViewModel
 
         IsStartupScanning = true;
         StatusMessage = Localizer.Get("StartupScanning");
+        string? scanError = null;
 
         try
         {
@@ -291,21 +292,20 @@ public partial class MainViewModel
         catch (Exception ex)
         {
             StartupLog.ZLogError(ex, $"Startup scan failed");
-            StartupWarningText = string.Format(Localizer.Get("StartupScanFailed"), ex.Message);
+            scanError = string.Format(Localizer.Get("StartupScanFailed"), ex.Message);
         }
         finally
         {
             IsStartupScanning = false;
             UpdateStartupSummary();
-            // Count what the user can actually see, so the status line agrees with the summary
-            // card instead of quoting the several hundred hidden Windows entries.
-            var visible = VisibleStartupItems.ToList();
-            StatusMessage = string.Format(
-                Localizer.Get("StartupScanFinished"),
-                visible.Count,
-                visible.Count(item => item.IsPending)
-            );
         }
+        if (scanError is not null)
+        {
+            StatusMessage = StartupWarningText = scanError;
+            return;
+        }
+        var visible = VisibleStartupItems.ToList();
+        StatusMessage = string.Format(Localizer.Get("StartupScanFinished"), visible.Count, visible.Count(item => item.IsPending));
     }
 
     private void RebuildStartupGroups(List<StartupItem> items)
@@ -762,15 +762,19 @@ public partial class MainViewModel
         IsStartupBusy = true;
         try
         {
-            var recorded = await Task.Run(
-                () => StartupItemManager.AcceptBaseline(StartupItems.ToList())
-            );
+            var items = StartupItems.ToList();
+            var recorded = await Task.Run(() => StartupItemManager.AcceptBaseline(items));
             ReapplyStartupDecisions();
             IsStartupBaselinePending = false;
             UpdateStartupSummary();
             RefreshDisplayedStartupGroups();
 
             StartupLog.ZLogInformation($"Accepted the startup baseline with {recorded} decisions");
+        }
+        catch (Exception ex)
+        {
+            StartupLog.ZLogWarning(ex, $"Failed to save the startup baseline");
+            StartupWarningText = Localizer.Get("StartupBaselineSaveFailed");
         }
         finally
         {
@@ -801,7 +805,11 @@ public partial class MainViewModel
             return;
         }
 
-        StartupDecisionStore.Flush();
+        if (!StartupDecisionStore.Flush())
+        {
+            StartupWarningText = Localizer.Get("StartupDecisionSaveFailed");
+            return;
+        }
         ReapplyStartupDecisions();
         IsStartupBaselinePending = !StartupLocalState.HasBaseline;
         UpdateStartupSummary();

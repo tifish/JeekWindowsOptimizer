@@ -148,53 +148,50 @@ public static class PagingFile
     {
         var target = Path.Join(Path.GetPathRoot(driveRoot) ?? driveRoot, "pagefile.sys");
 
-        using (
-            var searcher = new ManagementObjectSearcher(
-                "SELECT * FROM Win32_ComputerSystem"
-            )
-        )
+        var wasAutomatic = SetAutomaticManagement(false);
+        try
         {
-            foreach (ManagementObject system in searcher.Get())
-            {
-                using (system)
-                {
-                    if (system["AutomaticManagedPagefile"] is true)
-                    {
-                        system["AutomaticManagedPagefile"] = false;
-                        system.Put();
-                    }
-                }
-            }
-        }
+            // WMI's CreateOrUpdate handles both a new destination and an existing
+            // custom-sized entry. Keep the existing files until this write succeeds.
+            using var pageFileClass = new ManagementClass("Win32_PageFileSetting");
+            using var instance = pageFileClass.CreateInstance();
+            instance["Name"] = target;
+            instance["InitialSize"] = 0u;
+            instance["MaximumSize"] = 0u;
+            instance.Put(new PutOptions { Type = PutType.UpdateOrCreate });
 
-        using (
-            var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PageFileSetting")
-        )
-        {
-            foreach (ManagementObject setting in searcher.Get())
+            using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PageFileSetting");
+            using var settings = searcher.Get();
+            foreach (ManagementObject setting in settings)
             {
                 using (setting)
-                {
-                    var name = setting["Name"] as string ?? "";
-                    if (string.Equals(name, target, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Keep it but make sure it is system managed.
-                        setting["InitialSize"] = 0u;
-                        setting["MaximumSize"] = 0u;
-                        setting.Put();
-                        return;
-                    }
-
-                    setting.Delete();
-                }
+                    if (!string.Equals((string)setting["Name"], target, StringComparison.OrdinalIgnoreCase))
+                        setting.Delete();
             }
         }
+        catch
+        {
+            if (wasAutomatic)
+                SetAutomaticManagement(true);
+            throw;
+        }
+    }
 
-        using var pageFileClass = new ManagementClass("Win32_PageFileSetting");
-        using var instance = pageFileClass.CreateInstance();
-        instance["Name"] = target;
-        instance["InitialSize"] = 0u;
-        instance["MaximumSize"] = 0u;
-        instance.Put();
+    private static bool SetAutomaticManagement(bool enabled)
+    {
+        using var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
+        using var systems = searcher.Get();
+        foreach (ManagementObject system in systems)
+        {
+            using (system)
+            {
+                if ((bool)system["AutomaticManagedPagefile"] == enabled)
+                    return false;
+                system["AutomaticManagedPagefile"] = enabled;
+                system.Put();
+                return true;
+            }
+        }
+        throw new IOException("Windows did not return the paging file management setting.");
     }
 }

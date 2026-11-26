@@ -98,66 +98,65 @@ function Download-File {
 Write-Host "=== $AppName Installer ===" -ForegroundColor Cyan
 
 # 1. Download the latest release zip, falling back through mirrors.
-$tempRoot = Join-Path $env:TEMP "$AppName-install"
-if (Test-Path $tempRoot) {
-    Remove-Item -Recurse -Force $tempRoot
-}
+$tempRoot = Join-Path $env:TEMP ("$AppName-install-" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Path $tempRoot | Out-Null
-$zipPath = Join-Path $tempRoot $ZipName
+try {
+    $zipPath = Join-Path $tempRoot $ZipName
 
-$downloaded = $false
-for ($i = 0; $i -lt $Mirrors.Count; $i++) {
-    $isLast = $i -eq $Mirrors.Count - 1
-    Write-Host "Downloading from $($Mirrors[$i])"
-    try {
-        Download-File -Url $Mirrors[$i] -Destination $zipPath -EnforceMinimumSpeed (-not $isLast)
-        $downloaded = $true
-        break
-    }
-    catch {
-        Write-Host "  Failed: $($_.Exception.Message)" -ForegroundColor Yellow
-        if (Test-Path $zipPath) {
-            Remove-Item -Force $zipPath
+    $downloaded = $false
+    for ($i = 0; $i -lt $Mirrors.Count; $i++) {
+        $isLast = $i -eq $Mirrors.Count - 1
+        Write-Host "Downloading from $($Mirrors[$i])"
+        try {
+            Download-File -Url $Mirrors[$i] -Destination $zipPath -EnforceMinimumSpeed (-not $isLast)
+            $downloaded = $true
+            break
+        }
+        catch {
+            Write-Host "  Failed: $($_.Exception.Message)" -ForegroundColor Yellow
+            if (Test-Path $zipPath) {
+                Remove-Item -Force $zipPath
+            }
         }
     }
-}
-if (-not $downloaded) {
-    Write-Host "Download failed from all mirrors." -ForegroundColor Red
-    exit 1
-}
+    if (-not $downloaded) {
+        throw "Download failed from all mirrors."
+    }
 
-# 2. Extract to a staging folder.
-Write-Host "Extracting..."
-$stageDir = Join-Path $tempRoot "package"
-Expand-Archive -Path $zipPath -DestinationPath $stageDir -Force
-if (-not (Test-Path (Join-Path $stageDir "$AppName.exe"))) {
-    Write-Host "Package is missing $AppName.exe." -ForegroundColor Red
-    exit 1
-}
+    # 2. Extract to a staging folder.
+    Write-Host "Extracting..."
+    $stageDir = Join-Path $tempRoot "package"
+    Expand-Archive -Path $zipPath -DestinationPath $stageDir -Force
+    foreach ($required in @("$AppName.exe", "Runtime\$AppName.dll", "Runtime\$AppName.runtimeconfig.json", "Runtime\${AppName}Mcp.exe", "Data\Languages.tab")) {
+        if (-not (Test-Path -LiteralPath (Join-Path $stageDir $required) -PathType Leaf)) {
+            throw "Package is missing $required."
+        }
+    }
 
-# 3. Stop only instances running from the install directory, so instances
-#    running from a development folder are left alone.
-Get-Process -Name $AppName -ErrorAction SilentlyContinue | ForEach-Object {
-    $exePath = $null
-    try { $exePath = $_.Path } catch {}
-    if ($exePath -and $exePath.StartsWith("$InstallDir\", [System.StringComparison]::OrdinalIgnoreCase)) {
-        Write-Host "Stopping running instance (PID $($_.Id))..."
-        Stop-Process -Id $_.Id -Force
-        $_.WaitForExit()
+    # 3. Stop only instances running from the install directory, so instances
+    #    running from a development folder are left alone.
+    Get-Process -Name $AppName -ErrorAction SilentlyContinue | ForEach-Object {
+        $exePath = $null
+        try { $exePath = $_.Path } catch {}
+        if ($exePath -eq (Join-Path $InstallDir "$AppName.exe")) {
+            Write-Host "Stopping running instance (PID $($_.Id))..."
+            Stop-Process -Id $_.Id -Force
+            $_.WaitForExit()
+        }
+    }
+
+    # 4. Mirror the package into the install directory, cleaning up files the new
+    #    version no longer ships while preserving user data folders. The exclusion
+    #    list matches the auto-update script (bin/AutoUpdate.ps1).
+    Write-Host "Installing to $InstallDir"
+    robocopy $stageDir $InstallDir /MIR /XJ /R:3 /W:1 /XD Config Logs Activator /NFL /NDL /NJH /NJS /NP | Out-Null
+    if ($LASTEXITCODE -ge 8) {
+        throw "Failed to copy files (robocopy exit code $LASTEXITCODE)."
     }
 }
-
-# 4. Mirror the package into the install directory, cleaning up files the new
-#    version no longer ships while preserving user data folders. The exclusion
-#    list matches the auto-update script (bin/AutoUpdate.ps1).
-Write-Host "Installing to $InstallDir"
-robocopy $stageDir $InstallDir /MIR /XD Config Logs Activator /NFL /NDL /NJH /NJS /NP | Out-Null
-if ($LASTEXITCODE -ge 8) {
-    Write-Host "Failed to copy files (robocopy exit code $LASTEXITCODE)." -ForegroundColor Red
-    exit 1
+finally {
+    Remove-Item -Recurse -Force -LiteralPath $tempRoot -ErrorAction SilentlyContinue
 }
-
-Remove-Item -Recurse -Force $tempRoot
 
 # 5. Create the Start Menu shortcut.
 Write-Host "Creating Start Menu shortcut..."

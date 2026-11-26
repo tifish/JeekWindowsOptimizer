@@ -4,7 +4,7 @@ namespace JeekWindowsOptimizer;
 
 public static class RegistryItemManager
 {
-    public static List<RegistryItem> Items { get; } = [];
+    public static List<RegistryItem> Items { get; private set; } = [];
 
     public static async Task Load()
     {
@@ -83,10 +83,10 @@ public static class RegistryItemManager
                 item.ShouldReboot = shouldReboot;
                 item.ShouldRestartExplorer = shouldRestartExplorer;
                 itemsDict[nameKey] = item;
-                Items.Add(item);
             }
 
             item.RegistryValues.Add(value);
         }
+        Items = [.. itemsDict.Values];
     }
 }

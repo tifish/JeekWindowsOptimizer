@@ -123,9 +123,12 @@ public static class StartupToggle
     private static StartupToggleResult ApplyService(StartupItem item, bool enabled)
     {
         var isDriver = item.Kind == StartupItemKind.Driver;
+        var current = ServiceRegistryScanner.ReadMutableStart(item);
 
         if (enabled)
         {
+            if (current != StartDisabled)
+                return StartupToggleResult.Ok(serviceState: isDriver ? null : ServiceRegistryScanner.ReadRuntimeSnapshot(item.Name));
             // Put back the start type the service had before it was denied, not a guessed default.
             var start = StartupLocalState.RecallServiceStart(item.Name);
             if (!ServiceRegistryScanner.SetStartMode(item.Name, start, out var enableError))
@@ -152,8 +155,7 @@ public static class StartupToggle
         }
 
         // Capture the current start type before overwriting it, or the original is lost forever.
-        if (int.TryParse(item.RestoreState, out var current))
-            StartupLocalState.RememberServiceStart(item.Name, current);
+        StartupLocalState.RememberServiceStart(item.Name, current);
 
         // Disable first. If stopping then fails the service at least cannot come back after a
         // reboot, and the row says it is still running rather than pretending otherwise.
@@ -218,15 +220,17 @@ public static class StartupToggle
 
         // Re-check on disk right before deleting so a file on a reconnected drive or a newly
         // reinstalled program cannot be removed because of a stale scan.
-        if (item.ImagePath.Length == 0 || File.Exists(item.ImagePath))
+        if (!StartupIdentity.IsMissingTarget(item.ImagePath))
             return StartupDeleteResult.Fail(Localizer.Get("StartupDeleteFileExistsNow"));
 
         try
         {
+            if (item.DeleteTarget is not RegistryValueDeleteTarget && !StillMatchesRegistration(item))
+                return StartupDeleteResult.Fail(Localizer.Get("StartupRegistrationChanged"));
             switch (item.DeleteTarget)
             {
                 case RegistryValueDeleteTarget registryTarget:
-                    return StartupRegistryScanner.Delete(registryTarget, out var registryError)
+                    return StartupRegistryScanner.Delete(registryTarget, item.Command, out var registryError)
                         ? StartupDeleteResult.Ok()
                         : StartupDeleteResult.Fail(registryError);
 
@@ -269,6 +273,28 @@ public static class StartupToggle
         }
     }
 
+    private static bool StillMatchesRegistration(StartupItem item)
+    {
+        var entries = item.DeleteTarget switch
+        {
+            StartupFolderDeleteTarget => StartupFolderScanner.Scan(),
+            ScheduledTaskDeleteTarget => ScheduledTaskScanner.Scan(),
+            ServiceDeleteTarget => ServiceRegistryScanner.Scan(),
+            ShellExtensionDeleteTarget => ShellExtensionScanner.Scan(),
+            _ => throw new InvalidOperationException("Unsupported startup entry type."),
+        };
+        return entries.Any(entry => entry.Kind == item.Kind && entry.Name == item.Name
+            && entry.Location == item.Location && entry.Command == item.Command
+            && string.Equals(StartupIdentity.ExpandPath(entry.ImagePath), item.ImagePath, StringComparison.OrdinalIgnoreCase)
+            && SameDeleteTarget(entry.DeleteTarget, item.DeleteTarget));
+    }
+
+    private static bool SameDeleteTarget(StartupDeleteTarget? current, StartupDeleteTarget? expected) =>
+        current is ShellExtensionDeleteTarget a && expected is ShellExtensionDeleteTarget b
+            ? a.IsExplorer == b.IsExplorer && a.Registrations.ToHashSet().SetEquals(b.Registrations)
+                && a.Clsids.ToHashSet(StringComparer.OrdinalIgnoreCase).SetEquals(b.Clsids)
+            : current == expected;
+
     /// <summary>
     ///     Executes a RunOnce command immediately and removes its registry value once launched.
     /// </summary>
@@ -279,6 +305,8 @@ public static class StartupToggle
 
         if (!StartupRegistryScanner.TryReadValue(registryTarget, out var liveCommand))
             return StartupRunOnceResult.Fail(Localizer.Get("StartupRunOnceMissing"));
+        if (!string.Equals(liveCommand, item.Command, StringComparison.Ordinal))
+            return StartupRunOnceResult.Fail(Localizer.Get("StartupRegistryCommandChanged"));
 
         if (item.ImagePath.Length > 0 && Path.IsPathRooted(item.ImagePath) && !File.Exists(item.ImagePath))
             return StartupRunOnceResult.Fail(Localizer.Get("StartupRunOnceFileMissing"));
@@ -312,7 +340,7 @@ public static class StartupToggle
             return StartupRunOnceResult.Fail(ex.Message);
         }
 
-        if (!StartupRegistryScanner.Delete(registryTarget, out var deleteError))
+        if (!StartupRegistryScanner.Delete(registryTarget, liveCommand, out var deleteError))
         {
             return StartupRunOnceResult.Fail(
                 string.Format(

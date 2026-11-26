@@ -35,7 +35,11 @@ internal static class DriverStoreCleanup
 
     internal static List<Package> SelectOld(IEnumerable<Package> packages, ISet<string> inUse) => packages
         .GroupBy(p => string.Join("|", p.Original, p.Provider, p.ClassId, p.Architecture).ToUpperInvariant())
-        .SelectMany(group => group.Where(p => p.Version < group.Max(x => x.Version) && !inUse.Contains(p.Published)))
+        .SelectMany(group =>
+        {
+            var newest = group.Max(p => p.Version);
+            return group.Where(p => p.Version < newest && !inUse.Contains(p.Published));
+        })
         .ToList();
 
     internal static async Task<List<Package>> Candidates(CancellationToken token)

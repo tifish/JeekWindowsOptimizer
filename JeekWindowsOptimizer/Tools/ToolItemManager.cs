@@ -8,16 +8,15 @@ public static class ToolItemManager
 {
     private static readonly ILogger Log = LogManager.CreateLogger(nameof(ToolItemManager));
 
-    public static List<ToolItem> Items { get; } = [];
+    public static List<ToolItem> Items { get; private set; } = [];
 
     public static async Task Load()
     {
-        Items.Clear();
-
         var tabFile = new TabFile();
         if (!await tabFile.LoadAsync(Path.Join(AppPaths.ProgramDir, @"Data\Tools.tab")))
             return;
 
+        var items = new List<ToolItem>();
         foreach (var row in tabFile.Rows.Skip(1))
         {
             if (row.Count != 11)
@@ -30,13 +29,14 @@ public static class ToolItemManager
                 var optional = ParseBool(row[10]);
                 if (optional && !item.IsAvailable)
                     continue;
-                Items.Add(item);
+                items.Add(item);
             }
             catch (Exception ex)
             {
                 Log.ZLogError(ex, $"Failed to load tool item: {string.Join(" ", row)}");
             }
         }
+        Items = items;
     }
 
     private static ToolItem ParseToolItem(List<string> row)

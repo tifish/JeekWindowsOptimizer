@@ -25,12 +25,6 @@ public static class RecycleBin
         return SHQueryRecycleBin(rootPath, ref info) == 0 ? info.i64Size : 0;
     }
 
-    public static long GetItemCount(string? rootPath = null)
-    {
-        var info = new SHQUERYRBINFO { cbSize = (uint)Marshal.SizeOf<SHQUERYRBINFO>() };
-        return SHQueryRecycleBin(rootPath, ref info) == 0 ? info.i64NumItems : 0;
-    }
-
     /// <summary>Empties the bin silently; all drives when <paramref name="rootPath" /> is null.</summary>
     public static bool Empty(string? rootPath = null)
     {

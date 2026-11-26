@@ -500,7 +500,7 @@ public static class StartupLedgerProbe
             var ownBadStore = new StartupDecisionShardStore(() => ownBadDir, "PC-A", enableBackgroundTimers: false);
             ownBadStore.Load();
             check("corrupt own shard poisons store and refuses writes",
-                ownBadStore.IsPoisoned
+                ownBadStore.IsPoisoned && !ownBadStore.Flush()
                 && !ownBadStore.Decide("x", StartupDecision.Allow, new StartupDecisionSnapshot("Service", "X", null, "x.exe")));
 
             // (b) Future version in any remote shard blocks writes.

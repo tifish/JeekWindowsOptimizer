@@ -2,6 +2,7 @@ param(
     [Parameter(Position = 0)]
     [string]$StageDir,
     [string]$InstallDir = "",
+    [ValidatePattern('^[\w.-]+$')]
     [string]$AppName = "JeekWindowsOptimizer",
     [int]$GracefulWaitSeconds = 5,
     [int]$CloseWaitSeconds = 5,
@@ -33,7 +34,6 @@ if ([string]::IsNullOrWhiteSpace($InstallDir)) {
 }
 
 $installDir = [System.IO.Path]::GetFullPath($InstallDir)
-$installPrefix = $installDir.TrimEnd('\', '/') + '\'
 $exePath = Join-Path $installDir "$AppName.exe"
 
 try {
@@ -67,7 +67,7 @@ function Get-InstallAppProcesses {
             return
         }
         $procPath = Get-ProcessExecutablePath -Process $_
-        if ($procPath -and $procPath.StartsWith($installPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        if ($procPath -eq $exePath) {
             $matched += $_
         }
     }
@@ -124,11 +124,28 @@ Write-Host "Please keep this window open. The app will restart automatically"
 Write-Host "when the update is finished."
 Write-Host ""
 
+$installStarted = $false
 try {
     $stageDir = [System.IO.Path]::GetFullPath($StageDir)
+    $stagePrefix = $stageDir.TrimEnd('\', '/') + '\'
+    $installPrefix = $installDir.TrimEnd('\', '/') + '\'
+    foreach ($dir in @($stagePrefix, $installPrefix)) {
+        if ($dir.TrimEnd('\') -eq [System.IO.Path]::GetPathRoot($dir).TrimEnd('\')) {
+            throw "The update package and installation directories must not be volume roots."
+        }
+    }
+    if ($stagePrefix.StartsWith($installPrefix, [StringComparison]::OrdinalIgnoreCase) -or
+        $installPrefix.StartsWith($stagePrefix, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "The update package and installation directories must be separate."
+    }
 
-    if (-not (Test-Path -LiteralPath (Join-Path $stageDir "$AppName.exe"))) {
-        throw "Staged update package is missing $AppName.exe: $stageDir"
+    if (-not (Test-Path -LiteralPath $exePath -PathType Leaf)) {
+        throw "The installation directory is missing $AppName.exe."
+    }
+    foreach ($required in @("$AppName.exe", "Runtime\$AppName.dll", "Runtime\$AppName.runtimeconfig.json", "Runtime\${AppName}Mcp.exe", "Data\Languages.tab")) {
+        if (-not (Test-Path -LiteralPath (Join-Path $stageDir $required) -PathType Leaf)) {
+            throw "Staged update package is missing ${required}: $stageDir"
+        }
     }
 
     Write-Host "[1/3] Waiting for $AppName in $installDir to exit..."
@@ -157,45 +174,28 @@ try {
     }
 
     Write-Host "[2/3] Installing files..."
-    # Preserve portable user data, logs, this script so it is not deleted mid-run,
-    # and the user-supplied Tools\Activator (not shipped in the package).
-    # Matches install.ps1's robocopy /XD list.
-    $preserveNames = @("Config", "Logs", "AutoUpdate.ps1")
-    $maxAttempts = 5
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-        try {
-            Get-ChildItem -LiteralPath $installDir -Force -ErrorAction SilentlyContinue |
-                Where-Object { $preserveNames -notcontains $_.Name } |
-                ForEach-Object {
-                    if ($_.PSIsContainer -and $_.Name -eq "Tools") {
-                        Get-ChildItem -LiteralPath $_.FullName -Force -ErrorAction SilentlyContinue |
-                            Where-Object { $_.Name -ne "Activator" } |
-                            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-                    } else {
-                        Remove-Item -LiteralPath $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
-                    }
-                }
-
-            Copy-Item -Path (Join-Path $stageDir "*") -Destination $installDir -Recurse -Force
-            break
-        }
-        catch {
-            if ($attempt -ge $maxAttempts) {
-                throw
-            }
-            Start-Sleep -Milliseconds 300
-        }
+    # Keep user-owned directories. Copy changed files and prune obsolete ones,
+    # retaining usable installed files until their replacements are available.
+    $installStarted = $true
+    robocopy $stageDir $installDir /MIR /XJ /R:3 /W:1 /XD Config Logs Activator /NFL /NDL /NJH /NJS /NP | Out-Null
+    if ($LASTEXITCODE -ge 8) {
+        throw "Failed to copy files (robocopy exit code $LASTEXITCODE)."
     }
 
-    # Remove the update root the app created (typically
-    # %LOCALAPPDATA%\JeekWindowsOptimizer\Update containing package\ + version.txt).
-    # Fall back to deleting only the package folder for legacy layouts.
+    # Remove the staged package and its known sidecars. Preserve sibling files.
+    $stageDir = $stagePrefix.TrimEnd('\')
     $updateRoot = Split-Path -Parent $stageDir
     $updateRootName = Split-Path -Leaf $updateRoot
-    if ($updateRootName -eq "Update" -or $updateRootName -eq "$AppName-update") {
-        Remove-Item -Recurse -Force -LiteralPath $updateRoot -ErrorAction SilentlyContinue
-    } else {
-        Remove-Item -Recurse -Force -LiteralPath $stageDir -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force -LiteralPath $stageDir -ErrorAction SilentlyContinue
+    if ((Split-Path -Leaf $stageDir) -eq 'package' -and
+        ($updateRootName -eq "Update" -or $updateRootName -eq "$AppName-update")) {
+        foreach ($file in @('version.txt', "$AppName.zip")) {
+            $sidecar = Join-Path $updateRoot $file
+            if (Test-Path -LiteralPath $sidecar -PathType Leaf) {
+                Remove-Item -LiteralPath $sidecar -Force -ErrorAction SilentlyContinue
+            }
+        }
+        try { [System.IO.Directory]::Delete($updateRoot) } catch [System.IO.IOException] {}
     }
 
     Write-Host "[3/3] Restarting $AppName..."
@@ -210,7 +210,7 @@ catch {
     Write-Host ""
     Write-Host "Update failed: $($_.Exception.Message)" -ForegroundColor Red
     # Best effort: bring the app back even if the install failed.
-    if (-not $NoRestart -and (Test-Path -LiteralPath $exePath)) {
+    if ($installStarted -and -not $NoRestart -and (Test-Path -LiteralPath $exePath)) {
         Start-Process -FilePath $exePath -WorkingDirectory $installDir
     }
     if (-not $NoRestart) {

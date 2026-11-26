@@ -128,6 +128,19 @@ internal static class StartupDetailsProbe
 
             if (runOnceItem is not null)
             {
+                using (var key = Registry.CurrentUser.OpenSubKey(RunOncePath, writable: true))
+                {
+                    var changed = runOnceItem.Command + " changed";
+                    key!.SetValue(runOnceName, changed);
+                    var refused = StartupToggle.RunOnceAndDelete(runOnceItem);
+                    check("a changed RunOnce command requires a fresh scan",
+                        !refused.Succeeded && Equals(key.GetValue(runOnceName), changed) && !File.Exists(markerPath));
+                    var removed = StartupRegistryScanner.Delete((RegistryValueDeleteTarget)runOnceItem.DeleteTarget!,
+                        runOnceItem.Command, out _);
+                    check("a replacement registry command survives stale deletion",
+                        !removed && Equals(key.GetValue(runOnceName), changed));
+                    key.SetValue(runOnceName, runOnceItem.Command);
+                }
                 var result = StartupToggle.RunOnceAndDelete(runOnceItem);
                 var markerReached = WaitForMarker(markerPath, TimeSpan.FromSeconds(5));
                 using var runOnceKey = Registry.CurrentUser.OpenSubKey(RunOncePath);

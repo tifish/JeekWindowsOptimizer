@@ -69,7 +69,7 @@ public partial class ToolItem : ObservableObject
 
         if (Design.IsDesignMode)
             LoadToolIconSyncForDesigner();
-        else
+        else if (IsAvailable)
             _ = LoadToolIconAsync();
     }
 

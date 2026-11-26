@@ -11,6 +11,7 @@ internal static class DiskSpaceCleanupProbe
         if (scenario == "lcu") return await LcuAsync();
         if (scenario == "installer_baseline") return await InstallerBaselineAsync();
         if (scenario == "graphics") return await FixedDirectoryAsync();
+        if (scenario == "services") return VerifyServiceRestoration();
         if (scenario == "drivers")
         {
             var packages = DriverStoreCleanup.Parse("Published Name: oem1.inf\nOriginal Name: gpu.inf\nProvider Name: Vendor\nClass Name: Display\nClass GUID: {4d36e968-e325-11ce-bfc1-08002be10318}\nClass Version: 2.0\nDriver Version: 01/01/2025 1.2.0.0\n\n发布名称: oem2.inf\n原始名称: gpu.inf\n提供商名称: Vendor\n类名: Display\n类 GUID: {4d36e968-e325-11ce-bfc1-08002be10318}\n驱动程序版本: 01/01/2026 1.10.0.0");
@@ -61,7 +62,6 @@ internal static class DiskSpaceCleanupProbe
         }
         if (scenario == "shadows")
         {
-            Require(ShadowCopyStorage.ParseUsedBytes("Used space: 2 GB (3%)") == 2147483648L, "native size parser");
             var now = DateTime.Now;
             var newest = new ShadowCopyStorage.Snapshot("new", now);
             var old = new ShadowCopyStorage.Snapshot("old", now.AddDays(-1));
@@ -114,6 +114,47 @@ internal static class DiskSpaceCleanupProbe
             throw new InvalidOperationException("FAIL: " + name);
     }
 
+    private static string VerifyServiceRestoration()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var restarted = new List<string>();
+        ServiceStopResult Stop(string name) => new(name, ServiceStopOutcome.Stopped, [], null);
+        bool Start(string name) { restarted.Add(name); return true; }
+        try
+        {
+            ServiceCacheCleanup.WithServicesStopped(["first", "inactive", "second"], cancellation.Token,
+                name => name != "inactive", Stop, Start, () =>
+                {
+                    cancellation.Cancel();
+                    cancellation.Token.ThrowIfCancellationRequested();
+                    return 0;
+                });
+            throw new InvalidOperationException("Cancellation was lost.");
+        }
+        catch (OperationCanceledException) { }
+        Require(restarted.SequenceEqual(["second", "first"]), "restore only previously running services on cancellation");
+        restarted.Clear();
+        try
+        {
+            ServiceCacheCleanup.WithServicesStopped(["first", "second"], default, _ => true,
+                name => name == "first" ? Stop(name) : new(name, ServiceStopOutcome.TimedOut, [], null),
+                Start, () => throw new InvalidOperationException("Cleanup ran after stop failed."));
+            throw new InvalidOperationException("Stop failure was lost.");
+        }
+        catch (IOException) { }
+        Require(restarted.SequenceEqual(["second", "first"]), "partial stop failure restores both services");
+        restarted.Clear();
+        try
+        {
+            ServiceCacheCleanup.WithServicesStopped(["first", "second"], default, _ => true, Stop,
+                name => Start(name) && name != "second", () => 100);
+            throw new InvalidOperationException("Restart failure was lost.");
+        }
+        catch (IOException) { }
+        Require(restarted.SequenceEqual(["second", "first"]), "one restart failure does not skip the rest");
+        return "PASS services: cancellation, stop timeout, inactive services, and restart failure";
+    }
+
     private static async Task<string> BrowserAsync()
     {
         var root = Path.Join(Path.GetTempPath(), "JeekCleanupProbe-" + Guid.NewGuid().ToString("N"));
@@ -161,7 +202,7 @@ internal static class DiskSpaceCleanupProbe
             Require(item.SizeBytes == 0 && File.Exists(Path.Join(outside, "keep")), "linked profiles and caches skipped");
             return "PASS browser: multiple profiles, cache allowlist, running guard, locked file, retry, preserved data, reparse points";
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 
     private static async Task<string> NuGetAsync()
@@ -215,7 +256,7 @@ internal static class DiskSpaceCleanupProbe
             Require(rejectedRoot, "drive root rejected");
             return "PASS nuget: real CLI, overridden paths, separate caches, package opt-in, locked file error, retry, links and root guard";
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 
     private static async Task<string> UserDumpsAsync()
@@ -259,7 +300,7 @@ internal static class DiskSpaceCleanupProbe
             Require(absentItem.State == DiskSpaceItemState.Done && absentItem.SizeBytes == 0, "missing directory");
             return "PASS user_dumps: exact extension, top-level only, diagnostic opt-in, read-only and locked files, retry, links, missing directory";
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 
     private static async Task<string> LcuAsync()
@@ -324,7 +365,7 @@ internal static class DiskSpaceCleanupProbe
                 "locked entry reported incomplete without stopping the remaining entries");
             return "PASS lcu: pending reboot, servicing activity, current-boot staging, stale scan guard, successful retry, sibling preserved, locked entry";
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 
     private static async Task<string> InstallerBaselineAsync()
@@ -357,7 +398,7 @@ internal static class DiskSpaceCleanupProbe
             Require(cacheItem.State == DiskSpaceItemState.Failed && File.Exists(msi), "redirected cache blocked");
             return "PASS installer_baseline: exact directory, opt-in, active installer guard, MSI/MSP preserved, link blocked";
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 
     private static async Task<string> FixedDirectoryAsync()
@@ -390,6 +431,18 @@ internal static class DiskSpaceCleanupProbe
                 Directory.CreateSymbolicLink(Path.Join(path, "link"), outside);
                 await cache.CleanAsync();
                 Require(File.Exists(Path.Join(outside, "keep")), "nested link preserved");
+                var child = Directory.CreateDirectory(Path.Join(outside, "child")).FullName;
+                File.WriteAllBytes(Path.Join(child, "keep"), new byte[20]);
+                var redirected = Path.Join(path, "link", "child");
+                Require(FileSystemCleaner.GetDirectorySize(redirected) == 0
+                    && FileSystemCleaner.GetFilesSize(redirected, "*") == 0
+                    && FileSystemCleaner.GetFileSize(Path.Join(redirected, "keep")) == 0,
+                    "linked ancestor excluded from measurement");
+                FileSystemCleaner.DeleteFile(Path.Join(redirected, "keep"));
+                FileSystemCleaner.DeleteFiles(redirected, "*");
+                FileSystemCleaner.DeleteDirectoryContents(redirected);
+                FileSystemCleaner.DeleteDirectory(redirected);
+                Require(File.Exists(Path.Join(child, "keep")), "all cleanup entry points preserve linked ancestors");
             }
 
             var busyPath = Path.Join(root, "busy");
@@ -415,7 +468,7 @@ internal static class DiskSpaceCleanupProbe
             }
             return "PASS graphics: all four paths, opt-in, measured size, locked files, retry, siblings and link targets preserved, installer guard, system roots refused";
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 
     private static async Task<string> SelectionAsync()

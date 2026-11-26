@@ -4,7 +4,7 @@ namespace JeekWindowsOptimizer;
 
 public static class MicrosoftStoreItemManager
 {
-    public static List<MicrosoftStoreItem> Items { get; } = [];
+    public static List<MicrosoftStoreItem> Items { get; private set; } = [];
 
     public static async Task Load()
     {
@@ -16,6 +16,7 @@ public static class MicrosoftStoreItemManager
         )
             return;
 
+        var items = new List<MicrosoftStoreItem>();
         foreach (var row in tabFile.Rows.Skip(1))
         {
             if (row.Count != 4)
@@ -35,7 +36,8 @@ public static class MicrosoftStoreItemManager
                 category,
                 packageName
             );
-            Items.Add(item);
+            items.Add(item);
         }
+        Items = items;
     }
 }

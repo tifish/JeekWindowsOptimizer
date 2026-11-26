@@ -90,6 +90,11 @@ internal static class DebugMcpServer
             return ToolText(await task);
         });
         host.AddTool("optimization_items", OptimizationItemsAsync);
+        host.AddTool("catalog_reload_probe", async _ =>
+        {
+            var task = await OnUiAsync(VerifyCatalogReloadAsync);
+            return ToolText(await task);
+        });
         host.AddTool("optimization_init_timings", OptimizationInitTimingsAsync);
         host.AddTool("optimization_refresh", async _ =>
         {
@@ -239,6 +244,22 @@ internal static class DebugMcpServer
     #endregion
 
     #region Describe
+
+    private static async Task<string> VerifyCatalogReloadAsync()
+    {
+        async Task<string[]> LoadKeys()
+        {
+            await Task.WhenAll(DriverItemManager.Load(), RegistryItemManager.Load(), MicrosoftStoreItemManager.Load(),
+                ScheduledTaskItemManager.Load(), ServiceItemManager.Load(), ToolItemManager.Load());
+            return [.. DriverItemManager.Items.Select(i => i.NameKey), .. RegistryItemManager.Items.Select(i => i.NameKey),
+                .. MicrosoftStoreItemManager.Items.Select(i => i.NameKey), .. ScheduledTaskItemManager.Items.Select(i => i.NameKey),
+                .. ServiceItemManager.Items.Select(i => i.NameKey), .. ToolItemManager.Items.Select(i => i.NameKey)];
+        }
+        var first = await LoadKeys();
+        var second = await LoadKeys();
+        DiskSpaceCleanupProbe.Require(first.Length > 0 && first.SequenceEqual(second), "catalog reload is idempotent");
+        return $"PASS catalog: {first.Length} entries after each reload";
+    }
 
     private static string BuildDescribeText()
     {
@@ -1145,8 +1166,8 @@ internal static class DebugMcpServer
     {
         await (await OnUiAsync(() => RequireMainVm().EnsureStartupItemsAsync()));
 
-        var recorded = await OnUiAsync(() =>
-            StartupItemManager.AcceptBaseline(RequireMainVm().StartupItems.ToList()));
+        var items = await OnUiAsync(() => RequireMainVm().StartupItems.ToList());
+        var recorded = await Task.Run(() => StartupItemManager.AcceptBaseline(items));
 
         await OnUiAsync(() =>
         {

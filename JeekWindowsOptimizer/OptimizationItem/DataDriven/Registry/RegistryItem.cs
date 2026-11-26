@@ -24,7 +24,7 @@ public class RegistryItem(string groupNameKey, string nameKey, string descriptio
                 foreach (var registryValue in RegistryValues)
                     registryValue.IsOptimized = value;
 
-                return true;
+                return RegistryValues.All(registryValue => registryValue.IsOptimized) == value;
             }
         );
     }

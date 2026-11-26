@@ -11,11 +11,10 @@ public sealed class ShadowCopiesCleanupItem : DiskSpaceCleanupItem
     public override bool IsReclaimableUpperBound => true;
     public int SnapshotCount { get; private set; }
 
-    protected override async Task<long> ScanCore(CancellationToken cancellationToken)
+    protected override Task<long> ScanCore(CancellationToken cancellationToken)
     {
         SnapshotCount = ShadowCopyStorage.List().Count;
-        var used = await ShadowCopyStorage.UsedBytes(cancellationToken);
-        return used;
+        return Task.FromResult(ShadowCopyStorage.UsedBytes(cancellationToken));
     }
 
     protected override async Task<bool> CleanCore(CancellationToken cancellationToken)

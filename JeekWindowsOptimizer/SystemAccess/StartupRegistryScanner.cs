@@ -291,7 +291,7 @@ public static class StartupRegistryScanner
     }
 
     /// <summary>Deletes an orphaned Run or RunOnce registry value and its StartupApproved flag if present.</summary>
-    public static bool Delete(RegistryValueDeleteTarget target, out string? error)
+    public static bool Delete(RegistryValueDeleteTarget target, string expectedCommand, out string? error)
     {
         error = null;
 
@@ -301,6 +301,11 @@ public static class StartupRegistryScanner
             using var key = baseKey.OpenSubKey(target.SubKey, writable: true);
             if (key is not null)
             {
+                if (key.GetValue(target.ValueName) is { } current && !Equals(current, expectedCommand))
+                {
+                    error = Jeek.Avalonia.Localization.Localizer.Get("StartupRegistryCommandChanged");
+                    return false;
+                }
                 key.DeleteValue(target.ValueName, throwOnMissingValue: false);
                 if (key.GetValue(target.ValueName) is not null)
                 {

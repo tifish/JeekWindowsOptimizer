@@ -77,8 +77,18 @@ public static class DiskCleanupTool
             if (process is null)
                 return false;
 
-            await process.WaitForExitAsync(cancellationToken);
-            return true;
+            try
+            {
+                await process.WaitForExitAsync(cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                if (!process.HasExited)
+                    process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync();
+                throw;
+            }
+            return process.ExitCode == 0;
         }
         finally
         {

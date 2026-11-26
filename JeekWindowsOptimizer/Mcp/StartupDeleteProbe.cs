@@ -303,6 +303,7 @@ internal static class StartupDeleteProbe
 
             if (bootItem is not null)
             {
+                check("live guard rejects changing a boot driver", !CanChangeStart(bootItem));
                 var refused = StartupToggle.Delete(bootItem);
                 using var probe = Registry.LocalMachine.OpenSubKey($@"{ServicesPath}\{bootName}");
                 check("delete refuses a boot-critical driver and leaves its key intact",
@@ -315,6 +316,12 @@ internal static class StartupDeleteProbe
             try { Registry.LocalMachine.DeleteSubKeyTree($@"{ServicesPath}\{svcName}", false); } catch { }
             try { Registry.LocalMachine.DeleteSubKeyTree($@"{ServicesPath}\{bootName}", false); } catch { }
         }
+    }
+
+    private static bool CanChangeStart(StartupItem item)
+    {
+        try { ServiceRegistryScanner.ReadMutableStart(item); return true; }
+        catch (InvalidOperationException) { return false; }
     }
 
     private static void ShellExtensionScenario(string token, CheckFn check)

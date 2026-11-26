@@ -34,8 +34,24 @@ internal sealed class PnpmStore : IPnpmStore
         {
             var exe = Path.Join(directory, "pnpm.exe");
             if (File.Exists(exe)) return new(exe, null);
+
+            // Standalone pnpm on Windows installs a .cmd shim pointing at its versioned exe.
+            // Resolve the generated relative path without running a command shell.
+            var shim = Path.Join(directory, "pnpm.cmd");
+            if (File.Exists(shim))
+            {
+                foreach (var line in File.ReadLines(shim))
+                {
+                    var target = Regex.Match(line, """^\s*@?"%~dp0[\\/]?(?<path>\.\.[\\/]global[\\/]v\d+[\\/][a-f0-9]+[\\/]node_modules[\\/]@pnpm[\\/]exe[\\/]pnpm\.exe)"\s+%\*\s*$""",
+                        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                    if (!target.Success) continue;
+                    var standalone = Path.GetFullPath(target.Groups["path"].Value, directory);
+                    if (File.Exists(standalone)) return new(standalone, null);
+                }
+            }
             foreach (var relative in new[] { @"node_modules\pnpm\bin\pnpm.cjs", @"node_modules\corepack\dist\pnpm.js" })
             {
+                if (relative.Contains("corepack") && !File.Exists(shim)) continue;
                 var script = Path.Join(directory, relative);
                 if (!File.Exists(script)) continue;
                 var node = new[] { directory }.Concat(directories).Select(p => Path.Join(p, "node.exe")).FirstOrDefault(File.Exists);

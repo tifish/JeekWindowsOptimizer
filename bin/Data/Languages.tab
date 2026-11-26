@@ -808,6 +808,8 @@ StartupScanFinished	Scan complete: {0} total, {1} pending decision.	扫描完成
 StartupScanFailed	Startup scan failed: {0}	启动项扫描失败：{0}
 StartupLedgerUnreadable	Saved decisions could not be read ({0}), so saving is paused to avoid overwriting them. This usually happens while a sync tool replaces the file and will recover automatically.	暂时无法读取启动项决策文件（{0}），为防覆盖已暂停写入。通常是同步工具正在替换文件，稍后会自动恢复。
 StartupLedgerBlocked	Saving is paused while the decision file is unreadable.	决策文件暂时不可读，已暂停保存。
+StartupBaselineSaveFailed	Could not save the startup baseline. Check the settings directory and try again.	无法保存启动项基线，请检查设置目录后重试。
+StartupDecisionSaveFailed	Could not save startup decisions. Check the settings directory and try again.	无法保存启动项决策，请检查设置目录后重试。
 StartupForgetAllConfirm	Clear all {0} remembered startup decisions across this PC and every synced PC? Nothing on Windows changes, and every item will ask for your decision again.	确定清空全部 {0} 条已记住的启动项决定（包括所有同步电脑）吗？不会修改系统现有设置，但所有项目都会重新变为“待决定”。
 StartupKindRunOnce	Run-once entries	一次性启动项
 StartupKindInternetExplorerExtension	Browser add-ons	浏览器加载项
@@ -837,6 +839,8 @@ StartupStatusRunningOnce	Running…	正在运行…
 StartupRunOnceSucceeded	Ran and deleted Run-once entry: {0}	已运行并删除一次性启动项：{0}
 StartupRunOnceFailed	Failed to run: {0}	运行失败：{0}
 StartupRunOnceMissing	This Run-once entry no longer exists; rescan to refresh.	此一次性启动项已不存在，请重新扫描。
+StartupRegistryCommandChanged	The startup command changed. Scan again before continuing.	启动命令已更改，请重新扫描后再操作。
+StartupRegistrationChanged	The startup registration changed. Scan again before continuing.	启动项注册信息已更改，请重新扫描后再操作。
 StartupRunOnceFileMissing	The target file no longer exists; rescan before taking action.	目标文件已不存在，已取消运行，请重新扫描。
 StartupRunOnceDeleteFailedAfterRun	Started, but failed to delete registry value: {0}	已启动，但删除注册表项失败：{0}
 StartupTaskEnabled	Enabled	已启用

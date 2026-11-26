@@ -102,6 +102,6 @@ internal static class DeveloperCacheProbe
             Check(developer.Count == DeveloperCachePaths.Kinds.Length + 3 && developer.All(i => !i.IsChecked), "NuGet included; entire developer group opt-in");
             return "PASS developer: all 12 caches measured/cleaned in isolation; settings, sources, IDE backups and installer metadata preserved; locked files/retry, process guard, links, protected/project overrides, npm/Maven configuration, environment paths, unique rows and default opt-in";
         }
-        finally { FileSystemCleaner.DeleteDirectory(root); }
+        finally { Directory.Delete(root, recursive: true); }
     }
 }

@@ -4,7 +4,7 @@ namespace JeekWindowsOptimizer;
 
 public static class DriverItemManager
 {
-    public static List<DriverItem> Items { get; } = [];
+    public static List<DriverItem> Items { get; private set; } = [];
 
     public static async Task Load()
     {
@@ -39,7 +39,6 @@ public static class DriverItemManager
                     Category = category,
                 };
                 itemsDict[nameKey] = item;
-                Items.Add(item);
             }
 
             if (kind.Equals("Service", StringComparison.OrdinalIgnoreCase))
@@ -47,5 +46,6 @@ public static class DriverItemManager
             else if (kind.Equals("Driver", StringComparison.OrdinalIgnoreCase))
                 item.DriverPathPatterns.Add(value);
         }
+        Items = [.. itemsDict.Values];
     }
 }

@@ -50,7 +50,12 @@ public static class StartupLocalState
         {
             JsonSettingsFile.TryLoad(FilePath, out StartupLocalSettings settings);
             settings.FirstSeenUtc ??= new Dictionary<string, DateTime>(StringComparer.Ordinal);
-            settings.OriginalServiceStart ??= new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            // JSON does not preserve a dictionary's comparer.
+            var starts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            if (settings.OriginalServiceStart is { } saved)
+                foreach (var pair in saved)
+                    starts.TryAdd(pair.Key, pair.Value);
+            settings.OriginalServiceStart = starts;
             _settings = settings;
             _loaded = true;
         }
@@ -92,8 +97,17 @@ public static class StartupLocalState
         lock (Gate)
         {
             EnsureLoaded();
+            var previous = _settings.BaselineTakenUtc;
             _settings.BaselineTakenUtc = DateTime.UtcNow;
-            Save();
+            try
+            {
+                SharedDataFile.WriteAllTextAtomic(FilePath, JsonSettingsFile.Serialize(_settings));
+            }
+            catch
+            {
+                _settings.BaselineTakenUtc = previous;
+                throw;
+            }
         }
     }
 
@@ -133,7 +147,15 @@ public static class StartupLocalState
                 return;
 
             _settings.OriginalServiceStart[serviceName] = start;
-            Save();
+            try
+            {
+                SharedDataFile.WriteAllTextAtomic(FilePath, JsonSettingsFile.Serialize(_settings));
+            }
+            catch
+            {
+                _settings.OriginalServiceStart.Remove(serviceName);
+                throw;
+            }
         }
     }
 

@@ -412,7 +412,8 @@ internal static class AppSettingsStore
 
         try
         {
-            JsonSettingsFile.TryLoad(RoamingSettingsPath, out RoamingSettings disk);
+            if (!JsonSettingsFile.TryLoad(RoamingSettingsPath, out RoamingSettings disk))
+                return;
             NormalizeRoaming(disk);
             var diskJson = JsonSettingsFile.Serialize(disk);
             if (string.Equals(diskJson, _lastSavedRoamingJson, StringComparison.Ordinal))

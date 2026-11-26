@@ -33,7 +33,7 @@ internal static class ToolIconExtractor
     private const uint SHGFI_LARGEICON = 0;
     private const uint SHGFI_SMALLICON = 1;
 
-    [DllImport("shell32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    [DllImport("shell32.dll", EntryPoint = "SHGetFileInfoW", CharSet = CharSet.Unicode, ExactSpelling = true)]
     private static extern nint SHGetFileInfo(
         string pszPath,
         uint dwFileAttributes,

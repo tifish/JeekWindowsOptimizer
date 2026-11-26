@@ -4,7 +4,7 @@ namespace JeekWindowsOptimizer;
 
 public static class ScheduledTaskItemManager
 {
-    public static List<ScheduledTaskItem> Items { get; } = [];
+    public static List<ScheduledTaskItem> Items { get; private set; } = [];
 
     public static async Task Load()
     {
@@ -62,6 +62,6 @@ public static class ScheduledTaskItemManager
         // keeping the table order.
         var candidates = itemsDict.Values.ToList();
         var exists = await Task.WhenAll(candidates.Select(item => item.AnyTaskExists()));
-        Items.AddRange(candidates.Where((_, index) => exists[index]));
+        Items = [.. candidates.Where((_, index) => exists[index])];
     }
 }

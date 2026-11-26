@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using JeekTools;
-
 namespace JeekWindowsOptimizer;
 
 /// <summary>
@@ -23,51 +20,6 @@ public static class WindowsUpdateCache
         return FileSystemCleaner.GetDirectorySize(DownloadPath, cancellationToken);
     }
 
-    /// <summary>Returns bytes freed; -1 when a service could not be restored.</summary>
-    public static async Task<long> Clean(CancellationToken cancellationToken = default)
-    {
-        var servicesToRestore = new List<string>();
-        foreach (var serviceName in ServiceNames)
-        {
-            if (await IsServiceRunning(serviceName))
-            {
-                servicesToRestore.Add(serviceName);
-                await RunAndWait("sc.exe", $"stop {serviceName}");
-            }
-        }
-
-        // Give the service control manager a moment to release file handles.
-        if (servicesToRestore.Count > 0)
-            await Task.Delay(1500, cancellationToken);
-
-        var freed = FileSystemCleaner.DeleteDirectoryContents(DownloadPath, cancellationToken);
-
-        var restored = true;
-        foreach (var serviceName in servicesToRestore)
-            restored &= await RunAndWait("sc.exe", $"start {serviceName}");
-
-        return restored ? freed : -1;
-    }
-
-    private static async Task<bool> IsServiceRunning(string serviceName)
-    {
-        var output = await Executor.RunWithOutput("sc.exe", $"query {serviceName}");
-        return output.Contains("RUNNING", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static async Task<bool> RunAndWait(string fileName, string arguments)
-    {
-        using var process = Process.Start(
-            new ProcessStartInfo(fileName, arguments)
-            {
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            }
-        );
-        if (process is null)
-            return false;
-
-        await process.WaitForExitAsync();
-        return process.ExitCode == 0;
-    }
+    public static Task<long> Clean(CancellationToken cancellationToken = default) =>
+        ServiceCacheCleanup.CleanAsync(ServiceNames, [DownloadPath], cancellationToken);
 }

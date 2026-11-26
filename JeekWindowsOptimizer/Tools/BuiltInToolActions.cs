@@ -14,16 +14,16 @@ internal static class BuiltInToolActions
         };
     }
 
-    private static async Task<bool> RestartExplorer()
+    internal static async Task<bool> RestartExplorer()
     {
-        StopExplorer();
+        await Task.Run(StopExplorer);
         await Task.Delay(500);
         return StartExplorer();
     }
 
     private static async Task<bool> RefreshIconCache()
     {
-        StopExplorer();
+        await Task.Run(StopExplorer);
         await Task.Delay(500);
 
         FileSystemCleaner.DeleteFile(
@@ -45,10 +45,14 @@ internal static class BuiltInToolActions
 
     private static void StopExplorer()
     {
+        using var currentProcess = Process.GetCurrentProcess();
+        var session = currentProcess.SessionId;
         foreach (var process in Process.GetProcessesByName("explorer"))
         {
             try
             {
+                if (process.SessionId != session)
+                    continue;
                 process.Kill();
                 process.WaitForExit(5000);
             }
@@ -67,8 +71,9 @@ internal static class BuiltInToolActions
     {
         try
         {
-            return Process.Start(new ProcessStartInfo("explorer.exe") { UseShellExecute = true })
-                is not null;
+            var explorer = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+            using var process = Process.Start(new ProcessStartInfo(explorer) { UseShellExecute = true });
+            return process is not null;
         }
         catch
         {

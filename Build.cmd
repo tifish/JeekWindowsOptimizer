@@ -11,10 +11,9 @@ rem LocalAppData path or JeekWindowsOptimizerDebugMcp.cmd.
 del /q "bin\*.deps.json" "bin\*.runtimeconfig.json" "bin\*.dll" "bin\*.pdb" "bin\JeekWindowsOptimizerMcp.exe" 2>nul
 rd /s /q "bin\Runtime" 2>nul
 rd /s /q "bin\Libs" 2>nul
-rd /s /q "bin\Logs" 2>nul
 
 dotnet build --configuration Release JeekWindowsOptimizer\JeekWindowsOptimizer.csproj
-if errorlevel 1 pause
+if errorlevel 1 exit /b %errorlevel%
 
 del /q /s bin\*.pdb 2>nul
 

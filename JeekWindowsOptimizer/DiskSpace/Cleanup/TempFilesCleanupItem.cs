@@ -16,6 +16,7 @@ public class TempFilesCleanupItem : DiskSpaceCleanupItem
             };
 
             var userTemp = Path.TrimEndingDirectorySeparator(Path.GetTempPath());
+            FileSystemCleaner.ValidateCacheDirectory(userTemp);
             if (!paths.Contains(userTemp, StringComparer.OrdinalIgnoreCase))
                 paths.Add(userTemp);
 

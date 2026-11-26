@@ -184,12 +184,17 @@ internal static class AutoUpdateProbe
             // Prepare staged update package.
             File.WriteAllText(Path.Combine(stageDir, "JeekWindowsOptimizer.exe"), "updated-exe-payload");
             Directory.CreateDirectory(Path.Combine(stageDir, "Runtime"));
+            Directory.CreateDirectory(Path.Combine(stageDir, "Data"));
+            foreach (var file in new[] { @"Runtime\JeekWindowsOptimizer.dll", @"Runtime\JeekWindowsOptimizer.runtimeconfig.json",
+                @"Runtime\JeekWindowsOptimizerMcp.exe", @"Data\Languages.tab" })
+                File.WriteAllText(Path.Combine(stageDir, file), "fixture");
             File.WriteAllText(Path.Combine(stageDir, "Runtime", "new.dll"), "v-next-runtime");
             File.WriteAllText(Path.Combine(stageDir, "payload.txt"), "v-next");
             Directory.CreateDirectory(Path.Combine(stageDir, "Tools", "NewTool"));
             File.WriteAllText(Path.Combine(stageDir, "Tools", "NewTool", "tool.txt"), "new-tool");
             File.Copy(scriptPath, Path.Combine(stageDir, "AutoUpdate.ps1"), overwrite: true);
             File.WriteAllText(Path.Combine(updateRoot, "version.txt"), "999");
+            File.WriteAllText(Path.Combine(updateRoot, "unrelated.txt"), "keep-sibling");
 
             // Start one blocking process inside InstallDir and one decoy process in OtherInstall.
             // Meanwhile this real Debug JeekWindowsOptimizer.exe is also running in AppPaths.ProgramDir!
@@ -272,7 +277,8 @@ internal static class AutoUpdateProbe
             Require(File.ReadAllText(Path.Combine(installDir, "Tools", "Activator", "Run.cmd")) == "keep-activator", "Tools\\Activator must be preserved.");
             Require(File.ReadAllText(Path.Combine(installDir, "Tools", "NewTool", "tool.txt")) == "new-tool", "New tool folder should be copied into Tools.");
             Require(File.Exists(Path.Combine(installDir, "AutoUpdate.ps1")), "AutoUpdate.ps1 must exist after update.");
-            Require(!Directory.Exists(updateRoot), "Staged Update root must be removed after update.");
+            Require(!Directory.Exists(stageDir) && !File.Exists(Path.Combine(updateRoot, "version.txt")), "Staged package and version must be removed.");
+            Require(File.ReadAllText(Path.Combine(updateRoot, "unrelated.txt")) == "keep-sibling", "Unrelated update-root files must be preserved.");
 
             results.Add($"AutoUpdate.ps1 filtered to InstallDir (stopped PID {installProc.Id}, ignored other-dir PID {otherProc.Id} & live Debug PID {Environment.ProcessId}), swapped files, preserved user data");
         }

@@ -51,7 +51,7 @@ public class WindowsUpdateItem : OptimizationItem
 
                     using var service = CreateWindowsUpdateService();
                     if (service.GetStartMode() == WindowsService.StartMode.Disabled)
-                        service.SetStartMode(WindowsService.StartMode.Manual);
+                        return service.SetStartMode(WindowsService.StartMode.Manual);
                 }
 
                 return value;

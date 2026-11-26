@@ -32,12 +32,13 @@ public class WindowsTerminalUseNewWindow : OptimizationItem
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
     {
+        // The previous tab/window preference is unknown. Keep this a one-way action.
+        if (!value)
+            return false;
+
         var json = await SettingsJson.Load();
         if (json == null)
-        {
-            IsOptimized = true;
-            return true;
-        }
+            return false;
 
         json.Set("windowingBehavior", DefaultValue);
         await SettingsJson.Save(json);

@@ -235,15 +235,7 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static Task RestartExplorer()
     {
-        return OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.Background,
-            () =>
-            {
-                // Kill all explorer.exe processes
-                foreach (var process in Process.GetProcessesByName("explorer"))
-                    process.Kill();
-            }
-        );
+        return BuiltInToolActions.RestartExplorer();
     }
 
     public static async Task PromptReboot()

@@ -69,7 +69,7 @@ public static class ServiceRuntime
             {
                 status = controller.Status;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex) when (ex.InnerException is System.ComponentModel.Win32Exception { NativeErrorCode: 1060 })
             {
                 return new(serviceName, ServiceStopOutcome.NotFound, [], null);
             }
@@ -120,6 +120,11 @@ public static class ServiceRuntime
             if (status == ServiceControllerStatus.Running)
                 return true;
 
+            if (status == ServiceControllerStatus.StopPending)
+            {
+                controller.WaitForStatus(ServiceControllerStatus.Stopped, timeout);
+                status = controller.Status;
+            }
             if (status != ServiceControllerStatus.StartPending)
                 controller.Start();
 

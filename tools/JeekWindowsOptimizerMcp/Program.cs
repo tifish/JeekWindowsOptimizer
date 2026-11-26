@@ -46,35 +46,46 @@ while (await stdin.ReadLineAsync().ConfigureAwait(false) is { } line)
         continue;
     }
 
-    if (message is not null)
-        await HandleAsync(message).ConfigureAwait(false);
+    JsonNode? response;
+    if (message is JsonArray { Count: > 0 } batch)
+    {
+        var replies = new JsonArray();
+        foreach (var entry in batch)
+            if (await HandleAsync(entry).ConfigureAwait(false) is { } reply)
+                replies.Add(reply);
+        response = replies.Count > 0 ? replies : null;
+    }
+    else
+        response = await HandleAsync(message).ConfigureAwait(false);
+
+    if (response is not null)
+        await stdout.WriteLineAsync(response.ToJsonString()).ConfigureAwait(false);
 }
 
-async Task HandleAsync(JsonNode message)
+async Task<JsonNode?> HandleAsync(JsonNode? message)
 {
-    var envelope = message as JsonObject;
-    var method = envelope?["method"]?.GetValue<string>();
-    var id = envelope?["id"]?.DeepClone();
+    if (message is not JsonObject envelope || envelope["method"] is not JsonValue methodValue
+        || !methodValue.TryGetValue<string>(out var method))
+        return AdapterText.RpcError(null, -32600, "Invalid request");
+    var id = envelope["id"]?.DeepClone();
+    if (id is not null && method.StartsWith("notifications/", StringComparison.Ordinal))
+        return AdapterText.RpcError(id, -32600, "A notification cannot have an id.");
 
     // Only a real tool call is worth starting the GUI for: MCP clients open stdio servers
     // when a session begins, and popping a window on every session start would be rude.
     var mayLaunch = options.AutoLaunch && method == "tools/call";
 
-    string? response;
     try
     {
-        response = await connection
-            .SendAsync(message, AdapterText.ExpectsResponse(message), mayLaunch)
+        var response = await connection
+            .SendAsync(message, id is not null, mayLaunch)
             .ConfigureAwait(false);
+        return response is null ? null : JsonNode.Parse(response);
     }
     catch (Exception ex)
     {
-        await stdout.WriteLineAsync(OfflineResponse(method, id, ex.Message).ToJsonString()).ConfigureAwait(false);
-        return;
+        return id is null ? null : OfflineResponse(method, id, ex.Message);
     }
-
-    if (response is not null)
-        await stdout.WriteLineAsync(response).ConfigureAwait(false);
 }
 
 // The app is unreachable. Keep the session usable instead of failing the handshake: the
@@ -100,7 +111,7 @@ JsonNode OfflineResponse(string? method, JsonNode? id, string reason) => method 
         {
             ["type"] = "text",
             ["text"] = $"JeekWindowsOptimizer is not reachable on {options.DescribePipes()}. "
-                       + $"Start the app and retry. Details: {reason}",
+                       + $"Check the operation's state before retrying. Details: {reason}",
         }),
         ["isError"] = true,
     }),
@@ -111,13 +122,6 @@ JsonNode OfflineResponse(string? method, JsonNode? id, string reason) => method 
 internal static class AdapterText
 {
     internal static readonly UTF8Encoding Utf8 = new(encoderShouldEmitUTF8Identifier: false);
-
-    internal static bool ExpectsResponse(JsonNode message) => message switch
-    {
-        JsonObject single => single["id"] is not null,
-        JsonArray batch => batch.Any(item => item is JsonObject entry && entry["id"] is not null),
-        _ => true,
-    };
 
     internal static JsonObject RpcResult(JsonNode? id, JsonNode result) =>
         new() { ["jsonrpc"] = "2.0", ["id"] = id, ["result"] = result };
@@ -144,7 +148,7 @@ internal sealed record AdapterOptions(
 
     public static AdapterOptions Parse(string[] args)
     {
-        var surface = "debug";
+        var surface = "product";
         string? pipe = null;
         string? instance = null;
         string? appPath = null;
@@ -266,38 +270,32 @@ internal sealed class PipeConnection(AdapterOptions options) : IDisposable
 
     /// <summary>
     /// Forwards one message and returns the matching response line, or null when the
-    /// message was a notification. Retries once on a broken pipe so an app restart does not
-    /// end the agent's session.
+    /// message was a notification. After a broken pipe the next request reconnects.
     /// </summary>
     public async Task<string?> SendAsync(JsonNode message, bool expectsResponse, bool mayLaunch)
     {
         var payload = message.ToJsonString();
-        for (var attempt = 0; ; attempt++)
+        try
         {
-            try
-            {
-                var (reader, writer) = await ConnectAsync(mayLaunch).ConfigureAwait(false);
-                await writer.WriteLineAsync(payload).ConfigureAwait(false);
-                if (!expectsResponse)
-                    return null;
+            var (reader, writer) = await ConnectAsync(mayLaunch).ConfigureAwait(false);
+            await writer.WriteLineAsync(payload).ConfigureAwait(false);
+            if (!expectsResponse)
+                return null;
 
-                // Skip server-initiated notifications so they cannot be mistaken for the
-                // reply to this request (the pipe is duplex; the app may push later).
-                while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
-                {
-                    if (line.Length == 0)
-                        continue;
-                    if (JsonNode.Parse(line) is JsonObject reply && reply["id"] is null)
-                        continue;
+            while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
+            {
+                if (line.Length == 0 || JsonNode.Parse(line) is not JsonObject reply)
+                    continue;
+                if (JsonNode.DeepEquals(reply["id"], message["id"]))
                     return line;
-                }
-
-                throw new IOException("The app closed the pipe before replying.");
             }
-            catch (Exception) when (attempt == 0)
-            {
-                Reset();
-            }
+            throw new IOException("The app closed the pipe before replying.");
+        }
+        catch
+        {
+            // A request may have changed the system before its reply was lost.
+            Reset();
+            throw;
         }
     }
 

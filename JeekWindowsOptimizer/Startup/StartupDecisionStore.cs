@@ -329,26 +329,26 @@ internal sealed class StartupDecisionShardStore
     }
 
     /// <summary>Writes any pending changes immediately to this machine's own shard.</summary>
-    public void Flush(bool forceWrite = false, long? nowUtcMsOverride = null)
+    public bool Flush(bool forceWrite = false, long? nowUtcMsOverride = null)
     {
         lock (_gate)
         {
             _saveTimer?.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            FlushLocked(forceWrite, carryOver: null, nowUtcMsOverride);
+            return FlushLocked(forceWrite, carryOver: null, nowUtcMsOverride);
         }
     }
 
-    private void FlushLocked(
+    private bool FlushLocked(
         bool forceWrite,
         StartupDecisionLedger? carryOver,
         long? nowUtcMsOverride = null
     )
     {
         if (IsPoisoned)
-            return;
+            return false;
 
         if (!forceWrite && !_pendingForgetAll && _pendingLocalEdits.Count == 0 && carryOver is null)
-            return;
+            return true;
 
         var configDir = ConfigDir;
         var shardsDir = Path.Combine(configDir, StartupDecisionStore.ShardsDirName);
@@ -366,7 +366,7 @@ internal sealed class StartupDecisionShardStore
                 if (disk.HasAnyReadableFile && disk.OwnShardError is null)
                     _ledger = disk.Merged;
                 EnterPoisonedLocked(poisonReason);
-                return;
+                return false;
             }
 
             var merged = disk.HasAnyReadableFile
@@ -441,10 +441,12 @@ internal sealed class StartupDecisionShardStore
                 ScheduleRetryLocked();
             else
                 LeavePoisonedLocked();
+            return true;
         }
         catch (Exception ex)
         {
             Log.ZLogWarning(ex, $"Failed to save startup decision shard to {shardPath}");
+            return false;
         }
     }
 
@@ -1094,7 +1096,7 @@ public static partial class StartupDecisionStore
     public static bool ForgetAll() => Live.ForgetAll();
 
     /// <summary>Writes any pending changes immediately to this machine's own shard. Called on shutdown.</summary>
-    public static void Flush() => Live.Flush();
+    public static bool Flush() => Live.Flush();
 
     /// <summary>Re-reads and merges all shards from disk in place without writing back.</summary>
     public static bool Reload(bool notify = true) => Live.ReloadFromDisk(notify);

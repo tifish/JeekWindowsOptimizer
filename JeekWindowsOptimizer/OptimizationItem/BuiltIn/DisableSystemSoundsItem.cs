@@ -41,17 +41,17 @@ public class DisableSystemSounds : OptimizationItem
 
                 foreach (var groupName in rootKey.GetSubKeyNames())
                 {
-                    var groupKey = rootKey.OpenSubKey(groupName, true);
+                    using var groupKey = rootKey.OpenSubKey(groupName, true);
                     if (groupKey == null)
                         continue;
 
                     foreach (var soundName in groupKey.GetSubKeyNames())
                     {
-                        var soundKey = groupKey.OpenSubKey(soundName, true);
+                        using var soundKey = groupKey.OpenSubKey(soundName, true);
                         if (soundKey == null)
                             continue;
 
-                        var currentSoundKey =
+                        using var currentSoundKey =
                             soundKey.OpenSubKey(".Current", true)
                             ?? soundKey.CreateSubKey(".Current");
 
@@ -61,7 +61,8 @@ public class DisableSystemSounds : OptimizationItem
                         }
                         else
                         {
-                            var defaultSound = soundKey.OpenSubKey(".Default")?.GetValue(null);
+                            using var defaultKey = soundKey.OpenSubKey(".Default");
+                            var defaultSound = defaultKey?.GetValue(null);
                             if (defaultSound != null)
                                 currentSoundKey.SetValue(null, defaultSound);
                         }
