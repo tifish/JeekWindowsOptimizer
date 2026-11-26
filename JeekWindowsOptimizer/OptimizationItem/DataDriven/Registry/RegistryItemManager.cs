@@ -74,14 +74,14 @@ public static class RegistryItemManager
 
             if (!itemsDict.TryGetValue(nameKey, out var item))
             {
-                item = new RegistryItem(groupNameKey, nameKey, descriptionKey)
-                {
-                    Category = category,
-                    ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection,
-                    ShouldUpdateGroupPolicy = shouldUpdateGroupPolicy,
-                    ShouldReboot = shouldReboot,
-                    ShouldRestartExplorer = shouldRestartExplorer,
-                };
+                item = nameKey == DisableWindowsRealTimeAntivirusItem.ItemNameKey
+                    ? new DisableWindowsRealTimeAntivirusItem(groupNameKey, nameKey, descriptionKey)
+                    : new RegistryItem(groupNameKey, nameKey, descriptionKey);
+                item.Category = category;
+                item.ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection;
+                item.ShouldUpdateGroupPolicy = shouldUpdateGroupPolicy;
+                item.ShouldReboot = shouldReboot;
+                item.ShouldRestartExplorer = shouldRestartExplorer;
                 itemsDict[nameKey] = item;
                 Items.Add(item);
             }

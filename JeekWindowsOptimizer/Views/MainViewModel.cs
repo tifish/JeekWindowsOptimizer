@@ -1281,6 +1281,8 @@ public partial class MainViewModel : ObservableObject, IDisposable
             .Where(item => item.IsChecked && !item.IsOptimized)
             .ToList();
 
+        var cancelled = false;
+
         try
         {
             StatusMessage = Localizer.Get("PreOptimizationPreparations");
@@ -1295,12 +1297,24 @@ public partial class MainViewModel : ObservableObject, IDisposable
             }
 
             if (shouldTurnOffTamperProtection)
+            {
                 if (!await OptimizationItem.TurnOffTamperProtection())
+                {
+                    foreach (var item in itemsToOptimize.Where(item => item.ShouldTurnOffTamperProtection))
+                        await item.OnTamperProtectionCheckFailedAsync();
+                    cancelled = true;
                     return;
+                }
+            }
 
             if (shouldTurnOffOnAccessProtection)
+            {
                 if (!await OptimizationItem.TurnOffOnAccessProtection())
+                {
+                    cancelled = true;
                     return;
+                }
+            }
 
             var shouldUpdateGroupPolicy = false;
             var shouldReboot = false;
@@ -1340,10 +1354,56 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             OptimizationItem.InBatching = false;
             IsBusy = false;
-            StatusMessage = Localizer.Get("OptimizationCompleted");
+            StatusMessage = cancelled
+                ? Localizer.Get("OptimizationCancelled")
+                : Localizer.Get("OptimizationCompleted");
             if (ShowOnlyNotOptimized)
                 RefreshDisplayedOptimizationGroups();
             UpdateOptimizeButtonText();
+        }
+    }
+
+    private OptimizationItem? _pendingPrerequisiteRecheckItem;
+    private bool _isRecheckingPrerequisite;
+
+    public async Task OpenOptimizationPrerequisiteSettingsAsync(OptimizationItem item)
+    {
+        _pendingPrerequisiteRecheckItem = item;
+        try
+        {
+            await item.OpenPrerequisiteSettingsAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogError(ex, $"Failed to open prerequisite settings for '{item.Name}'");
+        }
+    }
+
+    public async Task RecheckPendingPrerequisiteItemAsync()
+    {
+        var item = _pendingPrerequisiteRecheckItem;
+        if (item is null || IsBusy || _isRecheckingPrerequisite)
+            return;
+
+        _isRecheckingPrerequisite = true;
+        try
+        {
+            var oldIsOptimized = item.IsOptimized;
+            await item.Initialize();
+
+            if (!item.IsPrerequisiteBlocked)
+                _pendingPrerequisiteRecheckItem = null;
+
+            if (oldIsOptimized != item.IsOptimized)
+                OnOptimizationItemStatusChanged(item.Category);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to recheck prerequisite state for '{item.Name}'");
+        }
+        finally
+        {
+            _isRecheckingPrerequisite = false;
         }
     }
 

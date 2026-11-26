@@ -47,6 +47,7 @@ public partial class MainWindow : Window
 
         DataContextChanged += OnDataContextChanged;
         Loaded += OnLoaded;
+        Activated += OnActivated;
         Deactivated += OnDeactivated;
         Closing += OnClosing;
 
@@ -78,6 +79,13 @@ public partial class MainWindow : Window
 
         if (DataContext is MainViewModel vm && vm.LoadedCommand.CanExecute(null))
             vm.LoadedCommand.Execute(null);
+    }
+
+    // ReSharper disable once AsyncVoidMethod
+    private async void OnActivated(object? sender, EventArgs e)
+    {
+        if (DataContext is MainViewModel vm)
+            await vm.RecheckPendingPrerequisiteItemAsync();
     }
 
     private void OnDeactivated(object? sender, EventArgs e)
@@ -430,5 +438,14 @@ public partial class MainWindow : Window
 
         item.ToggleChecked();
         e.Handled = true;
+    }
+
+    // ReSharper disable once AsyncVoidMethod
+    private async void OpenPrerequisiteSettingsButton_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Control { DataContext: OptimizationItem item } || DataContext is not MainViewModel vm)
+            return;
+
+        await vm.OpenOptimizationPrerequisiteSettingsAsync(item);
     }
 }

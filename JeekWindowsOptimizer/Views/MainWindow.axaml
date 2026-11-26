@@ -1176,8 +1176,8 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate x:DataType="local:OptimizationItem">
                                                     <Border Classes="setting-card">
-                                                        <Grid ColumnDefinitions="* Auto">
-                                                            <Grid ColumnDefinitions="Auto *" RowDefinitions="Auto Auto">
+                                                        <Grid ColumnDefinitions="* Auto" RowDefinitions="Auto Auto">
+                                                            <Grid Grid.Row="0" Grid.Column="0" ColumnDefinitions="Auto *" RowDefinitions="Auto Auto">
                                                                 <CheckBox
                                                                     Grid.Column="0"
                                                                     Grid.Row="0"
@@ -1208,6 +1208,7 @@
                                                                     TextWrapping="Wrap" />
                                                             </Grid>
                                                             <StackPanel
+                                                                Grid.Row="0"
                                                                 Grid.Column="1"
                                                                 HorizontalAlignment="Right"
                                                                 VerticalAlignment="Center"
@@ -1219,7 +1220,13 @@
                                                                         <TextBlock FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource SuccessForegroundBrush}" Text="{l:Localize Optimized}" />
                                                                     </StackPanel>
                                                                 </Border>
-                                                                <Border Classes="status-pill status-neutral" IsVisible="{Binding !IsOptimized}">
+                                                                <Border Classes="status-pill status-warning" IsVisible="{Binding IsPrerequisiteBlocked}">
+                                                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                                                        <TextBlock Classes="glyph" FontSize="11" Foreground="{DynamicResource WarningForegroundBrush}" Text="&#xE7BA;" />
+                                                                        <TextBlock FontSize="11.5" FontWeight="SemiBold" Foreground="{DynamicResource WarningForegroundBrush}" Text="{Binding PrerequisiteBadgeText}" />
+                                                                    </StackPanel>
+                                                                </Border>
+                                                                <Border Classes="status-pill status-neutral" IsVisible="{Binding ShowNeutralNotOptimizedPill}">
                                                                     <TextBlock FontSize="11.5" Foreground="{DynamicResource NeutralBadgeForegroundBrush}" Text="{l:Localize NotOptimized}" />
                                                                 </Border>
                                                                 <ToggleSwitch
@@ -1230,6 +1237,42 @@
                                                                     IsCheckedChanged="ToggleButton_OnIsCheckedChanged"
                                                                     IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}" />
                                                             </StackPanel>
+
+                                                            <Border
+                                                                Grid.Row="1"
+                                                                Grid.Column="0"
+                                                                Grid.ColumnSpan="2"
+                                                                Margin="32,10,0,0"
+                                                                Classes="banner-warning"
+                                                                IsVisible="{Binding IsPrerequisiteBlocked}">
+                                                                <Grid ColumnDefinitions="Auto * Auto" ColumnSpacing="10">
+                                                                    <TextBlock
+                                                                        Grid.Column="0"
+                                                                        Classes="glyph"
+                                                                        FontSize="15"
+                                                                        Foreground="{DynamicResource WarningForegroundBrush}"
+                                                                        Text="&#xE7BA;" />
+                                                                    <TextBlock
+                                                                        Grid.Column="1"
+                                                                        VerticalAlignment="Center"
+                                                                        FontSize="12"
+                                                                        LineHeight="17"
+                                                                        Foreground="{DynamicResource WarningForegroundBrush}"
+                                                                        Text="{Binding PrerequisiteWarningText}"
+                                                                        TextWrapping="Wrap" />
+                                                                    <Button
+                                                                        Grid.Column="2"
+                                                                        VerticalAlignment="Center"
+                                                                        Classes="group-toolbar"
+                                                                        Click="OpenPrerequisiteSettingsButton_OnClick"
+                                                                        IsEnabled="{Binding $parent[Window].((local:MainViewModel)DataContext).AreOptimizationItemControlsEnabled}">
+                                                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                                                            <TextBlock Classes="glyph" FontSize="12" Text="&#xE8A7;" />
+                                                                            <TextBlock VerticalAlignment="Center" Text="{Binding PrerequisiteActionText}" />
+                                                                        </StackPanel>
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Border>
                                                         </Grid>
                                                     </Border>
                                                 </DataTemplate>

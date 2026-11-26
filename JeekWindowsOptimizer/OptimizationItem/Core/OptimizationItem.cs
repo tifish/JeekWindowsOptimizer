@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DotNetRun;
 using Jeek.Avalonia.Localization;
@@ -31,7 +33,33 @@ public abstract partial class OptimizationItem : ObservableObject
     [ObservableProperty]
     public partial bool IsOptimized { get; protected set; }
 
+    [ObservableProperty]
+    public partial bool IsPrerequisiteBlocked { get; protected set; }
+
+    public bool ShowNeutralNotOptimizedPill => !IsOptimized && !IsPrerequisiteBlocked;
+
+    public virtual string PrerequisiteBadgeText => "";
+    public virtual string PrerequisiteWarningText => "";
+    public virtual string PrerequisiteActionText => "";
+
+    partial void OnIsOptimizedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowNeutralNotOptimizedPill));
+    }
+
+    partial void OnIsPrerequisiteBlockedChanged(bool value)
+    {
+        OnPropertyChanged(nameof(ShowNeutralNotOptimizedPill));
+    }
+
+    public virtual Task OpenPrerequisiteSettingsAsync() => Task.CompletedTask;
+
+    public virtual Task OnTamperProtectionCheckFailedAsync() => Task.CompletedTask;
+
     public static bool InBatching { get; set; }
+
+    internal static Func<string, bool, Task<ButtonResult>>? TamperProtectionPromptOverrideForTesting { get; set; }
+    internal static Func<Task>? UpdateGroupPolicyOverrideForTesting { get; set; }
 
     public abstract Task Initialize();
 
@@ -45,16 +73,17 @@ public abstract partial class OptimizationItem : ObservableObject
 
         if (!InBatching)
         {
-            if (ShouldTurnOffTamperProtection)
+            if (value && ShouldTurnOffTamperProtection)
             {
                 if (!await TurnOffTamperProtection())
                 {
+                    await OnTamperProtectionCheckFailedAsync();
                     IsOptimized = !value;
                     return false;
                 }
             }
 
-            if (ShouldTurnOffOnAccessProtection)
+            if (value && ShouldTurnOffOnAccessProtection)
             {
                 if (!await TurnOffOnAccessProtection())
                 {
@@ -88,53 +117,69 @@ public abstract partial class OptimizationItem : ObservableObject
 
     public static async Task<bool> TurnOffTamperProtection()
     {
-        if (await IsTamperProtectionOff())
+        var status = await DefenderProtection.GetTamperProtectionStatus();
+        if (!status.IsBlockingRealTimeDisable)
             return true;
 
-        if (
-            await OptimizationExecutionScheduler.RunAsync(
-                OptimizationExecutionAffinity.ExclusiveBackground,
-                AntiVirus.HasThirdPartyAntivirusInstalled
-            )
-        )
-            return true;
-
-        await OptimizationExecutionScheduler.RunAsync(
-            OptimizationExecutionAffinity.Background,
-            OpenDefenderSettings
-        );
-
-        while (!await IsTamperProtectionOff())
+        var firstAttempt = true;
+        while (status.IsBlockingRealTimeDisable)
         {
-            var msgResult = await OptimizationExecutionScheduler.RunAsync(
-                OptimizationExecutionAffinity.Ui,
-                () =>
-                    MessageBoxManager
-                        .GetMessageBoxStandard(
-                            new MessageBoxStandardParams
-                            {
-                                ContentTitle = MessageTitle,
-                                ContentMessage = Localizer.Get("TamperProtectionPromptMessage"),
-                                ButtonDefinitions = ButtonEnum.OkCancel,
-                                Icon = Icon.Info,
-                                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                                Topmost = true,
-                                FontFamily = "Microsoft YaHei",
-                            }
-                        )
-                        .ShowAsync()
+            await OptimizationExecutionScheduler.RunAsync(
+                OptimizationExecutionAffinity.Background,
+                OpenDefenderSettings
             );
 
+            var messageKey = firstAttempt
+                ? "TamperProtectionPromptMessage"
+                : "TamperProtectionStillEnabledPromptMessage";
+            var isRetry = !firstAttempt;
+            firstAttempt = false;
+
+            var msgResult = await ShowTamperProtectionPromptAsync(messageKey, isRetry);
             if (msgResult == ButtonResult.Cancel)
                 return false;
+
+            status = await DefenderProtection.GetTamperProtectionStatus();
         }
 
         return true;
     }
 
-    private static async Task<bool> IsTamperProtectionOff()
+    private static Task<ButtonResult> ShowTamperProtectionPromptAsync(
+        string messageKey,
+        bool isRetry
+    )
     {
-        return (await DefenderProtection.GetTamperProtectionStatus()).IsOff;
+        if (TamperProtectionPromptOverrideForTesting is { } promptOverride)
+            return promptOverride(messageKey, isRetry);
+
+        return OptimizationExecutionScheduler.RunAsync(
+            OptimizationExecutionAffinity.Ui,
+            () =>
+            {
+                var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)
+                    ?.MainWindow;
+                var box = MessageBoxManager.GetMessageBoxStandard(
+                    new MessageBoxStandardParams
+                    {
+                        ContentTitle = MessageTitle,
+                        ContentMessage = Localizer.Get(messageKey),
+                        ButtonDefinitions = ButtonEnum.OkCancel,
+                        Icon = Icon.Warning,
+                        WindowStartupLocation = owner is not null
+                            ? WindowStartupLocation.CenterOwner
+                            : WindowStartupLocation.CenterScreen,
+                        // Keep non-topmost so Windows Security stays unobstructed while the user toggles Tamper Protection.
+                        Topmost = false,
+                        FontFamily = Localizer.Get("DefaultFontName"),
+                    }
+                );
+
+                return owner is not null
+                    ? box.ShowWindowDialogAsync(owner)
+                    : box.ShowAsync();
+            }
+        );
     }
 
     private static readonly RegistryValue DisableOnAccessProtectionRegistryValue = new(
@@ -165,18 +210,19 @@ public abstract partial class OptimizationItem : ObservableObject
         );
     }
 
-    private static void OpenDefenderSettings()
+    public static void OpenDefenderSettings()
     {
-        var openDefenderCommand = Environment.ExpandEnvironmentVariables(
-            @"%ProgramFiles%\Windows Defender\MSASCui.exe"
-        );
-        if (!File.Exists(openDefenderCommand))
-            openDefenderCommand = "windowsdefender://Threatsettings";
-        Process.Start(new ProcessStartInfo(openDefenderCommand) { UseShellExecute = true });
+        DefenderProtection.OpenTamperProtectionSettings();
     }
 
     public static async Task UpdateGroupPolicy()
     {
+        if (UpdateGroupPolicyOverrideForTesting is { } gpOverride)
+        {
+            await gpOverride();
+            return;
+        }
+
         using var proc = await OptimizationExecutionScheduler.RunAsync(
             OptimizationExecutionAffinity.Background,
             () =>
@@ -216,7 +262,7 @@ public abstract partial class OptimizationItem : ObservableObject
                             Icon = Icon.Info,
                             WindowStartupLocation = WindowStartupLocation.CenterScreen,
                             Topmost = true,
-                            FontFamily = "Microsoft YaHei",
+                            FontFamily = Localizer.Get("DefaultFontName"),
                         }
                     )
                     .ShowAsync();
@@ -245,5 +291,8 @@ public abstract partial class OptimizationItem : ObservableObject
         OnPropertyChanged(nameof(GroupName));
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Description));
+        OnPropertyChanged(nameof(PrerequisiteBadgeText));
+        OnPropertyChanged(nameof(PrerequisiteWarningText));
+        OnPropertyChanged(nameof(PrerequisiteActionText));
     }
 }
