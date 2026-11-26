@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using JeekTools;
 
 namespace JeekWindowsOptimizer;
 
@@ -108,7 +109,7 @@ internal sealed class DeveloperCachePaths
             throw new IOException("A drive root is not a cache directory.");
         foreach (var protectedTree in new[] { Environment.GetFolderPath(Environment.SpecialFolder.Windows),
             Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), AppContext.BaseDirectory })
+            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), AppPaths.ProgramDir })
         {
             if (string.IsNullOrEmpty(protectedTree)) continue;
             var tree = Path.TrimEndingDirectorySeparator(Path.GetFullPath(protectedTree));

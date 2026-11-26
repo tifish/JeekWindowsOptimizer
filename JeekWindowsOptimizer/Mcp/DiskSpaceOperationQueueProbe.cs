@@ -1,3 +1,5 @@
+using JeekTools;
+
 namespace JeekWindowsOptimizer.Mcp;
 
 internal static class DiskSpaceOperationQueueProbe
@@ -10,7 +12,7 @@ internal static class DiskSpaceOperationQueueProbe
         var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var first = new Cleanup("A", trace, gate.Task);
         var later = new Cleanup("C", trace, Task.CompletedTask);
-        var drive = new DriveOption(Path.GetPathRoot(AppContext.BaseDirectory)!, long.MaxValue, true);
+        var drive = new DriveOption(Path.GetPathRoot(AppPaths.ProgramDir)!, long.MaxValue, true);
         var failedMove = new Move("B", trace, drive) { RejectCheck = true };
         var moved = new Move("D", trace, drive);
         var restored = new Move("E", trace, drive);

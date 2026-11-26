@@ -73,7 +73,7 @@ internal static class DebugMcpServer
             GetVersion = () => $"{AutoUpdate.GetLocalCommitCount()}",
             Enabled = ListeningEnabled,
             // Named pipe only: no port to collide over between worktree instances.
-            PipeName = McpPipeNames.Debug(McpPipeNames.InstanceId(AppContext.BaseDirectory)),
+            PipeName = McpPipeNames.Debug(McpPipeNames.InstanceId(AppPaths.ProgramDir)),
             DefaultPort = 0,
             UiInvoker = func => Dispatcher.UIThread.InvokeAsync(func).GetTask()
                 .WaitAsync(TimeSpan.FromSeconds(15)),
@@ -247,6 +247,8 @@ internal static class DebugMcpServer
             $"JeekWindowsOptimizer debug MCP server (build {AutoUpdate.GetLocalCommitCount()}).");
         sb.AppendLine($"ProcessId: {Environment.ProcessId}");
         sb.AppendLine($"ExecutablePath: {Environment.ProcessPath}");
+        sb.AppendLine($"ProgramDir: {AppPaths.ProgramDir}");
+        sb.AppendLine($"RuntimeDir: {AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)}");
         sb.AppendLine($@"Pipe: \\.\pipe\{Host.PipeName}");
         sb.AppendLine($"Process uptime: {DateTime.Now - Process.GetCurrentProcess().StartTime:hh\\:mm\\:ss}.");
         sb.AppendLine($"Log file: {LogManager.CurrentRollingLogFile}");

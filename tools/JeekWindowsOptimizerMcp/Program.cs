@@ -182,7 +182,18 @@ internal sealed record AdapterOptions(
 
         var baseDirectory = AppContext.BaseDirectory;
         var sideBySideAppPath = Path.Combine(baseDirectory, "JeekWindowsOptimizer.exe");
+        if (!File.Exists(sideBySideAppPath))
+        {
+            var parentDirectory = Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(Path.GetFullPath(baseDirectory)));
+            if (!string.IsNullOrEmpty(parentDirectory))
+            {
+                var parentAppPath = Path.Combine(parentDirectory, "JeekWindowsOptimizer.exe");
+                if (File.Exists(parentAppPath))
+                    sideBySideAppPath = parentAppPath;
+            }
+        }
         var isSideBySide = File.Exists(sideBySideAppPath);
+        var sideBySideDirectory = Path.GetDirectoryName(sideBySideAppPath) ?? baseDirectory;
 
         // Explicit --app pins a worktree/install even when this process is the fixed per-user
         // adapter (not side-by-side). Instance id is always derived from the app directory.
@@ -197,7 +208,7 @@ internal sealed record AdapterOptions(
                             ?? (appDirectory is { Length: > 0 }
                                 ? McpPipeNames.InstanceId(appDirectory)
                                 : null)
-                            ?? (isSideBySide ? McpPipeNames.InstanceId(baseDirectory) : "release");
+                            ?? (isSideBySide ? McpPipeNames.InstanceId(sideBySideDirectory) : "release");
         var explicitlyRouted = instance is not null || appDirectory is { Length: > 0 };
 
         McpRegisteredInstance? registered = null;

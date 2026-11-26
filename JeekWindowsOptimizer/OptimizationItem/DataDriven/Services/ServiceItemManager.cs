@@ -9,7 +9,7 @@ public static class ServiceItemManager
     public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\ServiceItems.tab")))
+        if (!await tabFile.LoadAsync(Path.Join(AppPaths.ProgramDir, @"Data\ServiceItems.tab")))
             return;
 
         var candidates = new List<ServiceItem>();

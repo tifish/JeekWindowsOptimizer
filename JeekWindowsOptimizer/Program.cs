@@ -18,16 +18,14 @@ sealed class Program
     {
         try
         {
-            var appDirectory = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-            if (appDirectory != null)
-                Environment.CurrentDirectory = appDirectory;
+            Environment.CurrentDirectory = AppPaths.ProgramDir;
 
             if (Design.IsDesignMode)
                 LogManager.DisableLogging();
 
             using var singleInstance = Design.IsDesignMode
                 ? null
-                : AppSingleInstance.Acquire(AppContext.BaseDirectory);
+                : AppSingleInstance.Acquire(AppPaths.ProgramDir);
             if (singleInstance is { IsPrimary: false })
             {
                 singleInstance.NotifyPrimaryInstance();

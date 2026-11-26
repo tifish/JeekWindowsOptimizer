@@ -9,7 +9,7 @@ public static class DriverItemManager
     public static async Task Load()
     {
         var tabFile = new TabFile();
-        if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\DriverItems.tab")))
+        if (!await tabFile.LoadAsync(Path.Join(AppPaths.ProgramDir, @"Data\DriverItems.tab")))
             return;
 
         var itemsDict = new Dictionary<string, DriverItem>();

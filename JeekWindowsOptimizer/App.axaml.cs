@@ -42,7 +42,7 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         Localizer.SetLocalizer(
-            new TabLocalizer(Path.Join(AppContext.BaseDirectory, @"Data\Languages.tab"))
+            new TabLocalizer(Path.Join(AppPaths.ProgramDir, @"Data\Languages.tab"))
         );
         AppSettingsStore.Load();
         // Must come after AppSettingsStore.Load(): both resolve their paths from the active

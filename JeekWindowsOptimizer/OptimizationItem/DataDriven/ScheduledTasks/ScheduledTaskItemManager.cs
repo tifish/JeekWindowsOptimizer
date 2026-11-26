@@ -11,7 +11,7 @@ public static class ScheduledTaskItemManager
         var tabFile = new TabFile();
         if (
             !await tabFile.LoadAsync(
-                Path.Join(AppContext.BaseDirectory, @"Data\ScheduledTaskItems.tab")
+                Path.Join(AppPaths.ProgramDir, @"Data\ScheduledTaskItems.tab")
             )
         )
             return;

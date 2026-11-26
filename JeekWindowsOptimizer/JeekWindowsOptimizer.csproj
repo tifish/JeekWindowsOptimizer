@@ -10,7 +10,8 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <OutDir>..\bin</OutDir>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <OutDir>..\bin\Runtime\</OutDir>
     <ApplicationIcon>Assets\App.ico</ApplicationIcon>
     <CETCompat>false</CETCompat>
     <PublishDir>$(OutDir)</PublishDir>
@@ -30,7 +31,6 @@
     <PackageReference Include="Jeek.Avalonia.Localization" Version="12.0.2" />
     <PackageReference Include="Json.Easy" Version="1.0.0" />
     <PackageReference Include="MessageBox.Avalonia" Version="12.0.0" />
-    <PackageReference Include="nulastudio.NetBeauty" Version="2.1.5" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.10" />
     <PackageReference Include="System.Management" Version="10.0.10" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.10" />
@@ -47,61 +47,86 @@
     <ProjectReference Include="..\JeekTools.NET\JeekTools.csproj" />
     <ProjectReference Include="..\PowerManagerAPI\PowerManagerAPI\PowerManagerAPI.csproj" />
   </ItemGroup>
-  <PropertyGroup>
-    <BeautySharedRuntimeMode>False</BeautySharedRuntimeMode>
-    <!-- beauty into sub-directory, default is libs, quote with "" if contains space  -->
-    <BeautyLibsDir Condition="$(BeautySharedRuntimeMode) == 'True'">../Libs</BeautyLibsDir>
-    <BeautyLibsDir Condition="$(BeautySharedRuntimeMode) != 'True'">./Libs</BeautyLibsDir>
-    <!-- dlls that you don't want to be moved or can not be moved -->
-    <!-- <BeautyExcludes>dll1.dll;lib*;...</BeautyExcludes> -->
-    <!-- dlls that end users never needed, so hide them -->
-    <!-- <BeautyHiddens>hostfxr;hostpolicy;*.deps.json;*.runtimeconfig*.json</BeautyHiddens> -->
-    <!-- set to True if you want to disable -->
-    <DisableBeauty>False</DisableBeauty>
-    <!-- set to False if you want to beauty on build -->
-    <BeautyOnPublishOnly>False</BeautyOnPublishOnly>
-    <!-- DO NOT TOUCH THIS OPTION -->
-    <BeautyNoRuntimeInfo>False</BeautyNoRuntimeInfo>
-    <!-- set to True if you want to allow 3rd debuggers(like dnSpy) debugs the app -->
-    <BeautyEnableDebugging>False</BeautyEnableDebugging>
-    <!-- the patch can reduce the file count -->
-    <!-- set to False if you want to disable -->
-    <!-- SCD Mode Feature Only -->
-    <BeautyUsePatch>True</BeautyUsePatch>
-    <!-- App Entry Dll = BeautyDir + BeautyAppHostDir + BeautyAppHostEntry -->
-    <!-- see https://github.com/nulastudio/NetBeauty2#customize-apphost for more details -->
-    <!-- relative path based on AppHostDir -->
-    <!-- .NET Core Non Single-File Only -->
-    <!-- <BeautyAppHostEntry>bin/MyApp.dll</BeautyAppHostEntry> -->
-    <!-- relative path based on BeautyDir -->
-    <!-- .NET Core Non Single-File Only -->
-    <!-- <BeautyAppHostDir>..</BeautyAppHostDir> -->
-    <!-- <BeautyAfterTasks></BeautyAfterTasks> -->
-    <!-- valid values: Error|Detail|Info -->
-    <BeautyLogLevel>Info</BeautyLogLevel>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-    <!-- set to a repo mirror if you have troble in connecting github -->
-    <!-- <BeautyGitCDN>https://gitee.com/liesauer/HostFXRPatcher</BeautyGitCDN> -->
-    <!-- <BeautyGitTree>master</BeautyGitTree> -->
-  </PropertyGroup>
+
+  <!--
+    Keep the app root clean (only JeekWindowsOptimizer.exe among binaries, alongside Runtime\,
+    Data\, Tools\, scripts, etc.): all managed and native assemblies are built/published into
+    Runtime\, and a standard .NET AppHost is created in the parent directory pointing to
+    Runtime/JeekWindowsOptimizer.dll.
+  -->
+  <Target Name="CreateNestedAppHostAfterBuild"
+          AfterTargets="Build"
+          DependsOnTargets="_GetAppHostPaths;_GetAppHostCreationConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true' and '$(_IsPublishing)' != 'true'">
+    <PropertyGroup>
+      <_NestedRuntimeDir>$([System.IO.Path]::TrimEndingDirectorySeparator($([System.IO.Path]::GetFullPath('$(TargetDir)'))))</_NestedRuntimeDir>
+      <_NestedAppRoot>$([System.IO.Path]::GetDirectoryName('$(_NestedRuntimeDir)'))</_NestedAppRoot>
+      <_NestedRuntimeFolderName>$([System.IO.Path]::GetFileName('$(_NestedRuntimeDir)'))</_NestedRuntimeFolderName>
+    </PropertyGroup>
+    <CreateAppHost AppHostSourcePath="$(AppHostSourcePath)"
+                   AppHostDestinationPath="$(_NestedAppRoot)\$(AssemblyName).exe"
+                   AppBinaryName="$(_NestedRuntimeFolderName)/$(AssemblyName)$(TargetExt)"
+                   IntermediateAssembly="@(IntermediateAssembly->'%(FullPath)')"
+                   WindowsGraphicalUserInterface="$(_UseWindowsGraphicalUserInterface)"
+                   Retries="$(CopyRetryCount)"
+                   RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+                   EnableMacOSCodeSign="$(_EnableMacOSCodeSign)"
+                   DisableCetCompat="$(_DisableCetCompat)" />
+    <Delete Files="$(_NestedRuntimeDir)\$(AssemblyName).exe"
+            Condition="Exists('$(_NestedRuntimeDir)\$(AssemblyName).exe')" />
+  </Target>
+
+  <Target Name="CreateNestedAppHostAfterPublish"
+          AfterTargets="Publish"
+          DependsOnTargets="_GetAppHostPaths;_GetAppHostCreationConfiguration"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <PropertyGroup>
+      <_PublishFullDir>$([System.IO.Path]::TrimEndingDirectorySeparator($([System.IO.Path]::GetFullPath('$(PublishDir)', '$(MSBuildProjectDirectory)'))))</_PublishFullDir>
+      <_PublishLeafName>$([System.IO.Path]::GetFileName('$(_PublishFullDir)'))</_PublishLeafName>
+      <_PublishRuntimeDir Condition="'$(_PublishLeafName)' == 'Runtime'">$(_PublishFullDir)</_PublishRuntimeDir>
+      <_PublishRuntimeDir Condition="'$(_PublishLeafName)' != 'Runtime'">$(_PublishFullDir)\Runtime</_PublishRuntimeDir>
+      <_PublishAppRoot Condition="'$(_PublishLeafName)' == 'Runtime'">$([System.IO.Path]::GetDirectoryName('$(_PublishFullDir)'))</_PublishAppRoot>
+      <_PublishAppRoot Condition="'$(_PublishLeafName)' != 'Runtime'">$(_PublishFullDir)</_PublishAppRoot>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(_PublishLeafName)' != 'Runtime'">
+      <_LoosePublishedFiles Include="$(_PublishFullDir)\**\*.*"
+                            Exclude="$(_PublishFullDir)\Runtime\**\*.*;$(_PublishFullDir)\Data\**\*.*;$(_PublishFullDir)\Tools\**\*.*;$(_PublishFullDir)\Config\**\*.*;$(_PublishFullDir)\Logs\**\*.*;$(_PublishFullDir)\*.ps1;$(_PublishFullDir)\*.cmd" />
+    </ItemGroup>
+    <MakeDir Directories="$(_PublishRuntimeDir)" />
+    <Move SourceFiles="@(_LoosePublishedFiles)"
+          DestinationFiles="@(_LoosePublishedFiles->'$(_PublishRuntimeDir)\%(RecursiveDir)%(Filename)%(Extension)')"
+          OverwriteReadOnlyFiles="true"
+          Condition="'$(_PublishLeafName)' != 'Runtime' and '@(_LoosePublishedFiles)' != ''" />
+    <CreateAppHost AppHostSourcePath="$(AppHostSourcePath)"
+                   AppHostDestinationPath="$(_PublishAppRoot)\$(AssemblyName).exe"
+                   AppBinaryName="Runtime/$(AssemblyName)$(TargetExt)"
+                   IntermediateAssembly="@(IntermediateAssembly->'%(FullPath)')"
+                   WindowsGraphicalUserInterface="$(_UseWindowsGraphicalUserInterface)"
+                   Retries="$(CopyRetryCount)"
+                   RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)"
+                   EnableMacOSCodeSign="$(_EnableMacOSCodeSign)"
+                   DisableCetCompat="$(_DisableCetCompat)" />
+    <Delete Files="$(_PublishRuntimeDir)\$(AssemblyName).exe"
+            Condition="Exists('$(_PublishRuntimeDir)\$(AssemblyName).exe')" />
+  </Target>
 
   <!--
     JeekWindowsOptimizerMcp is the MCP stdio adapter. Agents launch the fixed per-user
     copy under LocalAppData (or the repo-root JeekWindowsOptimizerDebugMcp.cmd which does);
-    the file next to the app is only build output that the app installs to the fixed path on
+    the copy inside Runtime\ is only build output that the app installs to the fixed path on
     startup — not during build.
-    Publish it into the same output/publish directory so archives cannot omit it.
+    Publish it into Runtime\ so archives cannot omit it.
 
     Before overwriting, rename any existing exe (Windows allows renaming a running image). That
     way a leftover side-by-side MCP process cannot fail the main project build.
   -->
   <Target
     Name="PublishJeekWindowsOptimizerMcpAfterBuild"
-    AfterTargets="Build"
-    Condition="'$(DesignTimeBuild)' != 'true' and '$(PublishDir)' == '$(OutDir)'">
+    AfterTargets="CreateNestedAppHostAfterBuild"
+    Condition="'$(DesignTimeBuild)' != 'true' and '$(_IsPublishing)' != 'true'">
     <PropertyGroup>
-      <JeekWindowsOptimizerMcpBuildDir>$([System.IO.Path]::GetFullPath('$(OutDir)', '$(MSBuildProjectDirectory)'))</JeekWindowsOptimizerMcpBuildDir>
-      <_McpUnlockExe>$([System.IO.Path]::Combine('$(JeekWindowsOptimizerMcpBuildDir)', 'JeekWindowsOptimizerMcp.exe'))</_McpUnlockExe>
+      <JeekWindowsOptimizerMcpDir>$([System.IO.Path]::GetFullPath('$(_NestedRuntimeDir)', '$(MSBuildProjectDirectory)'))</JeekWindowsOptimizerMcpDir>
+      <_McpUnlockExe>$([System.IO.Path]::Combine('$(JeekWindowsOptimizerMcpDir)', 'JeekWindowsOptimizerMcp.exe'))</_McpUnlockExe>
       <_McpUnlockStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff'))</_McpUnlockStamp>
     </PropertyGroup>
     <Exec
@@ -111,22 +136,22 @@
       StandardOutputImportance="low"
       StandardErrorImportance="low" />
     <ItemGroup>
-      <_McpUnlockOld Include="$(JeekWindowsOptimizerMcpBuildDir)\JeekWindowsOptimizerMcp.exe.*.old" />
+      <_McpUnlockOld Include="$(JeekWindowsOptimizerMcpDir)\JeekWindowsOptimizerMcp.exe.*.old" />
     </ItemGroup>
     <Delete Files="@(_McpUnlockOld)" TreatErrorsAsWarnings="true" ContinueOnError="true" />
     <MSBuild
       Projects="..\tools\JeekWindowsOptimizerMcp\JeekWindowsOptimizerMcp.csproj"
       Targets="Restore;Publish"
-      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=true;PublishDir=$(JeekWindowsOptimizerMcpBuildDir)" />
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=true;PublishDir=$(JeekWindowsOptimizerMcpDir)" />
   </Target>
 
   <Target
     Name="PublishJeekWindowsOptimizerMcpAfterPublish"
-    AfterTargets="Publish"
-    Condition="'$(DesignTimeBuild)' != 'true' and '$(PublishDir)' != '$(OutDir)'">
+    AfterTargets="CreateNestedAppHostAfterPublish"
+    Condition="'$(DesignTimeBuild)' != 'true'">
     <PropertyGroup>
-      <JeekWindowsOptimizerMcpPublishDir>$([System.IO.Path]::GetFullPath('$(PublishDir)', '$(MSBuildProjectDirectory)'))</JeekWindowsOptimizerMcpPublishDir>
-      <_McpUnlockExe>$([System.IO.Path]::Combine('$(JeekWindowsOptimizerMcpPublishDir)', 'JeekWindowsOptimizerMcp.exe'))</_McpUnlockExe>
+      <JeekWindowsOptimizerMcpDir>$([System.IO.Path]::GetFullPath('$(_PublishRuntimeDir)', '$(MSBuildProjectDirectory)'))</JeekWindowsOptimizerMcpDir>
+      <_McpUnlockExe>$([System.IO.Path]::Combine('$(JeekWindowsOptimizerMcpDir)', 'JeekWindowsOptimizerMcp.exe'))</_McpUnlockExe>
       <_McpUnlockStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmmssfff'))</_McpUnlockStamp>
     </PropertyGroup>
     <Exec
@@ -136,12 +161,12 @@
       StandardOutputImportance="low"
       StandardErrorImportance="low" />
     <ItemGroup>
-      <_McpUnlockOld Include="$(JeekWindowsOptimizerMcpPublishDir)\JeekWindowsOptimizerMcp.exe.*.old" />
+      <_McpUnlockOld Include="$(JeekWindowsOptimizerMcpDir)\JeekWindowsOptimizerMcp.exe.*.old" />
     </ItemGroup>
     <Delete Files="@(_McpUnlockOld)" TreatErrorsAsWarnings="true" ContinueOnError="true" />
     <MSBuild
       Projects="..\tools\JeekWindowsOptimizerMcp\JeekWindowsOptimizerMcp.csproj"
       Targets="Restore;Publish"
-      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=true;PublishDir=$(JeekWindowsOptimizerMcpPublishDir)" />
+      Properties="Configuration=$(Configuration);RuntimeIdentifier=$(RuntimeIdentifier);SelfContained=$(SelfContained);PublishSingleFile=true;PublishDir=$(JeekWindowsOptimizerMcpDir)" />
   </Target>
 </Project>

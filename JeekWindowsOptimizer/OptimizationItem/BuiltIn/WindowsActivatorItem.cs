@@ -11,7 +11,7 @@ public class WindowsActivatorItem : OptimizationItem
     public override string DescriptionKey => "WindowsActivatorDescription";
 
     private static readonly string ActivatorDirectory = Path.Join(
-        AppContext.BaseDirectory,
+        AppPaths.ProgramDir,
         @"Tools\Activator"
     );
 

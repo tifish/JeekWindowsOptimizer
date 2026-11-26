@@ -48,10 +48,14 @@ jobs:
             - name: Zip files
               shell: pwsh
               run: |
-                  if (-not (Test-Path -LiteralPath bin\JeekWindowsOptimizerMcp.exe)) {
-                      throw "Published package is missing JeekWindowsOptimizerMcp.exe"
+                  if (-not (Test-Path -LiteralPath bin\JeekWindowsOptimizer.exe)) {
+                      throw "Published package is missing JeekWindowsOptimizer.exe"
+                  }
+                  if (-not (Test-Path -LiteralPath bin\Runtime\JeekWindowsOptimizerMcp.exe)) {
+                      throw "Published package is missing Runtime\JeekWindowsOptimizerMcp.exe"
                   }
                   Get-ChildItem -Path bin -Filter *.pdb -Recurse -ErrorAction SilentlyContinue | Remove-Item -Force
+                  Get-ChildItem -Path bin -Filter Logs -Recurse -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
                   Compress-Archive -Path bin\* -DestinationPath ${{ env.PROJECT_NAME }}.zip -Force
 
             - name: Delete release and tag

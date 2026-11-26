@@ -15,7 +15,7 @@ public static class ToolItemManager
         Items.Clear();
 
         var tabFile = new TabFile();
-        if (!await tabFile.LoadAsync(Path.Join(AppContext.BaseDirectory, @"Data\Tools.tab")))
+        if (!await tabFile.LoadAsync(Path.Join(AppPaths.ProgramDir, @"Data\Tools.tab")))
             return;
 
         foreach (var row in tabFile.Rows.Skip(1))

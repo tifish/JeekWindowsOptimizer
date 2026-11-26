@@ -11,7 +11,7 @@ public static class RegistryItemManager
         var tabFile = new TabFile();
         if (
             !await tabFile.LoadAsync(
-                Path.Join(AppContext.BaseDirectory, @"Data\RegistryValueItems.tab")
+                Path.Join(AppPaths.ProgramDir, @"Data\RegistryValueItems.tab")
             )
         )
             return;

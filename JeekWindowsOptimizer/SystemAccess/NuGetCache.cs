@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using Jeek.Avalonia.Localization;
+using JeekTools;
 
 namespace JeekWindowsOptimizer;
 
@@ -50,7 +51,7 @@ internal sealed class NuGetCache
     internal static void ValidatePath(string path, CancellationToken cancellationToken = default)
     {
         var full = Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
-        var protectedPaths = new[] { Path.GetPathRoot(full)!, AppContext.BaseDirectory,
+        var protectedPaths = new[] { Path.GetPathRoot(full)!, AppPaths.ProgramDir,
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),

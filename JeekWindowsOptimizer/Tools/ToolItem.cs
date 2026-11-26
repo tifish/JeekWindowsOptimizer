@@ -26,7 +26,7 @@ public partial class ToolItem : ObservableObject
 {
     private static readonly ILogger Log = LogManager.CreateLogger<ToolItem>();
     private static readonly string ToolsRoot = Path.GetFullPath(
-        Path.Join(AppContext.BaseDirectory, "Tools")
+        Path.Join(AppPaths.ProgramDir, "Tools")
     );
 
     public ToolItem(

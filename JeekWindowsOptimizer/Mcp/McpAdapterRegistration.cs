@@ -1,3 +1,5 @@
+using JeekTools;
+
 namespace JeekWindowsOptimizer.Mcp;
 
 /// <summary>Registers this GUI build for the fixed per-user MCP adapter.</summary>
@@ -11,10 +13,10 @@ internal static class McpAdapterRegistration
 #endif
 
     private static string WorkspaceRoot { get; } = Path.GetFullPath(
-        Path.Combine(AppContext.BaseDirectory, ".."));
+        Path.Combine(AppPaths.ProgramDir, ".."));
 
     private static string InstanceId { get; } = IsDebugBuild
-        ? McpPipeNames.InstanceId(AppContext.BaseDirectory)
+        ? McpPipeNames.InstanceId(AppPaths.ProgramDir)
         : "release";
 
     private static string DebugMcpPipeName { get; } =
@@ -26,9 +28,9 @@ internal static class McpAdapterRegistration
     public static McpRegisteredInstance RegisterCurrentInstance()
     {
         var sourceAdapter = Path.Combine(AppContext.BaseDirectory, "JeekWindowsOptimizerMcp.exe");
-        // Always refresh the fixed adapter when the side-by-side publish next to this app
-        // differs. Agents launch that fixed path (not bin\), so Debug worktrees must be able
-        // to push routing fixes even if a Release instance is also registered. A locked
+        // Always refresh the fixed adapter when the side-by-side publish inside Runtime\
+        // differs. Agents launch that fixed path (not bin\Runtime\), so Debug worktrees must be
+        // able to push routing fixes even if a Release instance is also registered. A locked
         // destination keeps the previous file — safe for this protocol-agnostic forwarder.
         if (!McpAdapterRegistry.EnsureAdapterInstalled(sourceAdapter, allowUpdate: true))
         {

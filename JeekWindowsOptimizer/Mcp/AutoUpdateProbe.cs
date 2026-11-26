@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using JeekTools;
 
 namespace JeekWindowsOptimizer.Mcp;
 
@@ -8,9 +9,51 @@ internal static class AutoUpdateProbe
     public static async Task<string> RunAsync()
     {
         var results = new List<string>();
+        VerifyRuntimeLayout(results);
         await VerifySingleInstanceAsync(results).ConfigureAwait(false);
         await VerifyAutoUpdateScriptAsync(results).ConfigureAwait(false);
         return "PASS\n" + string.Join('\n', results.Select(r => "  - " + r));
+    }
+
+    private static void VerifyRuntimeLayout(List<string> results)
+    {
+        var programDir = AppPaths.ProgramDir;
+        var runtimeDir = Path.TrimEndingDirectorySeparator(Path.GetFullPath(AppContext.BaseDirectory));
+        var expectedRuntimeDir = Path.Combine(programDir, "Runtime");
+
+        Require(
+            string.Equals(runtimeDir, expectedRuntimeDir, StringComparison.OrdinalIgnoreCase),
+            $"Expected RuntimeDir '{expectedRuntimeDir}', got '{runtimeDir}'."
+        );
+        Require(
+            string.Equals(
+                Path.GetDirectoryName(Environment.ProcessPath ?? ""),
+                programDir,
+                StringComparison.OrdinalIgnoreCase),
+            $"Expected ExecutablePath inside '{programDir}', got '{Environment.ProcessPath}'."
+        );
+        Require(File.Exists(Path.Combine(programDir, "JeekWindowsOptimizer.exe")), "JeekWindowsOptimizer.exe missing from ProgramDir.");
+        Require(File.Exists(Path.Combine(runtimeDir, "JeekWindowsOptimizer.dll")), "JeekWindowsOptimizer.dll missing from RuntimeDir.");
+        Require(File.Exists(Path.Combine(runtimeDir, "JeekWindowsOptimizerMcp.exe")), "JeekWindowsOptimizerMcp.exe missing from RuntimeDir.");
+        Require(!File.Exists(Path.Combine(runtimeDir, "JeekWindowsOptimizer.exe")), "Duplicate JeekWindowsOptimizer.exe should not exist in RuntimeDir.");
+        Require(!Directory.Exists(Path.Combine(programDir, "Libs")), "Legacy NetBeauty Libs directory should not exist in ProgramDir.");
+
+        var strayRootBinaries = Directory.EnumerateFiles(programDir)
+            .Select(Path.GetFileName)
+            .Where(name => !string.IsNullOrEmpty(name)
+                && !string.Equals(name, "JeekWindowsOptimizer.exe", StringComparison.OrdinalIgnoreCase)
+                && (name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
+                    || name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+                    || name.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase)
+                    || name.EndsWith(".deps.json", StringComparison.OrdinalIgnoreCase)
+                    || name.EndsWith(".runtimeconfig.json", StringComparison.OrdinalIgnoreCase)))
+            .ToArray();
+        Require(
+            strayRootBinaries.Length == 0,
+            $"Unexpected binary/runtime files in ProgramDir: {string.Join(", ", strayRootBinaries)}"
+        );
+
+        results.Add($"nested Runtime layout verified (ProgramDir={programDir}, RuntimeDir={runtimeDir})");
     }
 
     private static async Task VerifySingleInstanceAsync(List<string> results)
@@ -20,7 +63,7 @@ internal static class AutoUpdateProbe
 
         // Same directory must be detected as a duplicate and deliver activation via IPC.
         var beforeCount = App.ActivationRequestCount;
-        using (var duplicate = AppSingleInstance.Acquire(AppContext.BaseDirectory))
+        using (var duplicate = AppSingleInstance.Acquire(AppPaths.ProgramDir))
         {
             Require(!duplicate.IsPrimary, "Second acquire for the same app directory must not become primary.");
             Require(duplicate.NotifyPrimaryInstance(2000), "Duplicate NotifyPrimaryInstance() must succeed.");
@@ -73,7 +116,7 @@ internal static class AutoUpdateProbe
         using var child = Process.Start(new ProcessStartInfo
         {
             FileName = exePath,
-            WorkingDirectory = AppContext.BaseDirectory,
+            WorkingDirectory = AppPaths.ProgramDir,
             UseShellExecute = false,
             CreateNoWindow = true,
         }) ?? throw new InvalidOperationException("Failed to launch duplicate process.");
@@ -100,7 +143,7 @@ internal static class AutoUpdateProbe
 
     private static async Task VerifyAutoUpdateScriptAsync(List<string> results)
     {
-        var scriptPath = Path.Combine(AppContext.BaseDirectory, "AutoUpdate.ps1");
+        var scriptPath = Path.Combine(AppPaths.ProgramDir, "AutoUpdate.ps1");
         Require(File.Exists(scriptPath), $"AutoUpdate.ps1 not found at {scriptPath}");
 
         var pingSource = Path.Combine(Environment.SystemDirectory, "PING.EXE");
@@ -126,6 +169,8 @@ internal static class AutoUpdateProbe
             File.Copy(pingSource, Path.Combine(installDir, "JeekWindowsOptimizer.exe"), overwrite: true);
             File.Copy(pingSource, Path.Combine(otherDir, "JeekWindowsOptimizer.exe"), overwrite: true);
 
+            Directory.CreateDirectory(Path.Combine(installDir, "Runtime"));
+            File.WriteAllText(Path.Combine(installDir, "Runtime", "old.dll"), "stale-runtime");
             Directory.CreateDirectory(Path.Combine(installDir, "Config"));
             File.WriteAllText(Path.Combine(installDir, "Config", "user.json"), "keep-config");
             Directory.CreateDirectory(Path.Combine(installDir, "Logs"));
@@ -138,6 +183,8 @@ internal static class AutoUpdateProbe
 
             // Prepare staged update package.
             File.WriteAllText(Path.Combine(stageDir, "JeekWindowsOptimizer.exe"), "updated-exe-payload");
+            Directory.CreateDirectory(Path.Combine(stageDir, "Runtime"));
+            File.WriteAllText(Path.Combine(stageDir, "Runtime", "new.dll"), "v-next-runtime");
             File.WriteAllText(Path.Combine(stageDir, "payload.txt"), "v-next");
             Directory.CreateDirectory(Path.Combine(stageDir, "Tools", "NewTool"));
             File.WriteAllText(Path.Combine(stageDir, "Tools", "NewTool", "tool.txt"), "new-tool");
@@ -145,7 +192,7 @@ internal static class AutoUpdateProbe
             File.WriteAllText(Path.Combine(updateRoot, "version.txt"), "999");
 
             // Start one blocking process inside InstallDir and one decoy process in OtherInstall.
-            // Meanwhile this real Debug JeekWindowsOptimizer.exe is also running in AppContext.BaseDirectory!
+            // Meanwhile this real Debug JeekWindowsOptimizer.exe is also running in AppPaths.ProgramDir!
             installProc = StartSleepProcess(Path.Combine(installDir, "JeekWindowsOptimizer.exe"), installDir);
             otherProc = StartSleepProcess(Path.Combine(otherDir, "JeekWindowsOptimizer.exe"), otherDir);
 
@@ -215,6 +262,8 @@ internal static class AutoUpdateProbe
 
             // Verify file replacement, preservation, and staging cleanup.
             Require(File.ReadAllText(Path.Combine(installDir, "JeekWindowsOptimizer.exe")) == "updated-exe-payload", "Updated exe was not copied.");
+            Require(File.ReadAllText(Path.Combine(installDir, "Runtime", "new.dll")) == "v-next-runtime", "Updated Runtime payload was not copied.");
+            Require(!File.Exists(Path.Combine(installDir, "Runtime", "old.dll")), "Stale Runtime file should be removed.");
             Require(File.ReadAllText(Path.Combine(installDir, "payload.txt")) == "v-next", "New payload file was not copied.");
             Require(!File.Exists(Path.Combine(installDir, "obsolete.txt")), "Obsolete file should be removed.");
             Require(!Directory.Exists(Path.Combine(installDir, "Tools", "StaleTool")), "Non-Activator tool folder should be removed.");

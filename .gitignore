@@ -4,6 +4,7 @@
 obj/
 tools/*/bin/
 *.user
+/bin/Runtime
 /bin/Libs
 /bin/Logs
 /bin/Config

@@ -74,7 +74,7 @@ internal static class VirtualDiskMigrationProbe
     {
         var root = Path.Combine(Path.GetTempPath(), "JeekMigrationProbe-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(root);
-        var crossDriveRoot = Path.Combine(AppContext.BaseDirectory, ".migration-probe-" + Guid.NewGuid().ToString("N"));
+        var crossDriveRoot = Path.Combine(AppPaths.ProgramDir, ".migration-probe-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(crossDriveRoot);
         var anchor = Path.Combine(root, "original");
         var first = Path.Combine(crossDriveRoot, "first");

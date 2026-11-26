@@ -1,9 +1,9 @@
 @echo off
 rem Stdio entry for this worktree's Debug MCP surface (dev-only; not under bin\).
 rem
-rem Agents launch this script (not bin\JeekWindowsOptimizerMcp.exe) so a running MCP session
+rem Agents launch this script (not bin\Runtime\JeekWindowsOptimizerMcp.exe) so a running MCP session
 rem locks only the fixed per-user adapter under %%LocalAppData%%. Builds can overwrite the
-rem side-by-side copy in bin\; the app copies that file to the fixed path on startup
+rem side-by-side copy in bin\Runtime\; the app copies that file to the fixed path on startup
 rem (not during the build).
 rem
 rem Requires: the app has been built and launched at least once so the fixed adapter exists

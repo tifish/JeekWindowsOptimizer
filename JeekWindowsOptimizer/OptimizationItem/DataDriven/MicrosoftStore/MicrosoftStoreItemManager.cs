@@ -11,7 +11,7 @@ public static class MicrosoftStoreItemManager
         var tabFile = new TabFile();
         if (
             !await tabFile.LoadAsync(
-                Path.Join(AppContext.BaseDirectory, @"Data\MicrosoftStoreItems.tab")
+                Path.Join(AppPaths.ProgramDir, @"Data\MicrosoftStoreItems.tab")
             )
         )
             return;
