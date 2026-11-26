@@ -157,6 +157,12 @@ internal static class DebugMcpServer
         host.AddTool("startup_scan", StartupScanAsync);
         host.AddTool("startup_decide", StartupDecideAsync);
         host.AddTool("startup_delete", StartupDeleteAsync);
+        host.AddTool("startup_run_once_and_delete", StartupRunOnceAndDeleteAsync);
+        host.AddTool("startup_details_probe", async _ =>
+        {
+            var task = await OnUiAsync(StartupDetailsProbe.RunAsync);
+            return ToolText(await task);
+        });
         host.AddTool("startup_delete_probe", async _ =>
         {
             var task = await OnUiAsync(StartupDeleteProbe.RunAsync);
@@ -1070,6 +1076,44 @@ internal static class DebugMcpServer
         return ToolText(summary, !deleted);
     }
 
+    private static async Task<JsonObject> StartupRunOnceAndDeleteAsync(JsonObject args)
+    {
+        var key = args["key"]?.GetValue<string>();
+        if (string.IsNullOrWhiteSpace(key))
+            return ToolText("'key' is required.", isError: true);
+
+        await (await OnUiAsync(() => RequireMainVm().EnsureStartupItemsAsync()));
+
+        var (work, item) = await OnUiAsync(() =>
+        {
+            var vm = RequireMainVm();
+            var found = vm.StartupItems.FirstOrDefault(i =>
+                string.Equals(i.Key, key, StringComparison.Ordinal));
+            if (found is null)
+                return (Task.FromResult(false), (StartupItem?)null);
+
+            return (vm.RunOnceAndDeleteStartupItemForDebugAsync(found), found);
+        });
+
+        if (item is null)
+            return ToolText($"No startup item with key '{key}'.", isError: true);
+
+        if (!item.CanRunOnceAndDelete)
+            return ToolText(
+                $"Startup item '{item.Name}' cannot be run and deleted (kind={item.Kind}, orphaned={item.IsOrphaned}, canRunOnceAndDelete={item.CanRunOnceAndDelete}).",
+                isError: true
+            );
+
+        var ok = await work;
+        var summary = await OnUiAsync(() =>
+            $"ranAndDeleted={ok}\n"
+            + $"name={item.Name}\n"
+            + $"kind={item.Kind}\n"
+            + $"error={item.ErrorMessage ?? ""}\n"
+            + $"remainingTotal={RequireMainVm().StartupTotalCount}");
+        return ToolText(summary, !ok);
+    }
+
     private static async Task<JsonObject> StartupEnforceAsync(JsonObject args)
     {
         var timeout = TimeSpan.FromSeconds(
@@ -1203,8 +1247,19 @@ internal static class DebugMcpServer
         if (item.Command.Length > 0)
             sb.AppendLine($"  command={item.Command}");
         sb.AppendLine($"  signer={item.SignerKind} publisher={item.Publisher ?? "(none)"}");
-        sb.AppendLine($"  enabled={item.IsEnabled} canToggle={item.CanToggle} orphaned={item.IsOrphaned} canDelete={item.CanDelete}");
-        sb.AppendLine($"  applying={item.IsApplying} deleting={item.IsDeleting} canChoose={item.CanChoose} canDeleteNow={item.CanDeleteNow}");
+        sb.AppendLine($"  enabled={item.IsEnabled} canToggle={item.CanToggle} orphaned={item.IsOrphaned} canDelete={item.CanDelete} canRunOnceAndDelete={item.CanRunOnceAndDelete}");
+        sb.AppendLine($"  applying={item.IsApplying} deleting={item.IsDeleting} runningOnce={item.IsRunningOnce} canChoose={item.CanChoose} canDeleteNow={item.CanDeleteNow} canRunOnceAndDeleteNow={item.CanRunOnceAndDeleteNow}");
+        if (item.IsScheduledTask)
+        {
+            sb.AppendLine($"  taskEnabled={item.IsEnabled} taskEnabledText={item.TaskEnabledText}");
+            if (item.HasTaskTriggers)
+                sb.AppendLine($"  taskTriggers({item.TaskTriggers.Count})={item.TaskTriggersText}");
+        }
+        if (item.IsService)
+        {
+            sb.AppendLine($"  serviceStartMode={item.ServiceStartMode} delayed={item.ServiceDelayedAutoStart} trigger={item.ServiceTriggerStart} startModeText={item.ServiceStartModeText}");
+            sb.AppendLine($"  serviceRunState={item.ServiceRunState} runStateText={item.ServiceRunStateText}");
+        }
         sb.AppendLine($"  decision={(item.Decision?.ToString() ?? "pending")} "
             + $"source={item.DecisionSource} compliant={item.IsCompliant} "
             + $"needsEnforcement={item.NeedsEnforcement}");

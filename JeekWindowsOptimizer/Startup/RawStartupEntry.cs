@@ -42,4 +42,10 @@ public sealed record RawStartupEntry
     ///     entries (Group Policy runs, protected tasks, boot-critical drivers).
     /// </summary>
     public StartupDeleteTarget? DeleteTarget { get; init; }
+
+    /// <summary>For a scheduled task: structured trigger definitions describing when it runs.</summary>
+    public IReadOnlyList<ScheduledTaskTriggerInfo> TaskTriggers { get; init; } = [];
+
+    /// <summary>For a Windows service: its configured startup type and live running state.</summary>
+    public ServiceRuntimeSnapshot? ServiceRuntime { get; init; }
 }

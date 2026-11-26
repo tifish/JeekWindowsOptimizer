@@ -277,6 +277,10 @@ public static partial class StartupIdentity
         return remaining;
     }
 
+    /// <summary>Splits a Windows command line into its executable/file part and remaining arguments.</summary>
+    public static (string FileName, string Arguments) SplitCommandLine(string? commandLine) =>
+        string.IsNullOrWhiteSpace(commandLine) ? ("", "") : SplitFirstArgument(commandLine);
+
     private static (string Head, string Remainder) SplitFirstArgument(string value)
     {
         var text = value.TrimStart();

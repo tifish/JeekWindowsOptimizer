@@ -137,6 +137,34 @@ public partial class StartupItem : ObservableObject
     /// <summary>Extra state the toggle needs to put things back exactly as they were.</summary>
     public string? RestoreState { get; init; }
 
+    /// <summary>For a scheduled task: structured trigger definitions describing when it runs.</summary>
+    public IReadOnlyList<ScheduledTaskTriggerInfo> TaskTriggers { get; init; } = [];
+
+    /// <summary>For a Windows service: its configured startup type.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasServiceStartMode))]
+    [NotifyPropertyChangedFor(nameof(IsServiceAutomatic))]
+    [NotifyPropertyChangedFor(nameof(IsServiceNonAutomatic))]
+    [NotifyPropertyChangedFor(nameof(ServiceStartModeText))]
+    public partial StartupServiceStartMode? ServiceStartMode { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ServiceStartModeText))]
+    public partial bool ServiceDelayedAutoStart { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ServiceStartModeText))]
+    public partial bool ServiceTriggerStart { get; set; }
+
+    /// <summary>For a Windows service: its live running state from SCM.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasServiceRunState))]
+    [NotifyPropertyChangedFor(nameof(IsServiceRunning))]
+    [NotifyPropertyChangedFor(nameof(IsServiceTransitioning))]
+    [NotifyPropertyChangedFor(nameof(IsServiceStoppedOrPaused))]
+    [NotifyPropertyChangedFor(nameof(ServiceRunStateText))]
+    public partial StartupServiceRunState? ServiceRunState { get; set; }
+
     /// <summary>True when the item runs at startup right now.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCompliant))]
@@ -147,11 +175,15 @@ public partial class StartupItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
     [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
     [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
+    [NotifyPropertyChangedFor(nameof(IsTaskEnabled))]
+    [NotifyPropertyChangedFor(nameof(IsTaskDisabled))]
+    [NotifyPropertyChangedFor(nameof(TaskEnabledText))]
     public partial bool IsEnabled { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CanChoose))]
     [NotifyPropertyChangedFor(nameof(CanDeleteNow))]
+    [NotifyPropertyChangedFor(nameof(CanRunOnceAndDeleteNow))]
     [NotifyPropertyChangedFor(nameof(StatusKey))]
     [NotifyPropertyChangedFor(nameof(StatusText))]
     [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
@@ -169,6 +201,15 @@ public partial class StartupItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
     public partial bool IsDeleting { get; set; }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(StatusKey))]
+    [NotifyPropertyChangedFor(nameof(StatusText))]
+    [NotifyPropertyChangedFor(nameof(IsStatusSuccess))]
+    [NotifyPropertyChangedFor(nameof(IsStatusWarning))]
+    [NotifyPropertyChangedFor(nameof(IsStatusDanger))]
+    [NotifyPropertyChangedFor(nameof(IsStatusNeutral))]
+    public partial bool IsRunningOnce { get; set; }
+
     public bool CanChoose => CanToggle && !IsApplying;
 
     /// <summary>True when this entry's file is missing and its registration can be deleted.</summary>
@@ -176,6 +217,107 @@ public partial class StartupItem : ObservableObject
 
     /// <summary>True when the user can delete this entry right now.</summary>
     public bool CanDeleteNow => CanDelete && !IsApplying;
+
+    public bool IsRunOnce => Kind == StartupItemKind.RunOnce;
+
+    /// <summary>True when this is a healthy RunOnce entry that can be executed immediately and removed.</summary>
+    public bool CanRunOnceAndDelete =>
+        Kind == StartupItemKind.RunOnce
+        && !IsOrphaned
+        && DeleteTarget is RegistryValueDeleteTarget
+        && !string.IsNullOrWhiteSpace(Command);
+
+    /// <summary>True when the user can run and delete this RunOnce entry right now.</summary>
+    public bool CanRunOnceAndDeleteNow => CanRunOnceAndDelete && !IsApplying;
+
+    public bool IsScheduledTask => Kind == StartupItemKind.ScheduledTask;
+
+    public bool IsTaskEnabled => IsScheduledTask && IsEnabled;
+
+    public bool IsTaskDisabled => IsScheduledTask && !IsEnabled;
+
+    public string TaskEnabledText =>
+        IsScheduledTask
+            ? Localizer.Get(IsEnabled ? "StartupTaskEnabled" : "StartupTaskDisabled")
+            : "";
+
+    public bool HasTaskTriggers => IsScheduledTask && TaskTriggers.Count > 0;
+
+    public string TaskTriggersText =>
+        HasTaskTriggers ? ScheduledTaskTriggerInfo.FormatList(TaskTriggers) : "";
+
+    public bool IsService => Kind == StartupItemKind.Service;
+
+    public bool HasServiceStartMode => IsService && ServiceStartMode is not null;
+
+    public bool IsServiceAutomatic =>
+        IsService && ServiceStartMode == StartupServiceStartMode.Automatic;
+
+    public bool IsServiceNonAutomatic => HasServiceStartMode && !IsServiceAutomatic;
+
+    public string ServiceStartModeText =>
+        HasServiceStartMode
+            ? ServiceStartMode switch
+            {
+                StartupServiceStartMode.Boot => Localizer.Get("StartupServiceStartBoot"),
+                StartupServiceStartMode.System => Localizer.Get("StartupServiceStartSystem"),
+                StartupServiceStartMode.Automatic => (ServiceDelayedAutoStart, ServiceTriggerStart) switch
+                {
+                    (true, true) => Localizer.Get("StartupServiceStartAutomaticDelayedTrigger"),
+                    (true, false) => Localizer.Get("StartupServiceStartAutomaticDelayed"),
+                    (false, true) => Localizer.Get("StartupServiceStartAutomaticTrigger"),
+                    _ => Localizer.Get("StartupServiceStartAutomatic"),
+                },
+                StartupServiceStartMode.Manual => ServiceTriggerStart
+                    ? Localizer.Get("StartupServiceStartManualTrigger")
+                    : Localizer.Get("StartupServiceStartManual"),
+                StartupServiceStartMode.Disabled => Localizer.Get("StartupServiceStartDisabled"),
+                _ => "",
+            }
+            : "";
+
+    public bool HasServiceRunState =>
+        IsService && ServiceRunState is not null && ServiceRunState != StartupServiceRunState.Unknown;
+
+    public bool IsServiceRunning =>
+        IsService && ServiceRunState == StartupServiceRunState.Running;
+
+    public bool IsServiceTransitioning =>
+        IsService
+        && ServiceRunState is StartupServiceRunState.StartPending
+            or StartupServiceRunState.StopPending
+            or StartupServiceRunState.PausePending
+            or StartupServiceRunState.ContinuePending;
+
+    public bool IsServiceStoppedOrPaused =>
+        IsService
+        && ServiceRunState is StartupServiceRunState.Stopped or StartupServiceRunState.Paused;
+
+    public string ServiceRunStateText =>
+        HasServiceRunState
+            ? ServiceRunState switch
+            {
+                StartupServiceRunState.Running => Localizer.Get("StartupServiceRunRunning"),
+                StartupServiceRunState.Stopped => Localizer.Get("StartupServiceRunStopped"),
+                StartupServiceRunState.Paused => Localizer.Get("StartupServiceRunPaused"),
+                StartupServiceRunState.StartPending => Localizer.Get("StartupServiceRunStarting"),
+                StartupServiceRunState.StopPending => Localizer.Get("StartupServiceRunStopping"),
+                StartupServiceRunState.PausePending => Localizer.Get("StartupServiceRunPausing"),
+                StartupServiceRunState.ContinuePending => Localizer.Get("StartupServiceRunResuming"),
+                _ => "",
+            }
+            : "";
+
+    public void ApplyServiceRuntime(ServiceRuntimeSnapshot? snapshot)
+    {
+        if (snapshot is null)
+            return;
+
+        ServiceStartMode = snapshot.StartMode;
+        ServiceDelayedAutoStart = snapshot.DelayedAutoStart;
+        ServiceTriggerStart = snapshot.TriggerStart;
+        ServiceRunState = snapshot.RunState;
+    }
 
     /// <summary>What the user decided, or null when it has never been decided.</summary>
     [ObservableProperty]
@@ -299,6 +441,7 @@ public partial class StartupItem : ObservableObject
 
     public string StatusKey =>
         IsDeleting ? "StartupStatusDeleting"
+        : IsRunningOnce ? "StartupStatusRunningOnce"
         : IsApplying ? "StartupStatusApplying"
         : !CanToggle ? ReadOnlyReasonKey ?? "StartupStatusReadOnly"
         : Decision is null ? "StartupStatusPending"
@@ -366,5 +509,9 @@ public partial class StartupItem : ObservableObject
         OnPropertyChanged(nameof(PublisherText));
         OnPropertyChanged(nameof(StatusText));
         OnPropertyChanged(nameof(DecidedOnText));
+        OnPropertyChanged(nameof(TaskEnabledText));
+        OnPropertyChanged(nameof(TaskTriggersText));
+        OnPropertyChanged(nameof(ServiceStartModeText));
+        OnPropertyChanged(nameof(ServiceRunStateText));
     }
 }

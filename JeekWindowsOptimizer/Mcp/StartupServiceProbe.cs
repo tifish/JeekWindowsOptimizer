@@ -62,6 +62,9 @@ internal static class StartupServiceProbe
             Check("deny sets the start type to Disabled", ReadStart(serviceName) == 4,
                 ReadStart(serviceName).ToString());
             Check("deny stops the service", !ServiceRuntime.IsRunning(serviceName));
+            Check("deny returns live Disabled/Stopped service snapshot",
+                deny.ServiceState is { StartMode: StartupServiceStartMode.Disabled, RunState: StartupServiceRunState.Stopped },
+                deny.ServiceState?.ToString() ?? "(null)");
 
             // Allow: original start type back, and an automatic service running again.
             var allow = await Task.Run(() => StartupToggle.Apply(item, enabled: true));
@@ -72,6 +75,9 @@ internal static class StartupServiceProbe
                 ReadDelayed(serviceName)?.ToString() ?? "-");
             if (originalStart == 2)
                 Check("allow starts an automatic service again", ServiceRuntime.IsRunning(serviceName));
+            Check("allow returns updated service snapshot matching restored start mode",
+                allow.ServiceState is not null && (int)allow.ServiceState.StartMode == originalStart,
+                allow.ServiceState?.ToString() ?? "(null)");
 
             // A service with running dependents is reported, not stopped along with them.
             var dependents = await Task.Run(() => ServiceRuntime.Stop("RpcSs", TimeSpan.FromSeconds(1)));

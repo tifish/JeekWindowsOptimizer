@@ -200,6 +200,10 @@ public partial class MainViewModel
             || item.Command.Contains(term, StringComparison.CurrentCultureIgnoreCase)
             || item.Location.Contains(term, StringComparison.CurrentCultureIgnoreCase)
             || (item.Publisher ?? "").Contains(term, StringComparison.CurrentCultureIgnoreCase)
+            || item.TaskEnabledText.Contains(term, StringComparison.CurrentCultureIgnoreCase)
+            || item.TaskTriggersText.Contains(term, StringComparison.CurrentCultureIgnoreCase)
+            || item.ServiceStartModeText.Contains(term, StringComparison.CurrentCultureIgnoreCase)
+            || item.ServiceRunStateText.Contains(term, StringComparison.CurrentCultureIgnoreCase)
         );
     }
 
@@ -479,6 +483,9 @@ public partial class MainViewModel
         {
             var result = await Task.Run(() => StartupToggleHandler(item, enabled));
 
+            if (result.ServiceState is not null)
+                item.ApplyServiceRuntime(result.ServiceState);
+
             if (result.Succeeded)
             {
                 item.IsEnabled = enabled;
@@ -576,6 +583,75 @@ public partial class MainViewModel
         }
     }
 
+    [RelayCommand(AllowConcurrentExecutions = true)]
+    private Task RunOnceAndDeleteStartupItem(StartupItem? item) =>
+        RunOnceAndDeleteStartupItemAsync(item, confirm: true);
+
+    internal async Task<bool> RunOnceAndDeleteStartupItemAsync(StartupItem? item, bool confirm)
+    {
+        if (item is null || !item.CanRunOnceAndDeleteNow || IsStartupBusy || IsStartupScanning)
+            return false;
+
+        if (confirm)
+        {
+            var answer = await ShowUpdateDialogAsync(
+                Localizer.Get("Startup"),
+                string.Format(
+                    Localizer.Get("StartupRunOnceConfirm"),
+                    item.DisplayName,
+                    item.Command,
+                    item.Location
+                ),
+                ButtonEnum.YesNo,
+                MsBox.Avalonia.Enums.Icon.Question
+            );
+            if (answer != ButtonResult.Yes)
+                return false;
+
+            if (!item.CanRunOnceAndDeleteNow || IsStartupBusy || IsStartupScanning)
+                return false;
+        }
+
+        item.ErrorFormatKey = null;
+        item.ErrorMessage = null;
+        item.WarningMessage = null;
+        item.IsRunningOnce = true;
+        item.IsApplying = true;
+        StartupApplyingCount++;
+        try
+        {
+            var result = await Task.Run(() => StartupRunOnceHandler(item));
+            if (result.Succeeded)
+            {
+                RemoveStartupItemFromGroups(item);
+                RefreshDisplayedStartupGroups();
+                UpdateStartupSummary();
+                StatusMessage = string.Format(
+                    Localizer.Get("StartupRunOnceSucceeded"),
+                    item.DisplayName
+                );
+                StartupLog.ZLogInformation(
+                    $"Ran and deleted RunOnce startup entry {item.Name} at {item.Location}"
+                );
+                return true;
+            }
+
+            item.ErrorFormatKey = "StartupRunOnceFailed";
+            item.ErrorMessage = result.Error;
+            StartupLog.ZLogWarning(
+                $"Failed to run and delete RunOnce startup entry {item.Name}: {result.Error}"
+            );
+            return false;
+        }
+        finally
+        {
+            item.IsRunningOnce = false;
+            item.IsApplying = false;
+            StartupApplyingCount--;
+            UpdateStartupSummary();
+        }
+    }
+
     private void RemoveStartupItemFromGroups(StartupItem item)
     {
         for (var i = AllStartupGroups.Count - 1; i >= 0; i--)
@@ -590,7 +666,7 @@ public partial class MainViewModel
         }
     }
 
-    // Detached Debug probes use synthetic decisions, toggles and deletes instead of changing Windows.
+    // Detached Debug probes use synthetic decisions, toggles, deletes and runs instead of changing Windows.
     internal Func<StartupItem, StartupDecision, bool> StartupDecisionWriter { get; init; } =
         (item, decision) => StartupDecisionStore.Decide(item.Key, decision, item.ToSnapshot());
 
@@ -599,6 +675,9 @@ public partial class MainViewModel
 
     internal Func<StartupItem, StartupDeleteResult> StartupDeleteHandler { get; init; } =
         StartupToggle.Delete;
+
+    internal Func<StartupItem, StartupRunOnceResult> StartupRunOnceHandler { get; init; } =
+        StartupToggle.RunOnceAndDelete;
 
     private bool _startupNeedsExplorerRestart;
 
@@ -796,6 +875,10 @@ public partial class MainViewModel
     /// <summary>Deletes an orphaned entry without the confirmation dialog. Debug surface only.</summary>
     public Task<bool> DeleteStartupItemForDebugAsync(StartupItem item) =>
         DeleteStartupItemAsync(item, confirm: false);
+
+    /// <summary>Runs a RunOnce entry and deletes its registry value without the confirmation dialog. Debug surface only.</summary>
+    public Task<bool> RunOnceAndDeleteStartupItemForDebugAsync(StartupItem item) =>
+        RunOnceAndDeleteStartupItemAsync(item, confirm: false);
 
     /// <summary>Re-reads the ledger into the rows and refreshes the tab. Debug surface only.</summary>
     public void RefreshStartupAfterLedgerChangeForDebug()

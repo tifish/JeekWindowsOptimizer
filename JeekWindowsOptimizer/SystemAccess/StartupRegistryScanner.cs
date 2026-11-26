@@ -267,6 +267,29 @@ public static class StartupRegistryScanner
     public static string StartupFolderHandle(bool perUser, string fileName) =>
         $"{(perUser ? RegistryHive.CurrentUser : RegistryHive.LocalMachine)}|{RegistryView.Registry64}|StartupFolder|{fileName}";
 
+    /// <summary>Reads the current command string of a Run or RunOnce registry value, if it still exists.</summary>
+    public static bool TryReadValue(RegistryValueDeleteTarget target, out string command)
+    {
+        command = "";
+
+        try
+        {
+            using var baseKey = RegistryKey.OpenBaseKey(target.Hive, target.View);
+            using var key = baseKey.OpenSubKey(target.SubKey);
+            if (key?.GetValue(target.ValueName) is string value && !string.IsNullOrWhiteSpace(value))
+            {
+                command = value;
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to read startup registry value {target.ValueName}");
+        }
+
+        return false;
+    }
+
     /// <summary>Deletes an orphaned Run or RunOnce registry value and its StartupApproved flag if present.</summary>
     public static bool Delete(RegistryValueDeleteTarget target, out string? error)
     {

@@ -1,5 +1,6 @@
 using System.ServiceProcess;
 using JeekTools;
+using JeekWindowsOptimizer.Startup;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using ZLogger;
@@ -147,6 +148,127 @@ public static class ServiceRuntime
         }
     }
 
+    /// <summary>Reads the live running state of one service (or of a user-service template's instances).</summary>
+    public static StartupServiceRunState GetRunState(string serviceName, bool isUserServiceTemplate = false)
+    {
+        var best = ReadSingleRunState(serviceName);
+
+        if (isUserServiceTemplate)
+        {
+            foreach (var instance in FindUserServiceInstances(serviceName))
+                best = PickMoreActive(best, ReadSingleRunState(instance));
+        }
+
+        return best;
+    }
+
+    /// <summary>
+    ///     Enumerates every Win32 service's live running state in one SCM call, so scanning hundreds
+    ///     of services does not pay per-service handle open overhead.
+    /// </summary>
+    public static ServiceRunStateSnapshot SnapshotRunStates()
+    {
+        var exact = new Dictionary<string, StartupServiceRunState>(StringComparer.OrdinalIgnoreCase);
+        var templateBest = new Dictionary<string, StartupServiceRunState>(StringComparer.OrdinalIgnoreCase);
+        ServiceController[]? controllers = null;
+
+        try
+        {
+            controllers = ServiceController.GetServices();
+            foreach (var controller in controllers)
+            {
+                try
+                {
+                    var name = controller.ServiceName;
+                    var state = MapStatus(controller.Status);
+                    exact[name] = state;
+
+                    if (TryExtractUserServiceTemplate(name, out var template))
+                    {
+                        templateBest[template] = templateBest.TryGetValue(template, out var existing)
+                            ? PickMoreActive(existing, state)
+                            : state;
+                    }
+                }
+                catch
+                {
+                    // Skip unreadable service entries.
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to snapshot Windows service running states");
+        }
+        finally
+        {
+            if (controllers is not null)
+            {
+                foreach (var controller in controllers)
+                    controller.Dispose();
+            }
+        }
+
+        return new ServiceRunStateSnapshot(exact, templateBest);
+    }
+
+    private static StartupServiceRunState ReadSingleRunState(string serviceName)
+    {
+        try
+        {
+            using var controller = new ServiceController(serviceName);
+            return MapStatus(controller.Status);
+        }
+        catch
+        {
+            return StartupServiceRunState.Unknown;
+        }
+    }
+
+    private static StartupServiceRunState MapStatus(ServiceControllerStatus status) =>
+        status switch
+        {
+            ServiceControllerStatus.Running => StartupServiceRunState.Running,
+            ServiceControllerStatus.Stopped => StartupServiceRunState.Stopped,
+            ServiceControllerStatus.Paused => StartupServiceRunState.Paused,
+            ServiceControllerStatus.StartPending => StartupServiceRunState.StartPending,
+            ServiceControllerStatus.StopPending => StartupServiceRunState.StopPending,
+            ServiceControllerStatus.PausePending => StartupServiceRunState.PausePending,
+            ServiceControllerStatus.ContinuePending => StartupServiceRunState.ContinuePending,
+            _ => StartupServiceRunState.Unknown,
+        };
+
+    internal static StartupServiceRunState PickMoreActive(
+        StartupServiceRunState a,
+        StartupServiceRunState b
+    ) => Priority(b) > Priority(a) ? b : a;
+
+    private static int Priority(StartupServiceRunState state) =>
+        state switch
+        {
+            StartupServiceRunState.Running => 6,
+            StartupServiceRunState.StartPending or StartupServiceRunState.ContinuePending => 5,
+            StartupServiceRunState.StopPending or StartupServiceRunState.PausePending => 4,
+            StartupServiceRunState.Paused => 3,
+            StartupServiceRunState.Stopped => 2,
+            _ => 1,
+        };
+
+    private static bool TryExtractUserServiceTemplate(string name, out string template)
+    {
+        template = "";
+        var underscore = name.LastIndexOf('_');
+        if (underscore <= 0 || underscore == name.Length - 1)
+            return false;
+
+        var suffix = name[(underscore + 1)..];
+        if (!suffix.All(char.IsAsciiHexDigit))
+            return false;
+
+        template = name[..underscore];
+        return true;
+    }
+
     /// <summary>
     ///     The per-logon instances of a user-service template, e.g. <c>CDPUserSvc_4a2b1</c> for
     ///     <c>CDPUserSvc</c>. The template never runs itself; its instances do, so stopping a denied
@@ -205,5 +327,36 @@ public static class ServiceRuntime
         while (ex.InnerException is not null)
             ex = ex.InnerException;
         return ex;
+    }
+}
+
+/// <summary>Snapshot of live SCM running states for fast O(1) lookup during startup scans.</summary>
+public sealed class ServiceRunStateSnapshot
+{
+    private readonly Dictionary<string, StartupServiceRunState> _exact;
+    private readonly Dictionary<string, StartupServiceRunState> _templateBest;
+
+    internal ServiceRunStateSnapshot(
+        Dictionary<string, StartupServiceRunState> exact,
+        Dictionary<string, StartupServiceRunState> templateBest
+    )
+    {
+        _exact = exact;
+        _templateBest = templateBest;
+    }
+
+    public StartupServiceRunState GetState(string serviceName, bool isUserServiceTemplate)
+    {
+        var best = _exact.TryGetValue(serviceName, out var exactState)
+            ? exactState
+            : StartupServiceRunState.Unknown;
+
+        if (isUserServiceTemplate && _templateBest.TryGetValue(serviceName, out var instanceState))
+            best = ServiceRuntime.PickMoreActive(best, instanceState);
+
+        if (best == StartupServiceRunState.Unknown && _exact.Count > 0)
+            return StartupServiceRunState.Stopped;
+
+        return best;
     }
 }

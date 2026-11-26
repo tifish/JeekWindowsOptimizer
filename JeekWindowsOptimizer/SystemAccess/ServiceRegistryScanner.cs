@@ -45,6 +45,7 @@ public static partial class ServiceRegistryScanner
 
             var names = root.GetSubKeyNames();
             var templates = new HashSet<string>(names, StringComparer.OrdinalIgnoreCase);
+            var runStates = ServiceRuntime.SnapshotRunStates();
 
             foreach (var name in names)
             {
@@ -91,6 +92,21 @@ public static partial class ServiceRegistryScanner
                     // so they are listed for visibility but never toggled.
                     var critical = isDriver && start is StartBoot or StartSystem;
 
+                    ServiceRuntimeSnapshot? serviceRuntime = null;
+                    if (!isDriver)
+                    {
+                        var isUserTemplate = type is UserOwnProcess or UserShareProcess;
+                        var delayed = (key.GetValue("DelayedAutostart") as int? ?? 0) != 0;
+                        var triggerStart = HasTriggerInfo(key);
+                        var runState = runStates.GetState(name, isUserTemplate);
+                        serviceRuntime = new ServiceRuntimeSnapshot(
+                            ToStartMode(start),
+                            delayed,
+                            triggerStart,
+                            runState
+                        );
+                    }
+
                     entries.Add(
                         new RawStartupEntry
                         {
@@ -106,6 +122,7 @@ public static partial class ServiceRegistryScanner
                             // it back to Manual or Automatic as it was, not to a guessed value.
                             RestoreState = start.ToString(),
                             DeleteTarget = critical ? null : new ServiceDeleteTarget(name),
+                            ServiceRuntime = serviceRuntime,
                         }
                     );
                 }
@@ -175,6 +192,56 @@ public static partial class ServiceRegistryScanner
         uint cchOutBuf,
         nint ppvReserved
     );
+
+    /// <summary>Reads a single service's live startup type and running state after an apply.</summary>
+    public static ServiceRuntimeSnapshot? ReadRuntimeSnapshot(string serviceName)
+    {
+        try
+        {
+            using var key = Registry.LocalMachine.OpenSubKey($@"{ServicesPath}\{serviceName}");
+            if (key is null)
+                return null;
+
+            var type = key.GetValue("Type") as int? ?? 0;
+            var start = key.GetValue("Start") as int? ?? StartDisabled;
+            var delayed = (key.GetValue("DelayedAutostart") as int? ?? 0) != 0;
+            var triggerStart = HasTriggerInfo(key);
+            var isUserTemplate = type is UserOwnProcess or UserShareProcess;
+            var runState = ServiceRuntime.GetRunState(serviceName, isUserTemplate);
+            if (runState == StartupServiceRunState.Unknown)
+                runState = StartupServiceRunState.Stopped;
+
+            return new ServiceRuntimeSnapshot(ToStartMode(start), delayed, triggerStart, runState);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to read runtime snapshot for service {serviceName}");
+            return null;
+        }
+    }
+
+    private static bool HasTriggerInfo(RegistryKey serviceKey)
+    {
+        try
+        {
+            using var triggerKey = serviceKey.OpenSubKey("TriggerInfo");
+            return triggerKey is not null && triggerKey.SubKeyCount > 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static StartupServiceStartMode ToStartMode(int start) =>
+        start switch
+        {
+            0 => StartupServiceStartMode.Boot,
+            1 => StartupServiceStartMode.System,
+            2 => StartupServiceStartMode.Automatic,
+            3 => StartupServiceStartMode.Manual,
+            _ => StartupServiceStartMode.Disabled,
+        };
 
     /// <summary>Applies a start type, returning false with a reason when it could not be written.</summary>
     public static bool SetStartMode(string serviceName, int start, out string? error)

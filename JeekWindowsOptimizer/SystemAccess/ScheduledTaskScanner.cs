@@ -155,7 +155,8 @@ public static class ScheduledTaskScanner
 
             try
             {
-                if (!HasStartupTrigger(definition))
+                var (hasStartupTrigger, triggers) = ReadTriggers(definition);
+                if (!hasStartupTrigger)
                     return null;
 
                 var (command, imagePath) = ReadPrimaryAction(definition);
@@ -173,6 +174,7 @@ public static class ScheduledTaskScanner
                     ReadOnlyReasonKey = canModify ? null : "StartupStatusTaskProtected",
                     RestoreState = path,
                     DeleteTarget = canModify ? new ScheduledTaskDeleteTarget(path) : null,
+                    TaskTriggers = triggers,
                 };
             }
             finally
@@ -212,11 +214,15 @@ public static class ScheduledTaskScanner
         }
     }
 
-    private static bool HasStartupTrigger(object definition)
+    private static (bool HasStartupTrigger, List<ScheduledTaskTriggerInfo> Triggers) ReadTriggers(
+        object definition
+    )
     {
+        var result = new List<ScheduledTaskTriggerInfo>();
+        var hasStartup = false;
         var triggers = WindowsScheduledTask.GetComProperty<object>(definition, "Triggers");
         if (triggers is null)
-            return false;
+            return (false, result);
 
         try
         {
@@ -232,7 +238,13 @@ public static class ScheduledTaskScanner
                     var type = WindowsScheduledTask.GetComProperty<int>(trigger, "Type");
                     if (type is TriggerRegistration or TriggerBoot or TriggerLogon
                         or TriggerSessionStateChange)
-                        return true;
+                        hasStartup = true;
+
+                    result.Add(ReadTriggerInfo(trigger, type));
+                }
+                catch
+                {
+                    // One unreadable trigger must not discard the rest.
                 }
                 finally
                 {
@@ -249,7 +261,85 @@ public static class ScheduledTaskScanner
             WindowsScheduledTask.ReleaseCom(triggers);
         }
 
-        return false;
+        return (hasStartup, result);
+    }
+
+    private static ScheduledTaskTriggerInfo ReadTriggerInfo(object trigger, int type)
+    {
+        var kind = Enum.IsDefined(typeof(ScheduledTaskTriggerKind), type)
+            ? (ScheduledTaskTriggerKind)type
+            : ScheduledTaskTriggerKind.Unknown;
+
+        var enabled = TryGetComProperty(trigger, "Enabled", true);
+        var startBoundary = TryGetComProperty<string?>(trigger, "StartBoundary", null);
+
+        string? delay = null;
+        if (type is 0 or TriggerRegistration or TriggerBoot or TriggerLogon or TriggerSessionStateChange)
+            delay = TryGetComProperty<string?>(trigger, "Delay", null);
+
+        string? userId = null;
+        if (type is TriggerLogon or TriggerSessionStateChange)
+            userId = TryGetComProperty<string?>(trigger, "UserId", null);
+
+        var sessionChange = ScheduledTaskSessionChange.Unknown;
+        if (type == TriggerSessionStateChange)
+        {
+            var rawChange = TryGetComProperty(trigger, "StateChange", 0);
+            if (Enum.IsDefined(typeof(ScheduledTaskSessionChange), rawChange))
+                sessionChange = (ScheduledTaskSessionChange)rawChange;
+        }
+
+        var interval = type switch
+        {
+            2 => TryGetComProperty(trigger, "DaysInterval", 0),
+            3 => TryGetComProperty(trigger, "WeeksInterval", 0),
+            _ => 0,
+        };
+
+        string? repeatInterval = null;
+        var repetition = TryGetComProperty<object?>(trigger, "Repetition", null);
+        if (repetition is not null)
+        {
+            try
+            {
+                repeatInterval = TryGetComProperty<string?>(repetition, "Interval", null);
+            }
+            finally
+            {
+                WindowsScheduledTask.ReleaseCom(repetition);
+            }
+        }
+
+        return new ScheduledTaskTriggerInfo
+        {
+            Kind = kind,
+            Enabled = enabled,
+            SessionChange = sessionChange,
+            UserId = string.IsNullOrWhiteSpace(userId) ? null : userId.Trim(),
+            DelayIso = string.IsNullOrWhiteSpace(delay) ? null : delay.Trim(),
+            StartBoundary = string.IsNullOrWhiteSpace(startBoundary) ? null : startBoundary.Trim(),
+            RepetitionIntervalIso = string.IsNullOrWhiteSpace(repeatInterval) ? null : repeatInterval.Trim(),
+            Interval = interval,
+        };
+    }
+
+    private static T TryGetComProperty<T>(object target, string propertyName, T defaultValue)
+    {
+        try
+        {
+            var value = WindowsScheduledTask.GetComProperty<object?>(target, propertyName);
+            if (value is T typed)
+                return typed;
+            if (value is not null && typeof(T) == typeof(int))
+                return (T)(object)Convert.ToInt32(value);
+            if (value is not null && typeof(T) == typeof(bool))
+                return (T)(object)Convert.ToBoolean(value);
+            return defaultValue;
+        }
+        catch
+        {
+            return defaultValue;
+        }
     }
 
     /// <summary>

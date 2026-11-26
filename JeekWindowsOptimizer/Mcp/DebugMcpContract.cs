@@ -213,6 +213,18 @@ public static class DebugMcpContract
             {
                 ["key"] = Prop("string", "Ledger key from startup_items."),
             }, ["key"]),
+        Tool("startup_run_once_and_delete",
+            "Execute one healthy RunOnce startup entry immediately and delete its registry value without the GUI confirmation. "
+                + "Refuses non-RunOnce or orphaned entries. Changes the system; debug surface only.",
+            new()
+            {
+                ["key"] = Prop("string", "Ledger key from startup_items."),
+            }, ["key"]),
+        Tool("startup_details_probe",
+            "Run isolated end-to-end checks for RunOnce run-and-delete, scheduled task enabled/disabled status and trigger timing, "
+                + "and system service startup mode and running status (including localization and ViewModel flow). "
+                + "Cleans up all scratch fixtures and never touches real user startup entries or the decision ledger.",
+            new()),
         Tool("startup_delete_probe",
             "Run isolated end-to-end deletion checks against temporary scratch fixtures (Run, RunOnce, Startup folder shortcut, "
                 + "Scheduled Task, Service, Boot driver protection, Explorer/IE extensions, existing-file safety guard, and ViewModel). "

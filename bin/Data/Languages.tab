@@ -830,3 +830,63 @@ StartupStatusDeleting	Deleting…	正在删除…
 StartupDeleteFailed	Failed to delete: {0}	删除失败：{0}
 StartupDeleteSucceeded	Deleted startup entry: {0}	已删除启动项：{0}
 StartupDeleteFileExistsNow	The target file exists now; rescan before taking action.	目标文件现已存在，已取消删除，请重新扫描。
+StartupRunOnceAndDelete	Run & delete	立即运行并删除
+StartupRunOnceAndDeleteHint	Run this one-time entry now and remove it from RunOnce	立即运行此一次性启动项并从 RunOnce 中删除
+StartupRunOnceConfirm	Run "{0}" now and delete this Run-once entry?\n\nCommand: {1}\nLocation: {2}	立即运行“{0}”并删除此一次性启动项吗？\n\n命令：{1}\n位置：{2}
+StartupStatusRunningOnce	Running…	正在运行…
+StartupRunOnceSucceeded	Ran and deleted Run-once entry: {0}	已运行并删除一次性启动项：{0}
+StartupRunOnceFailed	Failed to run: {0}	运行失败：{0}
+StartupRunOnceMissing	This Run-once entry no longer exists; rescan to refresh.	此一次性启动项已不存在，请重新扫描。
+StartupRunOnceFileMissing	The target file no longer exists; rescan before taking action.	目标文件已不存在，已取消运行，请重新扫描。
+StartupRunOnceDeleteFailedAfterRun	Started, but failed to delete registry value: {0}	已启动，但删除注册表项失败：{0}
+StartupTaskEnabled	Enabled	已启用
+StartupTaskDisabled	Disabled	已禁用
+StartupTaskTriggerSeparator	 · 	 · 
+StartupTaskTriggerBoot	At startup	系统启动时
+StartupTaskTriggerLogon	At logon	用户登录时
+StartupTaskTriggerLogonUser	At logon ({0})	用户登录时（{0}）
+StartupTaskTriggerRegistration	When registered	任务注册或修改时
+StartupTaskTriggerSessionChange	On session state change	会话状态变更时
+StartupTaskTriggerConsoleConnect	On local connect	本地连接会话时
+StartupTaskTriggerConsoleDisconnect	On local disconnect	断开本地会话时
+StartupTaskTriggerRemoteConnect	On remote connect	远程连接会话时
+StartupTaskTriggerRemoteDisconnect	On remote disconnect	断开远程会话时
+StartupTaskTriggerSessionLock	On lock	锁屏时
+StartupTaskTriggerSessionUnlock	On unlock	解锁时
+StartupTaskTriggerIdle	On idle	系统空闲时
+StartupTaskTriggerEvent	On event	事件触发时
+StartupTaskTriggerTime	One time	定时触发
+StartupTaskTriggerTimeAt	At {0}	定时（{0}）
+StartupTaskTriggerDaily	Daily	每天
+StartupTaskTriggerDailyAt	Daily at {0}	每天 {0}
+StartupTaskTriggerEveryDays	Every {0} days	每 {0} 天
+StartupTaskTriggerEveryDaysAt	Every {0} days at {1}	每 {0} 天 {1}
+StartupTaskTriggerWeekly	Weekly	每周
+StartupTaskTriggerWeeklyAt	Weekly at {0}	每周 {0}
+StartupTaskTriggerEveryWeeks	Every {0} weeks	每 {0} 周
+StartupTaskTriggerEveryWeeksAt	Every {0} weeks at {1}	每 {0} 周 {1}
+StartupTaskTriggerMonthly	Monthly	每月
+StartupTaskTriggerMonthlyAt	Monthly at {0}	每月 {0}
+StartupTaskTriggerDelay	{0} (delay {1})	{0}（延迟 {1}）
+StartupTaskTriggerRepeat	{0}, every {1}	{0}，每 {1} 重复
+StartupTaskTriggerDisabled	{0} (trigger disabled)	{0}（触发器已禁用）
+StartupDurationDay	{0}d	{0}天
+StartupDurationHour	{0}h	{0}小时
+StartupDurationMinute	{0}m	{0}分钟
+StartupDurationSecond	{0}s	{0}秒
+StartupServiceStartBoot	Boot	引导启动
+StartupServiceStartSystem	System	系统启动
+StartupServiceStartAutomatic	Automatic	自动
+StartupServiceStartAutomaticDelayed	Automatic (Delayed)	自动（延迟启动）
+StartupServiceStartAutomaticTrigger	Automatic (Trigger)	自动（触发器启动）
+StartupServiceStartAutomaticDelayedTrigger	Automatic (Delayed, Trigger)	自动（延迟、触发器启动）
+StartupServiceStartManual	Manual	手动
+StartupServiceStartManualTrigger	Manual (Trigger)	手动（触发器启动）
+StartupServiceStartDisabled	Disabled	禁用
+StartupServiceRunRunning	Running	正在运行
+StartupServiceRunStopped	Stopped	已停止
+StartupServiceRunPaused	Paused	已暂停
+StartupServiceRunStarting	Starting	正在启动
+StartupServiceRunStopping	Stopping	正在停止
+StartupServiceRunPausing	Pausing	正在暂停
+StartupServiceRunResuming	Resuming	正在恢复

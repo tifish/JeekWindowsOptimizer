@@ -146,6 +146,11 @@ public static class StartupItemManager
                 CanToggle = entry.CanToggle,
                 ReadOnlyReasonKey = entry.ReadOnlyReasonKey,
                 RestoreState = entry.RestoreState,
+                TaskTriggers = entry.TaskTriggers,
+                ServiceStartMode = entry.ServiceRuntime?.StartMode,
+                ServiceDelayedAutoStart = entry.ServiceRuntime?.DelayedAutoStart ?? false,
+                ServiceTriggerStart = entry.ServiceRuntime?.TriggerStart ?? false,
+                ServiceRunState = entry.ServiceRuntime?.RunState,
                 IsEnabled = entry.IsEnabled,
             };
 

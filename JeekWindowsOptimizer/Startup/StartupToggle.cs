@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Jeek.Avalonia.Localization;
 using JeekTools;
 using Microsoft.Extensions.Logging;
@@ -14,11 +15,15 @@ public readonly record struct StartupToggleResult(
     bool Succeeded,
     string? Error,
     bool RequiresExplorerRestart,
-    string? Warning = null
+    string? Warning = null,
+    ServiceRuntimeSnapshot? ServiceState = null
 )
 {
-    public static StartupToggleResult Ok(bool requiresExplorerRestart = false, string? warning = null) =>
-        new(true, null, requiresExplorerRestart, warning);
+    public static StartupToggleResult Ok(
+        bool requiresExplorerRestart = false,
+        string? warning = null,
+        ServiceRuntimeSnapshot? serviceState = null
+    ) => new(true, null, requiresExplorerRestart, warning, serviceState);
 
     public static StartupToggleResult Fail(string? error) => new(false, error, false);
 }
@@ -29,6 +34,14 @@ public readonly record struct StartupDeleteResult(bool Succeeded, string? Error)
     public static StartupDeleteResult Ok() => new(true, null);
 
     public static StartupDeleteResult Fail(string? error) => new(false, error);
+}
+
+/// <summary>The outcome of running a RunOnce entry immediately and deleting its registry value.</summary>
+public readonly record struct StartupRunOnceResult(bool Succeeded, string? Error)
+{
+    public static StartupRunOnceResult Ok() => new(true, null);
+
+    public static StartupRunOnceResult Fail(string? error) => new(false, error);
 }
 
 /// <summary>
@@ -128,10 +141,14 @@ public static class StartupToggle
             // whatever triggers them, which is what Manual means.
             if (start == StartAutomatic
                 && !ServiceRuntime.Start(item.Name, ServiceRuntime.DefaultTimeout, out var startError))
-                return StartupToggleResult.Ok(warning: string.Format(
-                    Localizer.Get("StartupWarningServiceStartFailed"), startError));
+                return StartupToggleResult.Ok(
+                    warning: string.Format(Localizer.Get("StartupWarningServiceStartFailed"), startError),
+                    serviceState: ServiceRegistryScanner.ReadRuntimeSnapshot(item.Name)
+                );
 
-            return StartupToggleResult.Ok();
+            return StartupToggleResult.Ok(
+                serviceState: ServiceRegistryScanner.ReadRuntimeSnapshot(item.Name)
+            );
         }
 
         // Capture the current start type before overwriting it, or the original is lost forever.
@@ -148,7 +165,11 @@ public static class StartupToggle
         if (isDriver)
             return StartupToggleResult.Ok(warning: Localizer.Get("StartupWarningDriverReboot"));
 
-        return StartupToggleResult.Ok(warning: StopServiceAndInstances(item.Name));
+        var stopWarning = StopServiceAndInstances(item.Name);
+        return StartupToggleResult.Ok(
+            warning: stopWarning,
+            serviceState: ServiceRegistryScanner.ReadRuntimeSnapshot(item.Name)
+        );
     }
 
     /// <summary>
@@ -246,5 +267,61 @@ public static class StartupToggle
             Log.ZLogWarning(ex, $"Failed to delete orphaned startup entry {item.Name}");
             return StartupDeleteResult.Fail(ex.Message);
         }
+    }
+
+    /// <summary>
+    ///     Executes a RunOnce command immediately and removes its registry value once launched.
+    /// </summary>
+    public static StartupRunOnceResult RunOnceAndDelete(StartupItem item)
+    {
+        if (!item.CanRunOnceAndDelete || item.DeleteTarget is not RegistryValueDeleteTarget registryTarget)
+            return StartupRunOnceResult.Fail("This startup entry cannot be run and deleted.");
+
+        if (!StartupRegistryScanner.TryReadValue(registryTarget, out var liveCommand))
+            return StartupRunOnceResult.Fail(Localizer.Get("StartupRunOnceMissing"));
+
+        if (item.ImagePath.Length > 0 && Path.IsPathRooted(item.ImagePath) && !File.Exists(item.ImagePath))
+            return StartupRunOnceResult.Fail(Localizer.Get("StartupRunOnceFileMissing"));
+
+        try
+        {
+            var (rawFileName, arguments) = StartupIdentity.SplitCommandLine(liveCommand);
+            var fileName = Environment.ExpandEnvironmentVariables(rawFileName).Trim();
+            if (fileName.Length == 0)
+                return StartupRunOnceResult.Fail("The RunOnce command line is empty.");
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = fileName,
+                Arguments = arguments,
+                UseShellExecute = true,
+            };
+
+            if (Path.IsPathRooted(fileName))
+            {
+                var directory = Path.GetDirectoryName(fileName);
+                if (!string.IsNullOrEmpty(directory) && Directory.Exists(directory))
+                    startInfo.WorkingDirectory = directory;
+            }
+
+            using var process = Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            Log.ZLogWarning(ex, $"Failed to run RunOnce startup entry {item.Name}");
+            return StartupRunOnceResult.Fail(ex.Message);
+        }
+
+        if (!StartupRegistryScanner.Delete(registryTarget, out var deleteError))
+        {
+            return StartupRunOnceResult.Fail(
+                string.Format(
+                    Localizer.Get("StartupRunOnceDeleteFailedAfterRun"),
+                    deleteError ?? ""
+                )
+            );
+        }
+
+        return StartupRunOnceResult.Ok();
     }
 }

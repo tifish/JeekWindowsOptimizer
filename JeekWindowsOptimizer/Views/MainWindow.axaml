@@ -639,6 +639,20 @@
             <Setter Property="BorderBrush" Value="{DynamicResource DangerBarBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource DangerForegroundBrush}" />
         </Style>
+        <Style Selector="Button.startup-run-once /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AccentTintBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentTintBorderBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        </Style>
+        <Style Selector="Button.startup-run-once">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        </Style>
+        <Style Selector="Button.startup-run-once:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AccentTintHoverBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
+        </Style>
 
         <!-- Tool Card (2-column tactile card) -->
         <Style Selector="Button.tool-card">
@@ -2034,7 +2048,7 @@
                                                             <StackPanel Grid.Column="0" Margin="0,0,18,0" Spacing="4">
                                                                 <WrapPanel Orientation="Horizontal">
                                                                     <TextBlock
-                                                                        Margin="0,0,8,0"
+                                                                        Margin="0,0,8,2"
                                                                         VerticalAlignment="Center"
                                                                         FontSize="14.5"
                                                                         FontWeight="SemiBold"
@@ -2042,7 +2056,7 @@
                                                                         Text="{Binding DisplayName}"
                                                                         TextTrimming="CharacterEllipsis" />
                                                                     <Border
-                                                                        Margin="0,0,6,0"
+                                                                        Margin="0,0,6,2"
                                                                         Classes="status-pill status-warning"
                                                                         IsVisible="{Binding IsOrphaned}"
                                                                         ToolTip.Tip="{Binding ImagePath}">
@@ -2051,7 +2065,59 @@
                                                                             <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource WarningForegroundBrush}" Text="{l:Localize StartupFileMissing}" />
                                                                         </StackPanel>
                                                                     </Border>
+                                                                    <!-- Scheduled Task Enabled / Disabled Pill -->
                                                                     <Border
+                                                                        Margin="0,0,6,2"
+                                                                        Classes="status-pill status-success"
+                                                                        IsVisible="{Binding IsTaskEnabled}">
+                                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                                            <Ellipse Width="6" Height="6" Fill="{DynamicResource SuccessDotBrush}" VerticalAlignment="Center" />
+                                                                            <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource SuccessForegroundBrush}" Text="{Binding TaskEnabledText}" />
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="0,0,6,2"
+                                                                        Classes="status-pill status-neutral"
+                                                                        IsVisible="{Binding IsTaskDisabled}">
+                                                                        <TextBlock FontSize="11" Foreground="{DynamicResource NeutralBadgeForegroundBrush}" Text="{Binding TaskEnabledText}" />
+                                                                    </Border>
+                                                                    <!-- Service Running State Pills -->
+                                                                    <Border
+                                                                        Margin="0,0,6,2"
+                                                                        Classes="status-pill status-success"
+                                                                        IsVisible="{Binding IsServiceRunning}">
+                                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                                            <Ellipse Width="6" Height="6" Fill="{DynamicResource SuccessDotBrush}" VerticalAlignment="Center" />
+                                                                            <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource SuccessForegroundBrush}" Text="{Binding ServiceRunStateText}" />
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="0,0,6,2"
+                                                                        Classes="status-pill status-accent"
+                                                                        IsVisible="{Binding IsServiceTransitioning}">
+                                                                        <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" Text="{Binding ServiceRunStateText}" />
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="0,0,6,2"
+                                                                        Classes="status-pill status-neutral"
+                                                                        IsVisible="{Binding IsServiceStoppedOrPaused}">
+                                                                        <TextBlock FontSize="11" Foreground="{DynamicResource NeutralBadgeForegroundBrush}" Text="{Binding ServiceRunStateText}" />
+                                                                    </Border>
+                                                                    <!-- Service Startup Mode Pills -->
+                                                                    <Border
+                                                                        Margin="0,0,6,2"
+                                                                        Classes="status-pill status-accent"
+                                                                        IsVisible="{Binding IsServiceAutomatic}">
+                                                                        <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" Text="{Binding ServiceStartModeText}" />
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="0,0,6,2"
+                                                                        Classes="status-pill status-neutral"
+                                                                        IsVisible="{Binding IsServiceNonAutomatic}">
+                                                                        <TextBlock FontSize="11" Foreground="{DynamicResource NeutralBadgeForegroundBrush}" Text="{Binding ServiceStartModeText}" />
+                                                                    </Border>
+                                                                    <Border
+                                                                        Margin="0,0,0,2"
                                                                         Classes="status-pill status-neutral"
                                                                         Classes.status-warning="{Binding IsUnsignedOrInvalid}">
                                                                         <TextBlock
@@ -2072,6 +2138,17 @@
                                                                         Text="{Binding CommandText}"
                                                                         TextTrimming="CharacterEllipsis"
                                                                         ToolTip.Tip="{Binding CommandText}" />
+                                                                </Grid>
+
+                                                                <Grid ColumnDefinitions="Auto *" IsVisible="{Binding HasTaskTriggers}">
+                                                                    <TextBlock Grid.Column="0" Margin="0,1,6,0" VerticalAlignment="Top" Classes="glyph" FontSize="11" Foreground="{DynamicResource TertiaryTextBrush}" Text="&#xE823;" />
+                                                                    <TextBlock
+                                                                        Grid.Column="1"
+                                                                        FontSize="11.5"
+                                                                        Foreground="{DynamicResource SecondaryTextBrush}"
+                                                                        Text="{Binding TaskTriggersText}"
+                                                                        TextWrapping="Wrap"
+                                                                        ToolTip.Tip="{Binding TaskTriggersText}" />
                                                                 </Grid>
 
                                                                 <Grid ColumnDefinitions="Auto *">
@@ -2130,6 +2207,7 @@
                                                                     <Button
                                                                         Classes="startup-action startup-allow"
                                                                         Classes.active="{Binding IsAllowed}"
+                                                                        IsVisible="{Binding !IsRunOnce}"
                                                                         IsEnabled="{Binding CanChoose}"
                                                                         Command="{Binding $parent[Window].((local:MainViewModel)DataContext).AllowStartupItemCommand}"
                                                                         CommandParameter="{Binding}"
@@ -2137,10 +2215,24 @@
                                                                     <Button
                                                                         Classes="startup-action startup-deny"
                                                                         Classes.active="{Binding IsDenied}"
+                                                                        IsVisible="{Binding !IsRunOnce}"
                                                                         IsEnabled="{Binding CanChoose}"
                                                                         Command="{Binding $parent[Window].((local:MainViewModel)DataContext).DenyStartupItemCommand}"
                                                                         CommandParameter="{Binding}"
                                                                         Content="{l:Localize StartupDeny}" />
+                                                                    <Button
+                                                                        Classes="startup-action startup-run-once"
+                                                                        Padding="10,5"
+                                                                        IsVisible="{Binding CanRunOnceAndDelete}"
+                                                                        IsEnabled="{Binding CanRunOnceAndDeleteNow}"
+                                                                        Command="{Binding $parent[Window].((local:MainViewModel)DataContext).RunOnceAndDeleteStartupItemCommand}"
+                                                                        CommandParameter="{Binding}"
+                                                                        ToolTip.Tip="{l:Localize StartupRunOnceAndDeleteHint}">
+                                                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                                                            <TextBlock Classes="glyph" FontSize="12" Text="&#xE768;" />
+                                                                            <TextBlock VerticalAlignment="Center" Text="{l:Localize StartupRunOnceAndDelete}" />
+                                                                        </StackPanel>
+                                                                    </Button>
                                                                     <Button
                                                                         Classes="startup-action startup-delete"
                                                                         Padding="10,5"
