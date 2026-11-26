@@ -1381,30 +1381,71 @@ public partial class MainViewModel : ObservableObject, IDisposable
 
     public async Task RecheckPendingPrerequisiteItemAsync()
     {
-        var item = _pendingPrerequisiteRecheckItem;
-        if (item is null || IsBusy || _isRecheckingPrerequisite)
+        var pendingItem = _pendingPrerequisiteRecheckItem;
+        if (pendingItem is null || IsBusy || _isRecheckingPrerequisite)
             return;
 
         _isRecheckingPrerequisite = true;
         try
         {
-            var oldIsOptimized = item.IsOptimized;
-            await item.Initialize();
+            var itemsToRecheck = GetOptimizationItems()
+                .Where(item => item.IsPrerequisiteBlocked || ReferenceEquals(item, pendingItem))
+                .ToList();
+            if (!itemsToRecheck.Contains(pendingItem))
+                itemsToRecheck.Add(pendingItem);
 
-            if (!item.IsPrerequisiteBlocked)
+            var changedCategories = new HashSet<OptimizationItemCategory>();
+            foreach (var item in itemsToRecheck)
+            {
+                var oldIsOptimized = item.IsOptimized;
+                await item.Initialize();
+                if (oldIsOptimized != item.IsOptimized)
+                    changedCategories.Add(item.Category);
+            }
+
+            if (itemsToRecheck.All(item => !item.IsPrerequisiteBlocked))
                 _pendingPrerequisiteRecheckItem = null;
 
-            if (oldIsOptimized != item.IsOptimized)
-                OnOptimizationItemStatusChanged(item.Category);
+            foreach (var category in changedCategories)
+                OnOptimizationItemStatusChanged(category);
         }
         catch (Exception ex)
         {
-            Log.ZLogWarning(ex, $"Failed to recheck prerequisite state for '{item.Name}'");
+            Log.ZLogWarning(ex, $"Failed to recheck prerequisite state for '{pendingItem.Name}'");
         }
         finally
         {
             _isRecheckingPrerequisite = false;
         }
+    }
+
+    public async Task RefreshTamperProtectedSiblingItemsAsync(OptimizationItem? exclude = null)
+    {
+        var siblings = GetOptimizationItems()
+            .Where(item =>
+                item is DefenderTamperProtectedRegistryItem
+                && !ReferenceEquals(item, exclude)
+            )
+            .ToList();
+
+        var changedCategories = new HashSet<OptimizationItemCategory>();
+        foreach (var item in siblings)
+        {
+            try
+            {
+                var oldIsOptimized = item.IsOptimized;
+                await item.Initialize();
+                if (oldIsOptimized != item.IsOptimized)
+                    changedCategories.Add(item.Category);
+            }
+            catch (Exception ex)
+            {
+                Log.ZLogWarning(ex, $"Failed to refresh sibling tamper-protected item '{item.Name}'");
+            }
+        }
+
+        foreach (var category in changedCategories)
+            OnOptimizationItemStatusChanged(category);
     }
 
     /// <summary>

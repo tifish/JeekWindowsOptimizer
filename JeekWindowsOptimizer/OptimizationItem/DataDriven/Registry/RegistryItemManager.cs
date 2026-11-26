@@ -74,8 +74,8 @@ public static class RegistryItemManager
 
             if (!itemsDict.TryGetValue(nameKey, out var item))
             {
-                item = nameKey == DisableWindowsRealTimeAntivirusItem.ItemNameKey
-                    ? new DisableWindowsRealTimeAntivirusItem(groupNameKey, nameKey, descriptionKey)
+                item = DefenderTamperProtectedRegistryItem.IsTamperProtectedNameKey(nameKey)
+                    ? new DefenderTamperProtectedRegistryItem(groupNameKey, nameKey, descriptionKey)
                     : new RegistryItem(groupNameKey, nameKey, descriptionKey);
                 item.Category = category;
                 item.ShouldTurnOffTamperProtection = shouldTurnOffTamperProtection;

@@ -5,6 +5,7 @@ System	DisableWindowsRealTimeAntivirus	Antivirus	HKEY_LOCAL_MACHINE\SOFTWARE\Pol
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableBehaviorMonitoring	int	0	1	TRUE				
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableIOAVProtection	int	0	0	TRUE				
 	DisableWindowsRealTimeAntivirus		HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection	DisableOnAccessProtection	int	0	1	TRUE				
+System	DisableWindowsDefenderSampleSubmission	Antivirus	HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet	SubmitSamplesConsent	int	1	2	TRUE	TRUE	TRUE	FALSE	FALSE
 Kernel	DisableMeltdownAndSpectrePatches		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettings	int	0	1				TRUE	
 	DisableMeltdownAndSpectrePatches		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverride	int	0	3	TRUE				
 	DisableMeltdownAndSpectrePatches		HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management	FeatureSettingsOverrideMask	int	0	3	TRUE				

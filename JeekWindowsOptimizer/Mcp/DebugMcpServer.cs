@@ -395,17 +395,19 @@ internal static class DebugMcpServer
             OptimizationExecutionAffinity.Background,
             AntiVirus.HasThirdPartyAntivirusInstalled
         );
-        var itemSummary = await OnUiAsync(() =>
+        var itemsSummary = await OnUiAsync(() =>
         {
             if (Desktop?.MainWindow?.DataContext is not MainViewModel vm)
                 return "unavailable";
 
-            var item = vm.AntivirusGroups
+            var defenderItems = vm.AntivirusGroups
                 .SelectMany(group => group.Items)
-                .FirstOrDefault(it => it.NameKey == DisableWindowsRealTimeAntivirusItem.ItemNameKey);
-            return item is null
+                .Where(it => DefenderTamperProtectedRegistryItem.IsTamperProtectedNameKey(it.NameKey))
+                .Select(it => $"{it.NameKey}(type={it.GetType().Name},optimized={it.IsOptimized},blocked={it.IsPrerequisiteBlocked})")
+                .ToList();
+            return defenderItems.Count == 0
                 ? "missing"
-                : $"type={item.GetType().Name} optimized={item.IsOptimized} blocked={item.IsPrerequisiteBlocked}";
+                : string.Join("; ", defenderItems);
         });
 
         var runtimeValue = status.RuntimeIsEnabled?.ToString() ?? "unavailable";
@@ -417,10 +419,10 @@ internal static class DebugMcpServer
             + $"amRunningMode={runningModeValue}\n"
             + $"registryTamperProtection={status.RegistryValue}\n"
             + $"effectiveTamperProtectionOff={status.IsOff}\n"
-            + $"isBlockingRealTimeDisable={status.IsBlockingRealTimeDisable}\n"
+            + $"isBlockingDefenderPolicies={status.IsBlockingDefenderPolicies}\n"
             + $"detectionSource={status.DetectionSource}\n"
             + $"hasThirdPartyAntivirus={hasThirdPartyAntivirus}\n"
-            + $"disableWindowsRealTimeAntivirusItem={itemSummary}"
+            + $"tamperProtectedDefenderItems={itemsSummary}"
         );
     }
 

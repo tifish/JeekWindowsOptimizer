@@ -57,7 +57,7 @@ public static class DebugMcpContract
                 ["filter"] = Prop("string", "Case-insensitive filter."),
             }),
         Tool("defender_status",
-            "Read the effective Defender tamper-protection state, real-time scanning state, its runtime source, the registry fallback, and the DisableWindowsRealTimeAntivirus item state.",
+            "Read the effective Defender tamper-protection state, real-time scanning state, its runtime source, the registry fallback, and the tamper-protected Defender optimization item states.",
             new()),
         Tool("defender_tamper_probe",
             "Run isolated regression checks for Defender Tamper Protection gating (status matrix, HKCU scratch detection, interactive cancel/retry/success, revert, batching guard, manual settings open + recheck, and live item verification). Does not modify real Defender settings.",

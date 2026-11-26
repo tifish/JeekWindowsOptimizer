@@ -28,10 +28,10 @@ public readonly record struct DefenderTamperProtectionStatus(
         );
 
     /// <summary>
-    /// True when Windows Defender Tamper Protection is actively preventing real-time scanning
-    /// policy overrides from taking effect.
+    /// True when Windows Defender Tamper Protection is actively preventing Defender policy
+    /// overrides (such as real-time scanning or sample submission) from taking effect.
     /// </summary>
-    public bool IsBlockingRealTimeDisable =>
+    public bool IsBlockingDefenderPolicies =>
         !IsOff
         && !IsDefenderInactiveMode
         && !(RuntimeIsEnabled is null && HasThirdPartyAntivirus);

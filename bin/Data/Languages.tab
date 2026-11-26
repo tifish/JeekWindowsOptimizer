@@ -50,10 +50,10 @@ OptimizingItem	Optimizing: {0}…	正在优化：{0}…
 PostOptimizationProcessing	Finishing up…	正在执行后续刷新…
 OptimizationCompleted	Optimization complete.	优化已完成。
 OptimizationCancelled	Optimization cancelled.	已取消优化。
-TamperProtectionPromptMessage	Windows Defender Tamper Protection is currently on, so disabling real-time scanning will have no effect.\n\nWindows Security has been opened. Turn off Tamper Protection manually, then click OK to continue.	检测到 Windows Defender “篡改防护”处于开启状态，禁用实时扫描将无效。\n\n已打开 Windows 安全中心，请先手动关闭“篡改防护”，然后点击“确定”继续。
+TamperProtectionPromptMessage	Windows Defender Tamper Protection is currently on, so this optimization will have no effect.\n\nWindows Security has been opened. Turn off Tamper Protection manually, then click OK to continue.	检测到 Windows Defender “篡改防护”处于开启状态，此优化将无效。\n\n已打开 Windows 安全中心，请先手动关闭“篡改防护”，然后点击“确定”继续。
 TamperProtectionStillEnabledPromptMessage	Tamper Protection is still on, so the optimization cannot take effect.\n\nTurn off Tamper Protection in Windows Security and click OK to check again, or click Cancel to abort.	检测到“篡改防护”仍处于开启状态，优化无法生效。\n\n请在 Windows 安全中心关闭“篡改防护”后点击“确定”重新检测，或点击“取消”中止操作。
 TamperProtectionOnBadge	Tamper Protection on	篡改防护已开启
-DisableWindowsRealTimeAntivirusTamperWarning	Tamper Protection is on, so disabling real-time scanning has no effect. Turn off Tamper Protection in Windows Security first, then optimize or refresh.	检测到“篡改防护”已开启，禁用实时扫描当前无效。请先在 Windows 安全中心手动关闭“篡改防护”，再优化或刷新状态。
+DefenderTamperProtectionWarning	Tamper Protection is on, so this optimization has no effect. Turn off Tamper Protection in Windows Security first, then optimize or refresh.	检测到“篡改防护”已开启，此优化当前无效。请先在 Windows 安全中心手动关闭“篡改防护”，再优化或刷新状态。
 OpenTamperProtectionSettings	Open security settings	打开安全设置
 RebootRequiredPromptMessage	Changes have been applied. Please restart Windows for them to take effect.	设置已应用，重启电脑后生效。
 PleaseUninstallDriver	Please uninstall "{0}" and restart Windows to continue.	请先手动卸载“{0}”并重启电脑，然后再继续。
@@ -95,6 +95,8 @@ UninstallSkypeName	Uninstall Skype	卸载 Skype
 UninstallSkypeDescription	Removes the preinstalled Skype Store app to keep the Start menu and background updates clean. Can be reinstalled from Microsoft Store anytime if ever needed.	移除预装的 Skype 商店应用，减少开始菜单杂项与后台更新。若日后需要可随时从微软商店重新安装。
 DisableWindowsRealTimeAntivirusName	Disable Windows Defender real-time scanning	禁用 Windows Defender 实时扫描
 DisableWindowsRealTimeAntivirusDescription	Greatly speeds up file access, software builds, and app launches by turning off on-access scanning and behavior monitoring. Download scanning, threat alerts, and manual scans still remain; trade-off is reduced automatic protection against unknown executables—only disable if you practice safe download habits.\nRequires Tamper Protection to be turned off in Windows Security. Effective immediately.	关闭访问文件时的实时扫描与行为监控，可大幅加快文件读写、编译打包与软件启动速度。仍保留下载文件扫描、威胁提示和手动查杀；代价是降低了运行未知程序时的自动拦截能力，请结合自身上网习惯权衡。\n需先在 Windows 安全中心关闭“篡改防护”。立即生效。
+DisableWindowsDefenderSampleSubmissionName	Disable Windows Defender automatic sample submission	禁用 Windows Defender 自动提交样本
+DisableWindowsDefenderSampleSubmissionDescription	Stops Windows Defender from automatically uploading suspicious or unknown local files (such as newly built binaries, scripts, or private documents) to Microsoft for analysis, improving privacy and avoiding background upload overhead. Local threat detection and manual scans still work.\nRequires Tamper Protection to be turned off in Windows Security. Effective immediately.	禁止 Windows Defender 自动将可疑或未知的本地文件（如刚编译的程序、脚本或私人文件）上传到微软服务器分析，既保护隐私又减少后台上传开销。不影响本地查杀和手动扫描。\n需先在 Windows 安全中心关闭“篡改防护”。立即生效。
 DisableMeltdownAndSpectrePatchesName	Disable Meltdown and Spectre mitigations	禁用 Meltdown 和 Spectre 漏洞缓解补丁
 DisableMeltdownAndSpectrePatchesDescription	Reclaims CPU and syscall performance lost to speculative-execution mitigations, noticeably helping I/O-heavy workloads and older CPUs. Trade-off: weakens hardware-level isolation against side-channel exploits; acceptable for single-user personal PCs that do not run untrusted code.\nTakes effect after reboot.	恢复因 CPU 硬件漏洞软件缓解损失的系统调用与计算性能，对高频 I/O 和较老处理器提升更明显。代价是削弱对侧信道攻击的底层隔离；个人单用户电脑在不运行不可信代码时风险较低，请按需权衡。\n重启生效。
 DisableKernelMemoryIntegrityProtectionName	Disable Kernel Memory Integrity (HVCI)	禁用内核内存完整性保护（HVCI）

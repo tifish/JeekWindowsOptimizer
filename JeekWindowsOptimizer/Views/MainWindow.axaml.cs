@@ -374,6 +374,8 @@ public partial class MainWindow : Window
         try
         {
             await optimizationItem.SetIsOptimized(isOptimized);
+            if (optimizationItem.ShouldTurnOffTamperProtection)
+                await model.RefreshTamperProtectedSiblingItemsAsync(exclude: optimizationItem);
         }
         catch (Exception ex)
         {

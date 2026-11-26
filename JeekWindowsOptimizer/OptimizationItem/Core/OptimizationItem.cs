@@ -118,11 +118,11 @@ public abstract partial class OptimizationItem : ObservableObject
     public static async Task<bool> TurnOffTamperProtection()
     {
         var status = await DefenderProtection.GetTamperProtectionStatus();
-        if (!status.IsBlockingRealTimeDisable)
+        if (!status.IsBlockingDefenderPolicies)
             return true;
 
         var firstAttempt = true;
-        while (status.IsBlockingRealTimeDisable)
+        while (status.IsBlockingDefenderPolicies)
         {
             await OptimizationExecutionScheduler.RunAsync(
                 OptimizationExecutionAffinity.Background,

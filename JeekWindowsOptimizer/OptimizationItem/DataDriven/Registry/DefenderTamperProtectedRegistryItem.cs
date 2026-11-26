@@ -3,22 +3,26 @@ using Jeek.Avalonia.Localization;
 namespace JeekWindowsOptimizer;
 
 /// <summary>
-/// Windows Defender real-time scanning policy optimization.
-/// Defender ignores Real-Time Protection policy keys while Tamper Protection is enabled,
-/// so both status detection and optimization verify that Tamper Protection is off.
+/// Windows Defender policy optimization whose registry keys are ignored by Defender while
+/// Tamper Protection is enabled (e.g. real-time scanning, automatic sample submission).
+/// Both status detection and applying the optimization verify that Tamper Protection is off.
 /// </summary>
-public sealed class DisableWindowsRealTimeAntivirusItem(
+public sealed class DefenderTamperProtectedRegistryItem(
     string groupNameKey,
     string nameKey,
     string descriptionKey
 ) : RegistryItem(groupNameKey, nameKey, descriptionKey)
 {
-    public const string ItemNameKey = "DisableWindowsRealTimeAntivirusName";
+    public const string DisableRealTimeAntivirusNameKey = "DisableWindowsRealTimeAntivirusName";
+    public const string DisableSampleSubmissionNameKey = "DisableWindowsDefenderSampleSubmissionName";
+
+    public static bool IsTamperProtectedNameKey(string nameKey) =>
+        nameKey is DisableRealTimeAntivirusNameKey or DisableSampleSubmissionNameKey;
 
     public override string PrerequisiteBadgeText => Localizer.Get("TamperProtectionOnBadge");
 
     public override string PrerequisiteWarningText =>
-        Localizer.Get("DisableWindowsRealTimeAntivirusTamperWarning");
+        Localizer.Get("DefenderTamperProtectionWarning");
 
     public override string PrerequisiteActionText =>
         Localizer.Get("OpenTamperProtectionSettings");
@@ -34,8 +38,8 @@ public sealed class DisableWindowsRealTimeAntivirusItem(
         await Task.WhenAll(registryOptimizedTask, tamperStatusTask);
 
         var tamperStatus = await tamperStatusTask;
-        IsPrerequisiteBlocked = tamperStatus.IsBlockingRealTimeDisable;
-        IsOptimized = (await registryOptimizedTask) && !tamperStatus.IsBlockingRealTimeDisable;
+        IsPrerequisiteBlocked = tamperStatus.IsBlockingDefenderPolicies;
+        IsOptimized = (await registryOptimizedTask) && !tamperStatus.IsBlockingDefenderPolicies;
     }
 
     protected override async Task<bool> IsOptimizedChanging(bool value)
@@ -43,8 +47,8 @@ public sealed class DisableWindowsRealTimeAntivirusItem(
         if (value)
         {
             var tamperStatus = await DefenderProtection.GetTamperProtectionStatus();
-            IsPrerequisiteBlocked = tamperStatus.IsBlockingRealTimeDisable;
-            if (tamperStatus.IsBlockingRealTimeDisable)
+            IsPrerequisiteBlocked = tamperStatus.IsBlockingDefenderPolicies;
+            if (tamperStatus.IsBlockingDefenderPolicies)
                 return false;
 
             if (!await base.IsOptimizedChanging(true))
@@ -58,14 +62,14 @@ public sealed class DisableWindowsRealTimeAntivirusItem(
 
         var reverted = await base.IsOptimizedChanging(false);
         var currentStatus = await DefenderProtection.GetTamperProtectionStatus();
-        IsPrerequisiteBlocked = currentStatus.IsBlockingRealTimeDisable;
+        IsPrerequisiteBlocked = currentStatus.IsBlockingDefenderPolicies;
         return reverted;
     }
 
     public override async Task OnTamperProtectionCheckFailedAsync()
     {
         var tamperStatus = await DefenderProtection.GetTamperProtectionStatus();
-        IsPrerequisiteBlocked = tamperStatus.IsBlockingRealTimeDisable;
+        IsPrerequisiteBlocked = tamperStatus.IsBlockingDefenderPolicies;
     }
 
     public override Task OpenPrerequisiteSettingsAsync()
