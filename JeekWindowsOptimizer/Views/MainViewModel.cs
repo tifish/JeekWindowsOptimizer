@@ -1477,42 +1477,29 @@ public partial class MainViewModel : ObservableObject, IDisposable
         {
             await Task.Delay(UpdateInitialDelay, cancellationToken);
 
-            // Always check once at startup when auto-update is enabled.
-            if (IsAutoUpdateEnabled && !IsBusy)
-            {
-                await CheckForUpdatesAsync(manual: false);
-                _lastUpdateCheckUtc = DateTime.UtcNow;
-            }
-
             while (!cancellationToken.IsCancellationRequested)
             {
-                await Task.Delay(UpdatePollInterval, cancellationToken);
-
-                if (!IsAutoUpdateEnabled || IsBusy)
-                    continue;
-
                 var interval = AppSettingsStore.Roaming.AutoUpdateInterval;
-                if (interval == AutoUpdateInterval.Never)
-                    continue;
+                if (IsAutoUpdateEnabled && !IsBusy && IsAutoUpdateDue(interval, DateTime.UtcNow - _lastUpdateCheckUtc))
+                {
+                    await CheckForUpdatesAsync(manual: false);
+                    _lastUpdateCheckUtc = DateTime.UtcNow;
+                }
 
-                if (DateTime.UtcNow - _lastUpdateCheckUtc < IntervalToTimeSpan(interval))
-                    continue;
-
-                await CheckForUpdatesAsync(manual: false);
-                _lastUpdateCheckUtc = DateTime.UtcNow;
+                await Task.Delay(UpdatePollInterval, cancellationToken);
             }
         }
         catch (OperationCanceledException) { }
     }
 
-    private static TimeSpan IntervalToTimeSpan(AutoUpdateInterval interval)
+    internal static bool IsAutoUpdateDue(AutoUpdateInterval interval, TimeSpan elapsed)
     {
         return interval switch
         {
-            AutoUpdateInterval.Every6Hours => TimeSpan.FromHours(6),
-            AutoUpdateInterval.Daily => TimeSpan.FromDays(1),
-            AutoUpdateInterval.Weekly => TimeSpan.FromDays(7),
-            _ => TimeSpan.FromDays(1),
+            AutoUpdateInterval.Never => false,
+            AutoUpdateInterval.Every6Hours => elapsed >= TimeSpan.FromHours(6),
+            AutoUpdateInterval.Weekly => elapsed >= TimeSpan.FromDays(7),
+            _ => elapsed >= TimeSpan.FromDays(1),
         };
     }
 

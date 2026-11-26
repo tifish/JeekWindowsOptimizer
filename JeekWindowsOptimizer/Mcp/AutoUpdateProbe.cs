@@ -9,10 +9,29 @@ internal static class AutoUpdateProbe
     public static async Task<string> RunAsync()
     {
         var results = new List<string>();
+        VerifyUpdateSchedule(results);
         VerifyRuntimeLayout(results);
         await VerifySingleInstanceAsync(results).ConfigureAwait(false);
         await VerifyAutoUpdateScriptAsync(results).ConfigureAwait(false);
         return "PASS\n" + string.Join('\n', results.Select(r => "  - " + r));
+    }
+
+    private static void VerifyUpdateSchedule(List<string> results)
+    {
+        var firstCheck = DateTime.UtcNow - DateTime.MinValue;
+        Require(!MainViewModel.IsAutoUpdateDue(AutoUpdateInterval.Never, firstCheck), "Never must skip the startup check.");
+        foreach (var (interval, period) in new[] {
+            (AutoUpdateInterval.Every6Hours, TimeSpan.FromHours(6)),
+            (AutoUpdateInterval.Daily, TimeSpan.FromDays(1)),
+            (AutoUpdateInterval.Weekly, TimeSpan.FromDays(7)),
+        })
+        {
+            Require(MainViewModel.IsAutoUpdateDue(interval, firstCheck), $"{interval} must check at startup.");
+            Require(!MainViewModel.IsAutoUpdateDue(interval, period - TimeSpan.FromTicks(1)), $"{interval} checked too early.");
+            Require(MainViewModel.IsAutoUpdateDue(interval, period), $"{interval} missed its next check.");
+            Require(!MainViewModel.IsAutoUpdateDue(AutoUpdateInterval.Never, period), "Never must skip periodic checks.");
+        }
+        results.Add("Never skips startup and periodic checks; 6-hour, daily and weekly schedules check at startup and when due");
     }
 
     private static void VerifyRuntimeLayout(List<string> results)

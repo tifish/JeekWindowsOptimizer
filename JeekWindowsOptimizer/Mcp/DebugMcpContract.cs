@@ -281,7 +281,7 @@ public static class DebugMcpContract
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
             }),
         Tool("auto_update_probe",
-            "Run isolated checks for per-install single-instance enforcement (including IPC window activation and real duplicate launch) and AutoUpdate.ps1 (install-dir process filtering, timeout/termination, file swap, preservation, and cleanup).",
+            "Check startup and periodic update schedules, per-install single-instance enforcement (including IPC window activation and real duplicate launch), and AutoUpdate.ps1 (install-dir process filtering, timeout/termination, file swap, preservation, and cleanup).",
             new()));
 
     private static JsonObject Tool(string name, string description, JsonObject properties, string[]? required = null)
