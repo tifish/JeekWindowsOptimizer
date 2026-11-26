@@ -547,6 +547,13 @@ StorageModePortable	Portable (App folder)	便携（程序目录）
 StorageModeCustom	Custom folder…	自定义目录…
 StorageModeCustomPickerTitle	Choose a folder to store settings	选择用于保存配置的文件夹
 StorageSwitchTitle	Switch settings storage	切换配置存储位置
+StorageConflictTitle	Choose which configuration file to keep	选择要保留的配置文件
+StorageConflictMessage	Both folders contain this file. Choose the copy to keep after the move.\n\nSource: {0}\nDestination: {1}\n\nCancel to leave all files in place.	两个目录中都有此文件。请选择迁移后要保留的版本。\n\n来源：{0}\n目标：{1}\n\n取消迁移将保留所有文件的原位置。
+StorageConflictUseSource	Use source file	使用来源文件
+StorageConflictKeepDestination	Keep destination file	保留目标文件
+StorageConflictCancel	Cancel move	取消迁移
+StorageSwitchFailed	Could not switch the settings folder.\n{0}	无法切换配置目录。\n{0}
+StorageSwitchMachineFolder	This folder is reserved for machine-local settings. Choose another folder.	此目录用于保存本机配置，请选择其他目录。
 StorageSwitchMoveFilesMessage	Move your existing settings files to the new location?\nChoose No to keep the old files where they are and start using the new folder directly.	是否将现有配置文件迁移到新位置？\n选择“否”将保留旧文件，直接改用新位置存储。
 StorageSwitchPortableMustMoveMessage	Leaving portable mode requires moving the settings files out of the app folder, otherwise the app will switch back to portable mode next time. Move the files and continue?	退出便携模式必须移走程序目录中的配置文件，否则下次启动仍会自动进入便携模式。是否迁移文件并继续？
 UpdateInterval	Check interval	自动检查间隔

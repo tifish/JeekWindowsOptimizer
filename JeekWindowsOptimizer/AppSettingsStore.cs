@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
 using Avalonia.Styling;
+using Jeek.Avalonia.Localization;
 using JeekTools;
 
 namespace JeekWindowsOptimizer;
@@ -261,10 +262,11 @@ internal static class AppSettingsStore
     ///     root; otherwise the old files stay and the new location starts from the
     ///     in-memory settings. Machine settings are never moved.
     /// </summary>
-    public static void SwitchStorageLocation(
+    public static async Task SwitchStorageLocationAsync(
         StorageLocation newLocation,
         string? customDir,
-        bool moveFiles
+        bool moveFiles,
+        Func<string, string, Task<ConfigFileConflictChoice>> chooseConflict
     )
     {
         if (
@@ -274,6 +276,8 @@ internal static class AppSettingsStore
 
         var oldRoot = CurrentRoamingConfigDir;
         var newRoot = Storage.ResolveConfigRoot(newLocation, customDir);
+        if (string.Equals(Path.GetFullPath(newRoot), Path.GetFullPath(LocalConfigDir), StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException(Localizer.Get("StorageSwitchMachineFolder"));
         var sameTarget = string.Equals(
             Path.GetFullPath(oldRoot),
             Path.GetFullPath(newRoot),
@@ -286,15 +290,26 @@ internal static class AppSettingsStore
             if (!sameTarget)
                 BeforeRoamingConfigLocationChange?.Invoke();
 
-            if (!sameTarget && moveFiles)
-                SettingsStorage.MoveConfigRoot(oldRoot, newRoot);
+            if (!sameTarget && moveFiles && !await SettingsStorage.TryMoveConfigRootAsync(oldRoot, newRoot, chooseConflict))
+                return;
 
             Machine.StorageLocation = newLocation;
             Machine.CustomStoragePath =
                 newLocation == StorageLocation.CustomDirectory ? customDir : null;
             EffectiveStorageLocation = newLocation;
             SaveMachine();
-            SaveRoaming(forceAllLocal: !File.Exists(RoamingSettingsPath));
+            if (moveFiles && !sameTarget && File.Exists(RoamingSettingsPath))
+            {
+                // Honor the selected file, including any keys this build does not know.
+                JsonSettingsFile.TryLoad(RoamingSettingsPath, out RoamingSettings chosen);
+                NormalizeRoaming(chosen);
+                Roaming = chosen;
+                _baseRoaming = JsonSettingsFile.Clone(chosen);
+                _lastSavedRoamingJson = JsonSettingsFile.Serialize(chosen);
+                RoamingSettingsReloaded?.Invoke();
+            }
+            else
+                SaveRoaming(forceAllLocal: !File.Exists(RoamingSettingsPath));
         }
         finally
         {

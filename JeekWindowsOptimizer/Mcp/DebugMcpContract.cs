@@ -280,6 +280,8 @@ public static class DebugMcpContract
                 },
                 ["timeout_seconds"] = Prop("integer", "Max seconds to wait (default 1800)."),
             }),
+        Tool("storage_move_probe",
+            "Exercise configuration move conflict dialogs, cancellation, and file preservation in temporary folders.", new()),
         Tool("auto_update_probe",
             "Check startup and periodic update schedules, per-install single-instance enforcement (including IPC window activation and real duplicate launch), and AutoUpdate.ps1 (install-dir process filtering, timeout/termination, file swap, preservation, and cleanup).",
             new()));

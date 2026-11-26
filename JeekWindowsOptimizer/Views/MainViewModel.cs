@@ -33,6 +33,7 @@ public partial class MainViewModel : ObservableObject, IDisposable
     private bool _autoUpdateLoopStarted;
     private bool _isLoadingAutoUpdateSetting;
     private bool _updateInProgress;
+    private bool _switchingStorageLocation;
     private bool _suppressOptimizationRefresh;
     private bool _suppressGroupNavSelection;
 
@@ -1790,6 +1791,9 @@ public partial class MainViewModel : ObservableObject, IDisposable
         string? customDir = null
     )
     {
+        if (_switchingStorageLocation)
+            return;
+        _switchingStorageLocation = true;
         try
         {
             var current = AppSettingsStore.EffectiveStorageLocation;
@@ -1825,22 +1829,52 @@ public partial class MainViewModel : ObservableObject, IDisposable
                 var result = await ShowUpdateDialogAsync(
                     Localizer.Get("StorageSwitchTitle"),
                     Localizer.Get("StorageSwitchMoveFilesMessage"),
-                    ButtonEnum.YesNo,
+                    ButtonEnum.YesNoCancel,
                     MsBox.Avalonia.Enums.Icon.Question
                 );
+                if (result is not (ButtonResult.Yes or ButtonResult.No))
+                    return;
                 moveFiles = result == ButtonResult.Yes;
             }
 
-            AppSettingsStore.SwitchStorageLocation(newLocation, customDir, moveFiles);
+            await AppSettingsStore.SwitchStorageLocationAsync(newLocation, customDir, moveFiles, ChooseStorageConflictAsync);
         }
         catch (Exception ex)
         {
             Log.ZLogError(ex, $"Failed to switch storage location");
+            await ShowUpdateDialogAsync(Localizer.Get("StorageSwitchTitle"),
+                string.Format(Localizer.Get("StorageSwitchFailed"), ex.Message),
+                ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Warning);
         }
         finally
         {
+            _switchingStorageLocation = false;
             RefreshStorageModeMenuCheckState();
         }
+    }
+
+    internal static async Task<ConfigFileConflictChoice> ChooseStorageConflictAsync(string source, string destination)
+    {
+        var useSource = Localizer.Get("StorageConflictUseSource");
+        var keepDestination = Localizer.Get("StorageConflictKeepDestination");
+        var owner = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+        var box = MessageBoxManager.GetMessageBoxCustom(new MessageBoxCustomParams
+        {
+            ContentTitle = Localizer.Get("StorageConflictTitle"),
+            ContentMessage = string.Format(Localizer.Get("StorageConflictMessage"), source, destination),
+            ButtonDefinitions = [
+                new() { Name = useSource },
+                new() { Name = keepDestination },
+                new() { Name = Localizer.Get("StorageConflictCancel"), IsDefault = true, IsCancel = true },
+            ],
+            Icon = MsBox.Avalonia.Enums.Icon.Question,
+            WindowStartupLocation = owner is null ? WindowStartupLocation.CenterScreen : WindowStartupLocation.CenterOwner,
+            FontFamily = Localizer.Get("DefaultFontName"),
+        });
+        var answer = owner is null ? await box.ShowAsync() : await box.ShowWindowDialogAsync(owner);
+        if (answer == useSource) return ConfigFileConflictChoice.UseSource;
+        if (answer == keepDestination) return ConfigFileConflictChoice.KeepDestination;
+        return ConfigFileConflictChoice.Cancel;
     }
 
     private bool CanClearSearch()
