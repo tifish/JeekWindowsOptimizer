@@ -1157,15 +1157,39 @@ internal static class DebugMcpServer
             + $"epoch={StartupDecisionStore.Epoch}");
     }
 
-    private static Task<JsonObject> StartupLedgerAsync(JsonObject args)
+    private static async Task<JsonObject> StartupLedgerAsync(JsonObject args)
     {
         var includeEntries = args["entries"]?.GetValue<bool>() ?? false;
+        var reload = args["reload"]?.GetValue<bool>() ?? false;
         var limit = Math.Clamp(args["limit"]?.GetValue<int>() ?? 100, 1, 2000);
 
+        bool? reloadedChanged = null;
+        if (reload)
+        {
+            reloadedChanged = StartupDecisionStore.Reload(notify: false);
+            await OnUiAsync(() =>
+            {
+                RequireMainVm().RefreshStartupAfterLedgerChangeForDebug();
+                return true;
+            });
+        }
+
+        var loadedFiles = StartupDecisionStore.LoadedFiles;
         var sb = new StringBuilder();
+        sb.AppendLine($"machine={StartupDecisionStore.MachineName}");
+        sb.AppendLine($"dir={StartupDecisionStore.ShardsDir}");
+        sb.AppendLine($"dirExists={Directory.Exists(StartupDecisionStore.ShardsDir)}");
         sb.AppendLine($"file={StartupDecisionStore.FilePath}");
         sb.AppendLine($"exists={File.Exists(StartupDecisionStore.FilePath)}");
+        sb.AppendLine($"legacyFile={StartupDecisionStore.LegacyFilePath}");
+        sb.AppendLine($"legacyExists={File.Exists(StartupDecisionStore.LegacyFilePath)}");
+        sb.AppendLine($"loadedFiles={loadedFiles.Count}");
+        foreach (var file in loadedFiles)
+            sb.AppendLine($"  - {file}");
+        if (reloadedChanged is { } changed)
+            sb.AppendLine($"reloadedChanged={changed}");
         sb.AppendLine($"epoch={StartupDecisionStore.Epoch}");
+        sb.AppendLine($"clock={StartupDecisionStore.Clock}");
         sb.AppendLine($"entries={StartupDecisionStore.Count}");
         sb.AppendLine($"writesBlocked={StartupDecisionStore.IsPoisoned}");
         if (StartupDecisionStore.PoisonReason is { } reason)
@@ -1180,12 +1204,12 @@ internal static class DebugMcpServer
                          .Take(limit))
             {
                 sb.AppendLine(
-                    $"{entry.Decision,-5} clock={entry.Clock,-4} on={entry.Machine} "
+                    $"{entry.Decision,-5} clock={entry.Clock,-14} on={entry.Machine} "
                     + $"at={entry.DecidedAtUtc:u} key={key}");
             }
         }
 
-        return Task.FromResult(ToolText(sb.ToString()));
+        return ToolText(sb.ToString());
     }
 
     private static string DescribeStartupItems(

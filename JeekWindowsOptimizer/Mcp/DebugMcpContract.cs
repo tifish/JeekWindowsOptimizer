@@ -242,11 +242,12 @@ public static class DebugMcpContract
                 + "what is already off becomes denied. Writes decisions but changes nothing on the system.",
             new()),
         Tool("startup_ledger",
-            "Inspect the decision ledger itself: file path, epoch, entry count, whether writes are blocked "
-                + "because the file is unreadable, and optionally the raw entries.",
+            "Inspect the sharded decision ledger: machine name, shards directory, own shard path, legacy file path, "
+                + "loaded shard files, epoch, clock, entry count, whether writes are blocked, and optionally the raw entries.",
             new()
             {
                 ["entries"] = Prop("boolean", "Include the stored entries (default false)."),
+                ["reload"] = Prop("boolean", "Re-read and merge all shards from disk before reporting (default false)."),
                 ["limit"] = Prop("integer", "Maximum entries to return, 1-2000 (default 100)."),
             }),
         Tool("startup_auto_apply_probe",
@@ -261,10 +262,10 @@ public static class DebugMcpContract
             new() { ["name"] = Prop("string", "Service name (default W32Time). Pick one that is safe to stop briefly.") }),
         Tool("startup_ledger_probe",
             "Run isolated regression checks against synthetic data, a temporary folder and a scratch "
-                + "class id: cross-machine merge, reset epoch, sync conflict copies, unreadable files, "
-                + "identity keys and the browser add-on switch. Reads no real startup entry and never "
-                + "touches the real decision file.",
-            new() { ["scenario"] = Prop("string", "Scenario: merge | epoch | conflict | poison | identity | addon | all (default all).") }),
+                + "class id: cross-machine merge, per-machine shards & HLC & watcher & storage sync, "
+                + "reset epoch, sync conflict copies, unreadable files, identity keys and the browser "
+                + "add-on switch. Reads no real startup entry and never touches the real decision files.",
+            new() { ["scenario"] = Prop("string", "Scenario: merge | shards | epoch | conflict | poison | identity | addon | all (default all).") }),
         Tool("disk_space_move_checked",
             "Run the batch move (each checked relocation item to its own selected drive) without the GUI confirmation. Destructive; debug surface only.",
             new()

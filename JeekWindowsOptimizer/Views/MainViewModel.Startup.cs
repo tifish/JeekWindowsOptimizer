@@ -261,28 +261,7 @@ public partial class MainViewModel
     private void ReapplyStartupDecisions()
     {
         var decisions = StartupDecisionStore.Snapshot();
-
-        foreach (var item in StartupItems)
-        {
-            if (decisions.TryGetValue(item.Key, out var entry))
-            {
-                item.Decision = entry.Decision;
-                item.DecidedOnMachine = entry.Machine;
-                item.DecidedAtUtc = entry.DecidedAtUtc;
-                item.DecisionSource = string.Equals(
-                    entry.Machine,
-                    Environment.MachineName,
-                    StringComparison.OrdinalIgnoreCase
-                )
-                    ? StartupDecisionSource.ThisMachine
-                    : StartupDecisionSource.OtherMachine;
-            }
-            else if (item.DecisionSource != StartupDecisionSource.LooseMatch)
-            {
-                item.Decision = null;
-                item.DecisionSource = StartupDecisionSource.None;
-            }
-        }
+        StartupItemManager.ApplyDecisions(StartupItems, decisions);
 
         foreach (var group in AllStartupGroups)
             group.NotifyCountsChanged();

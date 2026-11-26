@@ -47,6 +47,9 @@ public static class StartupLedgerProbe
             case "merge":
                 MergeScenario(Check);
                 break;
+            case "shards":
+                ShardsScenario(Check);
+                break;
             case "epoch":
                 EpochScenario(Check);
                 break;
@@ -64,6 +67,7 @@ public static class StartupLedgerProbe
                 break;
             case "all":
                 MergeScenario(Check);
+                ShardsScenario(Check);
                 EpochScenario(Check);
                 ConflictScenario(Check);
                 PoisonScenario(Check);
@@ -72,7 +76,7 @@ public static class StartupLedgerProbe
                 break;
             default:
                 return Task.FromResult(
-                    $"Unknown scenario '{scenario}'. Use merge | epoch | conflict | poison | identity | addon | all."
+                    $"Unknown scenario '{scenario}'. Use merge | shards | epoch | conflict | poison | identity | addon | all."
                 );
         }
 
@@ -142,6 +146,209 @@ public static class StartupLedgerProbe
             roundTripped.Contains("FutureField"));
     }
 
+    private static void ShardsScenario(CheckFn check)
+    {
+        var root = Path.Combine(
+            Path.GetTempPath(),
+            "JeekStartupShards_" + Guid.NewGuid().ToString("N")[..8]
+        );
+        Directory.CreateDirectory(root);
+
+        try
+        {
+            // 1. Legacy Config/StartupDecisions.json fallback is read seamlessly without being modified.
+            var legacyLedger = Ledger(
+                ("legacy1", StartupDecision.Allow, 1, "OLD-PC"),
+                ("shared", StartupDecision.Allow, 2, "OLD-PC")
+            );
+            var legacyPath = Path.Combine(root, StartupDecisionStore.LegacyFileName);
+            Write(root, StartupDecisionStore.LegacyFileName, legacyLedger);
+            var legacyBefore = File.ReadAllText(legacyPath);
+
+            var pcA = new StartupDecisionShardStore(() => root, "PC-A", enableBackgroundTimers: false);
+            var pcB = new StartupDecisionShardStore(() => root, "PC-B", enableBackgroundTimers: false);
+            pcA.Load();
+            pcB.Load();
+
+            check("legacy single file loaded on PC-A",
+                pcA.Find("legacy1")?.Decision == StartupDecision.Allow
+                && pcA.Find("shared")?.Decision == StartupDecision.Allow);
+
+            // Flush with no local changes must not create a shard or trigger sync churn.
+            pcA.Flush();
+            check("no-op flush does not create an empty shard", !File.Exists(pcA.OwnShardPath));
+
+            // 2. Truly offline concurrent disjoint edits across PC-A (folder A) and PC-B (folder B),
+            // then synced into one folder -> zero conflicts, both preserved.
+            var rootB = Path.Combine(root, "offline-b");
+            Directory.CreateDirectory(rootB);
+            File.Copy(legacyPath, Path.Combine(rootB, StartupDecisionStore.LegacyFileName));
+            var pcBOffline = new StartupDecisionShardStore(() => rootB, "PC-B", enableBackgroundTimers: false);
+            pcBOffline.Load();
+
+            check("PC-A records decision 'app.a'",
+                pcA.Decide("app.a", StartupDecision.Allow, new StartupDecisionSnapshot("LogonRegistry", "AppA", null, "a.exe")));
+            pcA.Flush();
+
+            check("PC-B records decision 'app.b' offline",
+                pcBOffline.Decide("app.b", StartupDecision.Deny, new StartupDecisionSnapshot("Service", "AppB", null, "b.exe")));
+            pcBOffline.Flush();
+
+            var shardsDir = Path.Combine(root, StartupDecisionStore.ShardsDirName);
+            var shardA = Path.Combine(shardsDir, "PC-A.json");
+            var shardB = Path.Combine(shardsDir, "PC-B.json");
+            // Simulate file sync copying PC-B.json into root/StartupDecisions/.
+            File.Copy(pcBOffline.OwnShardPath, shardB);
+            check("PC-A wrote only its own shard", File.Exists(shardA));
+            check("PC-B wrote only its own shard", File.Exists(shardB));
+            check("legacy single file remained untouched",
+                File.ReadAllText(legacyPath) == legacyBefore);
+
+            var shardAWriteBeforeReload = File.GetLastWriteTimeUtc(shardA);
+            var shardBWriteBeforeReload = File.GetLastWriteTimeUtc(shardB);
+            var changedA = pcA.ReloadFromDisk(notify: false);
+            var changedB = pcB.ReloadFromDisk(notify: false);
+            check("PC-A merged both disjoint decisions",
+                changedA
+                && pcA.Find("app.a")?.Decision == StartupDecision.Allow
+                && pcA.Find("app.b")?.Decision == StartupDecision.Deny
+                && pcA.Find("legacy1")?.Decision == StartupDecision.Allow);
+            check("PC-B merged both disjoint decisions",
+                changedB
+                && pcB.Find("app.a")?.Decision == StartupDecision.Allow
+                && pcB.Find("app.b")?.Decision == StartupDecision.Deny
+                && pcB.Find("legacy1")?.Decision == StartupDecision.Allow);
+            check("reloading does not rewrite shards (no sync echo)",
+                File.GetLastWriteTimeUtc(shardA) == shardAWriteBeforeReload
+                && File.GetLastWriteTimeUtc(shardB) == shardBWriteBeforeReload);
+
+            // 3. HLC clock skew resilience: remote PC-C shard 10 minutes in the future.
+            var futureTs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + 600_000;
+            var pcCLedger = Ledger(("shared", StartupDecision.Deny, futureTs, "PC-C"));
+            pcCLedger.Machine = "PC-C";
+            Write(shardsDir, "PC-C.json", pcCLedger);
+
+            // Even if PC-A decides BEFORE the watcher reloads PC-C.json, Flush() must bump the
+            // local edit's HLC strictly past PC-C's skewed clock.
+            pcA.Decide("shared", StartupDecision.Allow, new StartupDecisionSnapshot("LogonRegistry", "Shared", null, "s.exe"));
+            pcA.Flush();
+
+            pcB.ReloadFromDisk(notify: false);
+            var resolvedShared = pcB.Find("shared");
+            check("HLC local edit strictly beats skewed future remote shard",
+                resolvedShared is not null
+                && resolvedShared.Decision == StartupDecision.Allow
+                && resolvedShared.Clock > futureTs,
+                resolvedShared is null ? "null" : $"{resolvedShared.Decision} clock={resolvedShared.Clock}");
+
+            // 4. Epoch reset (ForgetAll) across shards and legacy file.
+            check("PC-A forgets all decisions", pcA.ForgetAll());
+            pcA.Flush();
+            pcB.ReloadFromDisk(notify: false);
+            check("ForgetAll epoch beats legacy file and other shards on PC-B",
+                pcB.Count == 0 && pcB.Epoch == 1,
+                $"count={pcB.Count} epoch={pcB.Epoch}");
+
+            pcB.Decide("after.reset", StartupDecision.Allow, new StartupDecisionSnapshot("Service", "AfterReset", null, "r.exe"));
+            pcB.Flush();
+            pcA.ReloadFromDisk(notify: false);
+            check("decisions made after ForgetAll propagate cleanly across shards",
+                pcA.Count == 1 && pcA.Find("after.reset")?.Decision == StartupDecision.Allow,
+                $"count={pcA.Count}");
+
+            // 5. Storage switch without moving files: carry over local decisions and merge with destination.
+            var destRoot = Path.Combine(root, "dest");
+            Directory.CreateDirectory(destRoot);
+            var destShards = Path.Combine(destRoot, StartupDecisionStore.ShardsDirName);
+            Directory.CreateDirectory(destShards);
+            var remoteDestLedger = Ledger(("dest.only", StartupDecision.Deny, 10, "PC-DEST"));
+            remoteDestLedger.Epoch = 1;
+            remoteDestLedger.Machine = "PC-DEST";
+            Write(destShards, "PC-DEST.json", remoteDestLedger);
+
+            var activeDir = root;
+            var switched = new StartupDecisionShardStore(() => activeDir, "PC-A", enableBackgroundTimers: false);
+            switched.Load();
+            activeDir = destRoot;
+            switched.SyncWithCurrentLocation(notify: false);
+            check("storage switch without move merges local and destination shards",
+                switched.Find("after.reset")?.Decision == StartupDecision.Allow
+                && switched.Find("dest.only")?.Decision == StartupDecision.Deny
+                && File.Exists(Path.Combine(destShards, "PC-A.json")));
+
+            // Empty store switching to destination with existing shards loads them without writing an empty shard.
+            var emptyDir = Path.Combine(root, "empty-src");
+            Directory.CreateDirectory(emptyDir);
+            var emptyActive = emptyDir;
+            var emptyStore = new StartupDecisionShardStore(() => emptyActive, "PC-EMPTY", enableBackgroundTimers: false);
+            emptyStore.Load();
+            emptyActive = destRoot;
+            emptyStore.SyncWithCurrentLocation(notify: false);
+            check("empty store switch loads destination shards without creating empty shard",
+                emptyStore.Find("dest.only")?.Decision == StartupDecision.Deny
+                && !File.Exists(Path.Combine(destShards, "PC-EMPTY.json")));
+
+            // 6. Machine name sanitization guards invalid chars and Windows reserved names.
+            check("machine name sanitization replaces invalid chars and guards reserved names",
+                StartupDecisionStore.SanitizeMachineName(" PC/A:1 ") == "PC_A_1"
+                && StartupDecisionStore.SanitizeMachineName("CON") == "_CON"
+                && StartupDecisionStore.SanitizeMachineName("   ") == "default");
+
+            // 7. Live RoamingConfigWatcher detects remote shards, ignores .tmp and own self-writes.
+            var watchRoot = Path.Combine(root, "watch");
+            Directory.CreateDirectory(watchRoot);
+            var watchStore = new StartupDecisionShardStore(() => watchRoot, "PC-LOCAL", enableBackgroundTimers: false);
+            watchStore.Load();
+
+            var watchTriggers = 0;
+            var marker = new object();
+            using (var watcher = new RoamingConfigWatcher(
+                       TimeSpan.FromMilliseconds(250),
+                       (rel, changeType) => watchStore.IsInterestingChange(rel, changeType) ? [marker] : [],
+                       (targets, overflow) =>
+                       {
+                           if (overflow || targets.Contains(marker))
+                               Interlocked.Increment(ref watchTriggers);
+                       }))
+            {
+                watcher.Watch(watchRoot);
+                Thread.Sleep(250);
+
+                // Self-write to own shard should be suppressed by the self-write window.
+                watchStore.Decide("self.item", StartupDecision.Allow, new StartupDecisionSnapshot("Service", "Self", null, "self.exe"));
+                watchStore.Flush();
+                Thread.Sleep(600);
+                var afterSelfWrite = Volatile.Read(ref watchTriggers);
+
+                // Remote shard arriving in StartupDecisions/ must trigger the watcher.
+                var watchShardsDir = Path.Combine(watchRoot, StartupDecisionStore.ShardsDirName);
+                Write(watchShardsDir, "REMOTE-PC.json", Ledger(("remote.item", StartupDecision.Deny, 5, "REMOTE-PC")));
+                Thread.Sleep(700);
+                var afterRemote = Volatile.Read(ref watchTriggers);
+
+                // .tmp file inside StartupDecisions/ must be ignored.
+                File.WriteAllText(Path.Combine(watchShardsDir, "REMOTE-PC.json.123.tmp"), "{}");
+                Thread.Sleep(600);
+                var afterTmp = Volatile.Read(ref watchTriggers);
+
+                check("watcher suppresses own shard self-write", afterSelfWrite == 0, $"triggers={afterSelfWrite}");
+                check("watcher fires on remote shard in StartupDecisions/", afterRemote >= 1, $"triggers={afterRemote}");
+                check("watcher ignores .tmp files in StartupDecisions/", afterTmp == afterRemote, $"{afterTmp} == {afterRemote}");
+            }
+        }
+        finally
+        {
+            try
+            {
+                Directory.Delete(root, recursive: true);
+            }
+            catch
+            {
+                // Ignore temp cleanup failure.
+            }
+        }
+    }
+
     private static void EpochScenario(CheckFn check)
     {
         var populated = Ledger(
@@ -185,11 +392,12 @@ public static class StartupLedgerProbe
             Path.GetTempPath(),
             "JeekStartupProbe_" + Guid.NewGuid().ToString("N")[..8]
         );
-        Directory.CreateDirectory(dir);
+        var shardsDir = Path.Combine(dir, StartupDecisionStore.ShardsDirName);
+        Directory.CreateDirectory(shardsDir);
 
         try
         {
-            // The names the common sync tools actually produce.
+            // Legacy conflict copies in Config/ (e.g. left over from before migrating to shards).
             Write(dir, "StartupDecisions.sync-conflict-20260101-120000-ABCDEF.json",
                 Ledger(("syncthing", StartupDecision.Deny, 5, "PC-B")));
             Write(dir, "StartupDecisions-DESKTOP-B.json",
@@ -197,29 +405,35 @@ public static class StartupLedgerProbe
             Write(dir, "StartupDecisions (PC-B's conflicted copy 2026-01-01).json",
                 Ledger(("dropbox", StartupDecision.Deny, 7, "PC-B")));
 
-            // The main file must never be treated as its own conflict copy.
-            Write(dir, StartupDecisionStore.FileName,
-                Ledger(("main", StartupDecision.Allow, 1, "PC-A")));
+            // Legacy primary file.
+            Write(dir, StartupDecisionStore.LegacyFileName,
+                Ledger(("legacy", StartupDecision.Allow, 1, "PC-A")));
 
-            // An unrelated file must be left alone.
+            // Conflict copy inside StartupDecisions/ (e.g. two machines sharing one hostname).
+            Write(shardsDir, "PC-A.sync-conflict-20260102-120000-XYZ.json",
+                Ledger(("shard-conflict", StartupDecision.Deny, 8, "PC-A")));
+            Write(shardsDir, "PC-A.json",
+                Ledger(("local", StartupDecision.Allow, 2, "PC-A")));
+
+            // An unrelated file must be left alone and ignored.
             File.WriteAllText(Path.Combine(dir, "settings.json"), "{}");
 
-            var local = Ledger(("local", StartupDecision.Allow, 2, "PC-A"));
-            var absorbed = StartupDecisionStore.AbsorbFrom(dir, local, deleteAbsorbed: true, out var merged);
+            var store = new StartupDecisionShardStore(() => dir, "PC-A", enableBackgroundTimers: false);
+            store.Load();
 
-            check("conflict copies were absorbed", absorbed);
-            check("every sync tool's naming was recognised",
-                merged.Entries.ContainsKey("syncthing")
-                && merged.Entries.ContainsKey("onedrive")
-                && merged.Entries.ContainsKey("dropbox"),
-                string.Join(",", merged.Entries.Keys));
-            check("the local decision was kept", merged.Entries.ContainsKey("local"));
-            check("absorbed copies were deleted",
-                Directory.GetFiles(dir, "StartupDecisions*.json").Length == 1);
-            check("the main decision file was not consumed",
-                File.Exists(Path.Combine(dir, StartupDecisionStore.FileName)));
-            check("unrelated files were left alone",
-                File.Exists(Path.Combine(dir, "settings.json")));
+            check("legacy conflict copies from every sync tool were merged",
+                store.Find("syncthing")?.Decision == StartupDecision.Deny
+                && store.Find("onedrive")?.Decision == StartupDecision.Allow
+                && store.Find("dropbox")?.Decision == StartupDecision.Deny,
+                string.Join(",", store.Snapshot().Keys));
+            check("conflict copy inside StartupDecisions/ was merged",
+                store.Find("shard-conflict")?.Decision == StartupDecision.Deny);
+            check("legacy primary and local shard decisions were kept",
+                store.Find("legacy")?.Decision == StartupDecision.Allow
+                && store.Find("local")?.Decision == StartupDecision.Allow);
+            check("read-only merge leaves unrelated and legacy files intact",
+                File.Exists(Path.Combine(dir, "settings.json"))
+                && File.Exists(Path.Combine(dir, StartupDecisionStore.LegacyFileName)));
         }
         finally
         {
@@ -276,6 +490,41 @@ public static class StartupLedgerProbe
             check("a newer file version is readable and reports its version",
                 StartupDecisionStore.TryReadLedgerFile(Path.Combine(dir, "future.json"), out var futureLedger, out _)
                 && futureLedger!.Version > StartupDecisionLedger.CurrentVersion);
+
+            // Store-level poison checks:
+            // (a) Corrupt own shard blocks writes.
+            var ownBadDir = Path.Combine(dir, "own-bad");
+            var ownBadShards = Path.Combine(ownBadDir, StartupDecisionStore.ShardsDirName);
+            Directory.CreateDirectory(ownBadShards);
+            File.WriteAllText(Path.Combine(ownBadShards, "PC-A.json"), "{ broken");
+            var ownBadStore = new StartupDecisionShardStore(() => ownBadDir, "PC-A", enableBackgroundTimers: false);
+            ownBadStore.Load();
+            check("corrupt own shard poisons store and refuses writes",
+                ownBadStore.IsPoisoned
+                && !ownBadStore.Decide("x", StartupDecision.Allow, new StartupDecisionSnapshot("Service", "X", null, "x.exe")));
+
+            // (b) Future version in any remote shard blocks writes.
+            var futureDir = Path.Combine(dir, "future-shard");
+            var futureShards = Path.Combine(futureDir, StartupDecisionStore.ShardsDirName);
+            Directory.CreateDirectory(futureShards);
+            Write(futureShards, "PC-B.json", future);
+            var futureStore = new StartupDecisionShardStore(() => futureDir, "PC-A", enableBackgroundTimers: false);
+            futureStore.Load();
+            check("future version in a remote shard poisons writes while still reading entries",
+                futureStore.IsPoisoned && futureStore.Find("ok")?.Decision == StartupDecision.Allow);
+
+            // (c) Corrupt remote shard does not brick own shard writes; healthy shards still merge.
+            var remoteBadDir = Path.Combine(dir, "remote-bad");
+            var remoteBadShards = Path.Combine(remoteBadDir, StartupDecisionStore.ShardsDirName);
+            Directory.CreateDirectory(remoteBadShards);
+            Write(remoteBadShards, "PC-A.json", Ledger(("mine", StartupDecision.Allow, 1, "PC-A")));
+            File.WriteAllText(Path.Combine(remoteBadShards, "PC-B.json"), "{ half synced");
+            var remoteBadStore = new StartupDecisionShardStore(() => remoteBadDir, "PC-A", enableBackgroundTimers: false);
+            remoteBadStore.Load();
+            check("corrupt remote shard does not poison own shard",
+                !remoteBadStore.IsPoisoned
+                && remoteBadStore.Find("mine")?.Decision == StartupDecision.Allow
+                && remoteBadStore.Decide("new.local", StartupDecision.Deny, new StartupDecisionSnapshot("Service", "New", null, "n.exe")));
         }
         finally
         {
@@ -495,7 +744,9 @@ public static class StartupLedgerProbe
             {
                 Decision = decision,
                 Clock = clock,
-                DecidedAtUtc = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMinutes(clock),
+                DecidedAtUtc = clock > 1_000_000_000_000L
+                    ? DateTimeOffset.FromUnixTimeMilliseconds(clock).UtcDateTime
+                    : new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMinutes(clock),
                 Machine = machine,
                 Command = key + ".exe",
             };

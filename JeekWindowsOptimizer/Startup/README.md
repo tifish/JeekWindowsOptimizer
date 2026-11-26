@@ -14,38 +14,44 @@
 
 这是整个功能的核心，也是最容易静默损坏数据的地方。
 
-- `StartupDecisionLedger`：磁盘格式。`Entries` 是键到决策的字典，外加 `Version`、`Epoch`、`Clock`。`Merge()` 是纯函数、可交换，**按条目**合并。
-- `StartupDecisionStore`：文件读写、监视、冲突副本吸收、中毒保护、去抖批量写。
+- `StartupDecisionLedger`：磁盘格式。`Entries` 是键到决策的字典，外加 `Version`、`Machine`、`Epoch`、`Clock`。`Merge()` 是纯函数、可交换，**按条目**合并。
+- `StartupDecisionStore` / `StartupDecisionShardStore`：按机器名分片读写、子目录监视、自动合并、中毒保护、去抖批量写。
 
-### 为什么不用 JsonSettingsFile.TryMergeAndWrite
+### 按机器名分片，避免多机同步冲突
 
-`JsonSettingsFile` 的三方合并是**按 JSON 属性**做的。整个账本是一个属性，两台电脑各自新增条目时，后写的一方会把对方整份覆盖掉。所以这里每次读写都走 `StartupDecisionLedger.Merge`，逐条解决。
+如果所有机器共同写入单个 `Config\StartupDecisions.json`，网盘或文件同步工具在多机并发修改时会产生冲突副本甚至后写覆盖前写。因此这里采用与 `JeekLauncher` 相同的分片方案：
 
-### 逻辑时钟，不是时间戳
+- 每台机器**只写自己的分片**：`Config\StartupDecisions\<MachineName>.json`（机器名经文件名合法化处理），永不修改其他机器的分片或旧版单文件。
+- 读取和保存时**合并 `Config\StartupDecisions\*.json` 下的全部分片**，并兼容读取旧版 `Config\StartupDecisions.json`（及遗留冲突副本）作为只读兜底层，旧数据无缝升级。
+- 重载（`ReloadFromDisk`）只合并到内存、**绝不回写磁盘**，避免多机之间的同步回声；没有本地改动时 `Flush()` 也不写盘。
+- 切换存储位置且不移动文件时，若内存中有决策或纪元，会与目标目录已有分片合并后写入本机分片；否则直接从目标目录加载。
 
-同一个键在两台电脑上被赋予不同决策时，用 Lamport 计数器判胜负，写入时取全表最大值加一。不用挂钟：CMOS 电池没电、时间差了几年的机器会永久压制或永久输给其他机器。`DecidedAtUtc` 只用于界面显示和次级判据，`Machine` 作为最终的确定性判据。
+### 混合逻辑时钟（HLC）
+
+同一个键在两台电脑上被赋予不同决策时，用混合逻辑时钟 `Clock`（UTC 毫秒，单调大于已见全表最大值）判胜负：
+
+- 尚未同步的两台机器自然按真实 UTC 时间先后决出胜负。
+- 一旦观察到时钟漂移到未来的远端分片，本机下一次修改会取 `maxSeen + 1`，严格胜出，不会被错误挂钟永久压制。
+- 保存时把待落盘的本地编辑重新抬高到磁盘最新时钟之上，即使远端分片在监视器防抖期间刚同步落盘也不会压掉用户刚做的决定。
+- `DecidedAtUtc`、`Machine`、`Decision` 作为次级确定性判据，保证任意合并顺序收敛到完全一致的结果。
 
 ### 没有墓碑
 
-条目缺失本身就表示"未定"，账本只记录"用户做过的选择"，所以不存"未定"状态。合并因此是纯并集，天然幂等——监视器看到自己刚写的文件回声无害，不需要抑制逻辑。
+条目缺失本身就表示"未定"，账本只记录"用户做过的选择"，所以不存"未定"状态。合并因此是纯并集，天然幂等。
 
-代价是单项"重置决策"无法跨机器兑现（本机删掉，下次同步又回来），所以界面上不提供这个操作。真正需要的"全部重新开始"用文件级 `Epoch`：清空时加一，合并时纪元小的一方整体作废，这样重置能扛过同步，而不会被还持有旧条目的机器撤销。
+代价是单项"重置决策"无法跨机器兑现（本机删掉，下次同步又回来），所以界面上不提供这个操作。真正需要的"全部重新开始"用文件级 `Epoch`：清空时加一，合并时纪元小的一方整体作废，这样重置能扛过同步，而不会被还持有旧条目的其他机器分片或旧版 `StartupDecisions.json` 撤销。
 
 ### 保留未知字段
 
-`StartupDecisionEntry` 和 `StartupDecisionLedger` 都有 `[JsonExtensionData]`。旧版程序读到新版写的文件后重新序列化，如果丢掉不认识的字段，同步回去就是永久损坏。文件版本高于本程序时只读不写。
+`StartupDecisionEntry` 和 `StartupDecisionLedger` 都有 `[JsonExtensionData]`。旧版程序读到新版写的文件后重新序列化，如果丢掉不认识的字段，同步回去就是永久损坏。任意分片文件版本高于本程序时只读不写。
 
 ### 外部变更
 
-`AppSettingsStore.RegisterConfigWatcher` 是为此加的扩展点：原来的监视器只认 `settings.json` 一个名字。账本注册的匹配器同时覆盖主文件和各同步工具的冲突副本命名（Syncthing 的 `sync-conflict`、OneDrive 的机器名后缀、Dropbox 的 conflicted copy）。因为条目本身可合并，这些副本会被自动吸收进主账本再删除，不需要用户手工对账。
-
-重载是合并而不是替换。
+`AppSettingsStore` 经 `RoamingConfigWatcher` 递归监视漫游 `Config` 目录（`IncludeSubdirectories = true`），实时捕捉 `StartupDecisions\*.json`、`StartupDecisions` 子目录以及旧版 `StartupDecisions.json` 的变更，在事件到达瞬间过滤 `.tmp` 临时文件、目录自身时间戳噪声和本机分片的自写窗口（绝不抑制其他机器分片），静默期后自动重新合并并刷新界面（含宽松匹配重算）。
 
 ### 中毒保护
 
-同步工具替换文件的瞬间会短暂暴露零长度或半截文件，读失败是常态。此时**必须禁写**：拿一份残缺的内存状态写回去就是数据丢失。`IsPoisoned` 期间拒绝一切写入，按退避重试，成功读到后自动恢复，界面上给出提示。
-
-注意 `SharedDataFile.Acquire` 是会话内 Mutex，只协调本机进程。两台电脑同时写同一个同步文件谁也拦不住，正确性只能来自合并算法本身。
+同步工具替换文件的瞬间会短暂暴露锁定、零长度或半截文件。读写均带共享模式与退避重试；若本机自己的分片、唯一旧版文件或任意高版本分片无法安全读取，进入 `IsPoisoned` 禁写并按退避自动重试恢复。单个远端分片暂时损坏或半写时只记录警告并安排重试，不会阻塞本机向自己的分片写入，因为本机写盘不会覆盖任何远端分片。
 
 ## 身份
 
@@ -165,7 +171,7 @@ IE 本体在 Windows 11 已经移除，但这些加载项仍然会被 Edge 的 I
 
 ## 调试
 
-Debug MCP：`startup_items`、`startup_scan`、`startup_decide`、`startup_enforce`、`startup_baseline`、`startup_ledger`，以及只跑合成数据和临时目录的 `startup_ledger_probe`（场景：merge | epoch | conflict | poison | identity | all）。probe 不读取任何真实启动项，也不碰真实决策文件。
+Debug MCP：`startup_items`、`startup_scan`、`startup_decide`、`startup_enforce`、`startup_baseline`、`startup_ledger`，以及只跑合成数据和临时目录的 `startup_ledger_probe`（场景：merge | shards | epoch | conflict | poison | identity | addon | all）。probe 不读取任何真实启动项，也不碰真实决策文件。
 
 ## 尚未覆盖
 

@@ -88,8 +88,14 @@ internal static class AppSettingsStore
     /// <summary>Raised (on a worker thread) after the roaming settings were reloaded from disk.</summary>
     public static event Action? RoamingSettingsReloaded;
 
-    /// <summary>Raised after the roaming Config folder moved, so other stores can reopen their files.</summary>
-    public static event Action? RoamingConfigLocationChanged;
+    /// <summary>Raised right before the roaming Config folder moves, so other stores can flush pending edits.</summary>
+    public static event Action? BeforeRoamingConfigLocationChange;
+
+    /// <summary>
+    ///     Raised after the roaming Config folder moved, passing whether existing files were moved
+    ///     (<c>true</c>) or left behind (<c>false</c>), so other stores can reload or sync their shards.
+    /// </summary>
+    public static event Action<bool>? RoamingConfigLocationChanged;
 
     private static MachineSettings _baseMachine = new();
     private static RoamingSettings _baseRoaming = new();
@@ -277,6 +283,9 @@ internal static class AppSettingsStore
         StopWatcher();
         try
         {
+            if (!sameTarget)
+                BeforeRoamingConfigLocationChange?.Invoke();
+
             if (!sameTarget && moveFiles)
                 SettingsStorage.MoveConfigRoot(oldRoot, newRoot);
 
@@ -292,51 +301,34 @@ internal static class AppSettingsStore
             StartWatcher();
         }
 
-        RoamingConfigLocationChanged?.Invoke();
+        RoamingConfigLocationChanged?.Invoke(moveFiles);
     }
 
     // ---------- Roaming config watcher ----------
 
     private static readonly System.Threading.Lock WatchLock = new();
-    private static readonly HashSet<string> PendingChangedFiles = new(
-        StringComparer.OrdinalIgnoreCase
-    );
     private static readonly TimeSpan ReloadDebounce = TimeSpan.FromSeconds(10);
-    private static FileSystemWatcher? _watcher;
-    private static Timer? _reloadTimer;
+    private static RoamingConfigWatcher? _watcher;
 
     /// <summary>
-    ///     Registers an extra file in the roaming Config folder to watch. <paramref name="matches" />
-    ///     receives each changed file name (not a path) so a store can also react to a sync tool's
-    ///     conflict copies, which never carry the exact file name.
+    ///     Registers a handler for external changes under the roaming Config folder (including
+    ///     subdirectories such as <c>StartupDecisions/</c>). <paramref name="matches" /> is
+    ///     evaluated immediately on file system events with the Config-relative path and change type
+    ///     so self-writes and noisy directory updates can be filtered before debouncing.
     /// </summary>
-    public static void RegisterConfigWatcher(Func<string, bool> matches, Action onChanged)
+    public static void RegisterConfigWatcher(
+        Func<string, WatcherChangeTypes, bool> matches,
+        Action onChanged
+    )
     {
         lock (WatchLock)
             ExtraWatchers.Add((matches, onChanged));
     }
 
-    private static readonly List<(Func<string, bool> Matches, Action OnChanged)> ExtraWatchers = [];
-
-    private static void NotifyExtraWatchers(string[] changedNames)
-    {
-        (Func<string, bool> Matches, Action OnChanged)[] watchers;
-        lock (WatchLock)
-            watchers = [.. ExtraWatchers];
-
-        foreach (var (matches, onChanged) in watchers)
-        {
-            try
-            {
-                if (changedNames.Any(matches))
-                    onChanged();
-            }
-            catch
-            {
-                // One store's reload failure must not stop the others.
-            }
-        }
-    }
+    private static readonly List<(
+        Func<string, WatcherChangeTypes, bool> Matches,
+        Action OnChanged
+    )> ExtraWatchers = [];
 
     private static void StartWatcher()
     {
@@ -347,17 +339,12 @@ internal static class AppSettingsStore
             var dir = CurrentRoamingConfigDir;
             Directory.CreateDirectory(dir);
 
-            var watcher = new FileSystemWatcher(dir)
-            {
-                IncludeSubdirectories = false,
-                NotifyFilter =
-                    NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size,
-            };
-            watcher.Changed += OnConfigFileChanged;
-            watcher.Created += OnConfigFileChanged;
-            watcher.Deleted += OnConfigFileChanged;
-            watcher.Renamed += OnConfigFileChanged;
-            watcher.EnableRaisingEvents = true;
+            var watcher = new RoamingConfigWatcher(
+                ReloadDebounce,
+                MatchWatchTarget,
+                OnDebouncedChanges
+            );
+            watcher.Watch(dir);
             _watcher = watcher;
         }
         catch
@@ -370,50 +357,57 @@ internal static class AppSettingsStore
     {
         _watcher?.Dispose();
         _watcher = null;
-
-        lock (WatchLock)
-        {
-            _reloadTimer?.Dispose();
-            _reloadTimer = null;
-            PendingChangedFiles.Clear();
-        }
     }
 
-    private static void OnConfigFileChanged(object sender, FileSystemEventArgs e)
+    private static List<object> MatchWatchTarget(string relativePath, WatcherChangeTypes changeType)
     {
-        // Atomic writes produce temp files; only track names we may care about.
-        if (e.Name is null || e.Name.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase))
-            return;
+        var targets = new List<object>();
 
+        if (string.Equals(relativePath, RoamingSettingsFileName, StringComparison.OrdinalIgnoreCase))
+            targets.Add(RoamingSettingsFileName);
+
+        (Func<string, WatcherChangeTypes, bool> Matches, Action OnChanged)[] watchers;
         lock (WatchLock)
-        {
-            PendingChangedFiles.Add(e.Name);
-            if (e is RenamedEventArgs renamed && renamed.OldName is not null)
-                PendingChangedFiles.Add(renamed.OldName);
+            watchers = [.. ExtraWatchers];
 
-            // Debounce: wait until the folder has been quiet for a while.
-            _reloadTimer ??= new Timer(_ => ReloadChangedFiles(), null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            _reloadTimer.Change(ReloadDebounce, Timeout.InfiniteTimeSpan);
+        foreach (var entry in watchers)
+        {
+            try
+            {
+                if (entry.Matches(relativePath, changeType))
+                    targets.Add(entry.OnChanged);
+            }
+            catch
+            {
+                // One store's matcher failure must not stop the others.
+            }
         }
+
+        return targets;
     }
 
-    private static void ReloadChangedFiles()
+    private static void OnDebouncedChanges(IReadOnlySet<object> targets, bool overflow)
     {
-        string[] changed;
+        (Func<string, WatcherChangeTypes, bool> Matches, Action OnChanged)[] watchers;
         lock (WatchLock)
+            watchers = [.. ExtraWatchers];
+
+        foreach (var (_, onChanged) in watchers)
         {
-            changed = [.. PendingChangedFiles];
-            PendingChangedFiles.Clear();
+            if (!overflow && !targets.Contains(onChanged))
+                continue;
+
+            try
+            {
+                onChanged();
+            }
+            catch
+            {
+                // One store's reload failure must not stop the others.
+            }
         }
 
-        NotifyExtraWatchers(changed);
-
-        // Only reload the files that actually changed.
-        if (
-            !changed.Any(name =>
-                string.Equals(name, RoamingSettingsFileName, StringComparison.OrdinalIgnoreCase)
-            )
-        )
+        if (!overflow && !targets.Contains(RoamingSettingsFileName))
             return;
 
         try
@@ -566,5 +560,172 @@ internal static class AppSettingsStore
     {
         Roaming.AutoEnforceStartupDecisions = value;
         SaveRoaming();
+    }
+}
+
+/// <summary>
+///     Watches the roaming Config directory (including subdirectories such as
+///     <c>StartupDecisions/</c>) and invokes a debounced callback once changes settle.
+///     Matchers run immediately when events arrive so self-writes and noisy directory
+///     timestamp updates are ignored before starting the quiet-period timer.
+/// </summary>
+internal sealed class RoamingConfigWatcher : IDisposable
+{
+    private readonly TimeSpan _quietPeriod;
+    private readonly Func<string, WatcherChangeTypes, List<object>> _matchTargets;
+    private readonly Action<IReadOnlySet<object>, bool> _onFlushed;
+    private readonly Lock _gate = new();
+    private readonly HashSet<object> _pendingTargets = [];
+    private readonly Timer _debounce;
+    private FileSystemWatcher? _watcher;
+    private bool _pendingOverflow;
+    private bool _disposed;
+
+    public RoamingConfigWatcher(
+        TimeSpan quietPeriod,
+        Func<string, WatcherChangeTypes, List<object>> matchTargets,
+        Action<IReadOnlySet<object>, bool> onFlushed
+    )
+    {
+        _quietPeriod = quietPeriod < TimeSpan.FromMilliseconds(50)
+            ? TimeSpan.FromMilliseconds(50)
+            : quietPeriod;
+        _matchTargets = matchTargets;
+        _onFlushed = onFlushed;
+        _debounce = new Timer(
+            _ => Flush(),
+            null,
+            Timeout.InfiniteTimeSpan,
+            Timeout.InfiniteTimeSpan
+        );
+    }
+
+    public void Watch(string dir)
+    {
+        Stop();
+        if (_disposed || !Directory.Exists(dir))
+            return;
+
+        try
+        {
+            var watcher = new FileSystemWatcher(dir)
+            {
+                IncludeSubdirectories = true,
+                NotifyFilter =
+                    NotifyFilters.FileName
+                    | NotifyFilters.DirectoryName
+                    | NotifyFilters.LastWrite
+                    | NotifyFilters.Size,
+            };
+            watcher.Changed += OnEvent;
+            watcher.Created += OnEvent;
+            watcher.Deleted += OnEvent;
+            watcher.Renamed += OnEvent;
+            watcher.Error += (_, _) => ScheduleOverflow();
+            watcher.EnableRaisingEvents = true;
+            _watcher = watcher;
+        }
+        catch
+        {
+            // Inaccessible directory: skip watching.
+        }
+    }
+
+    private void OnEvent(object sender, FileSystemEventArgs e)
+    {
+        var matched = new List<object>();
+
+        if (!string.IsNullOrEmpty(e.Name) && !e.Name.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase))
+            matched.AddRange(_matchTargets(e.Name, e.ChangeType));
+
+        if (
+            e is RenamedEventArgs renamed
+            && !string.IsNullOrEmpty(renamed.OldName)
+            && !renamed.OldName.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase)
+        )
+            matched.AddRange(_matchTargets(renamed.OldName, e.ChangeType));
+
+        if (matched.Count == 0)
+            return;
+
+        lock (_gate)
+        {
+            if (_disposed)
+                return;
+
+            foreach (var target in matched)
+                _pendingTargets.Add(target);
+            _debounce.Change(_quietPeriod, Timeout.InfiniteTimeSpan);
+        }
+    }
+
+    private void ScheduleOverflow()
+    {
+        lock (_gate)
+        {
+            if (_disposed)
+                return;
+
+            _pendingOverflow = true;
+            _debounce.Change(_quietPeriod, Timeout.InfiniteTimeSpan);
+        }
+    }
+
+    private void Flush()
+    {
+        HashSet<object> targets;
+        bool overflow;
+        lock (_gate)
+        {
+            if (_disposed || (!_pendingOverflow && _pendingTargets.Count == 0))
+                return;
+
+            targets = new HashSet<object>(_pendingTargets);
+            overflow = _pendingOverflow;
+            _pendingTargets.Clear();
+            _pendingOverflow = false;
+        }
+
+        _onFlushed(targets, overflow);
+    }
+
+    private void Stop()
+    {
+        lock (_gate)
+        {
+            _pendingTargets.Clear();
+            _pendingOverflow = false;
+            if (!_disposed)
+                _debounce.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+        }
+
+        if (_watcher is null)
+            return;
+
+        try
+        {
+            _watcher.EnableRaisingEvents = false;
+            _watcher.Dispose();
+        }
+        catch
+        {
+            // Ignore disposal errors.
+        }
+        _watcher = null;
+    }
+
+    public void Dispose()
+    {
+        lock (_gate)
+        {
+            if (_disposed)
+                return;
+            _disposed = true;
+            _pendingTargets.Clear();
+            _pendingOverflow = false;
+            _debounce.Dispose();
+        }
+
+        Stop();
     }
 }

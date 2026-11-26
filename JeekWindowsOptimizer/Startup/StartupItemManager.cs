@@ -163,9 +163,7 @@ public static class StartupItemManager
         // different place here. It is built only once every item is known, because a decision whose
         // exact key belongs to something present on this machine is that item's decision and must
         // not also be lent to others.
-        var looseIndex = BuildLooseIndex(decisions, items.Select(item => item.Key));
-        foreach (var item in items)
-            ApplyDecision(item, decisions, looseIndex);
+        ApplyDecisions(items, decisions);
 
         StartupLocalState.RecordSeen(items.Select(item => item.Key));
 
@@ -176,6 +174,21 @@ public static class StartupItemManager
                 .ThenByDescending(item => item.IsPending)
                 .ThenBy(item => item.DisplayName, StringComparer.CurrentCultureIgnoreCase),
         ];
+    }
+
+    /// <summary>
+    ///     Re-applies remembered decisions (both exact and loose matches) to an existing list of
+    ///     items without rescanning the system.
+    /// </summary>
+    internal static void ApplyDecisions(
+        IEnumerable<StartupItem> items,
+        Dictionary<string, StartupDecisionEntry> decisions
+    )
+    {
+        var list = items as IList<StartupItem> ?? items.ToList();
+        var looseIndex = BuildLooseIndex(decisions, list.Select(item => item.Key));
+        foreach (var item in list)
+            ApplyDecision(item, decisions, looseIndex);
     }
 
     /// <summary>
