@@ -1,7 +1,7 @@
 param(
     [Parameter(Position = 0)]
     [string]$StageDir,
-    [string]$InstallDir = $PSScriptRoot,
+    [string]$InstallDir = "",
     [string]$AppName = "JeekWindowsOptimizer",
     [int]$GracefulWaitSeconds = 5,
     [int]$CloseWaitSeconds = 5,
@@ -19,7 +19,19 @@ if ([string]::IsNullOrWhiteSpace($StageDir)) {
     Exit 1
 }
 
-$stageDir = [System.IO.Path]::GetFullPath($StageDir)
+# Resolve InstallDir in the script body rather than as a param() default:
+# in Windows PowerShell 5.1, $PSScriptRoot is empty while param defaults are
+# evaluated under `powershell.exe -File`.
+if ([string]::IsNullOrWhiteSpace($InstallDir)) {
+    $InstallDir = $PSScriptRoot
+}
+if ([string]::IsNullOrWhiteSpace($InstallDir) -and $MyInvocation.MyCommand.Path) {
+    $InstallDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrWhiteSpace($InstallDir)) {
+    $InstallDir = (Get-Location).Path
+}
+
 $installDir = [System.IO.Path]::GetFullPath($InstallDir)
 $installPrefix = $installDir.TrimEnd('\', '/') + '\'
 $exePath = Join-Path $installDir "$AppName.exe"
@@ -113,6 +125,8 @@ Write-Host "when the update is finished."
 Write-Host ""
 
 try {
+    $stageDir = [System.IO.Path]::GetFullPath($StageDir)
+
     if (-not (Test-Path -LiteralPath (Join-Path $stageDir "$AppName.exe"))) {
         throw "Staged update package is missing $AppName.exe: $stageDir"
     }

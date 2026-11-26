@@ -139,6 +139,8 @@ internal static class AutoUpdateProbe
             // Prepare staged update package.
             File.WriteAllText(Path.Combine(stageDir, "JeekWindowsOptimizer.exe"), "updated-exe-payload");
             File.WriteAllText(Path.Combine(stageDir, "payload.txt"), "v-next");
+            Directory.CreateDirectory(Path.Combine(stageDir, "Tools", "NewTool"));
+            File.WriteAllText(Path.Combine(stageDir, "Tools", "NewTool", "tool.txt"), "new-tool");
             File.Copy(scriptPath, Path.Combine(stageDir, "AutoUpdate.ps1"), overwrite: true);
             File.WriteAllText(Path.Combine(updateRoot, "version.txt"), "999");
 
@@ -147,12 +149,16 @@ internal static class AutoUpdateProbe
             installProc = StartSleepProcess(Path.Combine(installDir, "JeekWindowsOptimizer.exe"), installDir);
             otherProc = StartSleepProcess(Path.Combine(otherDir, "JeekWindowsOptimizer.exe"), otherDir);
 
-            // Run the real AutoUpdate.ps1 against the isolated InstallDir.
+            // Run the copied AutoUpdate.ps1 inside InstallDir WITHOUT passing -InstallDir
+            // (and with a different WorkingDirectory) to match AutoUpdater.LaunchInstall
+            // and verify $PSScriptRoot resolution in Windows PowerShell 5.1.
+            var installedScriptPath = Path.Combine(installDir, "AutoUpdate.ps1");
             using var updater = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "powershell.exe",
+                    WorkingDirectory = tempRoot,
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
@@ -165,10 +171,8 @@ internal static class AutoUpdateProbe
             updater.StartInfo.ArgumentList.Add("-ExecutionPolicy");
             updater.StartInfo.ArgumentList.Add("Bypass");
             updater.StartInfo.ArgumentList.Add("-File");
-            updater.StartInfo.ArgumentList.Add(scriptPath);
+            updater.StartInfo.ArgumentList.Add(installedScriptPath);
             updater.StartInfo.ArgumentList.Add(stageDir);
-            updater.StartInfo.ArgumentList.Add("-InstallDir");
-            updater.StartInfo.ArgumentList.Add(installDir);
             updater.StartInfo.ArgumentList.Add("-GracefulWaitSeconds");
             updater.StartInfo.ArgumentList.Add("1");
             updater.StartInfo.ArgumentList.Add("-CloseWaitSeconds");
@@ -217,6 +221,7 @@ internal static class AutoUpdateProbe
             Require(File.ReadAllText(Path.Combine(installDir, "Config", "user.json")) == "keep-config", "Config must be preserved.");
             Require(File.ReadAllText(Path.Combine(installDir, "Logs", "app.log")) == "keep-log", "Logs must be preserved.");
             Require(File.ReadAllText(Path.Combine(installDir, "Tools", "Activator", "Run.cmd")) == "keep-activator", "Tools\\Activator must be preserved.");
+            Require(File.ReadAllText(Path.Combine(installDir, "Tools", "NewTool", "tool.txt")) == "new-tool", "New tool folder should be copied into Tools.");
             Require(File.Exists(Path.Combine(installDir, "AutoUpdate.ps1")), "AutoUpdate.ps1 must exist after update.");
             Require(!Directory.Exists(updateRoot), "Staged Update root must be removed after update.");
 
