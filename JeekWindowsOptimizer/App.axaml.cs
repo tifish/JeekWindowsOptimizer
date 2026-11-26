@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -17,6 +18,12 @@ namespace JeekWindowsOptimizer;
 public class App : Application
 {
     private static readonly ILogger Log = LogManager.CreateLogger<MainViewModel>();
+
+    private static int _activationRequestCount;
+
+    internal static AppSingleInstance? SingleInstance { get; set; }
+
+    internal static int ActivationRequestCount => Volatile.Read(ref _activationRequestCount);
 
     /// <summary>Win11Fluent dark-mode Checkbox / ToggleSwitch-on fill (~AccentFill).</summary>
     private static readonly Color Win11FluentControlAccentDark = Color.Parse("#4CC2FF");
@@ -66,7 +73,11 @@ public class App : Application
 
             desktop.MainWindow = new MainWindow { DataContext = new MainViewModel() };
             PositionMainWindow(desktop.MainWindow);
-            desktop.Exit += (_, _) => DebugMcpServer.Stop();
+            desktop.Exit += (_, _) =>
+            {
+                SingleInstance?.StopListener();
+                DebugMcpServer.Stop();
+            };
         }
 
         ApplyWin11FluentControlAccentPalettes();
@@ -126,4 +137,39 @@ public class App : Application
             (int)((workAreaHeight - mainWindow.Height) / 2 * screen.Scaling)
         );
     }
+
+    internal void ActivateMainWindow()
+    {
+        Interlocked.Increment(ref _activationRequestCount);
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: { } window })
+                return;
+
+            if (!window.IsVisible)
+                window.Show();
+            if (window.WindowState == WindowState.Minimized)
+                window.WindowState = WindowState.Normal;
+
+            if (window.TryGetPlatformHandle()?.Handle is { } hwnd && hwnd != IntPtr.Zero)
+            {
+                if (IsIconic(hwnd))
+                    ShowWindow(hwnd, SwRestore);
+                SetForegroundWindow(hwnd);
+            }
+
+            window.Activate();
+        });
+    }
+
+    private const int SwRestore = 9;
+
+    [DllImport("user32.dll")]
+    private static extern bool IsIconic(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
 }

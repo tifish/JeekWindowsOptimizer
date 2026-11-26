@@ -25,6 +25,22 @@ sealed class Program
             if (Design.IsDesignMode)
                 LogManager.DisableLogging();
 
+            using var singleInstance = Design.IsDesignMode
+                ? null
+                : AppSingleInstance.Acquire(AppContext.BaseDirectory);
+            if (singleInstance is { IsPrimary: false })
+            {
+                singleInstance.NotifyPrimaryInstance();
+                return;
+            }
+
+            App.SingleInstance = singleInstance;
+            singleInstance?.StartActivationListener(() =>
+            {
+                if (Application.Current is App app)
+                    app.ActivateMainWindow();
+            });
+
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
         catch (Exception ex)

@@ -186,6 +186,7 @@ internal static class DebugMcpServer
         host.AddTool("disk_space_relocate", DiskSpaceRelocateAsync);
         host.AddTool("disk_space_restore_default", DiskSpaceRestoreDefaultAsync);
         host.AddTool("disk_space_move_checked", DiskSpaceMoveCheckedAsync);
+        host.AddTool("auto_update_probe", async _ => ToolText(await AutoUpdateProbe.RunAsync()));
         return host;
     }
 
